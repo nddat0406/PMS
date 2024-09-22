@@ -1,0 +1,19 @@
+#ignore ALL log, class files
+*.log
+*.class
+ignore ALL files in ANY directory named temp
+temp
+/build/*
+WebJSP/build/
+WebOSS/build/
+ZLog4JLogs/
+2Themes/
+lib
+**/nbproject/private/
+**/nbproject/Makefile-*.mk
+**/nbproject/Package-*.bash
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
