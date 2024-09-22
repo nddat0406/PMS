@@ -1,0 +1,357 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package dal;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import model.Group;
+import model.User;
+
+/**
+ *
+ * @author ASUS TUF
+ */
+public class GroupDAO extends BaseDAO {
+
+    public String getDeptNameById(int id) throws SQLException {
+        String str = "SELECT name FROM pms.department  where id=? ";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            pre.setInt(1, id);
+            ResultSet rs = pre.executeQuery();
+            rs.next();
+            return rs.getString(1);
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+
+    }
+
+    public String getDomainName(int id) throws SQLException {
+        String str = "SELECT name FROM pms.domain  where id=? ";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            pre.setInt(1, id);
+            ResultSet rs = pre.executeQuery();
+            rs.next();
+            return rs.getString(1);
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
+    // xóa domain 
+
+    public int Delete(int domainID) {
+        int n = 0;
+        String sql = "DELETE FROM domain WHERE id = ?";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            pre.setInt(1, domainID);
+            n = pre.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return n;
+    }
+//list all domai
+
+    public List<Group> Read(int pageNumber, int pageSize) {
+        List<Group> listD = new ArrayList<>();
+
+        // Tính toán offset dựa trên số trang và số bản ghi trên mỗi trang
+        int offset = (pageNumber - 1) * pageSize;
+
+        // Câu truy vấn với limit và offset để phân trang
+        String sql = "SELECT * FROM domain LIMIT ? OFFSET ?";
+
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+
+            // Đặt giá trị limit (số bản ghi cần lấy) và offset (vị trí bắt đầu)
+            pre.setInt(1, pageSize);  // Số lượng bản ghi trên mỗi trang (7 domain)
+            pre.setInt(2, offset);    // Vị trí bắt đầu
+
+            ResultSet rs = pre.executeQuery();
+
+            while (rs.next()) {
+                Group domain = new Group();
+
+                domain.setId(rs.getInt("id"));
+                domain.setCode(rs.getString("code"));
+                domain.setName(rs.getString("name"));
+                domain.setDetails(rs.getString("details"));
+                domain.setStatus(rs.getInt("status"));
+
+                listD.add(domain);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return listD;
+    }
+
+// Thêm domain mới 
+    public int Add(String code, String name, String details, int status) {
+        int n = 0;
+        String sql = "INSERT INTO domain (code, name, details, status) VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+
+            pre.setString(1, code);
+            pre.setString(2, name);
+            pre.setString(3, details);
+            pre.setInt(4, status);
+
+            n = pre.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return n;
+    }
+
+    // update Domain 
+    public int Update(int domainID, String code, String name, String details, int status) {
+        int n = 0;
+        String sql = "UPDATE domain SET code = ?, name = ?, details = ?, status = ? WHERE id = ?";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+
+            pre.setString(1, code);
+            pre.setString(2, name);
+            pre.setString(3, details);
+            pre.setInt(4, status);
+
+            //  id của domain cần cập nhật
+            pre.setInt(5, domainID);
+
+            n = pre.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return n;
+    }
+
+    // Lấy thông tin chi tiết của domain theo ID
+// Lấy thông tin chi tiết của domain theo ID
+    public Group Detail(int domainID) {
+        Group domain = null;
+        String sql = "SELECT * FROM domain WHERE id = ?";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            pre.setInt(1, domainID);
+            ResultSet rs = pre.executeQuery();
+
+            if (rs.next()) {
+                domain = new Group();
+                domain.setId(rs.getInt("id"));
+                domain.setCode(rs.getString("code"));
+                domain.setName(rs.getString("name"));
+                domain.setDetails(rs.getString("details"));
+                domain.setStatus(rs.getInt("status"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return domain; // Trả về đối tượng domain
+    }
+
+    public List<Group> Search(String keyword) {
+        List<Group> list = new ArrayList<>();
+        String sql = "SELECT * FROM domain WHERE code LIKE ? OR name LIKE ? OR details LIKE ?";
+
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+
+            // Sử dụng ký tự % để tìm kiếm với từ khóa
+            String searchKeyword = "%" + keyword + "%";
+
+            pre.setString(1, searchKeyword);
+            pre.setString(2, searchKeyword);
+            pre.setString(3, searchKeyword);
+
+            ResultSet rs = pre.executeQuery();
+
+            while (rs.next()) {
+                Group domain = new Group();
+                domain.setId(rs.getInt("id"));
+                domain.setCode(rs.getString("code"));
+                domain.setName(rs.getString("name"));
+                domain.setDetails(rs.getString("details"));
+                domain.setStatus(rs.getInt("status"));
+
+                list.add(domain);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        return list;
+    }
+
+    public List<Group> filterGroups(int pageNumber, int pageSize, String name, String code, Integer status) {
+        List<Group> groups = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM domain WHERE 1=1");
+
+        // Append các điều kiện filter
+        if (name != null && !name.isEmpty()) {
+            sql.append(" AND name LIKE ?");
+        }
+        if (code != null && !code.isEmpty()) {
+            sql.append(" AND code LIKE ?");
+        }
+        if (status != null) {
+            sql.append(" AND status = ?");
+        }
+
+        sql.append(" LIMIT ?, ?");
+
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql.toString());
+
+            // Set giá trị cho các điều kiện filter
+            int paramIndex = 1;
+            if (name != null && !name.isEmpty()) {
+                pre.setString(paramIndex++, "%" + name + "%");
+            }
+            if (code != null && !code.isEmpty()) {
+                pre.setString(paramIndex++, "%" + code + "%");
+            }
+            if (status != null) {
+                pre.setInt(paramIndex++, status);
+            }
+
+            // Set giá trị cho LIMIT
+            pre.setInt(paramIndex++, (pageNumber - 1) * pageSize);
+            pre.setInt(paramIndex++, pageSize);
+
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Group group = new Group();
+                group.setId(rs.getInt("id"));
+                group.setCode(rs.getString("code"));
+                group.setName(rs.getString("name"));
+                group.setDetails(rs.getString("details"));
+                group.setStatus(rs.getInt("status"));
+                groups.add(group);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return groups;
+    }
+
+    public static void main(String[] args) {
+        GroupDAO groupDAO = new GroupDAO();
+
+        // Tạo đối tượng Group để cập nhật
+        String code = "newCode"; // Mã mới
+        String name = "New Group Name"; // Tên mới
+        String details = "Updated details about the group."; // Chi tiết mới
+        int status = 1; // Trạng thái mới (1 cho Active, 0 cho Inactive)
+
+        // Gọi hàm Update
+        int result = groupDAO.Add(code, name, details, status);
+
+        // Kiểm tra và in kết quả
+        if (result > 0) {
+            System.out.println("Cập nhật thành công!");
+        } else {
+            System.out.println("Cập nhật không thành công.");
+        }
+    }
+
+    public List<Group> getAllDomain() throws SQLException {
+        List<Group> listD = new ArrayList<>();
+        String sql = "SELECT * FROM domain";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            ResultSet rs = pre.executeQuery();
+
+            while (rs.next()) {
+                Group domain = new Group();
+
+                domain.setId(rs.getInt("id"));
+                domain.setCode(rs.getString("code"));
+                domain.setName(rs.getString("name"));
+                domain.setDetails(rs.getString("details"));
+                domain.setStatus(rs.getInt("status"));
+
+                listD.add(domain);
+            }
+
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+
+        return listD;
+    }
+
+    public List<Group> getAllDepartment() throws SQLException {
+        List<Group> listD = new ArrayList<>();
+        String sql = "SELECT * FROM department";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Group department = new Group();
+
+                department.setId(rs.getInt("id"));
+                department.setCode(rs.getString("code"));
+                department.setName(rs.getString("name"));
+                department.setDetails(rs.getString("details"));
+
+                // Lấy phòng ban cha, xử lý nếu 'parent' có thể null 
+                int parentId = rs.getInt("parent");
+                if (!rs.wasNull()) {
+                    Group parentDepartment = getParentDepartmentById(parentId);
+                    department.setParent(parentDepartment);
+                } else {
+                    department.setParent(null);
+                }
+
+                department.setStatus(rs.getInt("status"));
+
+                listD.add(department);
+            }
+
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+
+        return listD;
+    }
+
+    public Group getParentDepartmentById(int id) {
+        String sql = "SELECT * FROM department WHERE id = ?";
+        Group department = null;
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            pre.setInt(1, id);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                department = new Group();
+                department.setId(rs.getInt("id"));
+                department.setCode(rs.getString("code"));
+                department.setName(rs.getString("name"));
+                department.setDetails(rs.getString("details"));
+                department.setStatus(rs.getInt("status"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return department;
+    }
+
+}
