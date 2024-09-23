@@ -11,16 +11,18 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Group;
-import service.DepartmentService;
+import service.GroupService;
 
 @WebServlet(
         name = "DepartmentController",
-        urlPatterns = {"/department", "/department/add", "/department/edit", "/department/delete", "/department/list"} 
+
+        urlPatterns = {"/admin/department"}
+
 )
 
 public class DepartmentController extends HttpServlet {
 
-    private DepartmentService departmentService = new DepartmentService();
+    private GroupService departmentService = new GroupService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

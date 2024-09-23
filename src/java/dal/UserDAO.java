@@ -321,7 +321,7 @@ public class UserDAO extends BaseDAO {
 
     public List<User> findByName(String keyword) throws SQLException {
         List<User> list = new ArrayList<>();
-        String sql = "SELECT * FROM pms.user where fullname like '%a%';";
+        String sql = "SELECT * FROM pms.user where fullname like ?;";
         try {
             PreparedStatement st = getConnection().prepareStatement(sql);
             st.setString(1, "%" + keyword + "%");

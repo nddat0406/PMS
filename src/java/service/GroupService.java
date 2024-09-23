@@ -14,9 +14,10 @@ import model.Group;
  * @author HP
  */
 public class GroupService {
-    
-    private GroupDAO gdao =new GroupDAO();
+
+    private GroupDAO gdao = new GroupDAO();
     public static final int CODE_MAX_LENGTH = 10;
+
     public GroupService() {
         this.gdao = new GroupDAO();
     }
@@ -85,7 +86,7 @@ public class GroupService {
         // Có thể thêm kiểm tra cho 'details' nếu cần
     }
 
-        public List<Group> getAllDepartment() throws SQLException {
+    public List<Group> getAllDepartment() throws SQLException {
         try {
             return gdao.getAllDepartment();
         } catch (SQLException e) {
@@ -93,12 +94,66 @@ public class GroupService {
         }
     }
 
-
     public List<Group> getAllDomains() throws SQLException {
         try {
             return gdao.getAllDomain();
         } catch (SQLException e) {
             throw new SQLException(e);
         }
+    }
+
+
+    // Lấy tên phòng ban theo ID
+    public String getDepartmentNameById(int id) {
+        try {
+            return gdao.getDeptNameById(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Xóa phòng ban theo ID
+    public boolean deleteDepartment(int departmentID) {
+        int rowsAffected = gdao.Delete(departmentID);
+        return rowsAffected > 0;
+    }
+
+    // Đọc danh sách phòng ban với phân trang
+    public List<Group> getDepartmentsByPage(int pageNumber, int pageSize) {
+        return gdao.readDepartments(pageNumber, pageSize);
+    }
+
+    // Thêm phòng ban mới
+    public boolean addDepartment(String code, String name, String details, Integer parent, int status) {
+        int rowsAffected = gdao.Add(code, name, details, parent, status);
+        return rowsAffected > 0;
+    }
+
+// Cập nhật thông tin phòng ban
+    public boolean updateDepartment(int departmentID, String code, String name, String details, Integer parent, int status) {
+        int rowsAffected = gdao.Update(departmentID, code, name, details, parent, status);
+        return rowsAffected > 0;
+    }
+
+    // Lấy thông tin chi tiết của phòng ban theo ID
+    public Group getDepartmentDetail(int departmentID) {
+        return gdao.getDepartmentDetail(departmentID);
+    }
+
+    // Lọc danh sách phòng ban theo tiêu chí
+    public List<Group> filterDepartments(int pageNumber, int pageSize, String code, String name, Integer status) {
+        return gdao.filter(pageNumber, pageSize, code, name, status);
+    }
+
+    // Tìm kiếm phòng ban theo từ khóa
+    public List<Group> searchDepartments(String keyword) {
+        return gdao.searchDepartments(keyword);
+    }
+
+    public boolean isCodeOrNameDuplicate(String code, String name) {
+        boolean isCodeDuplicate = gdao.isCodeExists(code);
+        boolean isNameDuplicate = gdao.isNameExists(name);
+        return isCodeDuplicate || isNameDuplicate; // Trả về true nếu code hoặc name bị trùng
     }
 }

@@ -51,7 +51,7 @@ public class SettingController extends HttpServlet {
             }
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Setting ID");
-        } catch (Exception e) {
+        } catch (ServletException | IOException | SQLException e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred");
         }
     }
@@ -62,24 +62,12 @@ public class SettingController extends HttpServlet {
         try {
             String action = request.getParameter("action");
             switch (action) {
-                case "update":
-                    handleUpdate(request, response);
-                    break;
-                case "add":
-                    handleAddSetting(request, response);
-                    break;
-                case "delete":
-                    handleDelete(request, response);
-                    break;
-                case "filter":
-                    paginateListWithFilter(request, response);
-                    break;
-                case "search":
-                    handleSearch(request, response);
-                    break;
-                default:
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
-                    break;
+                case "update" -> handleUpdate(request, response);
+                case "add" -> handleAddSetting(request, response);
+                case "delete" -> handleDelete(request, response);
+                case "filter" -> paginateListWithFilter(request, response);
+                case "search" -> handleSearch(request, response);
+                default -> response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
             }
         } catch (SQLException ex) {
             Logger.getLogger(SettingController.class.getName()).log(Level.SEVERE, null, ex);

@@ -7,6 +7,7 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import service.GroupService;
  *
  * @author ASUS TUF
  */
+@WebServlet(urlPatterns = {"/admin/domain"})
 public class GroupController extends HttpServlet {
 
     private GroupService Domain = new GroupService();

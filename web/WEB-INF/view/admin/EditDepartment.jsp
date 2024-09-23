@@ -1,20 +1,21 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <html>
 <head>
     <title>Edit Department</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
     <style>
-            /* CSS tùy ch?nh */
+            /* CSS tÃ¹y ch?nh */
             .custom-select {
-                width: 150px; /* Chi?u r?ng tùy ch?nh cho select */
+                width: 150px; /* Chi?u r?ng tÃ¹y ch?nh cho select */
             }
             .form-container {
                 max-width: 600px; /* Gi?i h?n chi?u r?ng form */
-                margin: 50px auto; /* C?n gi?a form v?i kho?ng cách trên */
+                margin: 50px auto; /* C?n gi?a form v?i kho?ng cÃ¡ch trÃªn */
             }
             .content {
-                padding-top: 100px; /* Cách ??u t? sidebar */
+                padding-top: 100px; /* CÃ¡ch ??u t? sidebar */
             }
     </style>
 </head>
@@ -33,7 +34,7 @@
                     </div>
                 </c:if>
                 <form action="department?action=update" method="post" onsubmit="return validateForm();">
-                    <input type="hidden" name="id" value="${departmentDetail.id}"> <!-- ID c?a phòng ban ?? c?p nh?t -->
+                    <input type="hidden" name="id" value="${departmentDetail.id}"> <!-- ID c?a phÃ²ng ban ?? c?p nh?t -->
 
                     <div class="form-group">
                         <label for="code">Code:</label>
@@ -59,7 +60,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="parent_department">Phòng ban cha:</label>
+                        <label for="parent_department">PhÃ²ng ban cha:</label>
                         <select id="parent_department" name="parent_department" class="form-control custom-select">
                             <option value="">chose parent</option>
                             <c:forEach var="parent" items="${listParentDepartments}">
@@ -78,9 +79,9 @@
 
     
     
-            <!-- Thêm jQuery và Bootstrap JS n?u c?n -->
-        <script src="assets/bundles/libscripts.bundle.js"></script>
-        <script src="assets/bundles/dataTables.bundle.js"></script>
-        <script src="assets/bundles/mainscripts.bundle.js"></script>
+            <!-- ThÃªm jQuery vÃ  Bootstrap JS n?u c?n -->
+        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
 </body>
 </html>

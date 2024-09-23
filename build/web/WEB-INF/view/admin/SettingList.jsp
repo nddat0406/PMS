@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -21,16 +22,16 @@
     </head>
     <body>
         <!-- Include Page Loader -->
-        <jsp:include page="/WEB-INF/view/common/pageLoader.jsp" />
+        <jsp:include page="../common/pageLoader.jsp" />
 
         <div id="layout" class="theme-cyan">
             <!-- Sidebar -->
-            <jsp:include page="/WEB-INF/view/common/sidebar.jsp" />
+            <jsp:include page="../common/sidebar.jsp" />
 
             <div id="main-content">
                 <div class="container-fluid">
                     <!-- Top Navbar -->
-                    <jsp:include page="/WEB-INF/view/common/topNavbar.jsp" />
+                    <jsp:include page="../common/topNavbar.jsp" />
 
                     <!-- Main Content -->
                     <div class="block-header py-lg-4 py-3">
@@ -50,7 +51,7 @@
                                     <button type="submit" class="btn btn-outline-secondary">Add New Setting</button>
                                 </form>
 
-                                <form method="get" action="settings">
+                                <form method="post" action="settings" >
                                     <input type="hidden" name="action" value="filter">
 
                                     <div class="row">
@@ -137,7 +138,7 @@
                                                         </button>
                                                     </form>
 
-                                                    <!-- Form xóa -->
+                                                    <!-- Form xÃ³a -->
                                                     <form action="settings" method="post" onsubmit="return confirm('Are you sure you want to delete this setting?');" style="display: inline-block;">
                                                         <input type="hidden" name="action" value="delete">
                                                         <input type="hidden" name="id" value="${setting.id}">
@@ -182,14 +183,5 @@
     <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
 
     <!-- Initialize DataTable -->
-    <script>
-                                                        $(document).ready(function () {
-                                                            $('#settingTable').dataTable({
-                                                                responsive: true,
-                                                                pageLength: 10,
-                                                                lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 100]]
-                                                            });
-                                                        });
-    </script>
 </body>
 </html>
