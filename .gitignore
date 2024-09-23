@@ -1,1 +1,15 @@
-/dist/
+#ignore ALL log, class files
+*.log
+*.class
+*.properties
+#ignore ALL files in ANY directory named temp
+temp
+/build/*
+**/nbproject/private/
+**/nbproject/Makefile-*.mk
+**/nbproject/Package-*.bash
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
