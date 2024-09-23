@@ -82,7 +82,7 @@
                                         </div>
                                     </c:if>
                                     <div class="form-floating">
-                                        <input type="re-password" name="rePassword" class="form-control" placeholder="Re-Password">
+                                        <input type="password" name="rePassword" class="form-control" placeholder="Re-Password">
                                         <label>Re-Password</label>
                                     </div>
                                     <c:if test="${not empty requestScope.rePasswordError}">
