@@ -43,4 +43,12 @@
         <servlet-name>DepartmentController</servlet-name>
         <url-pattern>/department</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>SettingController</servlet-name>
+        <servlet-class>controller.SettingController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SettingController</servlet-name>
+        <url-pattern>/settings</url-pattern>
+    </servlet-mapping>
 </web-app>
