@@ -197,5 +197,8 @@ public class UserService {
     public boolean createUser(String fullname, String email, String password){
         return udao.createUser(fullname, email, password);
     }
+    public boolean isEmailExists(String email){
+        return udao.checkEmailExists(email);
+    }
 }
 
