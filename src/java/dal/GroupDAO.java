@@ -440,7 +440,8 @@ public class GroupDAO extends BaseDAO {
     // Thêm phòng ban mới
     public int Add(String code, String name, String details, Integer parent, int status) {
         String sql = "INSERT INTO department (code, name, details, status" + (parent != null ? ", parent" : "") + ") VALUES (?, ?, ?, ?" + (parent != null ? ", ?" : "") + ")";
-        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, code);
             ps.setString(2, name);
             ps.setString(3, details);
@@ -625,7 +626,8 @@ public class GroupDAO extends BaseDAO {
     // validation code va name 
     public boolean isCodeExists(String code) {
         String query = "SELECT COUNT(*) FROM department  WHERE code = ?";
-        try (PreparedStatement ps = getConnection().prepareStatement(query)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(query);
             ps.setString(1, code);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -639,7 +641,8 @@ public class GroupDAO extends BaseDAO {
 
     public boolean isNameExists(String name) {
         String query = "SELECT COUNT(*) FROM department  WHERE name = ?";
-        try (PreparedStatement ps = getConnection().prepareStatement(query)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(query);
             ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {

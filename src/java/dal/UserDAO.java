@@ -51,7 +51,8 @@ public class UserDAO extends BaseDAO {
         String query = "SELECT id, email, fullname, mobile, password, note, role, status, departmentId, image,gender, otp, otp_expiry "
                 + "FROM pms.user WHERE user_name = ?";
 
-        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(query)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(query);
             ps.setString(1, username);
 
             try (ResultSet resultSet = ps.executeQuery()) {
@@ -99,7 +100,8 @@ public class UserDAO extends BaseDAO {
     // Phương thức đăng ký người dùng mới
     public String registerUser(String username, String pass, String email, String name, String phone) {
         String sql = "INSERT INTO pms.user (password, email, fullname, mobile, role, status) VALUES (?, ?, ?, ?, 1, 0)";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             String hashedPassword = BaseService.hashPassword(pass);
 
             ps.setString(1, email);
@@ -117,7 +119,7 @@ public class UserDAO extends BaseDAO {
             String updateOtpSql = "UPDATE pms.user SET otp = ?, otp_expiry = ? WHERE email = ?";
             Date otpExpiry = new Date(System.currentTimeMillis() + (5 * 60 * 1000)); // 5 phút
 
-            try (PreparedStatement otpPs = conn.prepareStatement(updateOtpSql)) {
+            try (PreparedStatement otpPs = getConnection().prepareStatement(updateOtpSql)) {
                 otpPs.setString(1, otp);
                 otpPs.setTimestamp(2, new java.sql.Timestamp(otpExpiry.getTime()));
                 otpPs.setString(3, email);
@@ -125,7 +127,7 @@ public class UserDAO extends BaseDAO {
             }
 
             return email; // Trả về email để sử dụng trong xác thực OTP
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
@@ -133,7 +135,8 @@ public class UserDAO extends BaseDAO {
 
     public boolean checkOldPassword(String email, String oldPassword) {
         String sql = "SELECT password FROM pms.user WHERE email = ?";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -354,7 +357,8 @@ public class UserDAO extends BaseDAO {
 
     public void Insert(User uNew) throws SQLException {
         String sql = "INSERT INTO pms.user (email, fullname, password, role, status, departmentId, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement st = getConnection().prepareStatement(sql);
             st.setString(1, uNew.getEmail());
             st.setString(2, uNew.getFullname());
             st.setString(3, uNew.getPassword());
@@ -431,13 +435,18 @@ public class UserDAO extends BaseDAO {
     public List<Group> getAllDept() throws SQLException {
         List<Group> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.department;";
-        try (Statement stmt = getConnection().createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+        try {
+            Statement stmt = getConnection().createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 Group dept = new Group();
                 dept.setId(rs.getInt("id"));
                 dept.setName(rs.getString("name"));
                 list.add(dept);
             }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+
         }
         return list;
     }
@@ -503,9 +512,8 @@ public class UserDAO extends BaseDAO {
     public boolean resetPassword(String email, String newPassword) {
         String sql = "UPDATE pms.user SET password = ? WHERE email = ?";
 
-        try (Connection con = getConnection(); // Giả sử có phương thức này để lấy kết nối
-                 PreparedStatement preparedStatement = con.prepareStatement(sql)) {
-
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement(sql);
             preparedStatement.setString(1, BaseService.hashPassword(newPassword));
             preparedStatement.setString(2, email);
             int rowsAffected = preparedStatement.executeUpdate();
@@ -519,9 +527,8 @@ public class UserDAO extends BaseDAO {
     public boolean saveOTP(String email, String otp) {
         String sql = "UPDATE pms.user SET otp = ? WHERE email = ?";
 
-        try (Connection conn = getConnection(); // Giả sử có phương thức này để lấy kết nối
-                 PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
-
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement(sql);
             preparedStatement.setString(1, otp);
             preparedStatement.setString(2, email);
             int rowsAffected = preparedStatement.executeUpdate();
@@ -535,13 +542,13 @@ public class UserDAO extends BaseDAO {
     public boolean createUser(String fullname, String email, String password) {
         String insertSQL = "INSERT INTO pms.user (fullname, email, password, status, role, departmentId) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(insertSQL)) {
-
+        try {
+            PreparedStatement stmt = getConnection().prepareStatement(insertSQL);
             stmt.setString(1, fullname);
             stmt.setString(2, email);
             stmt.setString(3, BaseService.hashPassword(password));
             stmt.setInt(4, 1);
-            stmt.setInt(5, 2);
+            stmt.setInt(5, 1);
             stmt.setInt(6, 1);
 
             int rowsAffected = stmt.executeUpdate();
