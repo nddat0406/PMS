@@ -1,3 +1,4 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,9 +17,7 @@
 
 
     <!-- MAIN CSS -->
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
 </head>
 
 <body>
@@ -48,14 +47,14 @@
                     </div>
                     <div class="card-body">
                         <p>Please enter your email address below to receive instructions for resetting password.</p>
-                        <form action="https://wrraptheme.com/templates/lucid/hr/bs5/dist/index.html">
+                        <form action="${pageContext.request.contextPath}/forgot-password?contain=forgot" method="POST">
                             <div class="form-floating mb-1">
-                                <input type="email" class="form-control" placeholder="name@example.com">
+                                <input type="email" name="email" class="form-control" placeholder="name@example.com">
                                 <label>Email address</label>
                             </div>
                             <button type="submit" class="btn btn-primary w-100 px-3 py-2">RESET PASSWORD</button>
                             <div class="text-center mt-3">
-                                <span class="helper-text">Know your password? <a href="login.jsp">Login</a></span>
+                                <span class="helper-text">Know your password? <a href="${pageContext.request.contextPath}/login">Login</a></span>
                             </div>
                         </form>
                     </div>

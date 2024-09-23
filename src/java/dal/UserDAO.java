@@ -51,7 +51,8 @@ public class UserDAO extends BaseDAO {
         String query = "SELECT id, email, fullname, mobile, password, note, role, status, departmentId, image,gender, otp, otp_expiry "
                 + "FROM pms.user WHERE user_name = ?";
 
-        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(query)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(query);
             ps.setString(1, username);
 
             try (ResultSet resultSet = ps.executeQuery()) {
@@ -99,7 +100,8 @@ public class UserDAO extends BaseDAO {
     // Phương thức đăng ký người dùng mới
     public String registerUser(String username, String pass, String email, String name, String phone) {
         String sql = "INSERT INTO pms.user (password, email, fullname, mobile, role, status) VALUES (?, ?, ?, ?, 1, 0)";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             String hashedPassword = BaseService.hashPassword(pass);
 
             ps.setString(1, email);
@@ -111,13 +113,13 @@ public class UserDAO extends BaseDAO {
 
             // Tạo và gửi mã OTP
             String otp = BaseService.generateOTP(); // Tạo mã OTP
-            BaseService.sendEmail(email, "Your OTP Code", "Your OTP is: " + otp + ". It expires in 5 minutes.");
+            BaseService.sendEmail(email, otp);
 
             // Lưu mã OTP vào cơ sở dữ liệu
             String updateOtpSql = "UPDATE pms.user SET otp = ?, otp_expiry = ? WHERE email = ?";
             Date otpExpiry = new Date(System.currentTimeMillis() + (5 * 60 * 1000)); // 5 phút
 
-            try (PreparedStatement otpPs = conn.prepareStatement(updateOtpSql)) {
+            try (PreparedStatement otpPs = getConnection().prepareStatement(updateOtpSql)) {
                 otpPs.setString(1, otp);
                 otpPs.setTimestamp(2, new java.sql.Timestamp(otpExpiry.getTime()));
                 otpPs.setString(3, email);
@@ -125,7 +127,7 @@ public class UserDAO extends BaseDAO {
             }
 
             return email; // Trả về email để sử dụng trong xác thực OTP
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
@@ -133,7 +135,8 @@ public class UserDAO extends BaseDAO {
 
     public boolean checkOldPassword(String email, String oldPassword) {
         String sql = "SELECT password FROM pms.user WHERE email = ?";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -257,7 +260,6 @@ public class UserDAO extends BaseDAO {
         return false; // OTP không hợp lệ
     }
 
- 
     public void updateUserPassword(String newPass, int id) throws SQLException {
         String str = """
                              UPDATE `pms`.`user`
@@ -290,6 +292,7 @@ public class UserDAO extends BaseDAO {
         }
         return false;
     }
+
     public List<User> getAll() throws SQLException {
         List<User> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.user";
@@ -321,7 +324,7 @@ public class UserDAO extends BaseDAO {
 
     public List<User> findByName(String keyword) throws SQLException {
         List<User> list = new ArrayList<>();
-        String sql = "SELECT * FROM pms.user where fullname like '%a%';";
+        String sql = "SELECT * FROM pms.user where fullname like ?;";
         try {
             PreparedStatement st = getConnection().prepareStatement(sql);
             st.setString(1, "%" + keyword + "%");
@@ -354,7 +357,8 @@ public class UserDAO extends BaseDAO {
 
     public void Insert(User uNew) throws SQLException {
         String sql = "INSERT INTO pms.user (email, fullname, password, role, status, departmentId, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement st = getConnection().prepareStatement(sql);
             st.setString(1, uNew.getEmail());
             st.setString(2, uNew.getFullname());
             st.setString(3, uNew.getPassword());
@@ -431,13 +435,18 @@ public class UserDAO extends BaseDAO {
     public List<Group> getAllDept() throws SQLException {
         List<Group> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.department;";
-        try (Statement stmt = getConnection().createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+        try {
+            Statement stmt = getConnection().createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 Group dept = new Group();
                 dept.setId(rs.getInt("id"));
                 dept.setName(rs.getString("name"));
                 list.add(dept);
             }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+
         }
         return list;
     }
@@ -458,9 +467,6 @@ public class UserDAO extends BaseDAO {
         }
     }
 
-    
-
-
     public boolean verifyLogin(String email, String pass) throws SQLException {
         String sql = "SELECT password FROM pms.user where email=?";
         try {
@@ -473,6 +479,7 @@ public class UserDAO extends BaseDAO {
             throw new SQLException(e);
         }
     }
+
     public static void main(String[] args) throws SQLException {
         System.out.println(new UserDAO().verifyLogin("admin@gmail.com", "$10$uliB64NGMAkGljc3AYS5zu81xK3dDskP2MmmkuJ2fkKP0fnDvs.wC"));
     }
@@ -495,10 +502,81 @@ public class UserDAO extends BaseDAO {
             user.setAddress(rs.getString(11));
             user.setGender(rs.getBoolean(12));
             user.setBirthdate(rs.getDate(13));
+            user.setOtp(rs.getString(14));
             return user;
         } catch (SQLException e) {
             throw new SQLException("User not exis or not active");
         }
     }
 
+    public boolean resetPassword(String email, String newPassword) {
+        String sql = "UPDATE pms.user SET password = ? WHERE email = ?";
+
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement(sql);
+            preparedStatement.setString(1, BaseService.hashPassword(newPassword));
+            preparedStatement.setString(2, email);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean saveOTP(String email, String otp) {
+        String sql = "UPDATE pms.user SET otp = ? WHERE email = ?";
+
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement(sql);
+            preparedStatement.setString(1, otp);
+            preparedStatement.setString(2, email);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean createUser(String fullname, String email, String password) {
+        String insertSQL = "INSERT INTO pms.user (fullname, email, password, status, role, departmentId) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try {
+            PreparedStatement stmt = getConnection().prepareStatement(insertSQL);
+            stmt.setString(1, fullname);
+            stmt.setString(2, email);
+            stmt.setString(3, BaseService.hashPassword(password));
+            stmt.setInt(4, 1);
+            stmt.setInt(5, 1);
+            stmt.setInt(6, 1);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public List<User> getAllPage(int offset, int noOfRecords) throws SQLException {
+    List<User> userList = new ArrayList<>();
+    String query = "SELECT * FROM users LIMIT ?, ?";
+    
+    try{
+        PreparedStatement pst = getConnection().prepareStatement(query);
+        pst.setInt(1, offset);
+        pst.setInt(2, noOfRecords);
+
+        try (ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                
+            }
+        }
+    }catch(SQLException e){
+        System.out.println(e);
+    }
+    return userList;
+
+
+}
 }

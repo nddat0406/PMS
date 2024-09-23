@@ -16,13 +16,14 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.User;
+import service.BaseService;
 import service.UserService;
 
 /**
  *
  * @author HP
  */
-@WebServlet(name = "LoginController", urlPatterns = {"/login","/logout"})
+@WebServlet(name = "LoginController", urlPatterns = {"/login", "/logout", "/register"})
 public class LoginController extends HttpServlet {
 
     private UserService uService = new UserService();
@@ -72,7 +73,10 @@ public class LoginController extends HttpServlet {
             request.getSession().removeAttribute("loginedUser");
             request.getSession().invalidate();
             request.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
+        } else if (action.contains("register")) {
+            request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
         }
+
     }
 
     /**
@@ -86,18 +90,46 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String email = request.getParameter("email");
-        String pass = request.getParameter("password");
-        try {
-            if (uService.verifyLogin(email, pass)) {
-                request.getSession().setAttribute("loginedUser", uService.getUserByEmail(email));
-                response.sendRedirect(request.getContextPath() + "/dashboard");
+        String action = request.getServletPath();
+        if (action.contains("login")) {
+            String email = request.getParameter("email");
+            String pass = request.getParameter("password");
+            try {
+                if (uService.verifyLogin(email, pass)) {
+                    request.getSession().setAttribute("loginedUser", uService.getUserByEmail(email));
+                    response.sendRedirect(request.getContextPath() + "/dashboard");
+                }
+            } catch (SQLException ex) {
+                request.setAttribute("errorMess", "Login failed!");
+                request.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
             }
-        } catch (SQLException ex) {
-            request.setAttribute("errorMess", "Login failed!");
+        } else if (action.contains("register")) {
+            String firstName = request.getParameter("firstName").trim();
+            String lastName = request.getParameter("lastName").trim();
+            String email = request.getParameter("email").trim();
+            String password = request.getParameter("password").trim();
+            String rePassword = request.getParameter("rePassword").trim();
+            if (email.isBlank()) {
+                request.setAttribute("emailError", "Email can not be blank");
+                request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
+            }
+            if (password.isEmpty()) {
+                request.setAttribute("passwordError", "Password can not be empty or null");
+                request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
+            }
+            if (!rePassword.equals(password)) {
+                request.setAttribute("rePasswordError", "Re-enter password does not match");
+                request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
+            }
+            String fullName = firstName.concat(" " + lastName);
+            if (!uService.createUser(fullName, email, password)) {
+                request.setAttribute("error", "Register unsuccessfully");
+                request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
+            }
+            request.setAttribute("success", "Register successfully");
             request.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
         }
+
     }
 
     /**

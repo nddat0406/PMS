@@ -188,4 +188,14 @@ public class UserService {
             Group group = udao.getDeptId(deptId);
             return group;
     }
+    public boolean resetPassword(String email, String newPassword){
+        return udao.resetPassword(email, newPassword);
+    }
+    public boolean saveOtp(String email, String otp){
+        return udao.saveOTP(email, otp);
+    }
+    public boolean createUser(String fullname, String email, String password){
+        return udao.createUser(fullname, email, password);
+    }
 }
+

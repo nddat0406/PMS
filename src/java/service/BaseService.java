@@ -11,6 +11,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.Random;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
@@ -25,14 +34,51 @@ public class BaseService {
     public static final int ADMIN_ROLE = 1;
     public static final int MEMBER_ROLE = 2;
 
-
-
     public static String generateOTP() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    public static void sendEmail(String email, String your_OTP_Code, String string) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public static String getRandom() {
+        Random random = new Random();
+        int number = random.nextInt(999999);
+        return String.format("%06d", number);
+    }
+
+    public static boolean sendEmail(String email, String OTP) {
+        boolean result = false;
+
+        String toEmail = email;
+        String fromEmail = "nmnghia1702@gmail.com";
+        String password = "suwv nrxz ypdg ajdp";
+
+        try {
+            Properties pr = new Properties();
+            pr.setProperty("mail.smtp.host", "smtp.gmail.com");
+            pr.setProperty("mail.smtp.port", "587");
+            pr.setProperty("mail.smtp.auth", "true");
+            pr.setProperty("mail.smtp.starttls.enable", "true");
+            pr.put("mail.smtp.socketFactory.port", "587");
+            pr.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+
+            //session
+            Session session = Session.getInstance(pr, new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(fromEmail, password);
+                }
+            });
+
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(fromEmail));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
+            message.setSubject("Forgot password OTP");
+            message.setText("Here is OTP to reset your password: " + OTP);
+            Transport.send(message);
+            result = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     private UserDAO udao = new UserDAO();

@@ -1,3 +1,4 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,8 +21,6 @@
 
         <!-- MAIN CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     </head>
 
     <body>
@@ -49,31 +48,51 @@
                             <div class="card-header">
                                 <p class="fs-5 mb-0">Create an account</p>
                             </div>
+                            <c:if test="${not empty requestScope.error}">
+                                        <div style="color: red; margin-top: 10px;">
+                                        ${requestScope.error}
+                                        </div>
+                                    </c:if>
                             <div class="card-body">
-                                <form>
+                                <form action="${pageContext.request.contextPath}/register" method="POST">
                                     <div class="form-floating mb-1">
-                                        <input type="first-name" class="form-control" placeholder="first-name">
+                                        <input type="first-name" name="firstName" class="form-control" placeholder="first-name">
                                         <label>First Name</label>
                                     </div>
                                     <div class="form-floating mb-1">
-                                        <input type="last-name" class="form-control" placeholder="last-name">
+                                        <input type="last-name" name="lastName" class="form-control" placeholder="last-name">
                                         <label>Last Name</label>
                                     </div>
                                     <div class="form-floating mb-1">
-                                        <input type="email" class="form-control" placeholder="name@example.com">
+                                        <input type="email" name="email" class="form-control" placeholder="name@example.com">
                                         <label>Email address</label>
                                     </div>
+                                    <c:if test="${not empty requestScope.emailError}">
+                                        <div style="color: red; margin-top: 10px;">
+                                        ${requestScope.emailError}
+                                        </div>
+                                    </c:if>
                                     <div class="form-floating">
-                                        <input type="password" class="form-control" placeholder="Password">
+                                        <input type="password" name="password" class="form-control" placeholder="Password">
                                         <label>Password</label>
                                     </div>
+                                    <c:if test="${not empty requestScope.passwordError}">
+                                        <div style="color: red; margin-top: 10px;">
+                                        ${requestScope.passwordError}
+                                        </div>
+                                    </c:if>
                                     <div class="form-floating">
-                                        <input type="re-password" class="form-control" placeholder="Re-Password">
+                                        <input type="re-password" name="rePassword" class="form-control" placeholder="Re-Password">
                                         <label>Re-Password</label>
-                                    </div>                                                      
+                                    </div>
+                                    <c:if test="${not empty requestScope.rePasswordError}">
+                                        <div style="color: red; margin-top: 10px;">
+                                        ${requestScope.rePasswordError}
+                                        </div>
+                                    </c:if>
                                     <div class="my-3">
                                         <button type="submit" class="btn btn-primary w-100 px-3 py-2 mb-2">REGISTER</button>
-                                        <span>Already have an account? <a href="loginpage.jsp">Login</a></span>
+                                        <span>Already have an account? <a href="${pageContext.request.contextPath}/login">Login</a></span>
                                     </div>
                                 </form>
                                 <div class="d-grid gap-2 mt-3 pt-3">
