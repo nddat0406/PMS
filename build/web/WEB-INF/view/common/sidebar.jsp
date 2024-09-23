@@ -35,9 +35,15 @@
                 <nav class="sidebar-nav">
                     <ul class="main-menu metismenu list-unstyled">
                         <li><a href="${pageContext.request.contextPath}/dashboard"><i class="fa fa-tachometer"></i><span>Dashboard</span></a></li>
-                        <li><a href="#Employees"><i class="fa fa-users"></i><span>User Management</span></a></li>
-                        <li><a href="app-users.html"><i class="fa fa-building"></i><span>Group Management</span></a></li>
-                        <li><a href="${pageContext.request.contextPath}/admin/setting"><i class="fa fa-server"></i><span>Setting Management</span></a></li>
+                        <li><a href="${pageContext.request.contextPath}/admin/userlist"><i class="fa fa-users"></i><span>User Management</span></a></li>
+                        <li>
+                            <a href="#Employees" class="has-arrow"><i class="fa fa-building"></i><span>Group Management</span></a>
+                            <ul class="list-unstyled">
+                                <li><a href="${pageContext.request.contextPath}/department">Department Management</a></li>
+                                <li><a href="${pageContext.request.contextPath}/domain">Domain Management</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="${pageContext.request.contextPath}/settings"><i class="fa fa-server"></i><span>Setting Management</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/user/profile"><i class="fa fa-user"></i><span>Users profile</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/user/logout"><i class="fa fa-sign-out"></i><span>Logout</span></a></li>
                     </ul>

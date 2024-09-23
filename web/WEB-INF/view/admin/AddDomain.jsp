@@ -24,56 +24,58 @@
         </style>
     </head>
     <body>
-        <div class="container-fluid">
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <jsp:include page="/WEB-INF/view/common/topNavbar.jsp" />
-                <jsp:include page="/WEB-INF/view/common/sidebar.jsp" />
-                <jsp:include page="/WEB-INF/view/common/pageLoader.jsp" />
-            </div>
+        <div id="layout" class="theme-cyan">
 
-            <!-- Content -->
-            <div class="content">
-                <div class="form-container">
-                    <c:if test="${not empty errorMessage}">
-                        <div class="alert alert-danger">
-                            ${errorMessage}
-                        </div>
-                    </c:if>
-                    <form action="domain?action=add" method="post">
-                        <div class="form-group">
-                            <label for="code">Code:</label>
-                            <input type="text" id="code" name="code" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="name">Name:</label>
-                            <input type="text" id="name" name="name" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="details">Detail:</label>
-                            <textarea id="details" name="details" class="form-control" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="status">Status:</label>
-                            <select id="status" name="status" class="form-control custom-select">
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
-                            </select>
-                        </div>
+            <jsp:include page="../common/pageLoader.jsp"></jsp:include>
 
-                        <!-- Các nút hành động -->
-                        <div class="form-actions text-center">
-                            <button type="submit" class="btn btn-success">Add Domain</button>
-                            <a href="http://localhost:9999/Project_Management/domain" class="btn btn-secondary mt-3">Back</a>
-                        </div>
-                    </form>
+                <div id="wrapper">
+
+                <jsp:include page="../common/topNavbar.jsp"></jsp:include>
+                <jsp:include page="../common/sidebar.jsp"></jsp:include>
+
+                    <!-- Content -->
+                    <div class="content">
+                        <div class="form-container">
+                        <c:if test="${not empty errorMessage}">
+                            <div class="alert alert-danger">
+                                ${errorMessage}
+                            </div>
+                        </c:if>
+                        <form action="domain?action=add" method="post">
+                            <div class="form-group">
+                                <label for="code">Code:</label>
+                                <input type="text" id="code" name="code" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Name:</label>
+                                <input type="text" id="name" name="name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="details">Detail:</label>
+                                <textarea id="details" name="details" class="form-control" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="status">Status:</label>
+                                <select id="status" name="status" class="form-control custom-select">
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+
+                            <!-- Các nút hành động -->
+                            <div class="form-actions text-center">
+                                <button type="submit" class="btn btn-success">Add Domain</button>
+                                <a href="http://localhost:9999/Project_Management/domain" class="btn btn-secondary mt-3">Back</a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Thêm jQuery và Bootstrap JS nếu cần -->
-        <script src="assets/bundles/libscripts.bundle.js"></script>
-        <script src="assets/bundles/dataTables.bundle.js"></script>
-        <script src="assets/bundles/mainscripts.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
     </body>
 </html>
