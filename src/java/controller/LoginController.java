@@ -98,6 +98,9 @@ public class LoginController extends HttpServlet {
                 if (uService.verifyLogin(email, pass)) {
                     request.getSession().setAttribute("loginedUser", uService.getUserByEmail(email));
                     response.sendRedirect(request.getContextPath() + "/dashboard");
+                }else{
+                    request.getSession().setAttribute("errorMess", "Sai tài khoản mật khẩu");
+                    request.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
                 }
             } catch (SQLException ex) {
                 request.setAttribute("errorMess", "Login failed!");
@@ -111,6 +114,9 @@ public class LoginController extends HttpServlet {
             String rePassword = request.getParameter("rePassword").trim();
             if (email.isBlank()) {
                 request.setAttribute("emailError", "Email can not be blank");
+                request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
+            }else if(uService.isEmailExists(email)){
+                request.setAttribute("emailError", "Email is used");
                 request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
             }
             if (password.isEmpty()) {

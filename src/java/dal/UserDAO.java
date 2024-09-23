@@ -579,4 +579,19 @@ public class UserDAO extends BaseDAO {
 
 
 }
+
+    public boolean isEmailExists(String email) {
+        boolean exists = false;
+        String sql = "SELECT COUNT(*) FROM pms.user WHERE email = ?";
+        try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                exists = rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return exists;
+    }
 }

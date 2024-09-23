@@ -107,6 +107,9 @@ public class ForgotpasswordController extends HttpServlet {
             if(otp.trim().equals(user.getOtp())){
                 request.setAttribute("email", email);
                 request.getRequestDispatcher("/WEB-INF/view/user/resetpassword.jsp").forward(request, response);
+            }else{
+                request.setAttribute("error", "Otp invalid or has been expired!");
+                request.getRequestDispatcher("/WEB-INF/view/user/verify.jsp").forward(request, response);
             }
         } else if (contain.contains("reset")) {
             String email = request.getParameter("email");
