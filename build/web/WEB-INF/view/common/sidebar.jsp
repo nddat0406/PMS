@@ -39,8 +39,8 @@
                         <li>
                             <a href="#Employees" class="has-arrow"><i class="fa fa-building"></i><span>Group Management</span></a>
                             <ul class="list-unstyled">
-                                <li><a href="${pageContext.request.contextPath}/department">Department Management</a></li>
-                                <li><a href="${pageContext.request.contextPath}/domain">Domain Management</a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/department">Department Management</a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/domain">Domain Management</a></li>
                             </ul>
                         </li>
                         <li><a href="${pageContext.request.contextPath}/settings"><i class="fa fa-server"></i><span>Setting Management</span></a></li>
