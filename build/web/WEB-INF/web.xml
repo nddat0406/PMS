@@ -39,8 +39,4 @@
         <servlet-name>GroupController</servlet-name>
         <url-pattern>/domain</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DepartmentController</servlet-name>
-        <url-pattern>/department</url-pattern>
-    </servlet-mapping>
 </web-app>

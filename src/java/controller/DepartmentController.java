@@ -13,10 +13,10 @@ import java.util.logging.Logger;
 import model.Group;
 import service.DepartmentService;
 
-@WebServlet(
-        name = "DepartmentController",
-        urlPatterns = {"/department", "/department/add", "/department/edit", "/department/delete", "/department/list"} aaaaaa
-)
+//@WebServlet(
+//        name = "DepartmentController",
+//        urlPatterns = {"/department", "/department/add", "/department/edit", "/department/delete", "/department/list"} aaaaaa
+//)
 
 public class DepartmentController extends HttpServlet {
 

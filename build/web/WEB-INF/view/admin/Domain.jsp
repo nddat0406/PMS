@@ -1,3 +1,5 @@
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,10 +16,10 @@
 
         <link rel="icon" href="favicon.ico" type="image/x-icon">
 
-        <link rel="stylesheet" href="assets/css/dataTables.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/dataTables.min.css">
 
         <!-- MAIN CSS -->
-        <link rel="stylesheet" href="assets/css/main.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
     </head>
     <style>
         .Domain-actions {
@@ -627,11 +629,11 @@
 
         </div>
         <!-- core js file -->
-        <script src="assets/bundles/libscripts.bundle.js"></script>
-        <script src="assets/bundles/dataTables.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
 
         <!-- page js file -->
-        <script src="assets/bundles/mainscripts.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
         <script>
                                                                     $(document).ready(function () {
                                                                         var extensions = {
