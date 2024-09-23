@@ -44,8 +44,13 @@
                             <div class="card-header">
                                 <p class="fs-5 mb-0">Login to your account</p>
                             </div>
+                            <c:if test="${not empty requestScope.success}">
+                                <div style="color: green; margin-top: 10px;">
+                                ${requestScope.success}
+                                </div>
+                            </c:if>
                             <div class="card-body">
-                                <form action="${pageContext.request.contextPath}/login" method="post">
+                                <form action="${pageContext.request.contextPath}/login" method="POST">
                                     <div class="form-floating mb-1">
                                         <input type="email" name="email" class="form-control" placeholder="name@example.com">
                                         <label>Email address</label>
@@ -60,6 +65,7 @@
                                             Remember me
                                         </label>
                                     </div>
+                                    <input type="hidden" name="contain" value="login">
                                     <button type="submit" class="btn btn-primary w-100 px-3 py-2">LOGIN</button>
                                 </form>
                                 <div class="d-grid gap-2 mt-3 pt-3">
@@ -67,8 +73,8 @@
                                     <button class="btn btn-light"><i class="fab fa-google"></i> Sign in with Gmail</button>
                                 </div>
                                 <div class="mt-3 pt-3 border-top">
-                                    <p class="mb-1"><a href="page-forgot-password.html"><i class="fa fa-lock me-2"></i>Forgot password?</a></p>
-                                    <span>Don't have an account? <a href="registerpage.jsp">Register</a></span>
+                                    <p class="mb-1"><a href="${pageContext.request.contextPath}/forgot-password"><i class="fa fa-lock me-2"></i>Forgot password?</a></p>
+                                    <span>Don't have an account? <a href="${pageContext.request.contextPath}/register">Register</a></span>
                                 </div>
                             </div>
                         </div>

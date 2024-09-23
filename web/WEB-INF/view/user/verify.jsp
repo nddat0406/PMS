@@ -5,7 +5,7 @@
 <!-- Mirrored from wrraptheme.com/templates/lucid/hr/bs5/dist/page-forgot-password.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 13 Sep 2024 06:42:38 GMT -->
 <head>
     <meta charset="utf-8">
-    <title>:: Lucid HR BS5 :: Forgot Password</title>
+    <title>:: Lucid HR BS5 :: Verify OTP</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Lucid HR & Project Admin Dashboard Template with Bootstrap 5x">
@@ -48,15 +48,18 @@
                     </div>
                     <div class="card-body">
                         <p>Please enter your email address below to receive instructions for resetting password.</p>
-                        <form action="${pageContext.request.contextPath}/forgot-password?contain=forgot" method="POST">
+                        <form action="${pageContext.request.contextPath}/forgot-password?contain=verify" method="POST">
                             <div class="form-floating mb-1">
-                                <input type="email" name="email" class="form-control" placeholder="name@example.com">
-                                <label>Email address</label>
+                                <input type="text" name="otp" class="form-control" placeholder="OTP">
+                                <label>OTP</label>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100 px-3 py-2">RESET PASSWORD</button>
-                            <div class="text-center mt-3">
-                                <span class="helper-text">Know your password? <a href="${pageContext.request.contextPath}/login">Login</a></span>
-                            </div>
+                            <input type="hidden" name="email" value="${requestScope.email}">
+                            <button type="submit" class="btn btn-primary w-100 px-3 py-2">Confirm</button>
+                            <c:if test="${not empty requestScope.error}">
+                                <div style="color: red; margin-top: 10px;">
+                                ${requestScope.error}
+                                </div>
+                            </c:if>
                         </form>
                     </div>
                 </div>

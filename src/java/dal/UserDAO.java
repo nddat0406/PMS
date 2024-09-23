@@ -111,7 +111,7 @@ public class UserDAO extends BaseDAO {
 
             // Tạo và gửi mã OTP
             String otp = BaseService.generateOTP(); // Tạo mã OTP
-            BaseService.sendEmail(email, "Your OTP Code", "Your OTP is: " + otp + ". It expires in 5 minutes.");
+            BaseService.sendEmail(email, otp);
 
             // Lưu mã OTP vào cơ sở dữ liệu
             String updateOtpSql = "UPDATE pms.user SET otp = ?, otp_expiry = ? WHERE email = ?";
@@ -257,7 +257,6 @@ public class UserDAO extends BaseDAO {
         return false; // OTP không hợp lệ
     }
 
- 
     public void updateUserPassword(String newPass, int id) throws SQLException {
         String str = """
                              UPDATE `pms`.`user`
@@ -290,6 +289,7 @@ public class UserDAO extends BaseDAO {
         }
         return false;
     }
+
     public List<User> getAll() throws SQLException {
         List<User> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.user";
@@ -458,9 +458,6 @@ public class UserDAO extends BaseDAO {
         }
     }
 
-    
-
-
     public boolean verifyLogin(String email, String pass) throws SQLException {
         String sql = "SELECT password FROM pms.user where email=?";
         try {
@@ -473,6 +470,7 @@ public class UserDAO extends BaseDAO {
             throw new SQLException(e);
         }
     }
+
     public static void main(String[] args) throws SQLException {
         System.out.println(new UserDAO().verifyLogin("admin@gmail.com", "$10$uliB64NGMAkGljc3AYS5zu81xK3dDskP2MmmkuJ2fkKP0fnDvs.wC"));
     }
@@ -495,10 +493,62 @@ public class UserDAO extends BaseDAO {
             user.setAddress(rs.getString(11));
             user.setGender(rs.getBoolean(12));
             user.setBirthdate(rs.getDate(13));
+            user.setOtp(rs.getString(14));
             return user;
         } catch (SQLException e) {
             throw new SQLException("User not exis or not active");
         }
     }
 
+    public boolean resetPassword(String email, String newPassword) {
+        String sql = "UPDATE pms.user SET password = ? WHERE email = ?";
+
+        try (Connection con = getConnection(); // Giả sử có phương thức này để lấy kết nối
+                 PreparedStatement preparedStatement = con.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, BaseService.hashPassword(newPassword));
+            preparedStatement.setString(2, email);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean saveOTP(String email, String otp) {
+        String sql = "UPDATE pms.user SET otp = ? WHERE email = ?";
+
+        try (Connection conn = getConnection(); // Giả sử có phương thức này để lấy kết nối
+                 PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, otp);
+            preparedStatement.setString(2, email);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean createUser(String fullname, String email, String password) {
+        String insertSQL = "INSERT INTO pms.user (fullname, email, password, status, role, departmentId) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(insertSQL)) {
+
+            stmt.setString(1, fullname);
+            stmt.setString(2, email);
+            stmt.setString(3, BaseService.hashPassword(password));
+            stmt.setInt(4, 1);
+            stmt.setInt(5, 1);
+            stmt.setInt(6, 1);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

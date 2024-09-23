@@ -48,14 +48,14 @@
                     </div>
                     <div class="card-body">
                         <p>Please enter your email address below to receive instructions for resetting password.</p>
-                        <form action="https://wrraptheme.com/templates/lucid/hr/bs5/dist/index.html">
+                        <form action="${pageContext.request.contextPath}/forgot-password?contain=forgot" method="POST">
                             <div class="form-floating mb-1">
-                                <input type="email" class="form-control" placeholder="name@example.com">
+                                <input type="email" name="email" class="form-control" placeholder="name@example.com">
                                 <label>Email address</label>
                             </div>
                             <button type="submit" class="btn btn-primary w-100 px-3 py-2">RESET PASSWORD</button>
                             <div class="text-center mt-3">
-                                <span class="helper-text">Know your password? <a href="login.jsp">Login</a></span>
+                                <span class="helper-text">Know your password? <a href="${pageContext.request.contextPath}/login">Login</a></span>
                             </div>
                         </form>
                     </div>
