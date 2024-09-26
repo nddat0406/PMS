@@ -136,7 +136,7 @@ public class User {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         if (birthdate != null) {
             return formatter.format(birthdate);
-        } else {
+        }else{
             return null;
         }
     }

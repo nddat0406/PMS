@@ -3,9 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="SWP391">
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/UserController.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/GroupController.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/SettingController.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/PMS/web/META-INF/context.xml</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/PMS/src/java/model/User.java</file>
         </group>
     </open-files>
 </project-private>
