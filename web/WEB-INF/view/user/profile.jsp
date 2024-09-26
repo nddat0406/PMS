@@ -43,8 +43,7 @@
                                     <div class="col-md-6 col-sm-12">
                                         <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> User Profile</h2>
                                         <ul class="breadcrumb mb-0">
-                                            <li class="breadcrumb-item"><a href="index.html">Lucid</a></li>
-                                            <li class="breadcrumb-item">Pages</li>
+                                            <li class="breadcrumb-item"><a href="/dashboard">Lucid</a></li>
                                             <li class="breadcrumb-item active">User Profile</li>
                                         </ul>
                                     </div>
@@ -154,14 +153,14 @@
                                                                             <small class="d-block">try to upload png, jpeg and jpg only</small>
                                                                         </div>
                                                                         <div class="card-body">
-                                                                            <input type="file" class="dropify" name="image" data-allowed-file-extensions="png jpeg jpg" />
+                                                                            <input type="file" class="dropify" name="image"  data-allowed-file-extensions="png jpeg jpg"/>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <c:if test="${error != null}">
-                                                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                                <div class="alert alert-danger alert-dismissible fade show"  role="alert">
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"  aria-label="Close"></button>
                                                                     <c:forEach items="${error}" var="e">
                                                                         <i class="fa fa-times-circle"></i> ${e} <br>
                                                                     </c:forEach>
@@ -181,13 +180,13 @@
                                                             <div class="col-lg-12 col-md-12">
                                                                 <h6 class="card-title">Change Password</h6><br>
                                                                 <div class="mb-3">
-                                                                    <input type="password" class="form-control" name="oldPass" placeholder="Current Password">
+                                                                    <input type="password" required class="form-control" name="oldPass" placeholder="Current Password*">
                                                                 </div>
                                                                 <div class="mb-3">
-                                                                    <input type="password" class="form-control" name="newPass" placeholder="New Password">
+                                                                    <input type="password" required class="form-control" name="newPass" placeholder="New Password*">
                                                                 </div>
                                                                 <div class="mb-3">
-                                                                    <input type="password" class="form-control" name="reNewPass" placeholder="Confirm New Password">
+                                                                    <input type="password" required class="form-control" name="reNewPass" placeholder="Confirm New Password*">
                                                                 </div>
                                                             </div>
                                                             <c:if test="${errorPass != null}">

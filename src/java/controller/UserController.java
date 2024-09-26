@@ -285,7 +285,7 @@ public class UserController extends HttpServlet {
         try {
             user.setBirthdate(new Date(formatter.parse(birthdate).getTime()));
             Part part = request.getPart("image");
-            user.setImage(request.getContextPath() + "/assets/images/userImage/" + part.getSubmittedFileName());
+            user.setImage(request.getContextPath() + "/images/" + part.getSubmittedFileName());
             //update profile
             uService.updateProfile(user, part);
             session.setAttribute("loginedUser", uService.getUserByEmail(user.getEmail()));

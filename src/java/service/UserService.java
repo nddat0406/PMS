@@ -63,8 +63,8 @@ public class UserService {
                     isValid = false;
                 }
                 if (!part.getContentType().equals("image/jpeg")
-                        && part.getContentType().equals("image/png")
-                        && part.getContentType().equals("image/jpg")) {
+                        && !part.getContentType().equals("image/png")
+                        && !part.getContentType().equals("image/jpg")) {
                     errorMess += "/Image type not right! Please use .jpg, .png and .jpg only";
                     isValid = false;
                 }
