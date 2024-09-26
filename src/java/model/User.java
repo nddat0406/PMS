@@ -1,4 +1,4 @@
-    /*
+/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
  * @author HP
  */
 public class User {
+
     private int id;
     private String email;
     private String fullname;
@@ -27,14 +28,11 @@ public class User {
     private Date birthdate;
     private String otp;
     private Date otp_expiry;//Sử dụng kiểu dữ liệu Date cho thời gian hết hạn OTP
-    
-
 
     public User() {
     }
 
-
-   public int getId() {
+    public int getId() {
         return id;
     }
 
@@ -133,10 +131,14 @@ public class User {
     public Date getBirthdate() {
         return birthdate;
     }
-    
+
     public String getBirthdateString() {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-        return formatter.format(birthdate);
+        if (birthdate != null) {
+            return formatter.format(birthdate);
+        }else{
+            return null;
+        }
     }
 
     public void setBirthdate(Date birthdate) {
@@ -158,12 +160,10 @@ public class User {
     public void setOtp_expiry(Date otp_expiry) {
         this.otp_expiry = otp_expiry;
     }
-    
 
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", email=" + email + ", fullname=" + fullname + ", mobile=" + mobile + ", password=" + password + ", note=" + note + ", department=" + department + ", role=" + role + ", status=" + status + ", image=" + image + ", gender=" + gender + ", address=" + address + ", birthdate=" + birthdate + ", otp=" + otp + ", otp_expiry=" + otp_expiry  +'}';
+        return "User{" + "id=" + id + ", email=" + email + ", fullname=" + fullname + ", mobile=" + mobile + ", password=" + password + ", note=" + note + ", department=" + department + ", role=" + role + ", status=" + status + ", image=" + image + ", gender=" + gender + ", address=" + address + ", birthdate=" + birthdate + ", otp=" + otp + ", otp_expiry=" + otp_expiry + '}';
     }
-    
-    
+
 }

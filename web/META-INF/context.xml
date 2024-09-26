@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/PMS"/>
+<Context path="/PMS_iter_2">
+  <Resources>
+    <PreResources base="D:\FPTU\SWP391\project\PMS_iter_2\PMS\images" className="org.apache.catalina.webresources.DirResourceSet" webAppMount="/images"/>
+  </Resources>
+</Context>

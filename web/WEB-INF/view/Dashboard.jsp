@@ -22,8 +22,6 @@
 
         <link rel="icon" href="favicon.ico" type="image/x-icon">
 
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/dataTables.min.css">
-
         <!-- MAIN CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
     </head>
