@@ -166,14 +166,14 @@
                                         <table id="pro_list" class="table table-hover mb-0">
                                             <thead id="tableHead">
                                                 <tr>
-                                                    <th name="project.name" sortBy="desc">Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                    <th name="project.bizTerm" sortBy="desc">Biz Term&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                    <th name="project.name" sortBy="desc" class="sortTableHead">Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                    <th name="project.bizTerm" sortBy="desc" class="sortTableHead">Biz Term&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                         <c:if test="${isAdmin==null}" >
-                                                        <th name="effortRate" sortBy="desc">Effort Rate&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                        <th name="projectRole" sortBy="desc">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                        <th name="effortRate" sortBy="desc" class="sortTableHead">Effort Rate&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                        <th name="projectRole" sortBy="desc" class="sortTableHead">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                         </c:if>
-                                                    <th name="project.status" sortBy="desc">Status&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                    <th name="project.startDate" sortBy="desc">Start Date&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                    <th name="project.status" sortBy="desc" class="sortTableHead">Status&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                    <th name="project.startDate" sortBy="desc" class="sortTableHead">Start Date&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                     <th>Details&nbsp;</th>
                                                 </tr>
                                             </thead>
@@ -290,13 +290,13 @@
         <script>
                                                         $(document).ready(function () {
                                                             // Event handler for clicking on the table headers
-                                                            $('th').on('click', function () {
+                                                            $(' .sortTableHead').on('click', function () {
                                                                 var $th = $(this);  // Get the clicked <th> element as a jQuery object
 
                                                                 var name = $th.attr('name');  // Get the 'name' attribute
                                                                 var sortBy = $th.attr('sortBy');  // Get the 'sortBy' attribute
                                                                 changeSort(name, sortBy);
-                                                                $('th .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+                                                                $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
 
                                                                 // Toggle the sortBy attribute between 'asc' and 'desc'
                                                                 if (sortBy === 'asc') {
