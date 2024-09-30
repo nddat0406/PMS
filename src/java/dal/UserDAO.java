@@ -356,16 +356,17 @@ public class UserDAO extends BaseDAO {
     }
 
     public void Insert(User uNew) throws SQLException {
-        String sql = "INSERT INTO pms.user (email, fullname, password, role, status, departmentId, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO pms.user (email,mobile, fullname, password, role, status, departmentId, address) VALUES (?,?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement st = getConnection().prepareStatement(sql);
             st.setString(1, uNew.getEmail());
-            st.setString(2, uNew.getFullname());
-            st.setString(3, uNew.getPassword());
-            st.setInt(4, uNew.getRole());
-            st.setInt(5, uNew.getStatus());
-            st.setInt(6, uNew.getDepartment().getId());
-            st.setString(7, uNew.getAddress());
+            st.setString(2, uNew.getMobile());
+            st.setString(3, uNew.getFullname());
+            st.setString(4, uNew.getPassword());
+            st.setInt(5, uNew.getRole());
+            st.setInt(6, uNew.getStatus());
+            st.setInt(7, uNew.getDepartment().getId());
+            st.setString(8, uNew.getAddress());
             st.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error inserting user: " + e.getMessage());
@@ -374,7 +375,7 @@ public class UserDAO extends BaseDAO {
 
     public void deleteUser(int id) throws SQLException {
         String sql = "DELETE FROM `pms`.`user`"
-                + "WHERE id=?;";
+                + "WHERE id=?";
         try (PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setInt(1, id);
 
@@ -382,6 +383,9 @@ public class UserDAO extends BaseDAO {
         } catch (SQLException e) {
             System.out.println(e);
         }
+    }
+    public static void main(String[] args) throws SQLException {
+        new UserDAO().deleteUser(15);
     }
 
     public boolean emailExists(String email) throws SQLException {
@@ -480,9 +484,6 @@ public class UserDAO extends BaseDAO {
         }
     }
 
-    public static void main(String[] args) throws SQLException {
-        System.out.println(new UserDAO().verifyLogin("admin@gmail.com", "$10$uliB64NGMAkGljc3AYS5zu81xK3dDskP2MmmkuJ2fkKP0fnDvs.wC"));
-    }
 
     public User getUserByEmail(String email) throws SQLException {
         String str = "SELECT * FROM pms.user where email=? and status = 1";
@@ -558,27 +559,7 @@ public class UserDAO extends BaseDAO {
         }
         return false;
     }
-    public List<User> getAllPage(int offset, int noOfRecords) throws SQLException {
-    List<User> userList = new ArrayList<>();
-    String query = "SELECT * FROM users LIMIT ?, ?";
-    
-    try{
-        PreparedStatement pst = getConnection().prepareStatement(query);
-        pst.setInt(1, offset);
-        pst.setInt(2, noOfRecords);
-
-        try (ResultSet rs = pst.executeQuery()) {
-            while (rs.next()) {
-                
-            }
-        }
-    }catch(SQLException e){
-        System.out.println(e);
-    }
-    return userList;
-
-
-}
+ 
 
     public boolean isEmailExists(String email) {
         boolean exists = false;
@@ -593,5 +574,20 @@ public class UserDAO extends BaseDAO {
             e.printStackTrace();
         }
         return exists;
+    }
+   public boolean checkMobileExists(String mobile) {
+        String sql = "SELECT COUNT(*) FROM pms.user WHERE mobile = ?";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, mobile);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // Kiểm tra số lượng bản ghi trả về
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Trả về false nếu không tìm thấy email
     }
 }

@@ -41,45 +41,45 @@
                     <!-- Sidbar menu -->
                 <jsp:include page="../common/sidebar.jsp"></jsp:include>
 
-                <div id="main-content">
-                    <div class="container-fluid">
+                    <div id="main-content">
+                        <div class="container-fluid">
 
-                        <div class="block-header py-lg-4 py-3">
-                            <div class="row g-3">
-                                <div class="col-md-6 col-sm-12">
-                                    <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Add Clients</h2>
-                                    <ul class="breadcrumb mb-0">
-                                        <li class="breadcrumb-item"><a href="index.html">Lucid</a></li>
-                                        <li class="breadcrumb-item">Clients</li>
-                                        <li class="breadcrumb-item active">Add</li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-6 col-sm-12 text-md-end">
-                                    <div class="d-inline-flex text-start">
-                                        <div class="me-2">
-                                            <h6 class="mb-0"><i class="fa fa-user"></i> 1,784</h6>
-                                            <small>Visitors</small>
-                                        </div>
-                                        <span id="bh_visitors"></span>
+                            <div class="block-header py-lg-4 py-3">
+                                <div class="row g-3">
+                                    <div class="col-md-6 col-sm-12">
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Add Clients</h2>
+                                        <ul class="breadcrumb mb-0">
+                                            <li class="breadcrumb-item"><a href="index.html">Lucid</a></li>
+                                            <li class="breadcrumb-item">Clients</li>
+                                            <li class="breadcrumb-item active">Add</li>
+                                        </ul>
                                     </div>
-                                    <div class="d-inline-flex text-start ms-lg-3 me-lg-3 ms-1 me-1">
-                                        <div class="me-2">
-                                            <h6 class="mb-0"><i class="fa fa-globe"></i> 325</h6>
-                                            <small>Visits</small>
+                                    <div class="col-md-6 col-sm-12 text-md-end">
+                                        <div class="d-inline-flex text-start">
+                                            <div class="me-2">
+                                                <h6 class="mb-0"><i class="fa fa-user"></i> 1,784</h6>
+                                                <small>Visitors</small>
+                                            </div>
+                                            <span id="bh_visitors"></span>
                                         </div>
-                                        <span id="bh_visits"></span>
-                                    </div>
-                                    <div class="d-inline-flex text-start">
-                                        <div class="me-2">
-                                            <h6 class="mb-0"><i class="fa fa-comments"></i> 13</h6>
-                                            <small>Chats</small>
+                                        <div class="d-inline-flex text-start ms-lg-3 me-lg-3 ms-1 me-1">
+                                            <div class="me-2">
+                                                <h6 class="mb-0"><i class="fa fa-globe"></i> 325</h6>
+                                                <small>Visits</small>
+                                            </div>
+                                            <span id="bh_visits"></span>
                                         </div>
-                                        <span id="bh_chats"></span>
+                                        <div class="d-inline-flex text-start">
+                                            <div class="me-2">
+                                                <h6 class="mb-0"><i class="fa fa-comments"></i> 13</h6>
+                                                <small>Chats</small>
+                                            </div>
+                                            <span id="bh_chats"></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <form action="${pageContext.request.contextPath}/admin/userdetail?action=edit" method="POST">
+                            <form action="${pageContext.request.contextPath}/admin/userdetail?action=edit" method="POST">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="row g-3">
@@ -109,10 +109,15 @@
 
                                         <!-- Status -->
                                         <div class="col-md-4 col-sm-12">
-                                            <label for="status">Status</label>
-                                            <input type="text" class="form-control" value="${requestScope.updateUser.status}" name="status">
-                                        </div>
-
+                                            <label for="status">Status:</label>
+                                            <select class="form-control" id="status" name="status" required>
+                                                <option value="">-- Select Status --</option>
+                                                <option value="0" <c:if test="${requestScope.updateUser.status == 0}">selected</c:if>>Active</option>
+                                                <option value="1" <c:if test="${requestScope.updateUser.status == 1}">selected</c:if>>Inactive</option>
+                                                <option value="2" <c:if test="${requestScope.updateUser.status == 2}">selected</c:if>>Closed</option>
+                                                </select>
+                                            </div>
+                                      
                                         <!-- Department (select dropdown) -->
                                         <div class="col-md-4 col-sm-12">
                                             <label for="departmentId">Department</label>

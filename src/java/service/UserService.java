@@ -9,6 +9,7 @@ import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -200,5 +201,19 @@ public class UserService {
     public boolean isEmailExists(String email){
         return udao.checkEmailExists(email);
     }
+    public boolean isMobileExistss(String mobile){
+        return udao.checkMobileExists(mobile);
+    }
+    public <T> List<T> getListByPages(List<T> list, int start, int end) {
+    // Kiểm tra xem start và end có nằm trong phạm vi hợp lệ không
+    List<T> arr = new ArrayList<>();
+    if (start >= 0 && start < list.size() && end > start) {
+        for (int i = start; i < end && i < list.size(); i++) {
+            arr.add(list.get(i));
+        }
+    }
+    return arr;
+}
+
 }
 

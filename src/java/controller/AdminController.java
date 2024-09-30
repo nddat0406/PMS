@@ -76,14 +76,13 @@ public class AdminController extends HttpServlet {
             case "userlist" -> {
                 List<User> list = null;
                 HttpSession session = request.getSession(false);
-                if (session != null && session.getAttribute("listUser") != null) {
 
+                if (session != null && session.getAttribute("listUser") != null) {
                     list = (List<User>) session.getAttribute("listUser");
-                    // Clear the session attribute to avoid stale data in future requests
                     session.removeAttribute("listUser");
                 } else {
                     try {
-                        // If no listUser in session, fetch from the database
+
                         list = uService.getAll();
                     } catch (SQLException ex) {
                         Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
@@ -91,8 +90,16 @@ public class AdminController extends HttpServlet {
                         return;
                     }
                 }
+            try {
+                pagination(request, response, list);
+            } catch (SQLException ex) {
+                Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+               
+
                 request.setAttribute("data", list);
-                // Forward to UserList.jsp
+
                 request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
             }
 
@@ -137,7 +144,7 @@ public class AdminController extends HttpServlet {
         try {
             switch (action) {
                 case "search":
-                    // Tìm kiếm người dùng
+                    
                     List<User> list = searchUser(request, response);
                     request.setAttribute("data", list);
                     request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
@@ -176,6 +183,7 @@ public class AdminController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
     private List<User> searchUser(HttpServletRequest request, HttpServletResponse response) throws SQLException {
         String keyword = request.getParameter("keyword");
         UserDAO dao = new UserDAO();
@@ -193,6 +201,7 @@ public class AdminController extends HttpServlet {
     private void addUser(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, ServletException, IOException {
         // Lấy dữ liệu từ request
         String fullname = request.getParameter("fullname");
+        String mobile=request.getParameter("mobile");
         int departmentId = Integer.parseInt(request.getParameter("departmentId"));
         String address = request.getParameter("address");
         int role = Integer.parseInt(request.getParameter("role"));
@@ -201,8 +210,21 @@ public class AdminController extends HttpServlet {
         String password = request.getParameter("password");
 
         try {
+            if (uService.isMobileExistss(mobile)) {
+            // Nếu số điện thoại đã tồn tại, gửi thông báo lỗi
+            request.setAttribute("error", "Mobile number already exists.");
+            // Điều hướng tới trang thêm người dùng (có thể là trang UserList.jsp hoặc trang AddUser.jsp)
+            request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
+            return; // Dừng lại nếu mobile trùng
+        } if(uService.isEmailExists(email)){
+            request.setAttribute("error", "Mobile number already exists.");
+            // Điều hướng tới trang thêm người dùng (có thể là trang UserList.jsp hoặc trang AddUser.jsp)
+            request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
+            return; // Dừng lại nếu mobile trùng
+        }
             User uNew = new User();
             uNew.setEmail(email);
+            uNew.setMobile(mobile);
             uNew.setFullname(fullname);
             uNew.setAddress(address);
             uNew.setPassword(password);
@@ -213,8 +235,8 @@ public class AdminController extends HttpServlet {
             uNew.setDepartment(g);
             uService.addUser(uNew);
             List<User> updatedList = uService.getAll();
-            request.setAttribute("data", updatedList);
-            request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
+            pagination(request, response, updatedList);
+         
         } catch (SQLException e) {
 //            // Xử lý ngoại lệ khi id không hợp lệ hoặc xảy ra lỗi khác
 //            request.setAttribute("error", "Invalid ID or other input errors.");
@@ -228,12 +250,14 @@ public class AdminController extends HttpServlet {
     private void editUser(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, IOException {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
+            String mobile=request.getParameter("mobile");
+            String email=request.getParameter("email");
             String fullname = request.getParameter("fullname");
             String address = request.getParameter("address");
             int role = Integer.parseInt(request.getParameter("role"));
             int status = Integer.parseInt(request.getParameter("status"));
             String departmentIdParam = request.getParameter("departmentId");
-            
+
             User user = new User();
             Group department = new Group();
             int departmentId = Integer.parseInt(departmentIdParam);
@@ -241,12 +265,14 @@ public class AdminController extends HttpServlet {
 
             // Set user details
             user.setId(id);
+            user.setMobile(mobile);
+            user.setEmail(email);
             user.setFullname(fullname);
             user.setRole(role);
             user.setStatus(status);
             user.setAddress(address);
             user.setDepartment(department);
-            
+
             // Update user
             uService.updateUser(user);
 //
@@ -259,11 +285,54 @@ public class AdminController extends HttpServlet {
     }
 
     private void deleteUser(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
+        int id = Integer.parseInt(request.getParameter("userid"));
         dao.deleteUser(id);
         List<User> updatedListAfterDelete = dao.getAll();
         request.setAttribute("data", updatedListAfterDelete);
         request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
     }
 
+    public void pagination(HttpServletRequest request, HttpServletResponse response, List<?> list) throws ServletException, IOException, SQLException {
+        try {
+            int page, numperpage = 12;
+            int size = list.size();
+            int num = (size % numperpage == 0 ? (size / numperpage) : (size / numperpage) + 1); // số trang
+            if (num == 0) {
+                num = 1;
+            }
+            String xpage = request.getParameter("page");
+            if (xpage == null) {
+                page = 1;
+            } else {
+                page = Integer.parseInt(xpage);
+                if (page > num) {
+                    page = num;
+                }
+            }
+            int start = (page - 1) * numperpage;
+            int end = Math.min(page * numperpage, size);
+
+           
+            List<?> paginatedList = uService.getListByPages(list, start, end);
+
+            request.setAttribute("page", page);
+            request.setAttribute("num", num);  
+            request.getSession().setAttribute("numberPage", numperpage);
+
+            
+            request.setAttribute("data", paginatedList); 
+            request.setAttribute("deptList", uService.getAll()); 
+
+            request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
+        } catch (SQLException ex) {
+            throw new SQLException(ex);
+        }
+    }
+
+    public static void main(String[] args) throws SQLException {
+        List<User> list = new ArrayList<>();
+        UserService u = new UserService();
+        list = u.getAll();
+        System.out.println(list.size());
+    }
 }

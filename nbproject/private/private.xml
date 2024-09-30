@@ -2,39 +2,17 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-<<<<<<< HEAD
         <group name="PRO">
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/model/User.java</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/model/Allocation.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/UserDetails.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/UserController.java</file>
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/UserService.java</file>
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/GroupDAO.java</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/DepartmentController.java</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/UserDAO.java</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/SettingService.java</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/filter/LoginFilter.java</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/model/Group.java</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/ProjectService.java</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/BaseService.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/Dashboard.jsp</file>
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/UserList.jsp</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/GroupService.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/UserDAO.java</file>
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/AdminController.java</file>
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/filter/RoleFilter.java</file>
-=======
-        <group name="SWP391">
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/UserService.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/classes/app.properties</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/UserController.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/DepartmentController.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/common/topNavbar.jsp</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/UserDAO.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/common/pageLoader.jsp</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/GroupController.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/SettingController.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/ForgotpasswordController.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/LoginController.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/AdminController.java</file>
-
->>>>>>> c0361ad7374d144b7b56211e37d08253bd03bc84
         </group>
     </open-files>
 </project-private>

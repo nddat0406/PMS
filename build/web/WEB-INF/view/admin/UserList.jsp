@@ -89,16 +89,24 @@
                                                         <td>
                                                             <!-- Search Form -->
                                                             <form action="${pageContext.request.contextPath}/admin/userlist?action=search" method="POST">
-                                                            <input type="text" name="keyword" placeholder="Enter keyword to search">
-                                                            <input type="submit" value="Search">
+                                                            <div class="input-group mb-3" style="width: 15%">
+                                                                <input value="" class="form-control" name="keyword" placeholder="Search here..." type="text">
+                                                                <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
+                                                            </div>
                                                         </form>
-
+                                                        <c:if test="${not empty error}">
+                                                            <div class="alert alert-danger">
+                                                                ${error}
+                                                            </div>
+                                                        </c:if>
                                                         <!-- Table for displaying users -->
                                                         <table class="table">
                                                             <thead>
                                                                 <tr>
                                                                     <th>ID</th>
                                                                     <th>Name</th>
+                                                                    <th>Mobile</th>
+                                                                    <th>Email</th>
                                                                     <th>Department ID</th>
                                                                     <th>Address</th>
                                                                     <th>Role</th>
@@ -106,15 +114,32 @@
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
-                                                            <tbody>
+                                                            <tbody class="table-hover" id="tableBody">
                                                                 <c:forEach items="${requestScope.data}" var="d">
                                                                     <tr>
                                                                         <td class="width45">${d.id}</td>
                                                                         <td>${d.fullname}</td>
+                                                                        <td>${d.mobile}</td>
+                                                                        <td>${d.email}</td>
                                                                         <td>${d.department.name}</td>
                                                                         <td>${d.address}</td>
                                                                         <td>${d.role}</td>
-                                                                        <td>${d.status}</td>
+                                                                        <td>
+                                                                            <div class="input-group mb-3" style="width: 25%">
+                                                                                <c:choose >
+                                                                                    <c:when test="${d.status == 0}">
+                                                                                        <span class="badge bg-success">Active</span><br>
+
+                                                                                    </c:when>
+                                                                                    <c:when test="${d.status == 1}">
+                                                                                        <span class="badge bg-secondary">Inactive</span><br>
+                                                                                    </c:when>
+                                                                                    <c:when test="${d.status == 2}">
+                                                                                        <span class="badge bg-danger">Closed</span>
+                                                                                    </c:when>
+                                                                                </c:choose>
+                                                                            </div>
+                                                                        </td>
                                                                         <td>
                                                                             <button type="button" class="btn btn-sm btn-outline-secondary" 
                                                                                     onclick="window.location.href = '${pageContext.request.contextPath}/admin/userdetail?id=${d.id}'">
@@ -122,34 +147,33 @@
                                                                             </button>
 
 
-                                                                            <!-- Nút Delete -->
-                                                                            <form action="${pageContext.request.contextPath}/admin/userlist?action=delete" method="POST" style="display:inline;">
-                                                                                <input type="hidden" name="id" value="${d.id}">
-                                                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this user?');">
-                                                                                    <i class="fa fa-trash-o"></i>
-                                                                                </button>
-                                                                            </form>
+
+
                                                                         </td>
                                                                     </tr>
                                                                 </c:forEach>
                                                             </tbody>
                                                         </table>
-                                                        <!-- Pagination Controls -->
-                                                        <div>
+                                                        <nav aria-label="Page navigation example">
                                                             <ul class="pagination">
-                                                                <c:if test="${currentPage > 1}">
-                                                                    <li><a href="${pageContext.request.contextPath}/admin/userlist?page=${currentPage - 1}">&laquo; Previous</a></li>
-                                                                    </c:if>
-                                                                    <c:forEach var="i" begin="1" end="${totalPages}">
-                                                                    <li class="${i == currentPage ? 'active' : ''}">
-                                                                        <a href="${pageContext.request.contextPath}/admin/userlist?page=${i}">${i}</a>
+
+                                                                <li class="page-item ${page == 1 ? 'disabled' : ''}">
+                                                                    <a class="page-link" href="${pageContext.request.contextPath}/admin/userlist?page=${page == 1 ? 1 : page - 1}">Previous</a>
+                                                                </li>
+
+
+                                                                <c:forEach begin="1" end="${num}" var="i">
+                                                                    <li class="page-item ${i == page ? 'active' : ''}">
+                                                                        <a class="page-link" href="${pageContext.request.contextPath}/admin/userlist?page=${i}">${i}</a>
                                                                     </li>
                                                                 </c:forEach>
-                                                                <c:if test="${currentPage < totalPages}">
-                                                                    <li><a href="${pageContext.request.contextPath}/admin/userlist?page=${currentPage + 1}">Next &raquo;</a></li>
-                                                                    </c:if>
+
+
+                                                                <li class="page-item ${page == num ? 'disabled' : ''}">
+                                                                    <a class="page-link" href="${pageContext.request.contextPath}/admin/userlist?page=${page + 1}">Next</a>
+                                                                </li>
                                                             </ul>
-                                                        </div>
+                                                        </nav>
 
                                                         <!-- Modal for Adding User -->
                                                         <div class="modal fade" id="AddUser" tabindex="-1" aria-labelledby="AddUser" aria-hidden="true">
@@ -172,28 +196,58 @@
                                                                     <div class="modal-body">
                                                                         <form action="${pageContext.request.contextPath}/admin/userlist?action=add" method="POST" id="addUserForm">
                                                                             <div class="row g-2">
+
                                                                                 <div class="col-md-4 col-sm-12">
-                                                                                    <input type="text" class="form-control" placeholder="Email" name="email" required>
+                                                                                    <input type="email" class="form-control" placeholder="Email" name="email" required>
                                                                                 </div>
+                                                                                <div class="col-md-4 col-sm-12">
+                                                                                    <input type="text" class="form-control" placeholder="Mobile" name="mobile" required>
+                                                                                </div>
+
+
                                                                                 <div class="col-md-4 col-sm-12">
                                                                                     <input type="text" class="form-control" placeholder="Name" name="fullname" required>
                                                                                 </div>
+
+
                                                                                 <div class="col-md-4 col-sm-12">
-                                                                                    <input type="text" class="form-control" placeholder="Password" name="password" required>
+                                                                                    <input type="password" class="form-control" placeholder="Password" name="password" required>
                                                                                 </div>
+
+
                                                                                 <div class="col-md-4 col-sm-12">
-                                                                                    <input type="text" class="form-control" placeholder="Role" name="role" required>
+                                                                                    <label for="role">Role:</label><br>
+                                                                                    <input type="radio" id="role1" name="role" value="1" required>
+                                                                                    <label for="role1">1</label><br>
+                                                                                    <input type="radio" id="role2" name="role" value="2" required>
+                                                                                    <label for="role2">2</label>
                                                                                 </div>
+
+
+
+
                                                                                 <div class="col-md-4 col-sm-12">
-                                                                                    <input type="text" class="form-control" placeholder="Status" name="status" required>
+                                                                                    <label for="status">Status:</label>
+                                                                                    <select class="form-control" id="status" name="status" required>
+                                                                                        <option value="">-- Select Status --</option>
+                                                                                        <option value="1">Active</option>
+                                                                                        <option value="2">Inactive</option>
+                                                                                        <option value="3">Closed</option>
+                                                                                    </select>
                                                                                 </div>
+
+
+
                                                                                 <div class="col-md-4 col-sm-12">
                                                                                     <input type="text" class="form-control" placeholder="Dept ID *" name="departmentId" required>
                                                                                 </div>
+
+
                                                                                 <div class="col-md-4 col-sm-12">
                                                                                     <input type="text" class="form-control" placeholder="Address *" name="address" required>
                                                                                 </div>
 
+                                                                                <!-- Modal Footer with Add and Close Buttons -->
                                                                                 <div class="modal-footer">
                                                                                     <button type="submit" class="btn btn-primary">Add</button>
                                                                                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
@@ -203,9 +257,11 @@
                                                                     </div>
 
 
+
                                                                 </div>
                                                             </div>
                                                         </div>
+
 
 
                                                         </div>
@@ -219,20 +275,21 @@
                                                         <!-- page js file -->
                                                         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
                                                         <script>
-                                                                                    $(document).ready(function () {
-                                                                                    var extensions = {
-                                                                                    "sFilter": "dataTables_filter custom_filter_class"
-                                                                                    }
-                                                                                    $.extend($.fn.dataTableExt.oStdClasses, extensions);
-                                                                                            $('#app_user').dataTable({
-                                                                                    responsive: true,
-                                                                                    });
-                                                                                    });
-                                                                                    }
-                                                                                    );
-                                                                                    document.getElementById("updateButton").onclick = function () {
-                                                                                        location.href = "${pageContext.request.contextPath}/admin/userdetail"; // Đường dẫn trang bạn muốn chuyển đến
-                                                                                    };
+                                                                                        $(document).ready(function () {
+                                                                                        var extensions = {
+                                                                                        "sFilter": "dataTables_filter custom_filter_class"
+                                                                                        }
+                                                                                        $.extend($.fn.dataTableExt.oStdClasses, extensions);
+                                                                                                $('#app_user').dataTable({
+                                                                                        responsive: true,
+                                                                                        });
+                                                                                        });
+                                                                                        }
+                                                                                        );
+                                                                                        document.getElementById("updateButton").onclick = function () {
+                                                                                            location.href = "${pageContext.request.contextPath}/admin/userdetail"; // Đường dẫn trang bạn muốn chuyển đến
+                                                                                        };
+
                                                         </script>
                                                         </body>
 
