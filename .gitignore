@@ -2,6 +2,9 @@
 *.log
 *.class
 *.properties
+private.properties
+private.xml
+
 #ignore ALL files in ANY directory named temp
 temp
 /build/*
@@ -13,3 +16,4 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+/images/*

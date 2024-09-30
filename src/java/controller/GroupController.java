@@ -65,25 +65,21 @@ public class GroupController extends HttpServlet {
 
         try {
             switch (action) {
-                case "delete":
+                case "delete" -> {
                     // Lấy id từ request và thực hiện xóa
                     int id = Integer.parseInt(request.getParameter("id"));
                     Domain.deleteGroup(id);  // Xóa group với id
 
                     // Sau khi xóa, lấy danh sách nhóm mới với phân trang
                     paginateList(request, response);
-                    break;
+                }
 
-                case "list":
-                default:
-                    // Xử lý danh sách với phân trang
+                case "list" -> // Xử lý danh sách với phân trang
                     paginateList(request, response);
-                    break;
 
-                case "filter": // Xử lý filter khi action là "filter"
+                case "filter" -> // Xử lý filter khi action là "filter"
                     paginateListWithFilter(request, response);
-                    break;
-                case "detail":
+                case "detail" -> {
                     // Lấy id của domain từ request
                     int detailId = Integer.parseInt(request.getParameter("id"));
 
@@ -95,9 +91,9 @@ public class GroupController extends HttpServlet {
 
                     // Điều hướng đến trang hiển thị chi tiết
                     request.getRequestDispatcher("/WEB-INF/view/admin/DomainDetail.jsp").forward(request, response);
-                    break;
+                }
 
-                case "edit":
+                case "edit" -> {
                     // Lấy id của nhóm từ request
                     int editId = Integer.parseInt(request.getParameter("id"));
 
@@ -109,14 +105,12 @@ public class GroupController extends HttpServlet {
 
                     // Chuyển hướng đến trang chỉnh sửa
                     request.getRequestDispatcher("/WEB-INF/view/admin/EditDomain.jsp").forward(request, response);
-                    break;
+                }
 
-                case "add":
-                    // Điều hướng đến trang thêm mới
+                case "add" -> // Điều hướng đến trang thêm mới
                     request.getRequestDispatcher("/WEB-INF/view/admin/AddDomain.jsp").forward(request, response);
-                    break;
 
-                case "search":
+                case "search" -> {
                     // Lấy từ khóa tìm kiếm từ request
                     String keyword = request.getParameter("keyword");
 
@@ -128,7 +122,7 @@ public class GroupController extends HttpServlet {
 
                     // Điều hướng đến trang danh sách domain
                     request.getRequestDispatcher("/WEB-INF/view/admin/Domain.jsp").forward(request, response);
-                    break;
+                }
             }
         } catch (NumberFormatException e) {
             // Xử lý lỗi nếu tham số "id" không phải là số hợp lệ
