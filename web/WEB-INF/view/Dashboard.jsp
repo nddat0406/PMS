@@ -24,6 +24,37 @@
 
         <!-- MAIN CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <style>
+            th {
+                cursor: pointer;
+                position: relative;
+            }
+            .sort-icon {
+                margin-left: 5px;
+                font-size: 12px;
+                width: 10px;
+                height: 20px;
+            }
+        </style>
+        <script>
+            function changeSort(name, sortBy) {
+                $.ajax({
+                    url: "dashboard",
+                    type: 'post',
+                    data: {
+                        sortBy: sortBy,
+                        fieldName: name,
+                        action: "sort"
+                    },
+                    success: function () {
+                        $('.tableBody').load("${pageContext.request.contextPath}/dashboard?page=${page} .tableBody > *");
+                    }
+                });
+            }
+            ;
+        </script>
+
     </head>
 
     <body>
@@ -95,7 +126,8 @@
                                         <h6 class="card-title">Project List</h6>
                                     </div>
                                     <div class="card-body" id="cardbody">
-                                        <form action="dashboard" method="get" >
+                                        <form action="dashboard" method="post">
+                                            <input hidden type="text" value="filter" name="action">
                                             <div style="display: flex; justify-content: space-between">
                                                 <div class="input-group mb-3" style="width: 25%">
                                                     <span class="input-group-text" id="basic-addon11">Department</span>
@@ -132,24 +164,22 @@
                                         </form>
 
                                         <table id="pro_list" class="table table-hover mb-0">
-                                            <thead>
+                                            <thead id="tableHead">
                                                 <tr>
-                                                    <th>Code</th>
-                                                    <th>Biz Term</th>
+                                                    <th name="project.name" sortBy="desc">Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                    <th name="project.bizTerm" sortBy="desc">Biz Term&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                         <c:if test="${isAdmin==null}" >
-                                                        <th>Effort Rate</th>
-                                                        <th>Role</th>
+                                                        <th name="effortRate" sortBy="desc">Effort Rate&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                        <th name="projectRole" sortBy="desc">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                         </c:if>
-                                                    <th>Status</th>
-                                                    <th>Start Date</th>
-                                                    <th>Details</th>
+                                                    <th name="project.status" sortBy="desc">Status&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                    <th name="project.startDate" sortBy="desc">Start Date&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                    <th>Details&nbsp;</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="table-hover" id="tableBody">
-
+                                            <tbody class="table-hover tableBody" >
                                                 <c:forEach items="${tableData}" var="l">
                                                     <c:set value="${l.project}" var="p"></c:set>
-
                                                         <tr>
                                                             <td>
                                                                 <h6>${p.code}</h6>
@@ -172,7 +202,6 @@
                                                             <c:choose >
                                                                 <c:when test="${p.status == 1}">
                                                                     <span class="badge bg-success">Active</span><br>
-
                                                                 </c:when>
                                                                 <c:when test="${p.status == 2}">
                                                                     <span class="badge bg-secondary">Inactive</span><br>
@@ -258,5 +287,30 @@
         <!-- page js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/pages/index2.js"></script>
+        <script>
+                                                        $(document).ready(function () {
+                                                            // Event handler for clicking on the table headers
+                                                            $('th').on('click', function () {
+                                                                var $th = $(this);  // Get the clicked <th> element as a jQuery object
+
+                                                                var name = $th.attr('name');  // Get the 'name' attribute
+                                                                var sortBy = $th.attr('sortBy');  // Get the 'sortBy' attribute
+                                                                changeSort(name, sortBy);
+                                                                $('th .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+
+                                                                // Toggle the sortBy attribute between 'asc' and 'desc'
+                                                                if (sortBy === 'asc') {
+                                                                    sortBy = 'desc';
+                                                                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down'); // Change icon to down
+                                                                } else {
+                                                                    sortBy = 'asc';
+                                                                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up'); // Change icon to up
+                                                                }
+
+                                                                // Set the updated sortBy attribute
+                                                                $th.attr('sortBy', sortBy);
+                                                            });
+                                                        });
+        </script>
     </body>
 </html>
