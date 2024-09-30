@@ -57,7 +57,7 @@ public class UserService {
                 errorMess += "/Mobile phone is not correct!";
                 isValid = false;
             }
-            if (part != null) {
+            if (part != null && part.getSize()!=0) {
                 if (part.getSize() > 10485760) {
                     errorMess += "/Image size exceed 10MB!";
                     isValid = false;
