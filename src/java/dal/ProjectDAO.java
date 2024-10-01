@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Allocation;
+import model.Criteria;
 import model.Group;
 import model.Project;
 import model.User;
@@ -128,8 +129,6 @@ public class ProjectDAO extends BaseDAO {
         }
     }
 
-    
-
     private Project getById(int id) throws SQLException {
         String str = "select * from project where id=?";
         try {
@@ -141,5 +140,32 @@ public class ProjectDAO extends BaseDAO {
         } catch (SQLException e) {
             throw new SQLException(e);
         }
+    }
+
+    public List<Criteria> getCriteriaByProject(int id) throws SQLException {
+        String str = "SELECT * FROM pms.project_criteria where projectId=?";
+        try {
+            List<Criteria> list = new ArrayList<>();
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            pre.setInt(1, id);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Criteria temp = new Criteria();
+                temp.setId(rs.getInt(1));
+                temp.setName(rs.getString(2));
+                temp.setWeight(rs.getInt(3));
+                temp.setProject(getById(rs.getInt(4)));
+                temp.setStatus(rs.getBoolean(5));
+                temp.setDescription(rs.getString(6));
+//                temp.setMilestone();
+                list.add(temp);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
+    public static void main(String[] args) throws SQLException {
+        System.out.println(new ProjectDAO().getCriteriaByProject(21));
     }
 }
