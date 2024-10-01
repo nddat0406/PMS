@@ -252,7 +252,7 @@ public class UserController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/user/profile?passChanged=success");
 
             } catch (SQLException ex) {
-                request.setAttribute("errorPass", "Current password not correct");
+                request.setAttribute("errorPass", ex.getMessage());
                 request.setAttribute("isSetting", "true");
                 try {
                     request.setAttribute("profile", uService.getUserProfile(id));

@@ -46,10 +46,9 @@
                                         <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> User Profile</h2>
                                         <ul class="breadcrumb mb-0">
                                             <li class="breadcrumb-item"><a href="/dashboard">Lucid</a></li>
-                                            <li class="breadcrumb-item active">User Profile</li>
+                                            <li class="breadcrumb-item active">Project config</li>
                                         </ul>
                                     </div>
-
                                 </div>
                             </div>
                             <div class="row g-3">
@@ -57,10 +56,10 @@
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${isSetting==null?'active':''}" id="Overview-tab" data-bs-toggle="tab" href="#Tab1" role="tab">Tab1</a></li>
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${isSetting==null?'':'active'}" id="Settings-tab" data-bs-toggle="tab" href="#Tab2" role="tab">Tab2</a></li>
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${isSetting==null?'':'active'}" id="Settings-tab" data-bs-toggle="tab" href="#Tab3" role="tab">Tab3</a></li>
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${isSetting==null?'':'active'}" id="Settings-tab" data-bs-toggle="tab" href="#Tab4" role="tab">Tab4</a></li>
+                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${isSetting==null?'active':''}" id="Overview-tab" data-bs-toggle="tab" href="#Tab1" role="tab">Milestone</a></li>
+                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${isSetting==null?'':'active'}" id="Settings-tab" data-bs-toggle="tab" href="#Tab2" role="tab">Eval criteria</a></li>
+                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${isSetting==null?'':'active'}" id="Settings-tab" data-bs-toggle="tab" href="#Tab3" role="tab">Member</a></li>
+                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${isSetting==null?'':'active'}" id="Settings-tab" data-bs-toggle="tab" href="#Tab4" role="tab">Team</a></li>
                                         </ul>
                                     </div>
                                 </div>

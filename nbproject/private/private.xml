@@ -6,10 +6,6 @@
             <file>file:/D:/FPTU/SWP391/project/PMS/PMS/web/META-INF/context.xml</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/PMS/src/java/model/User.java</file>
         </group>
-        <group name="Prj301-class">
-            <file>file:/D:/FPTU/SWP391/project/PMSiter1/PMS/web/WEB-INF/view/Dashboard.jsp</file>
-            <file>file:/D:/FPTU/SWP391/project/PMSiter1/PMS/web/index.html</file>
-            <file>file:/D:/FPTU/SWP391/project/PMSiter1/PMS/src/java/model/Project.java</file>
-        </group>
+        <group name="Prj301-class"/>
     </open-files>
 </project-private>
