@@ -4,6 +4,8 @@
 *.properties
 private.properties
 private.xml
+context.xml
+app.properties
 
 #ignore ALL files in ANY directory named temp
 temp
