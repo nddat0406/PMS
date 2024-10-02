@@ -9,7 +9,10 @@ import dal.UserDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Allocation;
+import model.Criteria;
 import model.Project;
 import static service.BaseService.*;
 
@@ -52,5 +55,11 @@ public class ProjectService {
         }
         return pList;
     }
-
+    public List<Criteria>listCriteriaOfProject(int id) throws SQLException{
+        try {
+            return pdao.getCriteriaByProject(id);
+        } catch (SQLException ex) {
+            throw new SQLException(ex);
+        }
+    }
 }

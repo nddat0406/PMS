@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context path="/PMS">
     <Resources>
+<<<<<<< HEAD
         <PreResources base="D:\Fall2024 Study\SWP\team6\images"
+=======
+        <PreResources base="D:\FPTU\SWP391\project\PMSiter1\PMS\images"
+>>>>>>> cd9f2a632ae92befc3395e27d242b991abf152fc
                       className="org.apache.catalina.webresources.DirResourceSet"
                       webAppMount="/images"/>
     </Resources>

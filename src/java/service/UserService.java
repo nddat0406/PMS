@@ -37,7 +37,6 @@ public class UserService {
         }
     }
 
-
     public void updateProfile(User user, Part part) throws Exception {
         boolean isValid = true;
 
@@ -46,8 +45,7 @@ public class UserService {
             if (!user.getEmail().matches(EMAIL_PATTERN)) {
                 errorMess += "Email pattern is not correct!";
                 isValid = false;
-            } 
-            else if (udao.checkEmailChanged(user.getEmail(), user.getId())) {
+            } else if (udao.checkEmailChanged(user.getEmail(), user.getId())) {
                 if (udao.checkEmailExists(user.getEmail())) {
                     errorMess += "Email is already taken!";
                     isValid = false;
@@ -57,7 +55,7 @@ public class UserService {
                 errorMess += "/Mobile phone is not correct!";
                 isValid = false;
             }
-            if (part != null && part.getSize()!=0) {
+            if (part != null && part.getSize() != 0) {
                 if (part.getSize() > 10485760) {
                     errorMess += "/Image size exceed 10MB!";
                     isValid = false;
@@ -95,11 +93,16 @@ public class UserService {
     }
 
     public void updatePassword(String oldPass, String newPass, int id) throws SQLException {
-        if (BaseService.checkPassword(oldPass, udao.getUserPassword(id))) {
-            udao.updateUserPassword(BaseService.hashPassword(newPass), id);
-        } else {
-            throw new SQLException("Password not right");
+        if (!BaseService.checkPassword(newPass, udao.getUserPassword(id))) {
+            if (BaseService.checkPassword(oldPass, udao.getUserPassword(id))) {
+                udao.updateUserPassword(BaseService.hashPassword(newPass), id);
+            } else {
+                throw new SQLException("Password not right");
+            }
+        }else{
+            throw new SQLException("New password is duplicated with old password");
         }
+
     }
 
     public List<User> getAll() throws SQLException {
@@ -119,9 +122,10 @@ public class UserService {
             throw new SQLException(e);
         }
     }
+
     public boolean verifyLogin(String email, String pass) throws SQLException {
         try {
-            return udao.verifyLogin(email,pass);
+            return udao.verifyLogin(email, pass);
         } catch (SQLException ex) {
             throw new SQLException(ex);
         }
@@ -130,7 +134,6 @@ public class UserService {
     public User getUserByEmail(String email) throws SQLException {
         return udao.getUserByEmail(email);
     }
-
 
     public void addUser(User user) throws SQLException {
         if (validateUser(user)) {
@@ -163,7 +166,6 @@ public class UserService {
 
     }
 
-
     public void deleteUser(int id) throws SQLException {
         try {
             udao.deleteUser(id);
@@ -185,20 +187,23 @@ public class UserService {
     }
 
     public Group getDepartmentById(int deptId) throws SQLException {
-            Group group = udao.getDeptId(deptId);
-            return group;
+        Group group = udao.getDeptId(deptId);
+        return group;
     }
-    public boolean resetPassword(String email, String newPassword){
+
+    public boolean resetPassword(String email, String newPassword) {
         return udao.resetPassword(email, newPassword);
     }
-    public boolean saveOtp(String email, String otp){
+
+    public boolean saveOtp(String email, String otp) {
         return udao.saveOTP(email, otp);
     }
-    public boolean createUser(String fullname, String email, String password){
+
+    public boolean createUser(String fullname, String email, String password) {
         return udao.createUser(fullname, email, password);
     }
-    public boolean isEmailExists(String email){
+
+    public boolean isEmailExists(String email) {
         return udao.checkEmailExists(email);
     }
 }
-

@@ -19,6 +19,7 @@ import java.util.Properties;
 import java.util.Random;
 import javax.mail.Authenticator;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -37,6 +38,8 @@ public class BaseService {
 
     public static final int ADMIN_ROLE = 1;
     public static final int MEMBER_ROLE = 2;
+    public static final int PROJECT_QA_ROLE = 3;
+    public static final int PROJECT_MANAGER_ROLE = 4;
 
     public static String generateOTP() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -79,7 +82,7 @@ public class BaseService {
             message.setText("Here is OTP to reset your password: " + OTP);
             Transport.send(message);
             result = true;
-        } catch (Exception e) {
+        } catch (MessagingException e) {
             e.printStackTrace();
         }
         return result;
@@ -98,7 +101,7 @@ public class BaseService {
 
     public Integer TryParseInt(String someText) {
         try {
-            return Integer.parseInt(someText);
+            return Integer.valueOf(someText);
         } catch (NumberFormatException ex) {
             return 0;
         }
