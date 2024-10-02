@@ -481,7 +481,8 @@ public class UserDAO extends BaseDAO {
     }
 
     public static void main(String[] args) throws SQLException {
-        System.out.println(new UserDAO().verifyLogin("admin@gmail.com", "$10$uliB64NGMAkGljc3AYS5zu81xK3dDskP2MmmkuJ2fkKP0fnDvs.wC"));
+        System.out.println(new UserDAO().verifyLogin("admin@gmail.com", "123"));
+        System.out.println(new UserDAO().getUserByEmail("aclieu2304@gmail.com"));
     }
 
     public User getUserByEmail(String email) throws SQLException {

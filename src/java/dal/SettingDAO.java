@@ -12,6 +12,8 @@ import model.Setting;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SettingDAO extends BaseDAO {
 
@@ -82,6 +84,21 @@ public class SettingDAO extends BaseDAO {
         }
     }
 
+    // Thay đổi trạng thái
+    public int changeSetting(int id, int idSetting) throws SQLException {
+        String sql = "UPDATE setting SET status = ? WHERE id = ?";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, idSetting);
+            ps.setInt(2, id);
+
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
     // Xóa setting theo ID
     public int deleteSetting(int settingID) throws SQLException {
         String sql = "DELETE FROM setting WHERE id = ?";
@@ -132,7 +149,7 @@ public class SettingDAO extends BaseDAO {
         }
 
         if (keyword != null && !keyword.isEmpty()) {
-            sql.append(" AND name LIKE ?");
+            sql.append(" AND priority = ?");
         }
 
         try {
@@ -146,6 +163,52 @@ public class SettingDAO extends BaseDAO {
             if (filterStatus != null && !filterStatus.isEmpty()) {
                 stmt.setInt(index++, Integer.parseInt(filterStatus));
             }
+
+            if (keyword != null && !keyword.isEmpty()) {
+                stmt.setInt(index++, Integer.parseInt(keyword));
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Setting setting = new Setting();
+                setting.setId(rs.getInt("id"));
+                setting.setName(rs.getString("name"));
+                setting.setType(rs.getInt("type"));
+                setting.setPriority(rs.getInt("priority"));
+                setting.setStatus(rs.getBoolean("status"));
+                setting.setDescription(rs.getString("description"));
+                settings.add(setting);
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+        return settings;
+    }
+
+    public static void main(String[] args) {
+        SettingDAO d = new SettingDAO();
+        try {
+            System.out.println(d.getSearchSettings("ROI"));
+
+        } catch (SQLException ex) {
+            Logger.getLogger(SettingDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public List<Setting> getSearchSettings(String keyword) throws SQLException {
+        List<Setting> settings = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM setting WHERE 1=1");
+
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND name like ?");
+        }
+
+        try {
+            PreparedStatement stmt = getConnection().prepareStatement(sql.toString());
+            int index = 1;
+
+           
 
             if (keyword != null && !keyword.isEmpty()) {
                 stmt.setString(index++, "%" + keyword + "%");
@@ -167,5 +230,4 @@ public class SettingDAO extends BaseDAO {
         }
         return settings;
     }
-
 }
