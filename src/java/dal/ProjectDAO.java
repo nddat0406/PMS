@@ -25,6 +25,7 @@ public class ProjectDAO extends BaseDAO {
 
     private GroupDAO gdao = new GroupDAO();
     private UserDAO udao = new UserDAO();
+    private MilestoneDAO mdao= new MilestoneDAO();
 
     public List<Allocation> getAllInAllocation() throws SQLException {
         String str = "select * from project";
@@ -157,15 +158,12 @@ public class ProjectDAO extends BaseDAO {
                 temp.setProject(getById(rs.getInt(4)));
                 temp.setStatus(rs.getBoolean(5));
                 temp.setDescription(rs.getString(6));
-//                temp.setMilestone();
+                temp.setMilestone(mdao.getMilestoneById(rs.getInt(7)));
                 list.add(temp);
             }
             return list;
         } catch (SQLException e) {
             throw new SQLException(e);
         }
-    }
-    public static void main(String[] args) throws SQLException {
-        System.out.println(new ProjectDAO().getCriteriaByProject(21));
     }
 }

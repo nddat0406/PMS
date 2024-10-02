@@ -65,11 +65,8 @@ public class ProjectController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getServletPath().substring("/project/".length());
         switch (action) {
-            case "eval":
-                getProjectEval(request, response);
-                break;
-            default:
-                throw new AssertionError();
+            case "eval" -> getProjectEval(request, response);
+            default -> throw new AssertionError();
         }
     }
 
