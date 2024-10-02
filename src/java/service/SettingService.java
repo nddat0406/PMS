@@ -58,7 +58,12 @@ public class SettingService {
         int rowsAffected = settingDAO.deleteSetting(settingID);
         return rowsAffected > 0;
     }
-
+    // Thay đổi trạng thái
+    public boolean changeSetting(int id, int idSetting) throws SQLException {
+        
+        int rowsAffected = settingDAO.changeSetting(id,idSetting);
+        return rowsAffected > 0;
+    }
     // Lấy chi tiết setting theo ID
     public Setting getSettingDetail(int settingID) throws SQLException {
         try {
@@ -90,9 +95,21 @@ public List<Setting> filterSettings(String filterType, String filterStatus, Stri
     return settingDAO.getFilteredSettings(filterType, filterStatus, keyword);
 }
 
+    public List<Setting> searchSetting(String keyword) throws SQLException {
+    // Nếu filterType null hoặc rỗng, bỏ qua điều kiện lọc theo type
+    
+    // Nếu keyword null hoặc rỗng, bỏ qua điều kiện lọc theo keyword
+    if (keyword == null || keyword.trim().isEmpty()) {
+        keyword = null;  // Truyền null để bỏ qua trong DAO
+    }
+
+    // Gọi phương thức DAO để lấy danh sách settings sau khi lọc
+    return settingDAO.getSearchSettings(keyword);
+}
+
     // Tìm kiếm settings theo từ khóa
     public List<Setting> searchSettings(String keyword) throws SQLException {
-        return filterSettings(null, null, keyword);
+        return searchSetting(keyword);
     }
 
     // Kiểm tra trùng lặp name hoặc type

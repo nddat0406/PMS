@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller;
 
 import java.io.IOException;
@@ -20,7 +19,7 @@ import service.SettingService;
 
 @WebServlet(
         name = "SettingController",
-        urlPatterns = {"/settings", "/settings/add", "/settings/edit", "/settings/delete", "/settings/list"}
+        urlPatterns = {"/settings", "/settings/add", "/settings/edit", "/settings/list"}
 )
 public class SettingController extends HttpServlet {
 
@@ -62,21 +61,28 @@ public class SettingController extends HttpServlet {
         try {
             String action = request.getParameter("action");
             switch (action) {
-                case "update" -> handleUpdate(request, response);
-                case "add" -> handleAddSetting(request, response);
-                case "delete" -> handleDelete(request, response);
-                case "filter" -> paginateListWithFilter(request, response);
-                case "search" -> handleSearch(request, response);
-                default -> response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
+                case "update" ->
+                    handleUpdate(request, response);
+                case "add" ->
+                    handleAddSetting(request, response);
+                case "change" ->
+                    handleChange(request, response);
+                case "filter" ->
+                    paginateListWithFilter(request, response);
+                case "search" ->
+                    handleSearch(request, response);
+                default ->
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
             }
         } catch (SQLException ex) {
             Logger.getLogger(SettingController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void handleDelete(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+    private void handleChange(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        settingService.deleteSetting(id);
+        int idSettingCheck = Integer.parseInt(request.getParameter("idSettingCheck"));
+        settingService.changeSetting(id,idSettingCheck);
         paginateList(request, response);
     }
 
@@ -84,7 +90,7 @@ public class SettingController extends HttpServlet {
         int editId = Integer.parseInt(request.getParameter("id"));
         Setting settingToEdit = settingService.getSettingDetail(editId);
 
-        request.setAttribute("settingDetail", settingToEdit);
+        request.setAttribute("settings", settingToEdit);
         request.getRequestDispatcher("/WEB-INF/view/admin/SettingDetails.jsp").forward(request, response);
     }
 
@@ -114,7 +120,7 @@ public class SettingController extends HttpServlet {
             request.setAttribute("errorMessage", e.getMessage());
             Setting settingToEdit = settingService.getSettingDetail(updateId);
             request.setAttribute("settingDetail", settingToEdit);
-            request.getRequestDispatcher("/WEB-INF/view/admin/EditSetting.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/admin/SettingList.jsp").forward(request, response);
         }
     }
 
@@ -158,14 +164,14 @@ public class SettingController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/view/admin/SettingList.jsp").forward(request, response);
     }
 
- private void paginateListWithFilter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+    private void paginateListWithFilter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
         int pageNumber = getPageNumber(request);
         int pageSize = 6;
 
         // Lấy các tham số filter từ request
         String filterType = request.getParameter("filterType");
         String filterStatus = request.getParameter("filterStatus");
-        String keyword = request.getParameter("keyword");
+        String keyword = request.getParameter("keywordPri");
 
         // Lọc danh sách settings
         List<Setting> filteredList = settingService.filterSettings(filterType, filterStatus, keyword);
@@ -180,6 +186,7 @@ public class SettingController extends HttpServlet {
         // Forward đến trang SettingList.jsp để hiển thị kết quả lọc
         request.getRequestDispatcher("/WEB-INF/view/admin/SettingList.jsp").forward(request, response);
     }
+
     private int getPageNumber(HttpServletRequest request) {
         String pageParam = request.getParameter("page");
         return (pageParam != null) ? Integer.parseInt(pageParam) : 1;

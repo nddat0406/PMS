@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
  * @author HP
  */
 public class User {
-
+    
     private int id;
     private String email;
     private String fullname;

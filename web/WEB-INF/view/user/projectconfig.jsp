@@ -1,8 +1,3 @@
-<%-- 
-    Document   : projectlist
-    Created on : Sep 26, 2024, 5:35:16 PM
-    Author     : HP
---%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -176,7 +171,7 @@
                                                                         ${i.weight} %
                                                                     </td>
                                                                     <td style="width: 200px">
-                                                                        iter
+                                                                        ${i.milestone.name}
                                                                     </td>
                                                                     <td style="width: 400px">
                                                                         <div class="content-wrapper" id="contentWrapper">
