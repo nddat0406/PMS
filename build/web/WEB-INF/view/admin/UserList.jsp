@@ -104,7 +104,15 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th>ID</th>
-                                                                    <th>Name</th>
+                                                                    <th>
+                                                                        Name
+                                                                          <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='${pageContext.request.contextPath}/admin/userlist?sort=asc'">
+                                                                                 
+                                                                           </button>
+                                                                             <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='${pageContext.request.contextPath}/admin/userlist?sort=desc'">
+                                                                                 
+                                                                            </button>
+                                                                              </th>
                                                                     <th>Mobile</th>
                                                                     <th>Email</th>
                                                                     <th>Department ID</th>

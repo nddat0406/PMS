@@ -9,7 +9,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -126,5 +130,68 @@ public class BaseService {
 
     public static boolean checkPassword(String password, String hashed) {
         return BCrypt.checkpw(password, hashed);
+    }
+
+    public <T> void sortListByField(List<T> list, String fieldName, String order) {
+        Collections.sort(list, new Comparator<T>() {
+            @Override
+            public int compare(T o1, T o2) {
+                try {
+                    // Handle nested fields (e.g., "user.userId")
+                    String[] fieldNames = fieldName.split("\\.");
+
+                    // Retrieve the field values using getter methods for each level
+                    Object value1 = getNestedFieldValue(o1, fieldNames);
+                    Object value2 = getNestedFieldValue(o2, fieldNames);
+
+                    // Handle null values during comparison
+//                    if (value1 == null && value2 == null) {
+//                        return 0;
+//                    }
+//                    if (value1 == null) {
+//                        return "desc".equalsIgnoreCase(order) ? 1 : -1;
+//                    }
+//                    if (value2 == null) {
+//                        return "desc".equalsIgnoreCase(order) ? -1 : 1;
+//                    }
+
+                    // Cast to Comparable to allow comparison
+                    Comparable comp1 = (Comparable) value1;
+                    Comparable comp2 = (Comparable) value2;
+
+                    // Compare the values and return based on the order
+                    if ("desc".equalsIgnoreCase(order)) {
+                        return comp2.compareTo(comp1);  // Descending order
+                    } else {
+                        return comp1.compareTo(comp2);  // Ascending order (default)
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException("Error during sorting", e);
+                }
+            }
+        });
+    }
+
+    // Helper method to get the value of nested fields
+    private Object getNestedFieldValue(Object obj, String[] fieldNames) throws Exception {
+        Object currentObject = obj;
+
+        for (String fieldName : fieldNames) {
+            // Convert fieldName to the corresponding getter method name
+            String getterMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+
+            // Retrieve the getter method
+            Method getter = currentObject.getClass().getMethod(getterMethodName);
+
+            // Invoke the getter method to get the field value
+            currentObject = getter.invoke(currentObject);
+
+            // Stop if the current value is null
+            if (currentObject == null) {
+                break;
+            }
+        }
+
+        return currentObject;
     }
 }

@@ -49,9 +49,9 @@
                                     <div class="col-md-6 col-sm-12">
                                         <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Add Clients</h2>
                                         <ul class="breadcrumb mb-0">
+                                            <li class="breadcrumb-item active">Add</li>
                                             <li class="breadcrumb-item"><a href="index.html">Lucid</a></li>
                                             <li class="breadcrumb-item">Clients</li>
-                                            <li class="breadcrumb-item active">Add</li>
                                         </ul>
                                     </div>
                                     <div class="col-md-6 col-sm-12 text-md-end">
@@ -104,24 +104,27 @@
                                         <!-- Role -->
                                         <div class="col-md-4 col-sm-12">
                                             <label for="role">Role</label>
-                                            <input type="text" class="form-control" value="${requestScope.updateUser.role}" name="role">
-                                        </div>
+                                            <select class="form-control" id="role" name="role" required>
+                                                <option value="1" <c:if test="${requestScope.updateUser.role == 1}">selected</c:if>>1</option>
+                                                <option value="2" <c:if test="${requestScope.updateUser.role == 2}">selected</c:if>>2</option>
+                                                </select>
+                                            </div>
 
-                                        <!-- Status -->
-                                        <div class="col-md-4 col-sm-12">
-                                            <label for="status">Status:</label>
-                                            <select class="form-control" id="status" name="status" required>
-                                                <option value="">-- Select Status --</option>
-                                                <option value="0" <c:if test="${requestScope.updateUser.status == 0}">selected</c:if>>Active</option>
+                                            <!-- Status -->
+                                            <div class="col-md-4 col-sm-12">
+                                                <label for="status">Status:</label>
+                                                <select class="form-control" id="status" name="status" required>
+                                                    <option value="">-- Select Status --</option>
+                                                    <option value="0" <c:if test="${requestScope.updateUser.status == 0}">selected</c:if>>Active</option>
                                                 <option value="1" <c:if test="${requestScope.updateUser.status == 1}">selected</c:if>>Inactive</option>
                                                 <option value="2" <c:if test="${requestScope.updateUser.status == 2}">selected</c:if>>Closed</option>
                                                 </select>
                                             </div>
-                                      
-                                        <!-- Department (select dropdown) -->
-                                        <div class="col-md-4 col-sm-12">
-                                            <label for="departmentId">Department</label>
-                                            <select class="form-control" name="departmentId">
+
+                                            <!-- Department (select dropdown) -->
+                                            <div class="col-md-4 col-sm-12">
+                                                <label for="departmentId">Department</label>
+                                                <select class="form-control" name="departmentId">
                                                 <c:forEach var="dept" items="${departments}">
                                                     <option value="${dept.id}" 
                                                             <c:if test="${dept.id == updateUser.department.id}">

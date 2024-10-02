@@ -58,14 +58,14 @@ public class UserService {
                 errorMess += "/Mobile phone is not correct!";
                 isValid = false;
             }
-            if (part != null) {
+            if (part != null && part.getSize()!=0) {
                 if (part.getSize() > 10485760) {
                     errorMess += "/Image size exceed 10MB!";
                     isValid = false;
                 }
                 if (!part.getContentType().equals("image/jpeg")
-                        && part.getContentType().equals("image/png")
-                        && part.getContentType().equals("image/jpg")) {
+                        && !part.getContentType().equals("image/png")
+                        && !part.getContentType().equals("image/jpg")) {
                     errorMess += "/Image type not right! Please use .jpg, .png and .jpg only";
                     isValid = false;
                 }

@@ -15,9 +15,7 @@ import service.GroupService;
 
 @WebServlet(
         name = "DepartmentController",
-
         urlPatterns = {"/admin/department"}
-
 )
 
 public class DepartmentController extends HttpServlet {

@@ -86,7 +86,15 @@ public class UserController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (request.getServletPath().contains("dashboard")) {
-            getDashboard(request, response);
+            if (request.getParameter("page") != null) {
+                try {
+                    pagination(request, response);
+                } catch (SQLException ex) {
+                    response.getWriter().print(ex);
+                }
+            } else {
+                getDashboard(request, response);
+            }
         } else {
             String action = request.getServletPath().substring("/user/".length());
             switch (action) {
@@ -113,17 +121,25 @@ public class UserController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String action = request.getServletPath().substring("/user/".length());
-        switch (action) {
-            case "profile" -> {
-                postProfile(request, response);
+        if (request.getServletPath().contains("dashboard")) {
+            String action = request.getParameter("action");
+            if (action.equals("filter")) {
+                postSearchAndFilter(request, response);
+            } else if (action.equals("sort")) {
+                postSort(request, response);
             }
-            case "changePass" -> {
-                postChangePass(request, response);
+        } else {
+            String action = request.getServletPath().substring("/user/".length());
+            switch (action) {
+                case "profile" -> {
+                    postProfile(request, response);
+                }
+                case "changePass" -> {
+                    postChangePass(request, response);
+                }
+                default ->
+                    throw new AssertionError();
             }
-            default ->
-                throw new AssertionError();
         }
     }
 
@@ -137,11 +153,18 @@ public class UserController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    public void pagination(HttpServletRequest request, HttpServletResponse response, List<?> list) throws ServletException, IOException, SQLException {
+    public void pagination(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        HttpSession session = request.getSession();
+        User loginedUser = (User) session.getAttribute("loginedUser");
+
         try {
+            int role = loginedUser.getRole();
+            if (role == ADMIN_ROLE) {
+                request.setAttribute("isAdmin", "true");
+            }
             //if not changing the number of product of a page -> set to session value in order to get next page
             //if the session value is null to ->set to default(12)
-
+            List<Allocation> list = (List<Allocation>) session.getAttribute("allocationList");
             int page, numperpage = 12;
             int size = list.size();
             int num = (size % numperpage == 0 ? (size / numperpage) : (size / numperpage) + 1);//so trang
@@ -173,31 +196,21 @@ public class UserController extends HttpServlet {
     }
 
     private void getDashboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String deptFilterRaw = request.getParameter("deptFilter");
-        String domainFilterRaw = request.getParameter("domainFilter");
-        String statusFilterRaw = request.getParameter("statusFilter");
-        String searchKey = request.getParameter("searchKey");
         HttpSession session = request.getSession();
         User loginedUser = (User) session.getAttribute("loginedUser");
-
+        session.removeAttribute("deptFilter");
+        session.removeAttribute("domainFilter");
+        session.removeAttribute("statusFilter");
+        session.removeAttribute("searchKey");
+        session.removeAttribute("allocationList");
         try {
             int id = loginedUser.getId();
             int role = loginedUser.getRole();
-            int deptFilter = baseService.TryParseInt(deptFilterRaw);
-            int domainFilter = baseService.TryParseInt(domainFilterRaw);
-            int statusFilter = baseService.TryParseInt(statusFilterRaw);
-            if (role == ADMIN_ROLE) {
-                request.setAttribute("isAdmin", "true");
-            }
             List<Allocation> list = pService.getByUser(id, role);
             request.setAttribute("listSize", list.size());
-            list = pService.searchFilter(list, deptFilter, domainFilter, statusFilter, searchKey);
-            request.setAttribute("deptFilter", deptFilter);
-            request.setAttribute("domainFilter", domainFilter);
-            request.setAttribute("statusFilter", statusFilter);
-            request.setAttribute("searchKey", searchKey);
             request.setAttribute("searchSize", list.size());
-            pagination(request, response, list);
+            session.setAttribute("allocationList", list);
+            pagination(request, response);
         } catch (SQLException ex) {
             response.getWriter().print(ex.getMessage());
         }
@@ -218,7 +231,7 @@ public class UserController extends HttpServlet {
             }
             request.setAttribute("profile", uService.getUserProfile(id));
             request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
-        } catch ( SQLException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
             response.getWriter().print(ex.getMessage());
         }
@@ -285,7 +298,7 @@ public class UserController extends HttpServlet {
         try {
             user.setBirthdate(new Date(formatter.parse(birthdate).getTime()));
             Part part = request.getPart("image");
-            user.setImage(request.getContextPath() + "/assets/images/userImage/" + part.getSubmittedFileName());
+            user.setImage(request.getContextPath() + "/images/" + part.getSubmittedFileName());
             //update profile
             uService.updateProfile(user, part);
             session.setAttribute("loginedUser", uService.getUserByEmail(user.getEmail()));
@@ -304,5 +317,49 @@ public class UserController extends HttpServlet {
             }
             request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
         }
+    }
+
+    private void postSearchAndFilter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String deptFilterRaw = request.getParameter("deptFilter");
+        String domainFilterRaw = request.getParameter("domainFilter");
+        String statusFilterRaw = request.getParameter("statusFilter");
+        String searchKey = request.getParameter("searchKey");
+        HttpSession session = request.getSession();
+        User loginedUser = (User) session.getAttribute("loginedUser");
+
+        try {
+            int id = loginedUser.getId();
+            int role = loginedUser.getRole();
+            int deptFilter = baseService.TryParseInt(deptFilterRaw);
+            int domainFilter = baseService.TryParseInt(domainFilterRaw);
+            int statusFilter = baseService.TryParseInt(statusFilterRaw);
+            List<Allocation> list = pService.getByUser(id, role);
+            request.setAttribute("listSize", list.size());
+            list = pService.searchFilter(list, deptFilter, domainFilter, statusFilter, searchKey);
+            session.setAttribute("deptFilter", deptFilter);
+            session.setAttribute("domainFilter", domainFilter);
+            session.setAttribute("statusFilter", statusFilter);
+            session.setAttribute("searchKey", searchKey);
+            session.setAttribute("allocationList", list);
+            request.setAttribute("searchSize", list.size());
+            pagination(request, response);
+        } catch (SQLException ex) {
+            response.getWriter().print(ex.getMessage());
+        }
+    }
+
+    private void postSort(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String fieldName = request.getParameter("fieldName");
+        String order = request.getParameter("sortBy");
+        List<Allocation> list = (List<Allocation>) request.getSession().getAttribute("allocationList");
+        try {
+            baseService.sortListByField(list, fieldName, order);
+            request.getSession().setAttribute("allocationList", list);
+            pagination(request, response);
+        } catch (SQLException e) {
+            response.getWriter().print(e.getMessage());
+
+        }
+
     }
 }

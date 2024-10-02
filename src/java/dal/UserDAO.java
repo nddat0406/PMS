@@ -472,7 +472,7 @@ public class UserDAO extends BaseDAO {
     }
 
     public boolean verifyLogin(String email, String pass) throws SQLException {
-        String sql = "SELECT password FROM pms.user where email=?";
+        String sql = "SELECT password FROM pms.user where email=? and status =1";
         try {
             PreparedStatement st = getConnection().prepareStatement(sql);
             st.setString(1, email);
@@ -549,7 +549,7 @@ public class UserDAO extends BaseDAO {
             stmt.setString(2, email);
             stmt.setString(3, BaseService.hashPassword(password));
             stmt.setInt(4, 1);
-            stmt.setInt(5, 1);
+            stmt.setInt(5, 2);
             stmt.setInt(6, 1);
 
             int rowsAffected = stmt.executeUpdate();

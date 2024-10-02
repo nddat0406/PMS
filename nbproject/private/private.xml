@@ -3,16 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="PRO">
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/model/User.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/fogotpassword.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/classes/app.properties</file>
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/UserDetails.jsp</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/UserController.java</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/UserService.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/Domain.jsp</file>
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/GroupDAO.java</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/Dashboard.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/DepartmentController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/BaseDAO.java</file>
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/UserList.jsp</file>
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/UserDAO.java</file>
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/AdminController.java</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/filter/RoleFilter.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/profile.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/projectlist.jsp</file>
         </group>
     </open-files>
 </project-private>
