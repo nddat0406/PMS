@@ -15,9 +15,11 @@ import model.Criteria;
  *
  * @author HP
  */
-public class CriteriaDAO extends BaseDAO{
-    private ProjectDAO pdao =new ProjectDAO();
+public class CriteriaDAO extends BaseDAO {
+
+    private ProjectDAO pdao = new ProjectDAO();
     private MilestoneDAO mdao = new MilestoneDAO();
+
     public List<Criteria> getCriteriaByProject(int id) throws SQLException {
         String str = "SELECT * FROM pms.project_criteria where projectId=?";
         try {
@@ -41,11 +43,13 @@ public class CriteriaDAO extends BaseDAO{
             throw new SQLException(e);
         }
     }
-        public void deleteCriteriaOfPrj(int id) throws SQLException, Exception {
+
+    public void deleteCriteriaOfPrj(int id) throws SQLException, Exception {
         String sql = """
                      DELETE FROM `pms`.`project_criteria`
                      WHERE id=?""";
-        try (PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement st = getConnection().prepareStatement(sql);
             st.setInt(1, id);
 
             st.executeUpdate();
@@ -53,13 +57,15 @@ public class CriteriaDAO extends BaseDAO{
             throw new SQLException(e);
         }
     }
-        public void flipStatusCriteriaOfPrj(int id) throws SQLException, Exception {
+
+    public void flipStatusCriteriaOfPrj(int id) throws SQLException {
         String sql = """
                      UPDATE `pms`.`project_criteria`
                      SET
                      `status` = status ^ 1
                      WHERE `id` = ?""";
-        try (PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement st = getConnection().prepareStatement(sql);
             st.setInt(1, id);
 
             st.executeUpdate();
@@ -67,5 +73,5 @@ public class CriteriaDAO extends BaseDAO{
             throw new SQLException(e);
         }
     }
-        
+
 }

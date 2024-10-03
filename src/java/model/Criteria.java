@@ -61,6 +61,9 @@ public class Criteria {
     public boolean isStatus() {
         return status;
     }
+    public int getStatusInt(){
+        return status?1:2;
+    }
 
     public void setStatus(boolean status) {
         this.status = status;

@@ -40,7 +40,7 @@
                 left: 0;
                 right: 0;
                 height: 10px; /* Height of the gradient */
-                background: linear-gradient(to bottom, transparent, white); /* Gradient fading to white */
+                background: linear-gradient(to bottom, transparent,); /* Gradient fading to white */
                 display: block;
             }
 
@@ -52,12 +52,28 @@
             /* The "Read More" button */
             .read-more-btn {
                 display: inline-block;
-                color: blue;
+                color: #008ce6;
                 cursor: pointer;
-                text-decoration: underline;
+            }
+            .statusCell{
+                cursor: pointer;
             }
         </style>
-
+        <script>
+            function changeStatus(id) {
+                $.ajax({
+                    url: "eval",
+                    type: 'post',
+                    data: {
+                        criteriaId: id,
+                        action: "changeStatus"
+                    },
+                    success: function () {
+                        $(' #status' + id).load("${pageContext.request.contextPath}/project/eval?page=${page} #status" + id +" > *");
+                    }
+                });
+            }
+        </script>
     </head>
 
     <body>
@@ -107,24 +123,24 @@
                                                         <h6 class="card-title">Evaluation Criteria</h6>
                                                     </div>
                                                     <div class="card-body" id="cardbody">
-                                                        <form action="dashboard" method="post">
+                                                        <form action="eval" method="post">
                                                             <input hidden type="text" value="filter" name="action">
-                                                            <div style="display: flex; justify-content: space-between">
+                                                            <div style="display: flex; justify-content: space-evenly">
                                                                 <div class="input-group mb-3" style="width: 25%">
                                                                     <span class="input-group-text" id="basic-addon11">Milestone</span>
-                                                                    <select class="form-select" aria-label="Default select example" name="domainFilter" id="domainFilter" onchange="ChangeFilter()">
-                                                                        <option value="0" ${msFilter==0?'selected':''}>All Milestone</option>
+                                                                    <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter" onchange="ChangeFilter()">
+                                                                        <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
                                                                     <c:forEach items="${msList}" var="m">
-                                                                        <option value="${m.id}" ${msFilter==m.id?'selected':''}>${m.name}</option>
+                                                                        <option value="${m.id}" ${milestoneFilter==m.id?'selected':''}>${m.name}</option>
                                                                     </c:forEach>
                                                                 </select>
                                                             </div>
                                                             <div class="input-group mb-3" style="width: 25%">
                                                                 <span class="input-group-text" id="basic-addon11">Status</span>
                                                                 <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter" onchange="ChangeFilter()">
-                                                                    <option value="0" ${statusFilter==0?'selected':''}>All Status</option>
-                                                                    <option value="1" ${statusFilter==1?'selected':''}>Active</option>
-                                                                    <option value="2" ${statusFilter==2?'selected':''}>InActive</option>
+                                                                    <option value="0" ${sessionScope.statusFilter==0?'selected':''}>All Status</option>
+                                                                    <option value="1" ${sessionScope.statusFilter==1?'selected':''}>Active</option>
+                                                                    <option value="2" ${sessionScope.statusFilter==2?'selected':''}>InActive</option>
                                                                 </select>
                                                             </div>
                                                             <div class="input-group mb-3" style="width: 15%">
@@ -174,7 +190,8 @@
                                                                         <a href="javascript:void(0);" class="btn btn-sm btn-outline-success"><i class="fa fa-pencil"></i></a>
                                                                         <a href="javascript:void(0);" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></a>
                                                                     </td>
-                                                                    <td style="width: 150px">
+                                                                    <td style="width: 150px" class="statusCell" onclick="changeStatus(${i.id})" id="status${i.id}">
+                                                                        
                                                                         <c:choose >
                                                                             <c:when test="${i.status==true}">
                                                                                 <span class="badge bg-success">Active</span><br>
@@ -184,7 +201,6 @@
                                                                             </c:when>
                                                                         </c:choose>
                                                                     </td>
-
                                                                 </tr>
                                                             </c:forEach>
                                                         </tbody>
@@ -196,15 +212,11 @@
                                                     </c:if>
                                                     <nav aria-label="Page navigation example">
                                                         <ul class="pagination">
-                                                                <c:if test="${page==1}">
-                                                                <li class="page-item"><a class="page-link" href="eval?page=${page==1?1:page-1}">Previous</a></li>
-                                                                </c:if>
+                                                            <li class="page-item"><a class="page-link" href="eval?page=${page==1?1:page-1}">Previous</a></li>
                                                                 <c:forEach begin="${1}" end="${num}" var="i">
                                                                 <li class="page-item ${i==page?'active':''}"><a class="page-link" href="eval?page=${i}">${i}</a></li>
                                                                 </c:forEach>
-                                                                <c:if test="${page==num}">
-                                                                <li class="page-item"><a class="page-link" href="eval?page=${page+1}">Next</a></li>
-                                                                </c:if>
+                                                            <li class="page-item"><a class="page-link" href="eval?page=${page!=num?page+1:page}">Next</a></li>
                                                         </ul>
                                                     </nav>
                                                 </div>
@@ -225,22 +237,21 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
 
         <script>
-                                                                    $readMoreBtn = $(' .read-more-btn');
+                                                                        $readMoreBtn = $(' .read-more-btn');
 
-                                                                    $readMoreBtn.on('click', function () {
+                                                                        $readMoreBtn.on('click', function () {
 
-                                                                        $contentWrapper = $(this).parent().find(' .content-wrapper');
-                                                                        // Toggle the "expanded" class on the content wrapper
-                                                                        $contentWrapper.toggleClass('expanded');
-                                                                        // Toggle the button text between "Read More" and "Read Less"
-                                                                        if ($contentWrapper.hasClass('expanded')) {
-                                                                            $(this).text('Read Less');
-                                                                        } else {
-                                                                            $(this).text('Read More');
-                                                                        }
-                                                                    });
+                                                                            $contentWrapper = $(this).parent().find(' .content-wrapper');
+                                                                            // Toggle the "expanded" class on the content wrapper
+                                                                            $contentWrapper.toggleClass('expanded');
+                                                                            // Toggle the button text between "Read More" and "Read Less"
+                                                                            if ($contentWrapper.hasClass('expanded')) {
+                                                                                $(this).text('Read Less');
+                                                                            } else {
+                                                                                $(this).text('Read More');
+                                                                            }
+                                                                        });
+
         </script>
-
     </body>
-
 </html>

@@ -118,14 +118,11 @@ public class UserDAO extends BaseDAO {
             // Lưu mã OTP vào cơ sở dữ liệu
             String updateOtpSql = "UPDATE pms.user SET otp = ?, otp_expiry = ? WHERE email = ?";
             Date otpExpiry = new Date(System.currentTimeMillis() + (5 * 60 * 1000)); // 5 phút
-
-            try (PreparedStatement otpPs = getConnection().prepareStatement(updateOtpSql)) {
-                otpPs.setString(1, otp);
-                otpPs.setTimestamp(2, new java.sql.Timestamp(otpExpiry.getTime()));
-                otpPs.setString(3, email);
-                otpPs.executeUpdate();
-            }
-
+            PreparedStatement otpPs = getConnection().prepareStatement(updateOtpSql);
+            otpPs.setString(1, otp);
+            otpPs.setTimestamp(2, new java.sql.Timestamp(otpExpiry.getTime()));
+            otpPs.setString(3, email);
+            otpPs.executeUpdate();
             return email; // Trả về email để sử dụng trong xác thực OTP
         } catch (SQLException e) {
             e.printStackTrace();
@@ -375,7 +372,8 @@ public class UserDAO extends BaseDAO {
     public void deleteUser(int id) throws SQLException {
         String sql = "DELETE FROM `pms`.`user`"
                 + "WHERE id=?;";
-        try (PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement st = getConnection().prepareStatement(sql);
             st.setInt(1, id);
 
             st.executeUpdate();
@@ -386,15 +384,14 @@ public class UserDAO extends BaseDAO {
 
     public boolean emailExists(String email) throws SQLException {
         String sql = "SELECT COUNT(*) FROM pms.user WHERE email = ?";
-        try (
-                PreparedStatement statement = getConnection().prepareStatement(sql)) {
-            statement.setString(1, email);
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0; // Nếu kết quả trả về lớn hơn 0, nghĩa là email tồn tại
-                }
+        PreparedStatement statement = getConnection().prepareStatement(sql);
+        statement.setString(1, email);
+        try (ResultSet rs = statement.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Nếu kết quả trả về lớn hơn 0, nghĩa là email tồn tại
             }
         }
+
         return false;
     }
 
@@ -560,18 +557,17 @@ public class UserDAO extends BaseDAO {
         return false;
     }
 
-    public boolean isEmailExists(String email) {
+    public boolean isEmailExists(String email) throws SQLException {
         boolean exists = false;
         String sql = "SELECT COUNT(*) FROM pms.user WHERE email = ?";
-        try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, email);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                exists = rs.getInt(1) > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Connection conn = getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, email);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            exists = rs.getInt(1) > 0;
         }
+
         return exists;
     }
 }

@@ -56,13 +56,5 @@ public class ProjectService {
         }
         return pList;
     }
-    public List<Criteria>listCriteriaOfProject(int id) throws SQLException{
-        try {
-            return cdao.getCriteriaByProject(id);
-        } catch (SQLException ex) {
-            throw new SQLException(ex);
-        }
-    }
-
 
 }

@@ -106,6 +106,13 @@ public class BaseService {
             return 0;
         }
     }
+    public boolean TryParseBoolean(String someText){
+        if(someText.equals("1") || someText.equals("true")){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     public void uploadFile(InputStream is, String path) throws IOException {
         try {
