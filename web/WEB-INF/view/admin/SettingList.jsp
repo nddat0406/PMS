@@ -157,13 +157,13 @@
                                     <ul class="pagination">
                                         <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
                                             <a class="page-link" href="?action=list&page=${currentPage - 1}" aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
+                                                <span aria-hidden="true">;</span>
                                             </a>
                                         </li>
                                         <li class="page-item active"><a class="page-link">${currentPage}</a></li>
                                         <li class="page-item">
                                             <a class="page-link" href="?action=list&page=${currentPage + 1}" aria-label="Next">
-                                                <span aria-hidden="true">&raquo;</span>
+                                                <span aria-hidden="true">;</span>
                                             </a>
                                         </li>
                                     </ul>

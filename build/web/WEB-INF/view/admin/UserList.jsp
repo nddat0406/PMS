@@ -106,16 +106,29 @@
                                                                     <th>ID</th>
                                                                     <th>
                                                                         Name
-                                                                          <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='${pageContext.request.contextPath}/admin/userlist?sort=asc'">
-                                                                                 
-                                                                           </button>
-                                                                             <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='${pageContext.request.contextPath}/admin/userlist?sort=desc'">
-                                                                                 
-                                                                            </button>
-                                                                              </th>
+                                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=asc'">
+                                                                            <i class="fa fa-sort-down"></i> 
+                                                                        </button>
+                                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=desc'">
+                                                                            <i class="fa fa-sort-up"></i> 
+
+                                                                        </button>
+                                                                    </th>
                                                                     <th>Mobile</th>
-                                                                    <th>Email</th>
-                                                                    <th>Department ID</th>
+                                                                    <th>Email
+                                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=asc'">
+                                                                            <i class="fa fa-sort-down"></i> 
+                                                                        </button>
+                                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=desc'">
+                                                                            <i class="fa fa-sort-up"></i> 
+                                                                    </th>
+                                                                    <th>Department ID
+                                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=asc'">
+                                                                            <i class="fa fa-sort-down"></i> 
+                                                                        </button>
+                                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=desc'">
+                                                                            <i class="fa fa-sort-up"></i> 
+                                                                    </th>
                                                                     <th>Address</th>
                                                                     <th>Role</th>
                                                                     <th>Status</th>
@@ -135,16 +148,14 @@
                                                                         <td>
                                                                             <div class="input-group mb-3" style="width: 25%">
                                                                                 <c:choose >
-                                                                                    <c:when test="${d.status == 0}">
+                                                                                    <c:when test="${d.status == 1}">
                                                                                         <span class="badge bg-success">Active</span><br>
 
                                                                                     </c:when>
-                                                                                    <c:when test="${d.status == 1}">
+                                                                                    <c:when test="${d.status == 0}">
                                                                                         <span class="badge bg-secondary">Inactive</span><br>
                                                                                     </c:when>
-                                                                                    <c:when test="${d.status == 2}">
-                                                                                        <span class="badge bg-danger">Closed</span>
-                                                                                    </c:when>
+
                                                                                 </c:choose>
                                                                             </div>
                                                                         </td>
@@ -238,9 +249,9 @@
                                                                                     <label for="status">Status:</label>
                                                                                     <select class="form-control" id="status" name="status" required>
                                                                                         <option value="">-- Select Status --</option>
-                                                                                        <option value="1">Active</option>
-                                                                                        <option value="2">Inactive</option>
-                                                                                        <option value="3">Closed</option>
+                                                                                        <option value="0">Active</option>
+                                                                                        <option value="1">Inactive</option>
+                                                                                        
                                                                                     </select>
                                                                                 </div>
 

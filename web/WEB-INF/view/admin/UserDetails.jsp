@@ -105,8 +105,8 @@
                                         <div class="col-md-4 col-sm-12">
                                             <label for="role">Role</label>
                                             <select class="form-control" id="role" name="role" required>
-                                                <option value="1" <c:if test="${requestScope.updateUser.role == 1}">selected</c:if>>1</option>
-                                                <option value="2" <c:if test="${requestScope.updateUser.role == 2}">selected</c:if>>2</option>
+                                                <option value="1" <c:if test="${requestScope.updateUser.role == 1}">selected</c:if>>Admin</option>
+                                                <option value="2" <c:if test="${requestScope.updateUser.role == 2}">selected</c:if>>User</option>
                                                 </select>
                                             </div>
 
@@ -115,9 +115,9 @@
                                                 <label for="status">Status:</label>
                                                 <select class="form-control" id="status" name="status" required>
                                                     <option value="">-- Select Status --</option>
-                                                    <option value="0" <c:if test="${requestScope.updateUser.status == 0}">selected</c:if>>Active</option>
-                                                <option value="1" <c:if test="${requestScope.updateUser.status == 1}">selected</c:if>>Inactive</option>
-                                                <option value="2" <c:if test="${requestScope.updateUser.status == 2}">selected</c:if>>Closed</option>
+                                                    <option value="1" <c:if test="${requestScope.updateUser.status == 0}">selected</c:if>>Active</option>
+                                                <option value="0" <c:if test="${requestScope.updateUser.status == 1}">selected</c:if>>Inactive</option>
+                                                
                                                 </select>
                                             </div>
 
