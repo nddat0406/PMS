@@ -92,18 +92,15 @@
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${showTab.equals("milestone")||showTab==null?'active':''}" id="Overview-tab" data-bs-toggle="tab" href="#Tab1" role="tab">Milestone</a></li>
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${showTab.equals("eval")?'active':''}" id="Settings-tab" data-bs-toggle="tab" href="#Tab2" role="tab">Evaluation criteria</a></li>
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${showTab.equals("member")?'active':''}" id="Settings-tab" data-bs-toggle="tab" href="#Tab3" role="tab">Member</a></li>
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${showTab.equals("team")?'active':''}" id="Settings-tab" data-bs-toggle="tab" href="#Tab4" role="tab">Team</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Overview-tab" href="milestone" role="tab">Milestone</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link active" id="Settings-tab " href="eval" role="tab">Evaluation criteria</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab" href="member" role="tab">Member</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab" href="team" role="tab">Team</a></li>
                                         </ul>
                                     </div>
                                 </div>
                                 <div class="tab-content p-0" id="myTabContent">
-                                    <div class="tab-pane fade  ${showTab.equals("milestone")||showTab==null?'show active':''}" id="Tab1">
-                                        Tab1
-                                    </div>
-                                    <div class="tab-pane fade ${showTab.equals("eval")?'show active':''}" id="Tab2">
+                                    <div class="tab-pane fade active show" id="Tab2">
                                         <div class="col-lg-12 col-md-12">
                                             <div class="card">
                                                 <div class="card-header">
@@ -114,20 +111,11 @@
                                                         <input hidden type="text" value="filter" name="action">
                                                         <div style="display: flex; justify-content: space-between">
                                                             <div class="input-group mb-3" style="width: 25%">
-                                                                <span class="input-group-text" id="basic-addon11">Department</span>
-                                                                <select class="form-select" aria-label="Default select example" name="deptFilter" id="deptFilter" onchange="ChangeFilter()">
-                                                                    <option value="0" ${deptFilter==0?'selected':''}>All Department</option>
-                                                                    <c:forEach items="${deptList}" var="d">
-                                                                        <option value="${d.id}" ${deptFilter==d.id?'selected':''}>${d.name}</option>
-                                                                    </c:forEach>
-                                                                </select>
-                                                            </div>
-                                                            <div class="input-group mb-3" style="width: 25%">
-                                                                <span class="input-group-text" id="basic-addon11">Domain</span>
+                                                                <span class="input-group-text" id="basic-addon11">Milestone</span>
                                                                 <select class="form-select" aria-label="Default select example" name="domainFilter" id="domainFilter" onchange="ChangeFilter()">
-                                                                    <option value="0" ${domainFilter==0?'selected':''}>All Domain</option>
-                                                                    <c:forEach items="${domainList}" var="d">
-                                                                        <option value="${d.id}" ${domainFilter==d.id?'selected':''}>${d.name}</option>
+                                                                    <option value="0" ${msFilter==0?'selected':''}>All Milestone</option>
+                                                                    <c:forEach items="${msList}" var="m">
+                                                                        <option value="${m.id}" ${msFilter==m.id?'selected':''}>${m.name}</option>
                                                                     </c:forEach>
                                                                 </select>
                                                             </div>
@@ -208,27 +196,18 @@
                                                     </c:if>
                                                     <nav aria-label="Page navigation example">
                                                         <ul class="pagination">
-                                                            <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/dashboard?page=${page==1?1:page-1}">Previous</a></li>
+                                                            <li class="page-item"><a class="page-link" href="eval?page=${page==1?1:page-1}">Previous</a></li>
                                                                 <c:forEach begin="${1}" end="${num}" var="i">
-                                                                <li class="page-item ${i==page?'active':''}"><a class="page-link" href="${pageContext.request.contextPath}/dashboard?page=${i}">${i}</a></li>
+                                                                <li class="page-item ${i==page?'active':''}"><a class="page-link" href="eval?page=${i}">${i}</a></li>
                                                                 </c:forEach>
-                                                            <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/dashboard?page=${page+1}">Next</a></li>
+                                                            <li class="page-item"><a class="page-link" href="eval?page=${page+1}">Next</a></li>
                                                         </ul>
                                                     </nav>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="tab-pane fade ${showTab.equals("member")?'show active':''}" id="Tab3">
-                                        <div class="row justify-content-center">
-                                            Tab3
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade ${showTab.equals("team")?'show active':''}" id="Tab4">
-                                        <div class="row justify-content-center">
-                                            Tab4
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -242,7 +221,6 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
 
         <script>
-
                                                                     $readMoreBtn = $(' .read-more-btn');
 
                                                                     $readMoreBtn.on('click', function () {

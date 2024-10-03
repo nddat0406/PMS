@@ -252,6 +252,9 @@ public class UserController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/user/profile?passChanged=success");
 
             } catch (SQLException ex) {
+                request.setAttribute("oldPass", oldPass);
+                request.setAttribute("newPass", newPass);
+                request.setAttribute("newRePass", reNewPass);
                 request.setAttribute("errorPass", ex.getMessage());
                 request.setAttribute("isSetting", "true");
                 try {

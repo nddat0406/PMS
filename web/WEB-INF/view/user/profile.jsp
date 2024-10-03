@@ -67,7 +67,7 @@
                                                 <div class="profile-image mb-3"><img src="${profile.image}" class="rounded-circle" alt="" style="height: 150px;width: 150px"> </div>
                                                 <div>
                                                     <h4 class=""><strong>${profile.fullname}</strong></h4>
-                                                    <span>${sessionScope.role}</span>
+                                                    <span>${sessionScope.loginedUser.role==1?'Admin':'Member'}</span>
                                                 </div>
 
                                             </div>

@@ -62,7 +62,7 @@ public class ProjectDAO extends BaseDAO {
     }
 
     public List<Allocation> getAllocation(int id) throws SQLException {
-        String str = "select * from allocation where userId = ?";
+        String str = "select * from allocation where userId = ? and status = 1";
         try {
             PreparedStatement pre = getConnection().prepareStatement(str);
             pre.setInt(1, id);
@@ -126,11 +126,11 @@ public class ProjectDAO extends BaseDAO {
             rs.next();
             return rs.getString(1);
         } catch (SQLException e) {
-            throw new SQLException(e);
+            return null;
         }
     }
 
-    private Project getById(int id) throws SQLException {
+    public Project getById(int id) throws SQLException {
         String str = "select * from project where id=?";
         try {
             PreparedStatement pre = getConnection().prepareStatement(str);
@@ -143,27 +143,5 @@ public class ProjectDAO extends BaseDAO {
         }
     }
 
-    public List<Criteria> getCriteriaByProject(int id) throws SQLException {
-        String str = "SELECT * FROM pms.project_criteria where projectId=?";
-        try {
-            List<Criteria> list = new ArrayList<>();
-            PreparedStatement pre = getConnection().prepareStatement(str);
-            pre.setInt(1, id);
-            ResultSet rs = pre.executeQuery();
-            while (rs.next()) {
-                Criteria temp = new Criteria();
-                temp.setId(rs.getInt(1));
-                temp.setName(rs.getString(2));
-                temp.setWeight(rs.getInt(3));
-                temp.setProject(getById(rs.getInt(4)));
-                temp.setStatus(rs.getBoolean(5));
-                temp.setDescription(rs.getString(6));
-                temp.setMilestone(mdao.getMilestoneById(rs.getInt(7)));
-                list.add(temp);
-            }
-            return list;
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        }
-    }
+
 }

@@ -11,19 +11,33 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Allocation;
+import model.Criteria;
+import model.User;
+import service.BaseService;
+import static service.BaseService.ADMIN_ROLE;
+import service.GroupService;
+import service.MilestoneService;
 import service.ProjectService;
+import service.UserService;
 
 /**
  *
  * @author HP
  */
-@WebServlet(name = "ProjectController", urlPatterns = {"/project", "/project/list", "/project/eval"})
+@WebServlet(name = "ProjectController", urlPatterns = {"/project", "/project/list", "/project/eval", "/project/milestone"})
 public class ProjectController extends HttpServlet {
 
+    private UserService uService = new UserService();
     private ProjectService pService = new ProjectService();
+    private GroupService gService = new GroupService();
+    private BaseService baseService = new BaseService();
+    private MilestoneService mService = new MilestoneService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -65,8 +79,22 @@ public class ProjectController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getServletPath().substring("/project/".length());
         switch (action) {
-            case "eval" -> getProjectEval(request, response);
-            default -> throw new AssertionError();
+            case "eval" -> {
+                if (request.getParameter("page") != null) {
+                    List<Criteria> list = (List<Criteria>) request.getSession().getAttribute("criteriaList");
+                    try {
+                        pagination(request, response, list, "/WEB-INF/view/user/projecteval.jsp");
+                    } catch (SQLException ex) {
+                        Logger.getLogger(ProjectController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    getProjectEval(request, response);
+                }
+            }
+            case "milestone" ->
+                getProjectMilestone(request, response);
+            default ->
+                throw new AssertionError();
         }
     }
 
@@ -95,14 +123,48 @@ public class ProjectController extends HttpServlet {
     }// </editor-fold>
 
     private void getProjectEval(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         try {
-            request.setAttribute("tableData",pService.listCriteriaOfProject(21));
+            HttpSession session = request.getSession();
+            String pIdRaw = request.getParameter("projectId");
+            int pID = Integer.parseInt(pIdRaw);
+            session.setAttribute("selectedProject", pID);
+            List<Criteria> list = pService.listCriteriaOfProject(pID);
+            session.setAttribute("criteriaList", list);
+            session.setAttribute("msList", mService.getAllMilestone(pID));
+            pagination(request, response, list, "/WEB-INF/view/user/projecteval.jsp");
         } catch (SQLException ex) {
-            Logger.getLogger(ProjectController.class.getName()).log(Level.SEVERE, null, ex);
+            response.getWriter().print(ex);
         }
-        request.setAttribute("showTab", "eval");
-        request.getRequestDispatcher("/WEB-INF/view/user/projectconfig.jsp").forward(request, response);
+    }
+
+    public void pagination(HttpServletRequest request, HttpServletResponse response, List<?> list, String link) throws ServletException, IOException, SQLException {
+        int page, numperpage = 12;
+        int size = list.size();
+        int num = (size % numperpage == 0 ? (size / numperpage) : (size / numperpage) + 1);//so trang
+        if (num == 0) {
+            num = 1;
+        }
+        String xpage = request.getParameter("page");
+        if (xpage == null) {
+            page = 1;
+        } else {
+            page = Integer.parseInt(xpage);
+            if (page > num) {
+                page = num;
+            }
+        }
+        int start, end;
+        start = (page - 1) * numperpage;
+        end = Math.min(page * numperpage, size);
+        request.setAttribute("page", page);
+        request.setAttribute("num", num);
+        request.getSession().setAttribute("numberPage", numperpage);
+        request.setAttribute("tableData", baseService.getListByPage(list, start, end));
+        request.getRequestDispatcher(link).forward(request, response);
+    }
+
+    private void getProjectMilestone(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("/WEB-INF/view/user/projectmilestone.jsp").forward(request, response);
     }
 
 }

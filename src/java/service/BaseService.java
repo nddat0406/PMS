@@ -148,15 +148,15 @@ public class BaseService {
                     Object value2 = getNestedFieldValue(o2, fieldNames);
 
                     // Handle null values during comparison
-//                    if (value1 == null && value2 == null) {
-//                        return 0;
-//                    }
-//                    if (value1 == null) {
-//                        return "desc".equalsIgnoreCase(order) ? 1 : -1;
-//                    }
-//                    if (value2 == null) {
-//                        return "desc".equalsIgnoreCase(order) ? -1 : 1;
-//                    }
+                    if (value1 == null && value2 == null) {
+                        return 0;
+                    }
+                    if (value1 == null) {
+                        return "desc".equalsIgnoreCase(order) ? 1 : -1;
+                    }
+                    if (value2 == null) {
+                        return "desc".equalsIgnoreCase(order) ? -1 : 1;
+                    }
 
                     // Cast to Comparable to allow comparison
                     Comparable comp1 = (Comparable) value1;
