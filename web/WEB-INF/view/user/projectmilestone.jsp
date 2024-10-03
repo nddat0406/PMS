@@ -1,9 +1,5 @@
-<%-- 
-    Document   : projectlist
-    Created on : Sep 26, 2024, 5:35:16 PM
-    Author     : HP
---%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
@@ -21,12 +17,13 @@
         <!-- MAIN CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
 
+        
+
     </head>
 
     <body>
 
         <div id="layout" class="theme-cyan">
-
             <!-- Page Loader -->
             <jsp:include page="../common/pageLoader.jsp"></jsp:include>
 
@@ -46,10 +43,9 @@
                                         <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> User Profile</h2>
                                         <ul class="breadcrumb mb-0">
                                             <li class="breadcrumb-item"><a href="/dashboard">Lucid</a></li>
-                                            <li class="breadcrumb-item active">User Profile</li>
+                                            <li class="breadcrumb-item active">Project Configs</li>
                                         </ul>
                                     </div>
-
                                 </div>
                             </div>
                             <div class="row g-3">
@@ -57,31 +53,16 @@
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${isSetting==null?'active':''}" id="Overview-tab" data-bs-toggle="tab" href="#Tab1" role="tab">Tab1</a></li>
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${isSetting==null?'':'active'}" id="Settings-tab" data-bs-toggle="tab" href="#Tab2" role="tab">Tab2</a></li>
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${isSetting==null?'':'active'}" id="Settings-tab" data-bs-toggle="tab" href="#Tab3" role="tab">Tab3</a></li>
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link ${isSetting==null?'':'active'}" id="Settings-tab" data-bs-toggle="tab" href="#Tab4" role="tab">Tab4</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link active" id="Overview-tab" href="milestone" role="tab">Milestone</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab " href="eval" role="tab">Evaluation criteria</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab" href="member" role="tab">Member</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab" href="team" role="tab">Team</a></li>
                                         </ul>
                                     </div>
                                 </div>
                                 <div class="tab-content p-0" id="myTabContent">
-                                    <div class="tab-pane fade  ${isSetting==null?'show active':''}" id="Tab1">
-                                        Tab1
-                                    </div>
-                                    <div class="tab-pane fade ${isSetting==null?'':'show active'}" id="Tab2">
-                                        <div class="row justify-content-center">
-                                            Tab2
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade ${isSetting==null?'':'show active'}" id="Tab3">
-                                        <div class="row justify-content-center">
-                                            Tab3
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade ${isSetting==null?'':'show active'}" id="Tab4">
-                                        <div class="row justify-content-center">
-                                            Tab4
-                                        </div>
+                                    <div class="tab-pane fade active show" id="Tab1">
+                                        write contend here
                                     </div>
                                 </div>
                             </div>
@@ -94,7 +75,6 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
         <!-- page js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-
 
     </body>
 

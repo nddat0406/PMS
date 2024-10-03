@@ -25,10 +25,6 @@
         <servlet-class>controller.UserController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ProjectController</servlet-name>
-        <servlet-class>controller.ProjectController</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>GroupController</servlet-name>
         <servlet-class>controller.GroupController</servlet-class>
     </servlet>
