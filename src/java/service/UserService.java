@@ -94,12 +94,17 @@ public class UserService {
         }
     }
 
-    public void updatePassword(String oldPass, String newPass, int id) throws SQLException {
+   public void updatePassword(String oldPass, String newPass, int id) throws SQLException {
         if (BaseService.checkPassword(oldPass, udao.getUserPassword(id))) {
-            udao.updateUserPassword(BaseService.hashPassword(newPass), id);
-        } else {
+            if (!BaseService.checkPassword(newPass, udao.getUserPassword(id))) {
+                udao.updateUserPassword(BaseService.hashPassword(newPass), id);
+            } else {
+                throw new SQLException("New password is duplicated with old password");
+            }
+        }else{
             throw new SQLException("Password not right");
         }
+
     }
 
     public List<User> getAll() throws SQLException {

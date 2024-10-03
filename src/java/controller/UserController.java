@@ -218,7 +218,7 @@ public class UserController extends HttpServlet {
             }
             request.setAttribute("profile", uService.getUserProfile(id));
             request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
-        } catch ( SQLException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
             response.getWriter().print(ex.getMessage());
         }
@@ -239,7 +239,10 @@ public class UserController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/user/profile?passChanged=success");
 
             } catch (SQLException ex) {
-                request.setAttribute("errorPass", "Current password not correct");
+                request.setAttribute("oldPass", oldPass);
+                request.setAttribute("newPass", newPass);
+                request.setAttribute("newRePass", reNewPass);
+                request.setAttribute("errorPass", ex.getMessage());
                 request.setAttribute("isSetting", "true");
                 try {
                     request.setAttribute("profile", uService.getUserProfile(id));
@@ -251,7 +254,10 @@ public class UserController extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
             }
         } else {
-            request.setAttribute("errorPass", "Password not match");
+            request.setAttribute("oldPass", oldPass);
+            request.setAttribute("newPass", newPass);
+            request.setAttribute("newRePass", reNewPass);
+            request.setAttribute("errorPass", "New password not match");
             request.setAttribute("isSetting", "true");
             try {
                 request.setAttribute("profile", uService.getUserProfile(id));
@@ -291,6 +297,7 @@ public class UserController extends HttpServlet {
             session.setAttribute("loginedUser", uService.getUserByEmail(user.getEmail()));
             response.sendRedirect(request.getContextPath() + "/user/profile?profileChanged=success");
         } catch (Exception ex) {
+            request.setAttribute("oldInfor", user);
             request.setAttribute("isSetting", "true");
             //get message error
             String[] error = Arrays.stream(ex.getMessage().split("/"))

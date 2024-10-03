@@ -124,7 +124,7 @@ public class ProjectDAO extends BaseDAO {
             rs.next();
             return rs.getString(1);
         } catch (SQLException e) {
-            throw new SQLException(e);
+            return null;
         }
     }
 
