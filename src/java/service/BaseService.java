@@ -106,10 +106,11 @@ public class BaseService {
             return 0;
         }
     }
-    public boolean TryParseBoolean(String someText){
-        if(someText.equals("1") || someText.equals("true")){
+
+    public boolean TryParseBoolean(String someText) {
+        if (someText.equals("1") || someText.equals("true")) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -203,5 +204,25 @@ public class BaseService {
         }
 
         return currentObject;
+    }
+
+    public <T> boolean objectWithIdExists(Object idToFind, List<T> objectList) {
+        for (T obj : objectList) {
+            try {
+                // Attempt to find a method named 'getId' on the object's class
+                Method getIdMethod = obj.getClass().getMethod("getId");
+
+                // Invoke the method and check if the id matches
+                Object id = getIdMethod.invoke(obj);
+                if (id.equals(idToFind)) {
+                    return true;  // Found the object with the matching id
+                }
+
+            } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return false;  // No object with the matching id found
     }
 }

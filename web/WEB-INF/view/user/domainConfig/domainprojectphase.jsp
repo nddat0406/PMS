@@ -25,14 +25,14 @@
 
         <div id="layout" class="theme-cyan">
             <!-- Page Loader -->
-            <jsp:include page="../common/pageLoader.jsp"></jsp:include>
+            <jsp:include page="../../common/pageLoader.jsp"></jsp:include>
 
                 <div id="wrapper">
                     <!-- top navbar -->
-                <jsp:include page="../common/topNavbar.jsp"></jsp:include>
+                <jsp:include page="../../common/topNavbar.jsp"></jsp:include>
 
                     <!-- Sidbar menu -->
-                <jsp:include page="../common/sidebar.jsp"></jsp:include>
+                <jsp:include page="../../common/sidebar.jsp"></jsp:include>
 
                     <div id="main-content" class="profilepage_2 blog-page">
                         <div class="container-fluid">
@@ -43,7 +43,7 @@
                                         <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> User Profile</h2>
                                         <ul class="breadcrumb mb-0">
                                             <li class="breadcrumb-item"><a href="/dashboard">Lucid</a></li>
-                                            <li class="breadcrumb-item active">Project Configs</li>
+                                            <li class="breadcrumb-item active">Domain Configs</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -53,10 +53,10 @@
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link active" id="Overview-tab" href="milestone" role="tab">Milestone</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Overview-tab" href="setting" role="tab">Domain Settings</a></li>
                                             <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab " href="eval" role="tab">Evaluation criteria</a></li>
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab" href="member" role="tab">Member</a></li>
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab" href="team" role="tab">Team</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab" href="user" role="tab">Domain Users</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link active" id="Settings-tab" href="phase" role="tab">Project Phase</a></li>
                                         </ul>
                                     </div>
                                 </div>

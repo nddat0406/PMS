@@ -17,6 +17,8 @@
         <!-- MAIN CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/sweetalert2.min.css">
+
 
         <style>
             /* Container for the text */
@@ -59,35 +61,20 @@
                 cursor: pointer;
             }
         </style>
-        <script>
-            function changeStatus(id) {
-                $.ajax({
-                    url: "eval",
-                    type: 'post',
-                    data: {
-                        criteriaId: id,
-                        action: "changeStatus"
-                    },
-                    success: function () {
-                        $(' #status' + id).load("${pageContext.request.contextPath}/project/eval?page=${page} #status" + id +" > *");
-                    }
-                });
-            }
-        </script>
     </head>
 
     <body>
 
         <div id="layout" class="theme-cyan">
             <!-- Page Loader -->
-            <jsp:include page="../common/pageLoader.jsp"></jsp:include>
+            <jsp:include page="../../common/pageLoader.jsp"></jsp:include>
 
                 <div id="wrapper">
                     <!-- top navbar -->
-                <jsp:include page="../common/topNavbar.jsp"></jsp:include>
+                <jsp:include page="../../common/topNavbar.jsp"></jsp:include>
 
                     <!-- Sidbar menu -->
-                <jsp:include page="../common/sidebar.jsp"></jsp:include>
+                <jsp:include page="../../common/sidebar.jsp"></jsp:include>
 
                     <div id="main-content" class="profilepage_2 blog-page">
                         <div class="container-fluid">
@@ -121,6 +108,11 @@
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <h6 class="card-title">Evaluation Criteria</h6>
+                                                        <ul class="header-dropdown">
+                                                            <li>
+                                                                <a href="eval/add" class="btn btn-sm btn-outline-secondary" >Add New</a>
+                                                            </li>
+                                                        </ul>
                                                     </div>
                                                     <div class="card-body" id="cardbody">
                                                         <form action="eval" method="post">
@@ -187,11 +179,11 @@
                                                                     </td>
 
                                                                     <td style="width: 200px">
-                                                                        <a href="javascript:void(0);" class="btn btn-sm btn-outline-success"><i class="fa fa-pencil"></i></a>
-                                                                        <a href="javascript:void(0);" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></a>
+                                                                        <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#updateCriteria"><i class="fa fa-pencil" ></i></a>
+                                                                        <a href="javascript:void(0);" class="btn btn-sm btn-outline-danger" onclick="deleteStatus(${i.id})"><i class="fa fa-trash"></i></a>
                                                                     </td>
                                                                     <td style="width: 150px" class="statusCell" onclick="changeStatus(${i.id})" id="status${i.id}">
-                                                                        
+
                                                                         <c:choose >
                                                                             <c:when test="${i.status==true}">
                                                                                 <span class="badge bg-success">Active</span><br>
@@ -230,17 +222,64 @@
                     </div>
                 </div>
             </div>
+            <div class="modal fade" id="updateCriteria" tabindex="-1" aria-labelledby="updateCriteria" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form action="eval/update">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="defaultModalLabel">Update Criteria</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row g-2">
+
+
+                                    <div class="col-md-12">
+                                        <label>ID:</label>
+                                        <input type="text" class="form-control" placeholder="ID" name="uID" readonly value="${modalItem.id}">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>Name*:</label>
+
+                                        <input type="text" class="form-control" placeholder="Name" name="uName" value="${modalItem.name}">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>Weight:</label>
+                                        <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="uWeight" value="${modalItem.weight}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Milestone</label>
+                                        <select name="uMilestone" class="form-select">
+                                            <c:forEach items="${msList}" var="m">
+                                                <option value="${m.id}" ${modalItem.milestone.id==m.id?'selected':''}>${m.name}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <textarea id="id" class="form-control" name="name" rows="8" cols="60">${modalItem.description}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Add</button>
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
+
         <!-- core js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/sweetalert2.bundle.js"></script>
+
         <!-- page js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
 
         <script>
+
                                                                         $readMoreBtn = $(' .read-more-btn');
-
                                                                         $readMoreBtn.on('click', function () {
-
                                                                             $contentWrapper = $(this).parent().find(' .content-wrapper');
                                                                             // Toggle the "expanded" class on the content wrapper
                                                                             $contentWrapper.toggleClass('expanded');
@@ -251,6 +290,45 @@
                                                                                 $(this).text('Read More');
                                                                             }
                                                                         });
+                                                                        function changeStatus(id) {
+                                                                            $.ajax({
+                                                                                url: "eval",
+                                                                                type: 'post',
+                                                                                data: {
+                                                                                    criteriaId: id,
+                                                                                    action: "changeStatus"
+                                                                                },
+                                                                                success: function () {
+                                                                                    $(' #status' + id).load("${pageContext.request.contextPath}/project/eval?page=${page} #status" + id + " > *");
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                        ;
+                                                                        function deleteStatus(id) {
+                                                                            Swal.fire({
+                                                                                title: "Do you want to delete criteria with id=" + id + " ?",
+                                                                                showCancelButton: true,
+                                                                                confirmButtonText: "Delete",
+                                                                                confirmButtonColor: "#FC5A69"
+                                                                            }).then((result) => {
+                                                                                /* Read more about isConfirmed, isDenied below */
+                                                                                if (result.isConfirmed) {
+                                                                                    $.ajax({
+                                                                                        url: "eval",
+                                                                                        type: 'post',
+                                                                                        data: {
+                                                                                            criteriaId: id,
+                                                                                            action: "delete"
+                                                                                        },
+                                                                                        success: function () {
+                                                                                            Swal.fire("Deleted!", "", "success");
+                                                                                            $(' .tableBody').load("${pageContext.request.contextPath}/project/eval?page=${page} .tableBody > *");
+                                                                                        }
+                                                                                    });
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                        ;
 
         </script>
     </body>

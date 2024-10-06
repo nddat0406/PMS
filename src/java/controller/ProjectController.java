@@ -41,7 +41,7 @@ public class ProjectController extends HttpServlet {
     private MilestoneService mService = new MilestoneService();
     private CriteriaService cService = new CriteriaService();
 
-    private String linkEval = "/WEB-INF/view/user/projecteval.jsp";
+    private String linkEval = "/WEB-INF/view/user/projectConfig/projecteval.jsp";
     private String linkMile = "/WEB-INF/view/user/projectmilestone.jsp";
 
     /**
@@ -88,9 +88,14 @@ public class ProjectController extends HttpServlet {
                 if (request.getParameter("page") != null) {
                     List<Criteria> list = (List<Criteria>) request.getSession().getAttribute("criteriaList");
                     try {
+                        String modalItemIDRaw = request.getParameter("modalItemID");
+                        if (modalItemIDRaw != null) {
+                            int modalItemID = Integer.parseInt(modalItemIDRaw);
+                            request.setAttribute("modalItem", cService.getCriteria(modalItemID, list));
+                        }
                         pagination(request, response, list, linkEval);
                     } catch (SQLException ex) {
-                        Logger.getLogger(ProjectController.class.getName()).log(Level.SEVERE, null, ex);
+                        throw new ServletException(ex);
                     }
                 } else {
                     getProjectEval(request, response);
@@ -122,6 +127,12 @@ public class ProjectController extends HttpServlet {
                     postEvalFilter(request, response);
                 } else if (action.equals("changeStatus")) {
                     postEvalFlipStatus(request, response);
+                } else if (action.equals("delete")) {
+                    postEvalDelete(request, response);
+                } else if (action.equals("add")) {
+                    postEvalAdd(request, response);
+                } else if (action.equals("update")) {
+                    postEvalUpdate(request, response);
                 }
                 break;
             default:
@@ -147,20 +158,24 @@ public class ProjectController extends HttpServlet {
         session.removeAttribute("milestoneFilter");
         session.removeAttribute("statusFilter");
         try {
-            int pID;
-            if (session.getAttribute("selectedProject") == null) {
-                String pIdRaw = request.getParameter("projectId");
-                pID = Integer.parseInt(pIdRaw);
-                session.setAttribute("selectedProject", pID);
+            Integer pID;
+            String pIdRaw = request.getParameter("projectId");
+            if (pIdRaw == null) {
+                pID = (Integer) session.getAttribute("selectedProject");
+                if (pID == null) {
+                    throw new ServletException("Some thing went wrong, cannot find the criteria id");
+                }
             } else {
-                pID = (int) session.getAttribute("selectedProject");
+                pID = Integer.valueOf(pIdRaw);
+                session.setAttribute("selectedProject", pID);
             }
             List<Criteria> list = cService.listCriteriaOfProject(pID);
             session.setAttribute("criteriaList", list);
             session.setAttribute("msList", mService.getAllMilestone(pID));
             pagination(request, response, list, linkEval);
         } catch (SQLException ex) {
-            response.getWriter().print(ex);
+            throw new ServletException(ex);
+
         }
     }
 
@@ -191,7 +206,7 @@ public class ProjectController extends HttpServlet {
     }
 
     private void getProjectMilestone(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/view/user/projectmilestone.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/view/user/projectConfig/projectmilestone.jsp").forward(request, response);
     }
 
     private void postEvalFilter(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -211,25 +226,50 @@ public class ProjectController extends HttpServlet {
             session.setAttribute("criteriaList", list);
             pagination(request, response, list, linkEval);
         } catch (SQLException e) {
-            response.getWriter().print(e);
+            throw new ServletException(e);
         }
     }
 
     private void postEvalFlipStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             int id = Integer.parseInt(request.getParameter("criteriaId"));
-            cService.flipStatus(id);
-            List<Criteria> list =  (List<Criteria>) request.getSession().getAttribute("criteriaList");
+            List<Criteria> list = (List<Criteria>) request.getSession().getAttribute("criteriaList");
+            cService.flipStatus(id, list);
             for (Criteria c : list) {
-                if(c.getId()==id){
+                if (c.getId() == id) {
                     c.setStatus(!c.isStatus());
                     break;
                 }
             }
             pagination(request, response, list, linkEval);
         } catch (NumberFormatException | SQLException e) {
-            response.getWriter().print(e);
+            throw new ServletException(e);
         }
+    }
+
+    private void postEvalDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            int id = Integer.parseInt(request.getParameter("criteriaId"));
+            List<Criteria> list = (List<Criteria>) request.getSession().getAttribute("criteriaList");
+            cService.deleteEval(id, list);
+            for (Criteria c : list) {
+                if (c.getId() == id) {
+                    list.remove(c);
+                    break;
+                }
+            }
+            pagination(request, response, list, linkEval);
+        } catch (NumberFormatException | SQLException e) {
+            throw new ServletException(e);
+        }
+    }
+
+    private void postEvalUpdate(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+
+    private void postEvalAdd(HttpServletRequest request, HttpServletResponse response) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }
