@@ -40,6 +40,7 @@
 
                     <!-- Sidbar menu -->
                 <jsp:include page="../common/sidebar.jsp"></jsp:include>
+                
 
                     <div id="main-content">
                         <div class="container-fluid">
@@ -92,7 +93,7 @@
                                         <!-- Full Name -->
                                         <div class="col-md-4 col-sm-12">
                                             <label for="fullname">Full Name</label>
-                                            <input type="text" class="form-control" readonly value="${requestScope.updateUser.fullname}" name="fullname">
+                                            <input type="text" class="form-control"  value="${requestScope.updateUser.fullname}" name="fullname">
                                         </div>
 
                                         <!-- Address -->
