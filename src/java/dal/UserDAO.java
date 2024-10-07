@@ -372,14 +372,9 @@ public class UserDAO extends BaseDAO {
 
     public void deleteUser(int id) throws SQLException {
         String sql = "DELETE FROM `pms`.`user`"
-<<<<<<< HEAD
-                + "WHERE id=?";
-        try (PreparedStatement st = getConnection().prepareStatement(sql)) {
-=======
                 + "WHERE id=?;";
         try {
             PreparedStatement st = getConnection().prepareStatement(sql);
->>>>>>> 312e4120b85284e040c04cba279be326dfc39361
             st.setInt(1, id);
 
             st.executeUpdate();
@@ -487,14 +482,6 @@ public class UserDAO extends BaseDAO {
         }
     }
 
-<<<<<<< HEAD
-=======
-    public static void main(String[] args) throws SQLException {
-        System.out.println(new UserDAO().verifyLogin("admin@gmail.com", "123"));
-        System.out.println(new UserDAO().getUserByEmail("aclieu2304@gmail.com"));
-    }
-
->>>>>>> 312e4120b85284e040c04cba279be326dfc39361
     public User getUserByEmail(String email) throws SQLException {
         String str = "SELECT * FROM pms.user where email=? and status = 1";
         try {
@@ -570,7 +557,6 @@ public class UserDAO extends BaseDAO {
         return false;
     }
 
-<<<<<<< HEAD
     public boolean updateUserStatus(int userId, int newStatus) throws SQLException {
         String query = "UPDATE pms.user SET status = ? WHERE id = ?";
         try ( PreparedStatement stmt = getConnection().prepareStatement(query)) {
@@ -588,10 +574,8 @@ public class UserDAO extends BaseDAO {
 
     
 
-    public boolean isEmailExists(String email) {
-=======
     public boolean isEmailExists(String email) throws SQLException {
->>>>>>> 312e4120b85284e040c04cba279be326dfc39361
+
         boolean exists = false;
         String sql = "SELECT COUNT(*) FROM pms.user WHERE email = ?";
         Connection conn = getConnection();

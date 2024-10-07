@@ -233,8 +233,4 @@ public class UserService {
     List<User> allUsers = udao.getAll(); // Get all users from the database
     return udao.searchFilter(allUsers, departmentId, status, keyword); // Filter users
 }
-<<<<<<< HEAD
-
 }
-=======
->>>>>>> 312e4120b85284e040c04cba279be326dfc39361
