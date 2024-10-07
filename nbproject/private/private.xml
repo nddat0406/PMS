@@ -2,11 +2,61 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+<<<<<<< HEAD
+        <group name="PRO">
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/fogotpassword.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/SettingController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/UserDetails.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/SettingDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/UserService.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/DomainDetail.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/Dashboard.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/verify.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/DepartmentController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/SettingDetails.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/UserDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/profile.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/projectlist.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/GroupController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/login.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/model/Group.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/UserController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/ProjectService.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/Domain.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/UserList.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/ProjectDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/AdminController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/SettingList.jsp</file>
+=======
         <group name="SWP391"/>
         <group name="test">
             <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projecteval.jsp</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/ProjectController.java</file>
+<<<<<<< HEAD
             <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projectevaladd.jsp</file>
+=======
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projecteval.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/UserService.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/CriteriaService.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/web.xml</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/CriteriaDAO.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/ProjectService.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/MilestoneDAO.java</file>
+>>>>>>> 312e4120b85284e040c04cba279be326dfc39361
+        </group>
+        <group>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/user/register.jsp</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/service/MilestoneService.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/user/projecteval.jsp</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/dal/MilestoneDAO.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/dal/ProjectDAO.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/ProjectController.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/classes/app.properties</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/model/Milestone.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/META-INF/context.xml</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/user/projectmilestone.jsp</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/Dashboard.jsp</file>
+>>>>>>> 730fa24b7070c42a5e5edef16b8ab810f18ac7d5
         </group>
     </open-files>
 </project-private>

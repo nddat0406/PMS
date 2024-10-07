@@ -37,8 +37,8 @@ public class CriteriaService {
     }
 
     public List<Criteria> searchFilter(List<Criteria> list, Integer mileFilter, Integer statusFilter, String searchKey) {
-        mileFilter=baseService.TryParseInteger(mileFilter);
-        statusFilter=baseService.TryParseInteger(statusFilter);
+        mileFilter = baseService.TryParseInteger(mileFilter);
+        statusFilter = baseService.TryParseInteger(statusFilter);
         List<Criteria> temp = new ArrayList<>();
         for (Criteria c : list) {
             if ((c.getMilestone().getId() == mileFilter || mileFilter == 0)
@@ -81,9 +81,26 @@ public class CriteriaService {
 
     public void updateEvalProject(Criteria c, List<Criteria> list) throws SQLException {
         if (baseService.objectWithIdExists(c.getId(), list)) {
-            cdao.updateCriteriaProject(c);
+            Criteria oldC = cdao.getCriteria(c.getId());
+            if (!c.getName().equals(oldC.getName()) || c.getMilestone().getId()!= oldC.getMilestone().getId()) {
+                if (!cdao.isDuplicateInProject(c)) {
+                    cdao.updateCriteriaProject(c);
+                } else {
+                    throw new SQLException("Criteria with that name is already existed");
+                }
+            } else {
+                cdao.updateCriteriaProject(c);
+            }
         } else {
             throw new IllegalAccessError("Illegal action!");
+        }
+    }
+
+    public void addEvalProject(Criteria c, List<Criteria> list) throws SQLException {
+        if (!cdao.isDuplicateInProject(c)) {
+            cdao.addCriteriaProject(c);
+        } else {
+            throw new SQLException("Criteria with that name is already existed");
         }
     }
 

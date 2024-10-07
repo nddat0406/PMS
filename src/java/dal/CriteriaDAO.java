@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Criteria;
+import model.Milestone;
+import model.Project;
 
 /**
  *
@@ -107,23 +109,57 @@ public class CriteriaDAO extends BaseDAO {
         pre.setInt(6, c.getId());
         pre.executeUpdate();
     }
+
     public void addCriteriaProject(Criteria c) throws SQLException {
 
         String str = """
-                     insert `pms`.`project_criteria`
-                     SET
-                     `name` = ?,
-                     `weight` = ?,
-                     `projectId` =?,
-                     `description` = ?,
-                     `milestoneId` = ?""";
+                     INSERT INTO `pms`.`project_criteria`
+                     (
+                     `name`,
+                     `weight`,
+                     `projectId`,
+                     `description`,
+                     `milestoneId`)
+                     VALUES
+                     (
+                     ?,
+                     ?,
+                     ?,
+                     ?,
+                     ?);""";
         PreparedStatement pre = getConnection().prepareStatement(str);
         pre.setString(1, c.getName());
         pre.setInt(2, c.getWeight());
         pre.setInt(3, c.getProject().getId());
         pre.setString(4, c.getDescription());
         pre.setInt(5, c.getMilestone().getId());
-        pre.setInt(6, c.getId());
         pre.executeUpdate();
+    }
+
+    public boolean isDuplicateInProject(Criteria c) throws SQLException {
+        String str = "select count(*) as num  FROM pms.project_criteria where projectId=? and milestoneId=? and name = ?;";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setInt(1, c.getProject().getId());
+        pre.setInt(2, c.getMilestone().getId());
+        pre.setString(3, c.getName());
+        ResultSet rs = pre.executeQuery();
+        rs.next();
+        return rs.getInt(1) >= 1;
+
+    }
+
+    public static void main(String[] args) throws SQLException {
+        Criteria c = new Criteria();
+        c.setId(305);
+        c.setName("dat");
+        c.setWeight(12);
+        Project p = new Project();
+        p.setId(21);
+        Milestone m = new Milestone();
+        m.setId(3);
+        c.setProject(p);
+        c.setDescription("123");
+        c.setMilestone(m);
+        System.out.println(c.getName().equals(new CriteriaDAO().getCriteria(c.getId()).getName()));
     }
 }
