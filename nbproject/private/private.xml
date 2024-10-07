@@ -14,5 +14,18 @@
             <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/CriteriaDAO.java</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/CriteriaService.java</file>
         </group>
+        <group>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/user/register.jsp</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/service/MilestoneService.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/user/projecteval.jsp</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/dal/MilestoneDAO.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/dal/ProjectDAO.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/ProjectController.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/classes/app.properties</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/model/Milestone.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/META-INF/context.xml</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/user/projectmilestone.jsp</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/Dashboard.jsp</file>
+        </group>
     </open-files>
 </project-private>

@@ -62,4 +62,19 @@ public class MilestoneDAO extends BaseDAO {
             throw new SQLException(e);
         }
     }
+    public void updateMilestone(Milestone milestone) throws SQLException {
+        String query = "UPDATE pms.milestone SET name=?, priority=?, details=?, endDate=?, status=? WHERE id=?";
+        try (PreparedStatement ps = getConnection().prepareStatement(query)) {
+            ps.setString(1, milestone.getName());
+            ps.setInt(2, milestone.getPriority());
+            ps.setString(3, milestone.getDetails());
+            ps.setDate(4, new java.sql.Date(milestone.getEndDate().getTime()));
+            ps.setBoolean(5, milestone.isStatus());
+//            ps.setString(6, milestone.getDeliver());
+            ps.setInt(6, milestone.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
 }

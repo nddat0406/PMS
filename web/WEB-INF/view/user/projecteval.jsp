@@ -40,7 +40,7 @@
                 left: 0;
                 right: 0;
                 height: 10px; /* Height of the gradient */
-                background: linear-gradient(to bottom, transparent,); /* Gradient fading to white */
+                background: linear-gradient(to bottom, transparent); /* Gradient fading to white */
                 display: block;
             }
 

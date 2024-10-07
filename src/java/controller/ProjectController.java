@@ -14,12 +14,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.List;
+import java.sql.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Allocation;
 import model.Criteria;
 import model.User;
 import service.BaseService;
+import model.Milestone;
 import static service.BaseService.ADMIN_ROLE;
 import service.CriteriaService;
 import service.GroupService;
@@ -124,6 +126,16 @@ public class ProjectController extends HttpServlet {
                     postEvalFlipStatus(request, response);
                 }
                 break;
+            case "milestone":
+                action = request.getParameter("action");
+                if ("update".equals(action)) {
+                    try {
+                        updateMilestone(request, response);
+                    } catch (SQLException ex) {
+                        response.getWriter().print("Update error: " + ex.getMessage());
+                    }
+                }
+                break;
             default:
                 throw new AssertionError();
         }
@@ -191,10 +203,33 @@ public class ProjectController extends HttpServlet {
     }
 
     private void getProjectMilestone(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/view/user/projectmilestone.jsp").forward(request, response);
+//        request.getRequestDispatcher("/WEB-INF/view/user/projectmilestone.jsp").forward(request, response);
+        HttpSession session = request.getSession();
+        try {
+            int projectId;
+            if (session.getAttribute("selectedProject") == null) {
+//                String projectIdRaw = request.getParameter("projectId");
+                //fake data
+                String projectIdRaw = "25";
+                projectId = Integer.parseInt(projectIdRaw);
+                session.setAttribute("selectedProject", projectId);
+            } else {
+                projectId = (int) session.getAttribute("selectedProject");
+            }
+
+            List<Milestone> milestones = mService.getAllMilestone(projectId);
+            session.setAttribute("milestoneList", milestones);
+
+            // Use the existing pagination method
+            pagination(request, response, milestones, linkMile);
+        } catch (SQLException ex) {
+            // Handle exception
+            response.getWriter().print("An error occurred: " + ex.getMessage());
+        }
     }
 
-    private void postEvalFilter(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+private void postEvalFilter(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String mileFilterRaw = request.getParameter("milestoneFilter");
         String statusFilterRaw = request.getParameter("statusFilter");
 
@@ -219,9 +254,9 @@ public class ProjectController extends HttpServlet {
         try {
             int id = Integer.parseInt(request.getParameter("criteriaId"));
             cService.flipStatus(id);
-            List<Criteria> list =  (List<Criteria>) request.getSession().getAttribute("criteriaList");
+            List<Criteria> list = (List<Criteria>) request.getSession().getAttribute("criteriaList");
             for (Criteria c : list) {
-                if(c.getId()==id){
+                if (c.getId() == id) {
                     c.setStatus(!c.isStatus());
                     break;
                 }
@@ -230,6 +265,32 @@ public class ProjectController extends HttpServlet {
         } catch (NumberFormatException | SQLException e) {
             response.getWriter().print(e);
         }
+    }
+    private void updateMilestone(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        // Lấy dữ liệu từ form
+        int id = Integer.parseInt(request.getParameter("mileStoneId"));
+        //fake data
+//         int id = 24;
+        String name = request.getParameter("milestoneName");
+        int priority = Integer.parseInt(request.getParameter("milestonePriority"));
+        String endDate = request.getParameter("milestoneEndDate");
+        boolean status = "1".equals(request.getParameter("milestoneStatus"));
+        String details = request.getParameter("milestoneDetails");
+
+        // Tạo đối tượng Milestone và cập nhật dữ liệu
+        Milestone milestone = new Milestone();
+        milestone.setId(id);
+        milestone.setName(name);
+        milestone.setPriority(priority);
+        milestone.setEndDate(Date.valueOf(endDate));
+        milestone.setStatus(status);
+        milestone.setDetails(details);
+
+        // Gọi service để cập nhật milestone
+        mService.updateMilestone(milestone);
+
+        // Redirect về trang milestone sau khi cập nhật thành công
+        response.sendRedirect(request.getContextPath() + "/project/milestone");
     }
 
 }

@@ -32,4 +32,13 @@ public class MilestoneService {
             throw new SQLException(ex);
         }
     }
+
+    public void updateMilestone(Milestone milestone) throws SQLException {
+        try {
+            mdao.updateMilestone(milestone); 
+        } catch (SQLException ex) {
+            Logger.getLogger(MilestoneService.class.getName()).log(Level.SEVERE, null, ex);
+            throw new SQLException(ex);
+        }
+    }
 }
