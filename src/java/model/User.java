@@ -29,9 +29,6 @@ public class User {
     private String otp;
     private Date otp_expiry;//Sử dụng kiểu dữ liệu Date cho thời gian hết hạn OTP
 
-    public User() {
-    }
-
     public int getId() {
         return id;
     }
@@ -98,6 +95,9 @@ public class User {
 
     public int getStatus() {
         return status;
+    }
+    public boolean isStatus() {
+        return status==1;
     }
 
     public void setStatus(int status) {
