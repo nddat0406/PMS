@@ -55,13 +55,27 @@ public class UserDAO extends BaseDAO {
             PreparedStatement ps = getConnection().prepareStatement(query);
             ps.setString(1, username);
 
-            try (ResultSet resultSet = ps.executeQuery()) {
-                // Kiểm tra xem có người dùng nào được tìm thấy không
-                if (resultSet.next()) {
-                    String hashedPassword = resultSet.getString("password");
-                    User user = new User();
+            ResultSet resultSet = ps.executeQuery();
+            // Kiểm tra xem có người dùng nào được tìm thấy không
+            if (resultSet.next()) {
+                String hashedPassword = resultSet.getString("password");
+                User user = new User();
+                user.setId(resultSet.getInt("id"));
+                user.setPassword(resultSet.getString("password"));
+                user.setEmail(resultSet.getString("email"));
+                user.setFullname(resultSet.getString("full_name"));
+                user.setMobile(resultSet.getString("mobile"));
+                user.setStatus(resultSet.getInt("status")); // Trạng thái
+                user.setRole(resultSet.getInt("role")); // role_id
+                user.setDepartment(new Group(gdao.getDeptNameById(resultSet.getInt("department"))));
+                user.setNote(resultSet.getString("notes")); // 
+                user.setImage(resultSet.getString("image")); // 
+                user.setOtp(resultSet.getString("otp")); // OTP
+//                    user.setOtp_expiry(resultSet.getTimestamp("otp_expiry")); // Thời gian hết hạn OTP
+
+                // Kiểm tra mật khẩu
+                if (BaseService.checkPassword(password, hashedPassword)) {
                     user.setId(resultSet.getInt("id"));
-                    user.setPassword(resultSet.getString("password"));
                     user.setEmail(resultSet.getString("email"));
                     user.setFullname(resultSet.getString("full_name"));
                     user.setMobile(resultSet.getString("mobile"));
@@ -71,23 +85,8 @@ public class UserDAO extends BaseDAO {
                     user.setNote(resultSet.getString("notes")); // 
                     user.setImage(resultSet.getString("image")); // 
                     user.setOtp(resultSet.getString("otp")); // OTP
-//                    user.setOtp_expiry(resultSet.getTimestamp("otp_expiry")); // Thời gian hết hạn OTP
-
-                    // Kiểm tra mật khẩu
-                    if (BaseService.checkPassword(password, hashedPassword)) {
-                        user.setId(resultSet.getInt("id"));
-                        user.setEmail(resultSet.getString("email"));
-                        user.setFullname(resultSet.getString("full_name"));
-                        user.setMobile(resultSet.getString("mobile"));
-                        user.setStatus(resultSet.getInt("status")); // Trạng thái
-                        user.setRole(resultSet.getInt("role")); // role_id
-                        user.setDepartment(new Group(gdao.getDeptNameById(resultSet.getInt("department"))));
-                        user.setNote(resultSet.getString("notes")); // 
-                        user.setImage(resultSet.getString("image")); // 
-                        user.setOtp(resultSet.getString("otp")); // OTP
 //                        user.setOtp_expiry(resultSet.getTimestamp("otp_expiry")); // Thời gian hết hạn OTP
-                        return user;
-                    }
+                    return user;
                 }
             }
         } catch (SQLException e) {
@@ -135,11 +134,10 @@ public class UserDAO extends BaseDAO {
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, email);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    String hashedPassword = rs.getString("password");
-                    return BaseService.checkPassword(oldPassword, hashedPassword);
-                }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String hashedPassword = rs.getString("password");
+                return BaseService.checkPassword(oldPassword, hashedPassword);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -196,11 +194,10 @@ public class UserDAO extends BaseDAO {
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, email);
-            try (ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
                     return rs.getInt(1) > 0; // Kiểm tra số lượng bản ghi trả về
                 }
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -212,10 +209,9 @@ public class UserDAO extends BaseDAO {
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery();
                 rs.next();
                 return !rs.getString(1).equals(email);
-            }
         } catch (SQLException e) {
             return true;
         }
@@ -353,16 +349,17 @@ public class UserDAO extends BaseDAO {
     }
 
     public void Insert(User uNew) throws SQLException {
-        String sql = "INSERT INTO pms.user (email, fullname, password, role, status, departmentId, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO pms.user (email,mobile, fullname, password, role, status, departmentId, address) VALUES (?,?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement st = getConnection().prepareStatement(sql);
             st.setString(1, uNew.getEmail());
-            st.setString(2, uNew.getFullname());
-            st.setString(3, uNew.getPassword());
-            st.setInt(4, uNew.getRole());
-            st.setInt(5, uNew.getStatus());
-            st.setInt(6, uNew.getDepartment().getId());
-            st.setString(7, uNew.getAddress());
+            st.setString(2, uNew.getMobile());
+            st.setString(3, uNew.getFullname());
+            st.setString(4, uNew.getPassword());
+            st.setInt(5, uNew.getRole());
+            st.setInt(6, uNew.getStatus());
+            st.setInt(7, uNew.getDepartment().getId());
+            st.setString(8, uNew.getAddress());
             st.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error inserting user: " + e.getMessage());
@@ -382,14 +379,17 @@ public class UserDAO extends BaseDAO {
         }
     }
 
+    public static void main(String[] args) throws SQLException {
+        new UserDAO().deleteUser(15);
+    }
+
     public boolean emailExists(String email) throws SQLException {
         String sql = "SELECT COUNT(*) FROM pms.user WHERE email = ?";
         PreparedStatement statement = getConnection().prepareStatement(sql);
         statement.setString(1, email);
-        try (ResultSet rs = statement.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt(1) > 0; // Nếu kết quả trả về lớn hơn 0, nghĩa là email tồn tại
-            }
+        ResultSet rs = statement.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0; // Nếu kết quả trả về lớn hơn 0, nghĩa là email tồn tại
         }
 
         return false;
@@ -477,11 +477,6 @@ public class UserDAO extends BaseDAO {
         }
     }
 
-    public static void main(String[] args) throws SQLException {
-        System.out.println(new UserDAO().verifyLogin("admin@gmail.com", "123"));
-        System.out.println(new UserDAO().getUserByEmail("aclieu2304@gmail.com"));
-    }
-
     public User getUserByEmail(String email) throws SQLException {
         String str = "SELECT * FROM pms.user where email=? and status = 1";
         try {
@@ -557,7 +552,23 @@ public class UserDAO extends BaseDAO {
         return false;
     }
 
+    public boolean updateUserStatus(int userId, int newStatus) throws SQLException {
+        String query = "UPDATE pms.user SET status = ? WHERE id = ?";
+        try {
+            PreparedStatement stmt = getConnection().prepareStatement(query);
+            stmt.setInt(1, newStatus);
+            stmt.setInt(2, userId);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Error updating user status: " + e.getMessage());
+        }
+    }
+
     public boolean isEmailExists(String email) throws SQLException {
+
         boolean exists = false;
         String sql = "SELECT COUNT(*) FROM pms.user WHERE email = ?";
         Connection conn = getConnection();
@@ -569,5 +580,37 @@ public class UserDAO extends BaseDAO {
         }
 
         return exists;
+    }
+
+    public boolean checkMobileExists(String mobile) {
+        String sql = "SELECT COUNT(*) FROM pms.user WHERE mobile = ?";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, mobile);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // Kiểm tra số lượng bản ghi trả về
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Trả về false nếu không tìm thấy email
+    }
+
+    public List<User> searchFilter(List<User> list, Integer departmentId, Integer status, String keyword) {
+        List<User> filteredList = new ArrayList<>();
+
+        for (User user : list) {
+            boolean matchesDepartment = (departmentId == null || departmentId == 0 || user.getDepartment().getId() == departmentId);
+            boolean matchesStatus = (status == null || status == 0 || user.getStatus() == status);
+            boolean matchesKeyword = (keyword == null || keyword.isBlank() || user.getFullname().toLowerCase().contains(keyword.toLowerCase()));
+
+            if (matchesDepartment && matchesStatus && matchesKeyword) {
+                filteredList.add(user);
+            }
+        }
+
+        return filteredList;
     }
 }

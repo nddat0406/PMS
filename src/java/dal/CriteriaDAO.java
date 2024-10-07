@@ -44,7 +44,7 @@ public class CriteriaDAO extends BaseDAO {
         }
     }
 
-    public void deleteCriteriaOfPrj(int id) throws SQLException, Exception {
+    public void deleteCriteriaOfPrj(int id) throws SQLException {
         String sql = """
                      DELETE FROM `pms`.`project_criteria`
                      WHERE id=?""";
@@ -74,4 +74,21 @@ public class CriteriaDAO extends BaseDAO {
         }
     }
 
+    public Criteria getCriteria(int modalItemID) throws SQLException {
+        String str = "SELECT * FROM pms.project_criteria where id=?";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setInt(1, modalItemID);
+        ResultSet rs = pre.executeQuery();
+        rs.next();
+        Criteria temp = new Criteria();
+        temp.setId(rs.getInt(1));
+        temp.setName(rs.getString(2));
+        temp.setWeight(rs.getInt(3));
+        temp.setProject(pdao.getById(rs.getInt(4)));
+        temp.setStatus(rs.getBoolean(5));
+        temp.setDescription(rs.getString(6));
+        temp.setMilestone(mdao.getMilestoneById(rs.getInt(7)));
+
+        return temp;
+    }
 }

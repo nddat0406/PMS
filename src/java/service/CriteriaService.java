@@ -4,6 +4,7 @@
  */
 package service;
 
+import com.mysql.cj.jdbc.exceptions.NotUpdatable;
 import dal.CriteriaDAO;
 import dal.MilestoneDAO;
 import dal.ProjectDAO;
@@ -25,6 +26,7 @@ public class CriteriaService {
     private ProjectDAO pdao = new ProjectDAO();
     private CriteriaDAO cdao = new CriteriaDAO();
     private MilestoneDAO mdao = new MilestoneDAO();
+    private BaseService baseService = new BaseService();
 
     public List<Criteria> listCriteriaOfProject(int id) throws SQLException {
         try {
@@ -48,7 +50,29 @@ public class CriteriaService {
         return temp;
     }
 
-    public void flipStatus(int id) throws SQLException {
-        cdao.flipStatusCriteriaOfPrj(id);
+    public void flipStatus(int id, List<Criteria> list) throws SQLException {
+        if (baseService.objectWithIdExists(id, list)) {
+            cdao.flipStatusCriteriaOfPrj(id);
+        } else {
+            throw new SQLException("Illegal action!");
+        }
+    }
+
+    public void deleteEval(int id, List<Criteria> list) throws SQLException {
+        if (baseService.objectWithIdExists(id, list)) {
+            cdao.deleteCriteriaOfPrj(id);
+
+        } else {
+            throw new SQLException("Illegal action!");
+        }
+    }
+
+    public Criteria getCriteria(int modalItemID, List<Criteria> list) throws SQLException {
+        if (baseService.objectWithIdExists(modalItemID, list)) {
+            return cdao.getCriteria(modalItemID);
+
+        } else {
+            throw new SQLException("Illegal action!");
+        }
     }
 }
