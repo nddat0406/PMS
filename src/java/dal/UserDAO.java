@@ -384,6 +384,7 @@ public class UserDAO extends BaseDAO {
             System.out.println(e);
         }
     }
+
     public static void main(String[] args) throws SQLException {
         new UserDAO().deleteUser(15);
     }
@@ -484,7 +485,6 @@ public class UserDAO extends BaseDAO {
         }
     }
 
-
     public User getUserByEmail(String email) throws SQLException {
         String str = "SELECT * FROM pms.user where email=? and status = 1";
         try {
@@ -559,7 +559,23 @@ public class UserDAO extends BaseDAO {
         }
         return false;
     }
- 
+
+    public boolean updateUserStatus(int userId, int newStatus) throws SQLException {
+        String query = "UPDATE pms.user SET status = ? WHERE id = ?";
+        try ( PreparedStatement stmt = getConnection().prepareStatement(query)) {
+
+            stmt.setInt(1, newStatus);
+            stmt.setInt(2, userId);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Error updating user status: " + e.getMessage());
+        }
+    }
+
+    
 
     public boolean isEmailExists(String email) {
         boolean exists = false;
@@ -575,7 +591,8 @@ public class UserDAO extends BaseDAO {
         }
         return exists;
     }
-   public boolean checkMobileExists(String mobile) {
+
+    public boolean checkMobileExists(String mobile) {
         String sql = "SELECT COUNT(*) FROM pms.user WHERE mobile = ?";
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
@@ -589,5 +606,20 @@ public class UserDAO extends BaseDAO {
             e.printStackTrace();
         }
         return false; // Trả về false nếu không tìm thấy email
+    }
+   public List<User> searchFilter(List<User> list, Integer departmentId, Integer status, String keyword) {
+        List<User> filteredList = new ArrayList<>();
+
+        for (User user : list) {
+            boolean matchesDepartment = (departmentId == null || departmentId == 0 || user.getDepartment().getId() == departmentId);
+            boolean matchesStatus = (status == null || status == 0 || user.getStatus() == status);
+            boolean matchesKeyword = (keyword == null || keyword.isBlank() || user.getFullname().toLowerCase().contains(keyword.toLowerCase()));
+
+            if (matchesDepartment && matchesStatus && matchesKeyword) {
+                filteredList.add(user);
+            }
+        }
+
+        return filteredList;
     }
 }

@@ -87,13 +87,34 @@
                                                 <thead>
                                                     <tr>
                                                         <td>
-                                                            <!-- Search Form -->
-                                                            <form action="${pageContext.request.contextPath}/admin/userlist?action=search" method="POST">
-                                                            <div class="input-group mb-3" style="width: 15%">
-                                                                <input value="" class="form-control" name="keyword" placeholder="Search here..." type="text">
-                                                                <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
-                                                            </div>
-                                                        </form>
+                                                            <form action="${pageContext.request.contextPath}/admin/userlist" method="POST">
+                                                            <input type="hidden" name="action" value="search">
+
+                                                            <div class="input-group mb-3" style="width: 100%">
+                                                                <!-- Keyword Search -->
+                                                                <input value="${param.keyword}" class="form-control" name="keyword" placeholder="Search here..." type="text" style="width: 20%;">
+
+                                                                <!-- Department Filter -->
+                                                                <label for="department" class="input-group-text">Department:</label>
+                                                                <select name="departmentId" id="department" class="form-select" style="width: 15%;">
+                                                                    <option value="">All Departments</option>
+                                                                    <c:forEach items="${departments}" var="department">
+                                                                        <option value="${department.id}" <c:if test="${param.departmentId == department.id}">selected</c:if>>${department.name}</option>
+                                                                    </c:forEach>
+                                                                </select>
+
+                                                                <!-- Status Filter -->
+                                                                <label for="status" class="input-group-text">Status:</label>
+                                                                <select name="status" id="status" class="form-select" style="width: 10%;">
+                                                                    <option value="">All Status</option>
+                                                                    <option value="1" <c:if test="${param.status == '1'}">selected</c:if>>Active</option>
+                                                                    <option value="0" <c:if test="${param.status == '0'}">selected</c:if>>Inactive</option>
+                                                                    </select>
+
+                                                                    <!-- Search Button -->
+                                                                    <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
+                                                                </div>
+                                                            </form>
                                                         <c:if test="${not empty error}">
                                                             <div class="alert alert-danger">
                                                                 ${error}
@@ -163,8 +184,15 @@
                                                                             <button type="button" class="btn btn-sm btn-outline-secondary" 
                                                                                     onclick="window.location.href = '${pageContext.request.contextPath}/admin/userdetail?id=${d.id}'">
                                                                                 <i class="fa fa-edit"></i>
-                                                                            </button>
 
+                                                                            </button>
+                                                                            <form action="${pageContext.request.contextPath}/admin/userlist?action=changeStatus" method="POST">
+                                                                                <input type="hidden" name="id" value="${d.id}">
+                                                                                <input type="hidden" name="status" value="${d.status == 1 ? 0 : 1}">
+                                                                                <button type="submit" class="btn btn-sm ${d.status == 1 ? 'btn-warning' : 'btn-success'}">
+                                                                                    ${d.status == 1 ? 'Deactivate' : 'Activate'}
+                                                                                </button>
+                                                                            </form>
 
 
 
@@ -251,7 +279,7 @@
                                                                                         <option value="">-- Select Status --</option>
                                                                                         <option value="0">Active</option>
                                                                                         <option value="1">Inactive</option>
-                                                                                        
+
                                                                                     </select>
                                                                                 </div>
 
@@ -295,19 +323,20 @@
                                                         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
                                                         <script>
                                                                                         $(document).ready(function () {
-                                                                                        var extensions = {
-                                                                                        "sFilter": "dataTables_filter custom_filter_class"
-                                                                                        }
-                                                                                        $.extend($.fn.dataTableExt.oStdClasses, extensions);
-                                                                                                $('#app_user').dataTable({
-                                                                                        responsive: true,
+                                                                                            var extensions = {
+                                                                                            "sFilter": "dataTables_filter custom_filter_class"
+
+                                                                                                    $.extend($.fn.dataTableExt.oStdClasses, extensions);
+                                                                                            $('#app_user').dataTable({
+                                                                                                responsive: true
+                                                                                            });
                                                                                         });
-                                                                                        });
-                                                                                        }
+
                                                                                         );
                                                                                         document.getElementById("updateButton").onclick = function () {
                                                                                             location.href = "${pageContext.request.contextPath}/admin/userdetail"; // Đường dẫn trang bạn muốn chuyển đến
                                                                                         };
+
 
                                                         </script>
                                                         </body>

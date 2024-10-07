@@ -90,6 +90,7 @@ public class AdminController extends HttpServlet {
                         response.getWriter().print("Error retrieving user list: " + ex.getMessage());
                         return;
                     }
+
                 }
                 String sortOrder = request.getParameter("sort");
                 if ("asc".equals(sortOrder)) {
@@ -166,10 +167,8 @@ public class AdminController extends HttpServlet {
 
                     break;
 
-                case "delete":
-
-                    deleteUser(request, response, dao);
-                    request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
+                case "changeStatus":
+                    changeStatus(request, response, dao);
                     break;
 
                 default:
@@ -189,19 +188,54 @@ public class AdminController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private List<User> searchUser(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+    public List<User> searchUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
         String keyword = request.getParameter("keyword");
-        UserDAO dao = new UserDAO();
-        List<User> listUser = new ArrayList<>(); // Khởi tạo danh sách rỗng
+        String departmentIdStr = request.getParameter("departmentId");
+        String statusStr = request.getParameter("status");
 
+        UserDAO dao = new UserDAO();
+        List<User> listUser = new ArrayList<>();
+
+        // Log if the keyword is empty or null
         if (keyword == null || keyword.trim().isEmpty()) {
             Logger.getLogger(AdminController.class.getName()).log(Level.INFO, "Keyword is empty or null.");
+            request.setAttribute("data", listUser);
+            request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
+            return null;
+        }
+
+        // Convert departmentId and status if provided
+        Integer departmentId = null;
+        if (departmentIdStr != null && !departmentIdStr.trim().isEmpty()) {
+            departmentId = Integer.parseInt(departmentIdStr);
+        }
+
+        Integer status = null;
+        if (statusStr != null && !statusStr.trim().isEmpty()) {
+            status = Integer.parseInt(statusStr);
+        }
+
+        listUser = uService.findUsersByFilters(keyword, departmentId, status);
+
+        if (listUser == null) {
+            listUser = new ArrayList<>();
+        }
+        List<Group> departments;
+        try {
+            departments = uService.getAllDepartments(); // Ensure this method exists in your UserService
+            request.setAttribute("departments", departments); // Set departments in request
+        } catch (SQLException ex) {
+            Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
+            response.getWriter().print("Error retrieving departments: " + ex.getMessage());
+        }
+            
+            // Set the user list and forward to the view
+            request.setAttribute("data", listUser);
+            request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
             return listUser;
         }
 
-        listUser = dao.findByName(keyword); // Tìm kiếm người dùng theo từ khóa
-        return listUser != null ? listUser : new ArrayList<>(); // Trả về danh sách rỗng nếu không tìm thấy user
-    }
+    
 
     private void addUser(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, ServletException, IOException {
         // Lấy dữ liệu từ request
@@ -261,7 +295,7 @@ public class AdminController extends HttpServlet {
             String fullname = request.getParameter("fullname");
             String address = request.getParameter("address");
             int role = Integer.parseInt(request.getParameter("role"));
-            int status = Integer.parseInt(request.getParameter("status"));
+
             String departmentIdParam = request.getParameter("departmentId");
 
             User user = new User();
@@ -275,7 +309,7 @@ public class AdminController extends HttpServlet {
             user.setEmail(email);
             user.setFullname(fullname);
             user.setRole(role);
-            user.setStatus(status);
+
             user.setAddress(address);
             user.setDepartment(department);
 
@@ -285,17 +319,11 @@ public class AdminController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/admin/userlist");
         } catch (NumberFormatException e) {
             response.getWriter().print("Invalid number format: " + e.getMessage());
-        } catch (IOException e) {
-            Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, e);
-        }
-    }
 
-    private void deleteUser(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("userid"));
-        dao.deleteUser(id);
-        List<User> updatedListAfterDelete = dao.getAll();
-        request.setAttribute("data", updatedListAfterDelete);
-        request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
+        } catch (IOException e) {
+            Logger.getLogger(AdminController.class
+                    .getName()).log(Level.SEVERE, null, e);
+        }
     }
 
     public void pagination(HttpServletRequest request, HttpServletResponse response, List<?> list) throws ServletException, IOException, SQLException {
@@ -338,5 +366,18 @@ public class AdminController extends HttpServlet {
         UserService u = new UserService();
         list = u.getAll();
         System.out.println(list.size());
+    }
+
+    public void changeStatus(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, IOException {
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            int status = Integer.parseInt(request.getParameter("status"));
+            uService.updateUserStatus(id, status);
+            response.sendRedirect(request.getContextPath() + "/admin/userlist");
+
+        } catch (NumberFormatException e) {
+            response.getWriter().print("Invalid number format: " + e.getMessage());
+
+        }
     }
 }

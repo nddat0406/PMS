@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import static java.util.Collections.list;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -38,7 +39,6 @@ public class UserService {
         }
     }
 
-
     public void updateProfile(User user, Part part) throws Exception {
         boolean isValid = true;
 
@@ -47,8 +47,7 @@ public class UserService {
             if (!user.getEmail().matches(EMAIL_PATTERN)) {
                 errorMess += "Email pattern is not correct!";
                 isValid = false;
-            } 
-            else if (udao.checkEmailChanged(user.getEmail(), user.getId())) {
+            } else if (udao.checkEmailChanged(user.getEmail(), user.getId())) {
                 if (udao.checkEmailExists(user.getEmail())) {
                     errorMess += "Email is already taken!";
                     isValid = false;
@@ -58,7 +57,7 @@ public class UserService {
                 errorMess += "/Mobile phone is not correct!";
                 isValid = false;
             }
-            if (part != null && part.getSize()!=0) {
+            if (part != null && part.getSize() != 0) {
                 if (part.getSize() > 10485760) {
                     errorMess += "/Image size exceed 10MB!";
                     isValid = false;
@@ -120,9 +119,10 @@ public class UserService {
             throw new SQLException(e);
         }
     }
+
     public boolean verifyLogin(String email, String pass) throws SQLException {
         try {
-            return udao.verifyLogin(email,pass);
+            return udao.verifyLogin(email, pass);
         } catch (SQLException ex) {
             throw new SQLException(ex);
         }
@@ -131,7 +131,6 @@ public class UserService {
     public User getUserByEmail(String email) throws SQLException {
         return udao.getUserByEmail(email);
     }
-
 
     public void addUser(User user) throws SQLException {
         if (validateUser(user)) {
@@ -164,7 +163,6 @@ public class UserService {
 
     }
 
-
     public void deleteUser(int id) throws SQLException {
         try {
             udao.deleteUser(id);
@@ -186,34 +184,48 @@ public class UserService {
     }
 
     public Group getDepartmentById(int deptId) throws SQLException {
-            Group group = udao.getDeptId(deptId);
-            return group;
+        Group group = udao.getDeptId(deptId);
+        return group;
     }
-    public boolean resetPassword(String email, String newPassword){
+
+    public boolean resetPassword(String email, String newPassword) {
         return udao.resetPassword(email, newPassword);
     }
-    public boolean saveOtp(String email, String otp){
+
+    public boolean saveOtp(String email, String otp) {
         return udao.saveOTP(email, otp);
     }
-    public boolean createUser(String fullname, String email, String password){
+
+    public boolean createUser(String fullname, String email, String password) {
         return udao.createUser(fullname, email, password);
     }
-    public boolean isEmailExists(String email){
+
+    public boolean isEmailExists(String email) {
         return udao.checkEmailExists(email);
     }
-    public boolean isMobileExistss(String mobile){
+
+    public boolean isMobileExistss(String mobile) {
         return udao.checkMobileExists(mobile);
     }
+
     public <T> List<T> getListByPages(List<T> list, int start, int end) {
-    // Kiểm tra xem start và end có nằm trong phạm vi hợp lệ không
-    List<T> arr = new ArrayList<>();
-    if (start >= 0 && start < list.size() && end > start) {
-        for (int i = start; i < end && i < list.size(); i++) {
-            arr.add(list.get(i));
+        // Kiểm tra xem start và end có nằm trong phạm vi hợp lệ không
+        List<T> arr = new ArrayList<>();
+        if (start >= 0 && start < list.size() && end > start) {
+            for (int i = start; i < end && i < list.size(); i++) {
+                arr.add(list.get(i));
+            }
         }
+        return arr;
     }
-    return arr;
+
+    public boolean updateUserStatus(int id, int status) throws SQLException {
+        return udao.updateUserStatus(id, status);
+    }
+
+    public List<User> findUsersByFilters(String keyword, Integer departmentId, Integer status) throws SQLException {
+    List<User> allUsers = udao.getAll(); // Get all users from the database
+    return udao.searchFilter(allUsers, departmentId, status, keyword); // Filter users
 }
 
 }
-

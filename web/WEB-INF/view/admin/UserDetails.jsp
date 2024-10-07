@@ -111,7 +111,7 @@
                                                 </select>
                                             </div>
 
-                                            <!-- Status -->
+<!--                                             Status 
                                             <div class="col-md-4 col-sm-12">
                                                 <label for="status">Status:</label>
                                                 <select class="form-control" id="status" name="status" required>
@@ -120,7 +120,7 @@
                                                 <option value="0" <c:if test="${requestScope.updateUser.status == 1}">selected</c:if>>Inactive</option>
                                                 
                                                 </select>
-                                            </div>
+                                            </div>-->
 
                                             <!-- Department (select dropdown) -->
                                             <div class="col-md-4 col-sm-12">
