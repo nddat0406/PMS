@@ -118,14 +118,11 @@ public class UserDAO extends BaseDAO {
             // Lưu mã OTP vào cơ sở dữ liệu
             String updateOtpSql = "UPDATE pms.user SET otp = ?, otp_expiry = ? WHERE email = ?";
             Date otpExpiry = new Date(System.currentTimeMillis() + (5 * 60 * 1000)); // 5 phút
-
-            try (PreparedStatement otpPs = getConnection().prepareStatement(updateOtpSql)) {
-                otpPs.setString(1, otp);
-                otpPs.setTimestamp(2, new java.sql.Timestamp(otpExpiry.getTime()));
-                otpPs.setString(3, email);
-                otpPs.executeUpdate();
-            }
-
+            PreparedStatement otpPs = getConnection().prepareStatement(updateOtpSql);
+            otpPs.setString(1, otp);
+            otpPs.setTimestamp(2, new java.sql.Timestamp(otpExpiry.getTime()));
+            otpPs.setString(3, email);
+            otpPs.executeUpdate();
             return email; // Trả về email để sử dụng trong xác thực OTP
         } catch (SQLException e) {
             e.printStackTrace();
@@ -375,8 +372,14 @@ public class UserDAO extends BaseDAO {
 
     public void deleteUser(int id) throws SQLException {
         String sql = "DELETE FROM `pms`.`user`"
+<<<<<<< HEAD
                 + "WHERE id=?";
         try (PreparedStatement st = getConnection().prepareStatement(sql)) {
+=======
+                + "WHERE id=?;";
+        try {
+            PreparedStatement st = getConnection().prepareStatement(sql);
+>>>>>>> 312e4120b85284e040c04cba279be326dfc39361
             st.setInt(1, id);
 
             st.executeUpdate();
@@ -391,15 +394,14 @@ public class UserDAO extends BaseDAO {
 
     public boolean emailExists(String email) throws SQLException {
         String sql = "SELECT COUNT(*) FROM pms.user WHERE email = ?";
-        try (
-                PreparedStatement statement = getConnection().prepareStatement(sql)) {
-            statement.setString(1, email);
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0; // Nếu kết quả trả về lớn hơn 0, nghĩa là email tồn tại
-                }
+        PreparedStatement statement = getConnection().prepareStatement(sql);
+        statement.setString(1, email);
+        try (ResultSet rs = statement.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Nếu kết quả trả về lớn hơn 0, nghĩa là email tồn tại
             }
         }
+
         return false;
     }
 
@@ -485,6 +487,14 @@ public class UserDAO extends BaseDAO {
         }
     }
 
+<<<<<<< HEAD
+=======
+    public static void main(String[] args) throws SQLException {
+        System.out.println(new UserDAO().verifyLogin("admin@gmail.com", "123"));
+        System.out.println(new UserDAO().getUserByEmail("aclieu2304@gmail.com"));
+    }
+
+>>>>>>> 312e4120b85284e040c04cba279be326dfc39361
     public User getUserByEmail(String email) throws SQLException {
         String str = "SELECT * FROM pms.user where email=? and status = 1";
         try {
@@ -560,6 +570,7 @@ public class UserDAO extends BaseDAO {
         return false;
     }
 
+<<<<<<< HEAD
     public boolean updateUserStatus(int userId, int newStatus) throws SQLException {
         String query = "UPDATE pms.user SET status = ? WHERE id = ?";
         try ( PreparedStatement stmt = getConnection().prepareStatement(query)) {
@@ -578,17 +589,19 @@ public class UserDAO extends BaseDAO {
     
 
     public boolean isEmailExists(String email) {
+=======
+    public boolean isEmailExists(String email) throws SQLException {
+>>>>>>> 312e4120b85284e040c04cba279be326dfc39361
         boolean exists = false;
         String sql = "SELECT COUNT(*) FROM pms.user WHERE email = ?";
-        try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, email);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                exists = rs.getInt(1) > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Connection conn = getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, email);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            exists = rs.getInt(1) > 0;
         }
+
         return exists;
     }
 

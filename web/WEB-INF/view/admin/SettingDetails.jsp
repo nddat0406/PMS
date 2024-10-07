@@ -62,7 +62,7 @@
                                     <ul class="list-unstyled basic-list mb-0">
                                         <li class="d-flex justify-content-between">Status:                   
                                             <c:choose>
-                                                <c:when test="${settingDetail.status == 1}">
+                                                <c:when test="${settings.status == true}">
                                                     <span class="badge bg-success">Active</span>
                                                 </c:when>
                                                 <c:otherwise>
@@ -82,42 +82,42 @@
                                 </div>
                                 <div class="card-body">
                                     <form action="settings" method="post">
-                                        <input type="hidden" name="action" value="${settingDetail != null ? 'update' : 'add'}">
-                                        <input type="hidden" name="id" value="${settingDetail != null ? settingDetail.id : ''}">
+                                        <input type="hidden" name="action" value="${settings != null ? 'update' : 'add'}">
+                                        <input type="hidden" name="id" value="${settings != null ? settings.id : ''}">
                                         
                                         <div class="mb-3">
                                             <label for="name" class="form-label">Name</label>
-                                            <input type="text" class="form-control" name="name" id="name" value="${settingDetail != null ? settingDetail.name : ''}" required>
+                                            <input type="text" class="form-control" name="name" id="name" value="${settings != null ? settings.name : ''}" required>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="type" class="form-label">Type</label>
                                             <select name="type" id="type" class="form-control" required>
-                                                <option value="1" ${settingDetail.type == 1 ? 'selected' : ''}>Type 1</option>
-                                                <option value="2" ${settingDetail.type == 2 ? 'selected' : ''}>Type 2</option>
-                                                <option value="3" ${settingDetail.type == 3 ? 'selected' : ''}>Type 3</option>
+                                                <option value="1" ${settings.type == 1 ? 'selected' : ''}>Type 1</option>
+                                                <option value="2" ${settings.type == 2 ? 'selected' : ''}>Type 2</option>
+                                                <option value="3" ${settings.type == 3 ? 'selected' : ''}>Type 3</option>
                                             </select>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="priority" class="form-label">Priority</label>
-                                            <input type="number" class="form-control" name="priority" id="priority" value="${settingDetail != null ? settingDetail.priority : 0}" required>
+                                            <input type="number" class="form-control" name="priority" id="priority" required>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="status" class="form-label">Status</label>
                                             <select name="status" id="status" class="form-control">
-                                                <option value="1" ${settingDetail.status == 1 ? 'selected' : ''}>Active</option>
-                                                <option value="0" ${settingDetail.status == 0 ? 'selected' : ''}>Inactive</option>
+                                                <option value="1" ${settings.status == true ? 'selected' : ''}>Active</option>
+                                                <option value="0" ${settings.status == false ? 'selected' : ''}>Inactive</option>
                                             </select>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="description" class="form-label">Description</label>
-                                            <textarea class="form-control" name="description" id="description" rows="3">${settingDetail != null ? settingDetail.description : ''}</textarea>
+                                            <textarea class="form-control" name="description" id="description" rows="3">${settings != null ? settings.description : ''}</textarea>
                                         </div>
 
-                                        <button type="submit" class="btn btn-primary">${settingDetail != null ? 'Update Setting' : 'Add Setting'}</button>
+                                        <button type="submit" class="btn btn-primary">${settings != null ? 'Update Setting' : 'Add Setting'}</button>
                                     </form>
                                 </div>
                             </div>

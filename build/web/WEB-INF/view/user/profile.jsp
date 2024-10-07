@@ -66,7 +66,7 @@
                                                 <div class="profile-image mb-3"><img src="${profile.image}" class="rounded-circle" alt="" style="height: 150px;width: 150px"> </div>
                                                 <div>
                                                     <h4 class=""><strong>${profile.fullname}</strong></h4>
-                                                    <span>${sessionScope.role}</span>
+                                                    <span>${sessionScope.loginedUser.role==1?'Admin':'Member'}</span>
                                                 </div>
 
                                             </div>
@@ -103,25 +103,26 @@
                                                 <div class="card-body">
                                                     <form action="profile" method="post" enctype="multipart/form-data">
                                                         <h6 class="card-title">Basic Information</h6>
+                                                        <c:set value="${oldInfor==null?profile:oldInfor}" var="p"></c:set>
                                                         <div class="row" style="margin-top: 10px">
                                                             <div class="col-lg-12 col-md-12">
                                                                 <div class="mb-3">
                                                                     <label>Fullname*: </label>
-                                                                    <input type="text" class="form-control" required name="fullname" placeholder="Full Name" value="${profile.fullname}">
+                                                                    <input type="text" class="form-control" required name="fullname" placeholder="Full Name" value="${p.fullname}">
                                                                 </div>
                                                                 <div class="mb-3">
                                                                     <label>Email*: </label>
-                                                                    <input type="email" class="form-control" required name="email" placeholder="Email" value="${profile.email}">
+                                                                    <input type="email" class="form-control" required name="email" placeholder="Email" value="${p.email}">
                                                                 </div>
                                                                 <div class="mb-3">
                                                                     <label>Gender*: </label>
                                                                     <div>
                                                                         <label class="fancy-radio">
-                                                                            <input name="gender" value="male" type="radio" ${profile.gender?'checked':''}>
+                                                                            <input name="gender" value="male" type="radio" ${p.gender?'checked':''}>
                                                                             <span><i></i>Male</span>
                                                                         </label>
                                                                         <label class="fancy-radio">
-                                                                            <input name="gender" value="female" type="radio" ${profile.gender?'':'checked'}>
+                                                                            <input name="gender" value="female" type="radio" ${p.gender?'':'checked'}>
                                                                             <span><i></i>Female</span>
                                                                         </label>
                                                                     </div>
@@ -129,17 +130,17 @@
                                                                 <div class="mb-3">
                                                                     <label>Address: </label>
                                                                     <input type="text" class="form-control" name="address"
-                                                                           placeholder="Address" value="${profile.address}">
+                                                                           placeholder="Address" value="${p.address}">
                                                                 </div>
                                                                 <div class="mb-3">
                                                                     <label>Phone Number: </label>
                                                                     <input type="text" class="form-control" name="mobile"
-                                                                           placeholder="Phone Number" value="${profile.mobile}">
+                                                                           placeholder="Phone Number" value="${p.mobile}">
                                                                 </div>
                                                                 <div class="mb-3">
                                                                     <label class="form-label">Birth Date:</label>
                                                                     <div class="input-group date" data-date-autoclose="true" data-provide="datepicker">
-                                                                        <input type="text" name="birthdate"  class="form-control" value="${profile.getBirthdateString()}"/>
+                                                                        <input type="text" name="birthdate"  class="form-control" value="${p.getBirthdateString()}"/>
                                                                         <div class="input-group-append">
                                                                             <button class="btn btn-outline-secondary" type="button"><i class="fa fa-calendar"></i></button>
                                                                         </div>
@@ -179,13 +180,13 @@
                                                             <div class="col-lg-12 col-md-12">
                                                                 <h6 class="card-title">Change Password</h6><br>
                                                                 <div class="mb-3">
-                                                                    <input type="password" required class="form-control" name="oldPass" placeholder="Current Password*">
+                                                                    <input type="password" required class="form-control" name="oldPass" placeholder="Current Password*" value="${oldPass}">
                                                                 </div>
                                                                 <div class="mb-3">
-                                                                    <input type="password" required class="form-control" name="newPass" placeholder="New Password*">
+                                                                    <input type="password" required class="form-control" name="newPass" placeholder="New Password*" value="${newPass}">
                                                                 </div>
                                                                 <div class="mb-3">
-                                                                    <input type="password" required class="form-control" name="reNewPass" placeholder="Confirm New Password*">
+                                                                    <input type="password" required class="form-control" name="reNewPass" placeholder="Confirm New Password*" value="${newRePass}">
                                                                 </div>
                                                             </div>
                                                             <c:if test="${errorPass != null}">
