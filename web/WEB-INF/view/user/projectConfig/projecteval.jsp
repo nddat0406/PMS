@@ -25,12 +25,18 @@
             .content-wrapper {
                 max-height: 50px; /* Define the height for the collapsed state */
                 overflow: hidden; /* Hide the overflow */
-                transition: max-height 0.4s ease-in-out; /* Smooth ease-in-out transition */
+                transition-timing-function: ease-in;
+                /* Quick on the way out */
+                transition: 0.25s;
                 position: relative;
             }
 
             /* When expanded, make the max height very large to reveal all content */
             .content-wrapper.expanded {
+                /* This timing applies on the way IN */
+                transition-timing-function: ease-out;
+                /* A litttttle slower on the way in */
+                transition: 0.5s;
                 max-height: 1000px; /* Can be any large value to show the full text */
             }
 
@@ -43,6 +49,9 @@
                 right: 0;
                 height: 10px; /* Height of the gradient */
                 background: linear-gradient(to bottom, transparent,); /* Gradient fading to white */
+                transition-timing-function: ease-out;
+                /* A litttttle slower on the way in */
+                transition: 0.5s;
                 display: block;
             }
 
@@ -110,7 +119,7 @@
                                                         <h6 class="card-title">Evaluation Criteria</h6>
                                                         <ul class="header-dropdown">
                                                             <li>
-                                                                <a href="eval/add" class="btn btn-sm btn-outline-secondary" >Add New</a>
+                                                                <a href="eval?action=add" class="btn btn-sm btn-outline-secondary" >Add New</a>
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -179,7 +188,7 @@
                                                                     </td>
 
                                                                     <td style="width: 200px">
-                                                                        <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#updateCriteria"><i class="fa fa-pencil" ></i></a>
+                                                                        <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#updateCriteria" onclick="getModal(${i.id})"><i class="fa fa-pencil" ></i></a>
                                                                         <a href="javascript:void(0);" class="btn btn-sm btn-outline-danger" onclick="deleteStatus(${i.id})"><i class="fa fa-trash"></i></a>
                                                                     </td>
                                                                     <td style="width: 150px" class="statusCell" onclick="changeStatus(${i.id})" id="status${i.id}">
@@ -225,14 +234,13 @@
             <div class="modal fade" id="updateCriteria" tabindex="-1" aria-labelledby="updateCriteria" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
-                        <form action="eval/update">
+                        <form action="eval" method="post">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="defaultModalLabel">Update Criteria</h5>
                             </div>
                             <div class="modal-body">
                                 <div class="row g-2">
-
-
+                                    <input type="text" name="action" hidden value="update">
                                     <div class="col-md-12">
                                         <label>ID:</label>
                                         <input type="text" class="form-control" placeholder="ID" name="uID" readonly value="${modalItem.id}">
@@ -255,12 +263,12 @@
                                         </select>
                                     </div>
                                     <div class="col-md-12">
-                                        <textarea id="id" class="form-control" name="name" rows="8" cols="60">${modalItem.description}</textarea>
+                                        <textarea id="id" class="form-control" name="uDescript" rows="8" cols="60">${modalItem.description}</textarea>
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary">Add</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                             </div>
                         </form>
@@ -329,7 +337,10 @@
                                                                             });
                                                                         }
                                                                         ;
-
+                                                                        function getModal(id) {
+                                                                            $(' #updateCriteria').load("${pageContext.request.contextPath}/project/eval?page=${page}&modalItemID=" + id + " #updateCriteria > *");
+                                                                        }
+                                                                        ;
         </script>
     </body>
 </html>

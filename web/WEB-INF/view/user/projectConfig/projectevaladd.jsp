@@ -17,6 +17,10 @@
         <!-- MAIN CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/sweetalert2.min.css">
+
+
+
     </head>
 
     <body>
@@ -58,79 +62,63 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="tab-content p-0" id="myTabContent">
-                                        <div class="tab-pane fade active show" id="Tab2">
-                                            
+                                    <div class="tab-content p-0 " id="myTabContent">
+                                        <div class="tab-pane fade active show" id="Tab2" style="display: flex;justify-content: center">
+                                            <div class="col-lg-10 col-md-10 ">
+                                                <div class="card">
+                                                    <div class="card-header display-4" >
+                                                        <a href="javascript:history.go(-1)" class="btn btn-sm btn-link ps-0"><i class="fa fa-arrow-left"></i>
+                                                            <span>Go Back</span></a>
+                                                        <span><h3 class="card-title">Add Evaluation Criteria</h3></span>
+                                                    </div>
+                                                    <div class="card-body" id="cardbody">
+                                                        <form action="eval" method="post">
+                                                            <div class="row g-2">
+                                                                <input type="text" name="action" hidden value="add">
+                                                            <div class="col-md-6">
+                                                                <label>ID:</label>
+                                                                <input type="text" class="form-control" placeholder="ID" name="ID" readonly value="${oldItem.id}">
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label>Name*:</label>
+                                                                <input type="text" class="form-control" placeholder="Name" name="Name" value="${oldItem.name}">
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label>Weight:</label>
+                                                                <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="Weight" value="${oldItem.weight}">
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label>Milestone</label>
+                                                                <select name="Milestone" class="form-select">
+                                                                    <c:forEach items="${msList}" var="m">
+                                                                        <option value="${m.id}" ${oldItem.milestone.id==m.id?'selected':''}>${m.name}</option>
+                                                                    </c:forEach>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <label>Description:</label>
+                                                                <textarea id="id" class="form-control" name="uDescript" rows="8" cols="60">${oldItem.description}</textarea>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-                                                        
         </div>
+
         <!-- core js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/sweetalert2.bundle.js"></script>
 
         <!-- page js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-
-        <script>
-
-                                                                        $readMoreBtn = $(' .read-more-btn');
-                                                                        $readMoreBtn.on('click', function () {
-                                                                            $contentWrapper = $(this).parent().find(' .content-wrapper');
-                                                                            // Toggle the "expanded" class on the content wrapper
-                                                                            $contentWrapper.toggleClass('expanded');
-                                                                            // Toggle the button text between "Read More" and "Read Less"
-                                                                            if ($contentWrapper.hasClass('expanded')) {
-                                                                                $(this).text('Read Less');
-                                                                            } else {
-                                                                                $(this).text('Read More');
-                                                                            }
-                                                                        });
-                                                                        function changeStatus(id) {
-                                                                            $.ajax({
-                                                                                url: "eval",
-                                                                                type: 'post',
-                                                                                data: {
-                                                                                    criteriaId: id,
-                                                                                    action: "changeStatus"
-                                                                                },
-                                                                                success: function () {
-                                                                                    $(' #status' + id).load("${pageContext.request.contextPath}/project/eval?page=${page} #status" + id + " > *");
-                                                                                }
-                                                                            });
-                                                                        }
-                                                                        ;
-                                                                        function deleteStatus(id) {
-                                                                            Swal.fire({
-                                                                                title: "Do you want to delete criteria with id="+id+" ?",
-                                                                                showCancelButton: true,
-                                                                                confirmButtonText: "Delete",
-                                                                                confirmButtonColor: "#FC5A69"
-                                                                            }).then((result) => {
-                                                                                /* Read more about isConfirmed, isDenied below */
-                                                                                if (result.isConfirmed) {
-                                                                                    $.ajax({
-                                                                                        url: "eval",
-                                                                                        type: 'post',
-                                                                                        data: {
-                                                                                            criteriaId: id,
-                                                                                            action: "delete"
-                                                                                        },
-                                                                                        success: function () {
-                                                                                            Swal.fire("Deleted!", "", "success");
-                                                                                            $(' .tableBody').load("${pageContext.request.contextPath}/project/eval?page=${page} .tableBody > *");
-                                                                                        }
-                                                                                    });
-                                                                                }
-                                                                            });
-                                                                        }
-                                                                        ;
-
-        </script>
     </body>
 </html>

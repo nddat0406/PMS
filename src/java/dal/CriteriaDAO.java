@@ -64,14 +64,10 @@ public class CriteriaDAO extends BaseDAO {
                      SET
                      `status` = status ^ 1
                      WHERE `id` = ?""";
-        try {
-            PreparedStatement st = getConnection().prepareStatement(sql);
-            st.setInt(1, id);
+        PreparedStatement st = getConnection().prepareStatement(sql);
+        st.setInt(1, id);
+        st.executeUpdate();
 
-            st.executeUpdate();
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        }
     }
 
     public Criteria getCriteria(int modalItemID) throws SQLException {
@@ -88,7 +84,46 @@ public class CriteriaDAO extends BaseDAO {
         temp.setStatus(rs.getBoolean(5));
         temp.setDescription(rs.getString(6));
         temp.setMilestone(mdao.getMilestoneById(rs.getInt(7)));
-
         return temp;
+    }
+
+    public void updateCriteriaProject(Criteria c) throws SQLException {
+
+        String str = """
+                     UPDATE `pms`.`project_criteria`
+                     SET
+                     `name` = ?,
+                     `weight` = ?,
+                     `projectId` =?,
+                     `description` = ?,
+                     `milestoneId` = ?
+                     WHERE `id` =?;""";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setString(1, c.getName());
+        pre.setInt(2, c.getWeight());
+        pre.setInt(3, c.getProject().getId());
+        pre.setString(4, c.getDescription());
+        pre.setInt(5, c.getMilestone().getId());
+        pre.setInt(6, c.getId());
+        pre.executeUpdate();
+    }
+    public void addCriteriaProject(Criteria c) throws SQLException {
+
+        String str = """
+                     insert `pms`.`project_criteria`
+                     SET
+                     `name` = ?,
+                     `weight` = ?,
+                     `projectId` =?,
+                     `description` = ?,
+                     `milestoneId` = ?""";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setString(1, c.getName());
+        pre.setInt(2, c.getWeight());
+        pre.setInt(3, c.getProject().getId());
+        pre.setString(4, c.getDescription());
+        pre.setInt(5, c.getMilestone().getId());
+        pre.setInt(6, c.getId());
+        pre.executeUpdate();
     }
 }
