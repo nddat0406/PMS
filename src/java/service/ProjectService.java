@@ -17,6 +17,7 @@ import model.Allocation;
 import model.Criteria;
 import model.Milestone;
 import model.Project;
+import model.User;
 import static service.BaseService.*;
 
 /**
@@ -28,7 +29,7 @@ public class ProjectService {
     private UserDAO udao = new UserDAO();
     private ProjectDAO pdao = new ProjectDAO();
     private CriteriaDAO cdao = new CriteriaDAO();
-    private MilestoneDAO mdao =new MilestoneDAO();
+    private MilestoneDAO mdao = new MilestoneDAO();
 
     public List<Allocation> getByUser(int id, int role) throws SQLException {
         try {
@@ -55,6 +56,11 @@ public class ProjectService {
             }
         }
         return pList;
+    }
+
+    public List<User> getProjectMembers(int pID) throws SQLException {
+        return pdao.getAllUser(pID);
+
     }
 
 }

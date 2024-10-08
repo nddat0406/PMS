@@ -80,6 +80,12 @@
                 width: 10px;
                 height: 20px;
             }
+            .nameTd{
+                display: flex;
+            }
+            .nameTd img{
+                margin: 0px 15px;
+            }
         </style>
     </head>
 
@@ -116,8 +122,8 @@
                                         <div class="card-body">
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                                 <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Overview-tab" href="milestone" role="tab">Milestone</a></li>
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link active" id="Settings-tab " href="eval" role="tab">Evaluation criteria</a></li>
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab" href="member" role="tab">Member</a></li>
+                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab " href="eval" role="tab">Evaluation criteria</a></li>
+                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link active" id="Settings-tab" href="member" role="tab">Member</a></li>
                                                 <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab" href="team" role="tab">Team</a></li>
                                             </ul>
                                         </div>
@@ -127,24 +133,17 @@
                                             <div class="col-lg-12 col-md-12">
                                                 <div class="card">
                                                     <div class="card-header">
-                                                        <h6 class="card-title">Evaluation Criteria</h6>
-                                                    <c:if test="${loginedUser.role!=2}">
+                                                        <h6 class="card-title">Project Member</h6>
 
-                                                        <ul class="header-dropdown">
-                                                            <li>
-                                                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addCriteria">Add New</button>
-                                                            </li>
-                                                        </ul>
-                                                    </c:if>
-                                                </div>
-                                                <div class="card-body" id="cardbody">
-                                                    <form action="eval" method="post">
-                                                        <input hidden type="text" value="filter" name="action">
-                                                        <div style="display: flex; justify-content: space-evenly">
-                                                            <div class="input-group mb-3" style="width: 25%">
-                                                                <span class="input-group-text" id="basic-addon11">Milestone</span>
-                                                                <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter" onchange="ChangeFilter()">
-                                                                    <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
+                                                    </div>
+                                                    <div class="card-body" id="cardbody">
+                                                        <form action="member" method="post">
+                                                            <input hidden type="text" value="filter" name="action">
+                                                            <div style="display: flex; justify-content: space-evenly">
+                                                                <div class="input-group mb-3" style="width: 25%">
+                                                                    <span class="input-group-text" id="basic-addon11">Milestone</span>
+                                                                    <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter" onchange="ChangeFilter()">
+                                                                        <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
                                                                     <c:forEach items="${msList}" var="m">
                                                                         <option value="${m.id}" ${milestoneFilter==m.id?'selected':''}>${m.name}</option>
                                                                     </c:forEach>
@@ -169,43 +168,35 @@
                                                         <thead id="tableHead">
                                                             <tr>
                                                                 <th name="id" sortBy="desc" class="sortTableHead">id&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="name" sortBy="desc" class="sortTableHead">Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="weight" sortBy="desc" class="sortTableHead">weight&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="milestone.name" sortBy="desc" class="sortTableHead">milestone&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th>description</th>
+                                                                <th name="name" sortBy="desc" class="sortTableHead" >Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="weight" sortBy="desc" class="sortTableHead">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="milestone.name" sortBy="desc" class="sortTableHead">team&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th>department</th>
                                                                     <c:if test="${loginedUser.role!=2}">
                                                                     <th>action</th>
                                                                     </c:if>
                                                                 <th>status</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody class="table-hover tableBody" >
+                                                        <tbody class="table-hover tableBody">
                                                             <c:forEach items="${tableData}" var="i">
                                                                 <tr>
-                                                                    <td>
-                                                                        <span>${i.id}</span>
+                                                                    <td class="width45">
+                                                                        ${i.id}
                                                                     </td>
-                                                                    <td>
-                                                                        ${i.name}
-                                                                    </td>
-                                                                    <td>
-                                                                        ${i.weight} %
-                                                                    </td>
-                                                                    <td style="width: 200px">
-                                                                        ${i.milestone.name}
-                                                                    </td>
-                                                                    <td style="width: 400px">
-                                                                        <div class="content-wrapper" id="contentWrapper">
-                                                                            <p>
-                                                                                ${i.description}
-                                                                            </p>
+                                                                    <td class="nameTd">
+                                                                        <img src="${i.image}" class="rounded-circle" style="width: 50px; height: 50px" alt="user picture">
+                                                                        <div><h6 class="mb-0">${i.fullname}</h6>
+                                                                            <span>${i.email}</span>
                                                                         </div>
-                                                                        <span class="read-more-btn" id="readMoreBtn">Read More</span>
+
                                                                     </td>
+                                                                    <td><span class="badge bg-danger">${i.role}</span></td>
+                                                                    <td>24 Jun, 2015</td>
+                                                                    <td>CEO and Founder</td>
                                                                     <c:if test="${loginedUser.role!=2}">
-                                                                        <td style="width: 200px">
-                                                                            <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#updateCriteria" onclick="getModal(${i.id})"><i class="fa fa-pencil" ></i></a>
-                                                                            <a href="javascript:void(0);" class="btn btn-sm btn-outline-danger" onclick="deleteStatus(${i.id})"><i class="fa fa-trash"></i></a>
+                                                                        <td>
+                                                                            aaa
                                                                         </td>
                                                                     </c:if>
                                                                     <c:if test="${loginedUser.role!=2}">
@@ -215,10 +206,10 @@
                                                                         <td style="width: 150px" class="statusCell">
                                                                         </c:if>
                                                                         <c:choose >
-                                                                            <c:when test="${i.status==true}">
+                                                                            <c:when test="${i.isStatus()==true}">
                                                                                 <span class="badge bg-success">Active</span><br>
                                                                             </c:when>
-                                                                            <c:when test="${i.status==false}">
+                                                                            <c:when test="${i.isStatus()==false}">
                                                                                 <span class="badge bg-secondary">Inactive</span><br>
                                                                             </c:when>
                                                                         </c:choose>
@@ -251,93 +242,6 @@
                     </div>
                 </div>
             </div>
-            <c:if test="${loginedUser.role!=2}">
-
-                <div class="modal fade" id="updateCriteria" tabindex="-1" aria-labelledby="updateCriteria" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form action="eval" method="post">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="defaultModalLabel">Update Criteria</h5>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row g-2">
-                                        <input type="text" name="action" hidden value="update">
-                                        <div class="col-md-12">
-                                            <label>ID:</label>
-                                            <input type="text" class="form-control" placeholder="ID" name="uID" readonly value="${modalItem.id}">
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label>Name*:</label>
-
-                                            <input type="text" class="form-control" placeholder="Name" name="uName" value="${modalItem.name}">
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label>Weight:</label>
-                                            <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="uWeight" value="${modalItem.weight}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label>Milestone</label>
-                                            <select name="uMilestone" class="form-select">
-                                                <c:forEach items="${msList}" var="m">
-                                                    <option value="${m.id}" ${modalItem.milestone.id==m.id?'selected':''}>${m.name}</option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <textarea id="id" class="form-control" name="uDescript" rows="8" cols="60">${modalItem.description}</textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Save</button>
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal fade" id="addCriteria" tabindex="-1" aria-labelledby="addCriteria" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="defaultModalLabel">Add Criteria</h5>
-                            </div>
-                            <form action="eval" method="post">
-                                <div class="modal-body">
-                                    <div class="row g-2">
-                                        <input type="text" name="action" hidden value="add">
-                                        <div class="col-md-6">
-                                            <label>Name*:</label>
-                                            <input type="text" class="form-control" placeholder="Name" name="Name" value="${oldItem.name}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label>Weight:</label>
-                                            <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="Weight" value="${oldItem.weight}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label>Milestone</label>
-                                            <select name="Milestone" class="form-select">
-                                                <c:forEach items="${msList}" var="m">
-                                                    <option value="${m.id}" ${oldItem.milestone.id==m.id?'selected':''}>${m.name}</option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label>Description:</label>
-                                            <textarea id="id" class="form-control" name="Descript" rows="8" cols="60">${oldItem.description}</textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Add</button>
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </c:if>
         </div>
 
         <!-- core js file -->
@@ -348,13 +252,13 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
         <c:if test="${requestScope.successMess!=null}">
             <script>
-                                                                            Swal.fire({
-                                                                                position: 'top-end',
-                                                                                icon: 'success',
-                                                                                title: '${successMess}',
-                                                                                showConfirmButton: false,
-                                                                                timer: 1500
-                                                                            });
+                                                                        Swal.fire({
+                                                                            position: 'top-end',
+                                                                            icon: 'success',
+                                                                            title: '${successMess}',
+                                                                            showConfirmButton: false,
+                                                                            timer: 1500
+                                                                        });
             </script>
         </c:if>
         <c:if test="${requestScope.errorMess!=null}">
@@ -404,7 +308,21 @@
                     $(this).text('Read More');
                 }
             });
+
+            $readMoreBtn = $(' .read-more-btn');
+            $readMoreBtn.on('click', function () {
+                $contentWrapper = $(this).parent().find(' .content-wrapper');
+                // Toggle the "expanded" class on the content wrapper
+                $contentWrapper.toggleClass('expanded');
+                // Toggle the button text between "Read More" and "Read Less"
+                if ($contentWrapper.hasClass('expanded')) {
+                    $(this).text('Read Less');
+                } else {
+                    $(this).text('Read More');
+                }
+            });
             <c:if test="${loginedUser.role!=2}">
+
             function changeStatus(id) {
                 $.ajax({
                     url: "eval",

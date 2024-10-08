@@ -213,7 +213,7 @@
                                                         </td>
                                                         <td>${p.startDate}</td>
                                                         <td>
-                                                            <a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#largeModal${p.id}">
+                                                            <a href="project/milestone?projectId=${p.id}" class="btn" >
                                                                 <strong>Project Detail</strong>
                                                             </a>
                                                         </td>
@@ -221,7 +221,7 @@
                                                 </c:forEach>
                                             </tbody>
                                         </table>
-                                        <c:if test="${searchSize==0}">
+                                        <c:if test="${empty tableData}">
                                             <div class="card-body text-center">
                                                 <h4>No result found!</h4>
                                             </div>

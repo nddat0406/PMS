@@ -25,7 +25,7 @@ public class ProjectDAO extends BaseDAO {
 
     private GroupDAO gdao = new GroupDAO();
     private UserDAO udao = new UserDAO();
-    private MilestoneDAO mdao= new MilestoneDAO();
+    private MilestoneDAO mdao = new MilestoneDAO();
 
     public List<Allocation> getAllInAllocation() throws SQLException {
         String str = "select * from project";
@@ -143,5 +143,32 @@ public class ProjectDAO extends BaseDAO {
         }
     }
 
+    public List<User> getAllUser(int id) throws SQLException {
+        String str = "select u.* from allocation a join user u on u.id = a.userId where a.projectId = ?";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setInt(1, id);
+        ResultSet rs = pre.executeQuery();
+
+        List<User> userList = new ArrayList<>();
+        while (rs.next()) {
+            User user = new User();
+            user.setId(rs.getInt(1));
+            user.setEmail(rs.getString(2));
+            user.setFullname(rs.getString(3));
+            user.setMobile(rs.getString(4));
+            user.setPassword(rs.getString(5));
+            user.setNote(rs.getString(6));
+            user.setRole(rs.getInt(7));
+            user.setStatus(rs.getInt(8));
+            user.setDepartment(new Group(gdao.getDeptNameById(rs.getInt(9))));
+            user.setImage(rs.getString(10));
+            user.setAddress(rs.getString(11));
+            user.setGender(rs.getBoolean(12));
+            user.setBirthdate(rs.getDate(13));
+            userList.add(user);
+        }
+        return userList;
+
+    }
 
 }

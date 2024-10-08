@@ -106,6 +106,14 @@ public class BaseService {
             return 0;
         }
     }
+    public Integer TryParseInteger(Integer i) {
+
+        if(i==null){
+            return 0;
+        }else{
+            return i;
+        }
+    }
 
     public boolean TryParseBoolean(String someText) {
         if (someText.equals("1") || someText.equals("true")) {
