@@ -559,8 +559,8 @@ public class UserDAO extends BaseDAO {
 
     public boolean updateUserStatus(int userId, int newStatus) throws SQLException {
         String query = "UPDATE pms.user SET status = ? WHERE id = ?";
-        try ( PreparedStatement stmt = getConnection().prepareStatement(query)) {
-
+        try {
+            PreparedStatement stmt = getConnection().prepareStatement(query);
             stmt.setInt(1, newStatus);
             stmt.setInt(2, userId);
 
@@ -571,8 +571,6 @@ public class UserDAO extends BaseDAO {
             throw new SQLException("Error updating user status: " + e.getMessage());
         }
     }
-
-    
 
     public boolean isEmailExists(String email) throws SQLException {
 
@@ -604,7 +602,8 @@ public class UserDAO extends BaseDAO {
         }
         return false; // Trả về false nếu không tìm thấy email
     }
-   public List<User> searchFilter(List<User> list, Integer departmentId, Integer status, String keyword) {
+
+    public List<User> searchFilter(List<User> list, Integer departmentId, Integer status, String keyword) {
         List<User> filteredList = new ArrayList<>();
 
         for (User user : list) {

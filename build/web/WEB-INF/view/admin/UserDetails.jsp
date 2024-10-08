@@ -111,22 +111,13 @@
                                                 </select>
                                             </div>
 
-<!--                                             Status 
-                                            <div class="col-md-4 col-sm-12">
-                                                <label for="status">Status:</label>
-                                                <select class="form-control" id="status" name="status" required>
-                                                    <option value="">-- Select Status --</option>
-                                                    <option value="1" <c:if test="${requestScope.updateUser.status == 0}">selected</c:if>>Active</option>
-                                                <option value="0" <c:if test="${requestScope.updateUser.status == 1}">selected</c:if>>Inactive</option>
-                                                
-                                                </select>
-                                            </div>-->
+<!--                                        
 
                                             <!-- Department (select dropdown) -->
                                             <div class="col-md-4 col-sm-12">
                                                 <label for="departmentId">Department</label>
                                                 <select class="form-control" name="departmentId">
-                                                <c:forEach var="dept" items="${departments}">
+                                                <c:forEach var="dept" items="${department}">
                                                     <option value="${dept.id}" 
                                                             <c:if test="${dept.id == updateUser.department.id}">
                                                                 selected

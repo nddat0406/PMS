@@ -97,7 +97,8 @@
                                                                 <!-- Department Filter -->
                                                                 <label for="department" class="input-group-text">Department:</label>
                                                                 <select name="departmentId" id="department" class="form-select" style="width: 15%;">
-                                                                    <option value="">All Departments</option>
+                                                                    <option value="">All Departments</option> <!-- Option cho tất cả departments -->
+                                                                    <!-- Lặp qua danh sách departments và hiển thị từng department -->
                                                                     <c:forEach items="${departments}" var="department">
                                                                         <option value="${department.id}" <c:if test="${param.departmentId == department.id}">selected</c:if>>${department.name}</option>
                                                                     </c:forEach>

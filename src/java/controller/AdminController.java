@@ -92,6 +92,13 @@ public class AdminController extends HttpServlet {
                     }
 
                 }
+                List<Group> departments = null;
+                try {
+                    departments = uService.getAllDepartments();
+                } catch (SQLException ex) {
+                    Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                request.setAttribute("departments", departments);
                 String sortOrder = request.getParameter("sort");
                 if ("asc".equals(sortOrder)) {
                     list.sort(Comparator.comparing(User::getFullname));
@@ -116,7 +123,7 @@ public class AdminController extends HttpServlet {
                     User user = uService.getUserById(id);
                     List<Group> departments = uService.getAllDepartments();
                     request.setAttribute("updateUser", user);
-                    request.setAttribute("departments", departments);
+                    request.setAttribute("department", departments);
                     request.getRequestDispatcher("/WEB-INF/view/admin/UserDetails.jsp").forward(request, response);
                 } catch (SQLException ex) {
                     Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
@@ -152,6 +159,7 @@ public class AdminController extends HttpServlet {
                 case "search":
 
                     List<User> list = searchUser(request, response);
+
                     request.setAttribute("data", list);
                     request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
                     break;
@@ -193,26 +201,24 @@ public class AdminController extends HttpServlet {
         String departmentIdStr = request.getParameter("departmentId");
         String statusStr = request.getParameter("status");
 
-        UserDAO dao = new UserDAO();
         List<User> listUser = new ArrayList<>();
 
-        // Log if the keyword is empty or null
-        if (keyword == null || keyword.trim().isEmpty()) {
-            Logger.getLogger(AdminController.class.getName()).log(Level.INFO, "Keyword is empty or null.");
-            request.setAttribute("data", listUser);
-            request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
-            return null;
-        }
-
-        // Convert departmentId and status if provided
         Integer departmentId = null;
         if (departmentIdStr != null && !departmentIdStr.trim().isEmpty()) {
-            departmentId = Integer.parseInt(departmentIdStr);
+            try {
+                departmentId = Integer.parseInt(departmentIdStr);
+            } catch (NumberFormatException e) {
+                Logger.getLogger(AdminController.class.getName()).log(Level.WARNING, "Invalid department ID format");
+            }
         }
 
         Integer status = null;
         if (statusStr != null && !statusStr.trim().isEmpty()) {
-            status = Integer.parseInt(statusStr);
+            try {
+                status = Integer.parseInt(statusStr);
+            } catch (NumberFormatException e) {
+                Logger.getLogger(AdminController.class.getName()).log(Level.WARNING, "Invalid status format");
+            }
         }
 
         listUser = uService.findUsersByFilters(keyword, departmentId, status);
@@ -220,22 +226,20 @@ public class AdminController extends HttpServlet {
         if (listUser == null) {
             listUser = new ArrayList<>();
         }
+
         List<Group> departments;
         try {
-            departments = uService.getAllDepartments(); // Ensure this method exists in your UserService
-            request.setAttribute("departments", departments); // Set departments in request
+            departments = uService.getAllDepartments();
+            request.setAttribute("departments", departments);
         } catch (SQLException ex) {
             Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
             response.getWriter().print("Error retrieving departments: " + ex.getMessage());
         }
-            
-            // Set the user list and forward to the view
-            request.setAttribute("data", listUser);
-            request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
-            return listUser;
-        }
 
-    
+        request.setAttribute("data", listUser);
+        request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
+        return listUser;
+    }
 
     private void addUser(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, ServletException, IOException {
         // Lấy dữ liệu từ request
