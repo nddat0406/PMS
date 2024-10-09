@@ -18,7 +18,6 @@ import model.Project;
  * @author HP
  */
 public class CriteriaDAO extends BaseDAO {
-
     private ProjectDAO pdao = new ProjectDAO();
     private MilestoneDAO mdao = new MilestoneDAO();
 

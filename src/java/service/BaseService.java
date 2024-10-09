@@ -173,7 +173,6 @@ public class BaseService {
                     if (value2 == null) {
                         return "desc".equalsIgnoreCase(order) ? -1 : 1;
                     }
-
                     // Cast to Comparable to allow comparison
                     Comparable comp1 = (Comparable) value1;
                     Comparable comp2 = (Comparable) value2;

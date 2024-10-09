@@ -167,11 +167,11 @@
                                                     <table id="pro_list" class="table table-hover mb-0 justify-content-end">
                                                         <thead id="tableHead">
                                                             <tr>
-                                                                <th name="id" sortBy="desc" class="sortTableHead">id&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="name" sortBy="desc" class="sortTableHead" >Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="weight" sortBy="desc" class="sortTableHead">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="milestone.name" sortBy="desc" class="sortTableHead">team&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th>department</th>
+                                                                <th name="user.id" sortBy="desc" class="sortTableHead">id&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="user.fullname" sortBy="desc" class="sortTableHead" >Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="user.role" sortBy="desc" class="sortTableHead">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="effortRate" sortBy="desc" class="sortTableHead">Effort Rate&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="user.department.name" sortBy="desc" class="sortTableHead">department&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                     <c:if test="${loginedUser.role!=2}">
                                                                     <th>action</th>
                                                                     </c:if>
@@ -179,9 +179,10 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody class="table-hover tableBody">
-                                                            <c:forEach items="${tableData}" var="i">
-                                                                <tr>
-                                                                    <td class="width45">
+                                                            <c:forEach items="${tableData}" var="t">
+                                                                <c:set value="${t.user}" var="i"></c:set>
+                                                                    <tr>
+                                                                        <td class="width45">
                                                                         ${i.id}
                                                                     </td>
                                                                     <td class="nameTd">
@@ -192,24 +193,30 @@
 
                                                                     </td>
                                                                     <td><span class="badge bg-danger">${i.role}</span></td>
-                                                                    <td>24 Jun, 2015</td>
-                                                                    <td>CEO and Founder</td>
+                                                                    <td>
+                                                                        <div class="progress" style="height: 5px;">
+                                                                            <div class="progress-bar" role="progressbar" aria-valuenow="${t.effortRate}" aria-valuemin="0" aria-valuemax="100" style="width: ${t.effortRate}%;">
+                                                                            </div>
+                                                                        </div>
+                                                                        <small>Effort Rate: ${t.effortRate}%</small>
+                                                                    </td>
+                                                                    <td>${i.department.name}</td>
                                                                     <c:if test="${loginedUser.role!=2}">
                                                                         <td>
                                                                             aaa
                                                                         </td>
                                                                     </c:if>
                                                                     <c:if test="${loginedUser.role!=2}">
-                                                                        <td style="width: 150px" class="statusCell" onclick="changeStatus(${i.id})" id="status${i.id}">
+                                                                        <td style="width: 150px" class="statusCell" onclick="changeStatus(${t.id})" id="status${t.id}">
                                                                         </c:if>
                                                                         <c:if test="${loginedUser.role==2}">
                                                                         <td style="width: 150px" class="statusCell">
                                                                         </c:if>
                                                                         <c:choose >
-                                                                            <c:when test="${i.isStatus()==true}">
+                                                                            <c:when test="${t.isStatus()==true}">
                                                                                 <span class="badge bg-success">Active</span><br>
                                                                             </c:when>
-                                                                            <c:when test="${i.isStatus()==false}">
+                                                                            <c:when test="${t.isStatus()==false}">
                                                                                 <span class="badge bg-secondary">Inactive</span><br>
                                                                             </c:when>
                                                                         </c:choose>
@@ -225,11 +232,11 @@
                                                     </c:if>
                                                     <nav aria-label="Page navigation example">
                                                         <ul class="pagination">
-                                                            <li class="page-item"><a class="page-link" href="eval?page=${page==1?1:page-1}">Previous</a></li>
+                                                            <li class="page-item"><a class="page-link" href="member?page=${page==1?1:page-1}">Previous</a></li>
                                                                 <c:forEach begin="${1}" end="${num}" var="i">
-                                                                <li class="page-item ${i==page?'active':''}"><a class="page-link" href="eval?page=${i}">${i}</a></li>
+                                                                <li class="page-item ${i==page?'active':''}"><a class="page-link" href="member?page=${i}">${i}</a></li>
                                                                 </c:forEach>
-                                                            <li class="page-item"><a class="page-link" href="eval?page=${page!=num?page+1:page}">Next</a></li>
+                                                            <li class="page-item"><a class="page-link" href="member?page=${page!=num?page+1:page}">Next</a></li>
                                                         </ul>
                                                     </nav>
                                                 </div>
@@ -252,13 +259,13 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
         <c:if test="${requestScope.successMess!=null}">
             <script>
-                                                                        Swal.fire({
-                                                                            position: 'top-end',
-                                                                            icon: 'success',
-                                                                            title: '${successMess}',
-                                                                            showConfirmButton: false,
-                                                                            timer: 1500
-                                                                        });
+                                                                            Swal.fire({
+                                                                                position: 'top-end',
+                                                                                icon: 'success',
+                                                                                title: '${successMess}',
+                                                                                showConfirmButton: false,
+                                                                                timer: 1500
+                                                                            });
             </script>
         </c:if>
         <c:if test="${requestScope.errorMess!=null}">
@@ -325,51 +332,22 @@
 
             function changeStatus(id) {
                 $.ajax({
-                    url: "eval",
+                    url: "member",
                     type: 'post',
                     data: {
-                        criteriaId: id,
+                        allocateId: id,
                         action: "changeStatus"
                     },
                     success: function () {
-                        $(' #status' + id).load("${pageContext.request.contextPath}/project/eval?page=${page} #status" + id + " > *");
+                        $(' #status' + id).load("${pageContext.request.contextPath}/project/member?page=${page} #status" + id + " > *");
                     }
                 });
-            }
-            ;
-            function deleteStatus(id) {
-                Swal.fire({
-                    title: "Do you want to delete criteria with id=" + id + " ?",
-                    showCancelButton: true,
-                    confirmButtonText: "Delete",
-                    confirmButtonColor: "#FC5A69"
-                }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "eval",
-                            type: 'post',
-                            data: {
-                                criteriaId: id,
-                                action: "delete"
-                            },
-                            success: function () {
-                                Swal.fire("Deleted!", "", "success");
-                                $(' .tableBody').load("${pageContext.request.contextPath}/project/eval?page=${page} .tableBody > *");
-                            }
-                        });
-                    }
-                });
-            }
-            ;
-            function getModal(id) {
-                $(' #updateCriteria').load("${pageContext.request.contextPath}/project/eval?page=${page}&modalItemID=" + id + " #updateCriteria > *");
             }
             ;
             </c:if>
             function changeSort(name, sortBy) {
                 $.ajax({
-                    url: "eval",
+                    url: "member",
                     type: 'post',
                     data: {
                         sortBy: sortBy,
@@ -377,7 +355,7 @@
                         action: "sort"
                     },
                     success: function () {
-                        $('.tableBody').load("${pageContext.request.contextPath}/project/eval?page=${page} .tableBody > *");
+                        $('.tableBody').load("${pageContext.request.contextPath}/project/member?page=${page} .tableBody > *");
                     }
                 });
             }

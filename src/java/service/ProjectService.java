@@ -30,6 +30,7 @@ public class ProjectService {
     private ProjectDAO pdao = new ProjectDAO();
     private CriteriaDAO cdao = new CriteriaDAO();
     private MilestoneDAO mdao = new MilestoneDAO();
+    private BaseService baseService = new BaseService();
 
     public List<Allocation> getByUser(int id, int role) throws SQLException {
         try {
@@ -58,9 +59,20 @@ public class ProjectService {
         return pList;
     }
 
-    public List<User> getProjectMembers(int pID) throws SQLException {
-        return pdao.getAllUser(pID);
+    public List<Allocation> getProjectMembers(int pID) throws SQLException {
+        return pdao.getAllMember(pID);
+    }
 
+    public void flipStatusMember(int id, List<Allocation> list) throws SQLException {
+        if (baseService.objectWithIdExists(id, list)) {
+            pdao.flipStatusMemberOfPrj(id);
+        } else {
+            throw new IllegalAccessError(""+id+"/"+list.toString());
+        }
+    }
+
+    public List<Allocation> searchFilterMember(List<Allocation> list, Integer mileFilter, Integer statusFilter, String searchKey) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

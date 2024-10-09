@@ -11,6 +11,8 @@ import java.util.Date;
  * @author HP
  */
 public class Allocation {
+
+    private int id;
     private User user;
     private Project project;
     private Date startDate;
@@ -19,6 +21,13 @@ public class Allocation {
     private int effortRate;
     private boolean status;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public User getUser() {
         return user;
@@ -75,6 +84,5 @@ public class Allocation {
     public void setStatus(boolean status) {
         this.status = status;
     }
-    
-    
+
 }
