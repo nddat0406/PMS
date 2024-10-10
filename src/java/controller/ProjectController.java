@@ -44,7 +44,7 @@ public class ProjectController extends HttpServlet {
     private CriteriaService cService = new CriteriaService();
 
     private String linkEval = "/WEB-INF/view/user/projectConfig/projecteval.jsp";
-    private String linkMile = "/WEB-INF/view/user/projectmilestone.jsp";
+    private String linkMile = "/WEB-INF/view/user/projectConfig/projectmilestone.jsp";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

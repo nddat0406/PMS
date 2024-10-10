@@ -54,10 +54,10 @@
     </head>
     <body>
         <div id="layout" class="theme-cyan">
-            <jsp:include page="../common/pageLoader.jsp"></jsp:include>
+            <jsp:include page="../../common/pageLoader.jsp"></jsp:include>
                 <div id="wrapper">
-                <jsp:include page="../common/topNavbar.jsp"></jsp:include>
-                <jsp:include page="../common/sidebar.jsp"></jsp:include>
+                <jsp:include page="../../common/topNavbar.jsp"></jsp:include>
+                <jsp:include page="../../common/sidebar.jsp"></jsp:include>
                     <div id="main-content">
                         <div class="container-fluid">
                             <div class="block-header py-lg-4 py-3">
@@ -91,7 +91,7 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                                                        <div class="input-group" style="width: 30%">
+<!--                                                        <div class="input-group" style="width: 30%">
                                                             <span class="input-group-text">Priority</span>
                                                             <select class="form-select" id="priorityFilter">
                                                                 <option value="0">All Priority</option>
@@ -112,7 +112,7 @@
                                                             <input type="text" class="form-control" id="searchInput" placeholder="Search here...">
                                                             <button class="btn btn-secondary" type="button" onclick="applyFilters()"><i class="fa fa-search"></i></button>
                                                         </div>
-                                                    </div>
+-->                                                    </div>
 
                                                     <table id="milestone_list" class="table table-hover mb-0">
                                                         <thead>
