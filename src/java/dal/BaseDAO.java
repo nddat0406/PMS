@@ -31,13 +31,13 @@ public class BaseDAO {
     }
 
     protected Connection getConnection() {
-        return this.connection;
+        return connection;
     }
 
     public void closeConnection() {
-        if (this.connection != null) {
+        if (connection != null) {
             try {
-                this.connection.close();
+                connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

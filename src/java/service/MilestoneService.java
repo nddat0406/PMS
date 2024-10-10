@@ -20,9 +20,6 @@ import model.Milestone;
  */
 public class MilestoneService {
 
-    private UserDAO udao = new UserDAO();
-    private ProjectDAO pdao = new ProjectDAO();
-    private CriteriaDAO cdao = new CriteriaDAO();
     private MilestoneDAO mdao = new MilestoneDAO();
 
     public List<Milestone> getAllMilestone(int id) throws SQLException {
@@ -35,9 +32,8 @@ public class MilestoneService {
 
     public void updateMilestone(Milestone milestone) throws SQLException {
         try {
-            mdao.updateMilestone(milestone); 
+            mdao.updateMilestone(milestone);
         } catch (SQLException ex) {
-            Logger.getLogger(MilestoneService.class.getName()).log(Level.SEVERE, null, ex);
             throw new SQLException(ex);
         }
     }

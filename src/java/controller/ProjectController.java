@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.List;
 import java.sql.Date;
@@ -23,6 +24,10 @@ import model.Project;
 import service.BaseService;
 import model.Milestone;
 import model.User;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import service.CriteriaService;
 import service.GroupService;
 import service.MilestoneService;
@@ -36,9 +41,7 @@ import service.UserService;
 @WebServlet(name = "ProjectController", urlPatterns = {"/project", "/project/list", "/project/eval", "/project/milestone", "/project/member"})
 public class ProjectController extends HttpServlet {
 
-    private UserService uService = new UserService();
     private ProjectService pService = new ProjectService();
-    private GroupService gService = new GroupService();
     private BaseService baseService = new BaseService();
     private MilestoneService mService = new MilestoneService();
     private CriteriaService cService = new CriteriaService();
@@ -159,6 +162,8 @@ public class ProjectController extends HttpServlet {
                         postMemberSort(request, response);
                     case "changeStatus" ->
                         postMemberFlipStatus(request, response);
+                    case "export" ->
+                        exportToExcel(response, request);
                     default ->
                         throw new AssertionError();
                 }
@@ -492,7 +497,6 @@ public class ProjectController extends HttpServlet {
     }
 
     private void postMemberFlipStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
         try {
             int id = Integer.parseInt(request.getParameter("allocateId"));
             List<Allocation> list = (List<Allocation>) request.getSession().getAttribute("memberList");
@@ -503,5 +507,20 @@ public class ProjectController extends HttpServlet {
             throw new ServletException(ex);
         }
 
+    }
+
+    private void exportToExcel(HttpServletResponse response, HttpServletRequest request) throws IOException, ServletException {
+        try {
+            List<Allocation> list = pService.getProjectMembers((int) request.getSession().getAttribute("selectedProject"));
+            Workbook workbook = pService.exportProjectMember(list);
+
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=Project_Members.xlsx");
+
+            OutputStream outputStream = response.getOutputStream();
+            workbook.write(outputStream);
+        } catch (SQLException ex) {
+            throw new ServletException(ex);
+        }
     }
 }

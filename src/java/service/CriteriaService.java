@@ -22,10 +22,7 @@ import model.Criteria;
  */
 public class CriteriaService {
 
-    private UserDAO udao = new UserDAO();
-    private ProjectDAO pdao = new ProjectDAO();
     private CriteriaDAO cdao = new CriteriaDAO();
-    private MilestoneDAO mdao = new MilestoneDAO();
     private BaseService baseService = new BaseService();
 
     public List<Criteria> listCriteriaOfProject(int id) throws SQLException {

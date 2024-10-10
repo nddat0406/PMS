@@ -80,6 +80,14 @@ public class Allocation {
     public boolean isStatus() {
         return status;
     }
+    
+    public String getStatusString(){
+        if(this.status){
+            return "Active";
+        }else{
+            return "Inactive";
+        }
+    }
 
     public void setStatus(boolean status) {
         this.status = status;

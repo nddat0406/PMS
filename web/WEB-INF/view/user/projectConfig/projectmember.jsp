@@ -134,6 +134,11 @@
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <h6 class="card-title">Project Member</h6>
+                                                        <ul class="header-dropdown">
+                                                            <li>
+                                                                <button onclick="exportToExel()" class="btn btn-success"><i class="fa fa-download"></i><span>&nbsp;Export to Excel</span></button>
+                                                            </li>
+                                                        </ul>
 
                                                     </div>
                                                     <div class="card-body" id="cardbody">
@@ -142,16 +147,16 @@
                                                             <div style="display: flex; justify-content: space-evenly">
                                                                 <div class="input-group mb-3" style="width: 25%">
                                                                     <span class="input-group-text" id="basic-addon11">Milestone</span>
-                                                                    <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter" onchange="ChangeFilter()">
-                                                                        <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
-                                                                    <c:forEach items="${msList}" var="m">
-                                                                        <option value="${m.id}" ${milestoneFilter==m.id?'selected':''}>${m.name}</option>
+                                                                    <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter">
+                                                                        <option value="0" ${deptFilter==0?'selected':''}>All Department</option>
+                                                                    <c:forEach items="${deptList}" var="d">
+                                                                        <option value="${m.id}" ${deptFilter==d.id?'selected':''}>${m.name}</option>
                                                                     </c:forEach>
                                                                 </select>
                                                             </div>
                                                             <div class="input-group mb-3" style="width: 25%">
                                                                 <span class="input-group-text" id="basic-addon11">Status</span>
-                                                                <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter" onchange="ChangeFilter()">
+                                                                <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter">
                                                                     <option value="0" ${sessionScope.statusFilter==0?'selected':''}>All Status</option>
                                                                     <option value="1" ${sessionScope.statusFilter==1?'selected':''}>Active</option>
                                                                     <option value="2" ${sessionScope.statusFilter==2?'selected':''}>InActive</option>
@@ -172,9 +177,7 @@
                                                                 <th name="user.role" sortBy="desc" class="sortTableHead">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="effortRate" sortBy="desc" class="sortTableHead">Effort Rate&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="user.department.name" sortBy="desc" class="sortTableHead">department&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                    <c:if test="${loginedUser.role!=2}">
-                                                                    <th>action</th>
-                                                                    </c:if>
+
                                                                 <th>status</th>
                                                             </tr>
                                                         </thead>
@@ -190,9 +193,8 @@
                                                                         <div><h6 class="mb-0">${i.fullname}</h6>
                                                                             <span>${i.email}</span>
                                                                         </div>
-
                                                                     </td>
-                                                                    <td><span class="badge bg-danger">${i.role}</span></td>
+                                                                    <td><span class="badge bg-danger">${i.getRoleString()}</span></td>
                                                                     <td>
                                                                         <div class="progress" style="height: 5px;">
                                                                             <div class="progress-bar" role="progressbar" aria-valuenow="${t.effortRate}" aria-valuemin="0" aria-valuemax="100" style="width: ${t.effortRate}%;">
@@ -201,11 +203,6 @@
                                                                         <small>Effort Rate: ${t.effortRate}%</small>
                                                                     </td>
                                                                     <td>${i.department.name}</td>
-                                                                    <c:if test="${loginedUser.role!=2}">
-                                                                        <td>
-                                                                            aaa
-                                                                        </td>
-                                                                    </c:if>
                                                                     <c:if test="${loginedUser.role!=2}">
                                                                         <td style="width: 150px" class="statusCell" onclick="changeStatus(${t.id})" id="status${t.id}">
                                                                         </c:if>
@@ -257,28 +254,6 @@
 
         <!-- page js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-        <c:if test="${requestScope.successMess!=null}">
-            <script>
-                                                                            Swal.fire({
-                                                                                position: 'top-end',
-                                                                                icon: 'success',
-                                                                                title: '${successMess}',
-                                                                                showConfirmButton: false,
-                                                                                timer: 1500
-                                                                            });
-            </script>
-        </c:if>
-        <c:if test="${requestScope.errorMess!=null}">
-            <script>
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: '${errorMess}',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            </script>
-        </c:if>
         <script>
             $(document).ready(function () {
                 // Event handler for clicking on the table headers
@@ -328,6 +303,42 @@
                     $(this).text('Read More');
                 }
             });
+            function exportToExel() {
+                $.ajax({
+                    type: "POST",
+                    url: "member", // URL của Servlet
+                    data: {action: "export"}, // Gửi action là "export"
+                    xhrFields: {
+                        responseType: 'blob' // Đặt response là blob để nhận file
+                    },
+                    success: function (data, status, xhr) {
+                        var filename = "Project_Members.xlsx"; // Tên file tải về
+
+                        // Tạo URL từ dữ liệu blob
+                        var url = window.URL.createObjectURL(data);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+
+                        // Append link ẩn và tự động nhấn để tải file
+                        document.body.appendChild(a);
+                        a.click();
+
+                        // Xóa URL khi không còn cần nữa
+                        window.URL.revokeObjectURL(url);
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Error Exporting File!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                });
+            }
+            ;            
             <c:if test="${loginedUser.role!=2}">
 
             function changeStatus(id) {
@@ -360,6 +371,8 @@
                 });
             }
             ;
+            
+            history.pushState(null, "", location.href.split("?")[0]);
         </script>
     </body>
 </html>

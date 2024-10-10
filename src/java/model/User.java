@@ -92,6 +92,25 @@ public class User {
     public void setRole(int role) {
         this.role = role;
     }
+    
+    public String getRoleString(){
+        switch (this.role) {
+            case 1:
+                return "Admin";
+            case 2:
+                return "Member";
+            case 3:
+                return "Project QA";
+            case 4:
+                return "Project Manager";
+            case 5:
+                return "Department Manager ";
+            case 6:
+                return "PMO Manager";
+            default:
+                throw new AssertionError();
+        }
+    }
 
     public int getStatus() {
         return status;
