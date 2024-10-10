@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import model.Group;
 import model.User;
 import service.UserService;
@@ -78,13 +79,14 @@ public class AdminController extends HttpServlet {
                 List<User> list = null;
                 HttpSession session = request.getSession(false);
 
+                // Fetch the list from session or database
                 if (session != null && session.getAttribute("listUser") != null) {
                     list = (List<User>) session.getAttribute("listUser");
                     session.removeAttribute("listUser");
                 } else {
                     try {
-
                         list = uService.getAll();
+
                     } catch (SQLException ex) {
                         Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
                         response.getWriter().print("Error retrieving user list: " + ex.getMessage());
@@ -99,40 +101,45 @@ public class AdminController extends HttpServlet {
                     Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 request.setAttribute("departments", departments);
+
+                // Sorting users by fullname
                 String sortOrder = request.getParameter("sort");
                 if ("asc".equals(sortOrder)) {
                     list.sort(Comparator.comparing(User::getFullname));
                 } else if ("desc".equals(sortOrder)) {
                     list.sort(Comparator.comparing(User::getFullname).reversed());
                 }
+
+                // Call pagination logic to handle large user lists
                 try {
                     pagination(request, response, list);
                 } catch (SQLException ex) {
                     Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
+                // Set the list into the request attribute to forward to the JSP
                 request.setAttribute("data", list);
-
                 request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
             }
+
 
             case "userdetail" -> {
 
                 try {
                     int id = Integer.parseInt(request.getParameter("id"));
-                    User user = uService.getUserById(id);
-                    List<Group> departments = uService.getAllDepartments();
+                    User user = uService.getUserById(id); // Get user by ID
+                    List<Group> departments = uService.getAllDepartments(); // Get departments list
                     request.setAttribute("updateUser", user);
-                    request.setAttribute("department", departments);
+                    request.setAttribute("departments", departments);
                     request.getRequestDispatcher("/WEB-INF/view/admin/UserDetails.jsp").forward(request, response);
                 } catch (SQLException ex) {
                     Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
                     response.getWriter().print("SQL Error: " + ex.getMessage());
-
                 }
             }
 
             default -> {
+
                 response.getWriter().print("Invalid action");
             }
         }
@@ -159,9 +166,9 @@ public class AdminController extends HttpServlet {
                 case "search":
 
                     List<User> list = searchUser(request, response);
-
                     request.setAttribute("data", list);
                     request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
+
                     break;
 
                 case "add":
@@ -198,47 +205,32 @@ public class AdminController extends HttpServlet {
 
     public List<User> searchUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
         String keyword = request.getParameter("keyword");
-        String departmentIdStr = request.getParameter("departmentId");
-        String statusStr = request.getParameter("status");
+    String departmentId = request.getParameter("departmentId");
+    String status = request.getParameter("status");
+    
+    UserDAO dao = new UserDAO();
+    List<User> listUser = new ArrayList<>(); // Khởi tạo danh sách rỗng
 
-        List<User> listUser = new ArrayList<>();
+    if (keyword == null) keyword = ""; // Nếu từ khóa null, gán giá trị rỗng
 
-        Integer departmentId = null;
-        if (departmentIdStr != null && !departmentIdStr.trim().isEmpty()) {
-            try {
-                departmentId = Integer.parseInt(departmentIdStr);
-            } catch (NumberFormatException e) {
-                Logger.getLogger(AdminController.class.getName()).log(Level.WARNING, "Invalid department ID format");
-            }
-        }
+    // Tìm kiếm người dùng theo từ khóa
+    listUser = dao.findByName(keyword);
 
-        Integer status = null;
-        if (statusStr != null && !statusStr.trim().isEmpty()) {
-            try {
-                status = Integer.parseInt(statusStr);
-            } catch (NumberFormatException e) {
-                Logger.getLogger(AdminController.class.getName()).log(Level.WARNING, "Invalid status format");
-            }
-        }
+    // Nếu có departmentId hoặc status, lọc danh sách
+    if (departmentId != null && !departmentId.isEmpty()) {
+        listUser = listUser.stream()
+            .filter(user -> String.valueOf(user.getDepartment().getId()).equals(departmentId))
+            .collect(Collectors.toList());
+    }
 
-        listUser = uService.findUsersByFilters(keyword, departmentId, status);
+    if (status != null && !status.isEmpty()) {
+        int statusValue = Integer.parseInt(status); // Chuyển đổi status sang số nguyên
+        listUser = listUser.stream()
+            .filter(user -> user.getStatus() == statusValue)
+            .collect(Collectors.toList());
+    }
 
-        if (listUser == null) {
-            listUser = new ArrayList<>();
-        }
-
-        List<Group> departments;
-        try {
-            departments = uService.getAllDepartments();
-            request.setAttribute("departments", departments);
-        } catch (SQLException ex) {
-            Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
-            response.getWriter().print("Error retrieving departments: " + ex.getMessage());
-        }
-
-        request.setAttribute("data", listUser);
-        request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
-        return listUser;
+    return listUser; // Trả về danh sách người dùng đã lọc
     }
 
     private void addUser(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, ServletException, IOException {
