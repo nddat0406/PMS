@@ -68,7 +68,7 @@
                         </div>
 
                         <div class="tab-content p-0" id="myTabContent">
-                            <form action="DomainUserController" method="post" enctype="multipart/form-data" class="mb-3">
+                            <form action="DomainConfigController" method="post" enctype="multipart/form-data" class="mb-3">
                                     <div class="d-flex justify-content-between mb-2">
                                         <button type="submit" name="action" value="export" class="btn btn-primary">
                                             <i class="fas fa-file-excel"></i> Export to Excel
@@ -86,13 +86,15 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>User ID</th>
-                                            <th>Domain ID</th>
+                                            <th>Full Name</th>
+                                            <th>Mobile</th>
+                                            <th>Email</th>
+                                            <th>Domain</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach var="user" items="${domainUsers}">
+                                        <c:forEach var="user" items="${data}">
                                             <tr>
                                                 <td>${user.id}</td>
                                                 <td>${user.userId}</td>

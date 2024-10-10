@@ -653,5 +653,28 @@ public class GroupDAO extends BaseDAO {
         }
         return false;
     }
+    public List<Group> getAllUserDomain(){
+        List<Group> list = new ArrayList<>();
+        String sql="SELECT * FROM pms.domain_user JOIN pms.user ON domain_user.userId = user.id JOIN pms.domain ON domain_user.domainId = domain.id;";
+        try{
+            PreparedStatement ps=getConnection().prepareStatement(sql);
+            ResultSet rs=ps.executeQuery();
+            while(rs.next()){
+                String id=String.valueOf(rs.getInt(1));
+                String status=String.valueOf(rs.getInt(4));
+                String email=rs.getString(5);
+                String fullname=rs.getString(7);
+                
+                String mobile=rs.getString(8);
+                String domainName=rs.getString(21);
+                Group d=new Group();
+                list.add(d);
+            }
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+    
 
 }
