@@ -19,6 +19,7 @@ import java.util.Properties;
 import java.util.Random;
 import javax.mail.Authenticator;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -37,6 +38,8 @@ public class BaseService {
 
     public static final int ADMIN_ROLE = 1;
     public static final int MEMBER_ROLE = 2;
+    public static final int PROJECT_QA_ROLE = 3;
+    public static final int PROJECT_MANAGER_ROLE = 4;
 
     public static String generateOTP() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -79,7 +82,7 @@ public class BaseService {
             message.setText("Here is OTP to reset your password: " + OTP);
             Transport.send(message);
             result = true;
-        } catch (Exception e) {
+        } catch (MessagingException e) {
             e.printStackTrace();
         }
         return result;
@@ -98,9 +101,25 @@ public class BaseService {
 
     public Integer TryParseInt(String someText) {
         try {
-            return Integer.parseInt(someText);
+            return Integer.valueOf(someText);
         } catch (NumberFormatException ex) {
             return 0;
+        }
+    }
+    public Integer TryParseInteger(Integer i) {
+
+        if(i==null){
+            return 0;
+        }else{
+            return i;
+        }
+    }
+
+    public boolean TryParseBoolean(String someText) {
+        if (someText.equals("1") || someText.equals("true")) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -145,15 +164,15 @@ public class BaseService {
                     Object value2 = getNestedFieldValue(o2, fieldNames);
 
                     // Handle null values during comparison
-//                    if (value1 == null && value2 == null) {
-//                        return 0;
-//                    }
-//                    if (value1 == null) {
-//                        return "desc".equalsIgnoreCase(order) ? 1 : -1;
-//                    }
-//                    if (value2 == null) {
-//                        return "desc".equalsIgnoreCase(order) ? -1 : 1;
-//                    }
+                    if (value1 == null && value2 == null) {
+                        return 0;
+                    }
+                    if (value1 == null) {
+                        return "desc".equalsIgnoreCase(order) ? 1 : -1;
+                    }
+                    if (value2 == null) {
+                        return "desc".equalsIgnoreCase(order) ? -1 : 1;
+                    }
 
                     // Cast to Comparable to allow comparison
                     Comparable comp1 = (Comparable) value1;
@@ -193,5 +212,25 @@ public class BaseService {
         }
 
         return currentObject;
+    }
+
+    public <T> boolean objectWithIdExists(Object idToFind, List<T> objectList) {
+        for (T obj : objectList) {
+            try {
+                // Attempt to find a method named 'getId' on the object's class
+                Method getIdMethod = obj.getClass().getMethod("getId");
+
+                // Invoke the method and check if the id matches
+                Object id = getIdMethod.invoke(obj);
+                if (id.equals(idToFind)) {
+                    return true;  // Found the object with the matching id
+                }
+
+            } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return false;  // No object with the matching id found
     }
 }

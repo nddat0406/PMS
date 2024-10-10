@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Allocation;
+import model.Criteria;
 import model.Group;
 import model.User;
 import static service.BaseService.*;
@@ -88,7 +89,8 @@ public class UserController extends HttpServlet {
         if (request.getServletPath().contains("dashboard")) {
             if (request.getParameter("page") != null) {
                 try {
-                    pagination(request, response);
+                    List<Allocation> list = (List<Allocation>) request.getSession().getAttribute("allocationList");
+                    pagination(request, response, list, "/WEB-INF/view/Dashboard.jsp");
                 } catch (SQLException ex) {
                     response.getWriter().print(ex);
                 }
@@ -153,46 +155,30 @@ public class UserController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    public void pagination(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
-        HttpSession session = request.getSession();
-        User loginedUser = (User) session.getAttribute("loginedUser");
-
-        try {
-            int role = loginedUser.getRole();
-            if (role == ADMIN_ROLE) {
-                request.setAttribute("isAdmin", "true");
-            }
-            //if not changing the number of product of a page -> set to session value in order to get next page
-            //if the session value is null to ->set to default(12)
-            List<Allocation> list = (List<Allocation>) session.getAttribute("allocationList");
-            int page, numperpage = 12;
-            int size = list.size();
-            int num = (size % numperpage == 0 ? (size / numperpage) : (size / numperpage) + 1);//so trang
-            if (num == 0) {
-                num = 1;
-            }
-            String xpage = request.getParameter("page");
-            if (xpage == null) {
-                page = 1;
-            } else {
-                page = Integer.parseInt(xpage);
-                if (page > num) {
-                    page = num;
-                }
-            }
-            int start, end;
-            start = (page - 1) * numperpage;
-            end = Math.min(page * numperpage, size);
-            request.setAttribute("page", page);
-            request.setAttribute("num", num);
-            request.getSession().setAttribute("numberPage", numperpage);
-            request.setAttribute("tableData", baseService.getListByPage(list, start, end));
-            request.setAttribute("deptList", gService.getAllDepartment());
-            request.setAttribute("domainList", gService.getAllDomains());
-            request.getRequestDispatcher("/WEB-INF/view/Dashboard.jsp").forward(request, response);
-        } catch (SQLException ex) {
-            throw new SQLException(ex);
+    public void pagination(HttpServletRequest request, HttpServletResponse response, List<?> list, String link) throws ServletException, IOException, SQLException {
+        int page, numperpage = 12;
+        int size = list.size();
+        int num = (size % numperpage == 0 ? (size / numperpage) : (size / numperpage) + 1);//so trang
+        if (num == 0) {
+            num = 1;
         }
+        String xpage = request.getParameter("page");
+        if (xpage == null) {
+            page = 1;
+        } else {
+            page = Integer.parseInt(xpage);
+            if (page > num) {
+                page = num;
+            }
+        }
+        int start, end;
+        start = (page - 1) * numperpage;
+        end = Math.min(page * numperpage, size);
+        request.setAttribute("page", page);
+        request.setAttribute("num", num);
+        request.getSession().setAttribute("numberPage", numperpage);
+        request.setAttribute("tableData", baseService.getListByPage(list, start, end));
+        request.getRequestDispatcher(link).forward(request, response);
     }
 
     private void getDashboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -210,9 +196,11 @@ public class UserController extends HttpServlet {
             request.setAttribute("listSize", list.size());
             request.setAttribute("searchSize", list.size());
             session.setAttribute("allocationList", list);
-            pagination(request, response);
+            session.setAttribute("deptList", gService.getAllDepartment());
+            session.setAttribute("domainList", gService.getAllDomains());
+            pagination(request, response, list, "/WEB-INF/view/Dashboard.jsp");
         } catch (SQLException ex) {
-            response.getWriter().print(ex.getMessage());
+            throw new ServletException(ex);
         }
     }
 
@@ -252,7 +240,10 @@ public class UserController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/user/profile?passChanged=success");
 
             } catch (SQLException ex) {
-                request.setAttribute("errorPass", "Current password not correct");
+                request.setAttribute("oldPass", oldPass);
+                request.setAttribute("newPass", newPass);
+                request.setAttribute("newRePass", reNewPass);
+                request.setAttribute("errorPass", ex.getMessage());
                 request.setAttribute("isSetting", "true");
                 try {
                     request.setAttribute("profile", uService.getUserProfile(id));
@@ -264,7 +255,10 @@ public class UserController extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
             }
         } else {
-            request.setAttribute("errorPass", "Password not match");
+            request.setAttribute("oldPass", oldPass);
+            request.setAttribute("newPass", newPass);
+            request.setAttribute("newRePass", reNewPass);
+            request.setAttribute("errorPass", "New password not match");
             request.setAttribute("isSetting", "true");
             try {
                 request.setAttribute("profile", uService.getUserProfile(id));
@@ -298,12 +292,13 @@ public class UserController extends HttpServlet {
         try {
             user.setBirthdate(new Date(formatter.parse(birthdate).getTime()));
             Part part = request.getPart("image");
-            user.setImage(request.getContextPath() + "/images/" + part.getSubmittedFileName());
+            user.setImage(request.getContextPath() + "/images/" +user.getId()+"_"+part.getSubmittedFileName());
             //update profile
             uService.updateProfile(user, part);
             session.setAttribute("loginedUser", uService.getUserByEmail(user.getEmail()));
             response.sendRedirect(request.getContextPath() + "/user/profile?profileChanged=success");
         } catch (Exception ex) {
+            request.setAttribute("oldInfor", user);
             request.setAttribute("isSetting", "true");
             //get message error
             String[] error = Arrays.stream(ex.getMessage().split("/"))
@@ -342,12 +337,11 @@ public class UserController extends HttpServlet {
             session.setAttribute("searchKey", searchKey);
             session.setAttribute("allocationList", list);
             request.setAttribute("searchSize", list.size());
-            pagination(request, response);
+            pagination(request, response, list, "/WEB-INF/view/Dashboard.jsp");
         } catch (SQLException ex) {
             response.getWriter().print(ex.getMessage());
         }
     }
-
     private void postSort(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String fieldName = request.getParameter("fieldName");
         String order = request.getParameter("sortBy");
@@ -355,7 +349,8 @@ public class UserController extends HttpServlet {
         try {
             baseService.sortListByField(list, fieldName, order);
             request.getSession().setAttribute("allocationList", list);
-            pagination(request, response);
+            pagination(request, response, list, "/WEB-INF/view/Dashboard.jsp");
+
         } catch (SQLException e) {
             response.getWriter().print(e.getMessage());
 

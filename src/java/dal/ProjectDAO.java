@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Allocation;
+import model.Criteria;
 import model.Group;
 import model.Project;
 import model.User;
@@ -24,6 +25,7 @@ public class ProjectDAO extends BaseDAO {
 
     private GroupDAO gdao = new GroupDAO();
     private UserDAO udao = new UserDAO();
+    private MilestoneDAO mdao = new MilestoneDAO();
 
     public List<Allocation> getAllInAllocation() throws SQLException {
         String str = "select * from project";
@@ -60,7 +62,7 @@ public class ProjectDAO extends BaseDAO {
     }
 
     public List<Allocation> getAllocation(int id) throws SQLException {
-        String str = "select * from allocation where userId = ?";
+        String str = "select * from allocation where userId = ? and status = 1";
         try {
             PreparedStatement pre = getConnection().prepareStatement(str);
             pre.setInt(1, id);
@@ -124,13 +126,11 @@ public class ProjectDAO extends BaseDAO {
             rs.next();
             return rs.getString(1);
         } catch (SQLException e) {
-            throw new SQLException(e);
+            return null;
         }
     }
 
-    
-
-    private Project getById(int id) throws SQLException {
+    public Project getById(int id) throws SQLException {
         String str = "select * from project where id=?";
         try {
             PreparedStatement pre = getConnection().prepareStatement(str);
@@ -142,4 +142,33 @@ public class ProjectDAO extends BaseDAO {
             throw new SQLException(e);
         }
     }
+
+    public List<User> getAllUser(int id) throws SQLException {
+        String str = "select u.* from allocation a join user u on u.id = a.userId where a.projectId = ?";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setInt(1, id);
+        ResultSet rs = pre.executeQuery();
+
+        List<User> userList = new ArrayList<>();
+        while (rs.next()) {
+            User user = new User();
+            user.setId(rs.getInt(1));
+            user.setEmail(rs.getString(2));
+            user.setFullname(rs.getString(3));
+            user.setMobile(rs.getString(4));
+            user.setPassword(rs.getString(5));
+            user.setNote(rs.getString(6));
+            user.setRole(rs.getInt(7));
+            user.setStatus(rs.getInt(8));
+            user.setDepartment(new Group(gdao.getDeptNameById(rs.getInt(9))));
+            user.setImage(rs.getString(10));
+            user.setAddress(rs.getString(11));
+            user.setGender(rs.getBoolean(12));
+            user.setBirthdate(rs.getDate(13));
+            userList.add(user);
+        }
+        return userList;
+
+    }
+
 }

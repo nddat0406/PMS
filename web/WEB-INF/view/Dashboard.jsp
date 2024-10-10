@@ -168,7 +168,7 @@
                                                 <tr>
                                                     <th name="project.name" sortBy="desc" class="sortTableHead">Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                     <th name="project.bizTerm" sortBy="desc" class="sortTableHead">Biz Term&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                        <c:if test="${isAdmin==null}" >
+                                                        <c:if test="${loginedUser.role==2}" >
                                                         <th name="effortRate" sortBy="desc" class="sortTableHead">Effort Rate&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                         <th name="projectRole" sortBy="desc" class="sortTableHead">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                         </c:if>
@@ -188,7 +188,7 @@
                                                         <td>
                                                             ${p.bizTerm}
                                                         </td>
-                                                        <c:if test="${isAdmin==null}" >
+                                                        <c:if test="${loginedUser.role==2}" >
                                                             <td>
                                                                 <div class="progress" style="height: 5px;">
                                                                     <div class="progress-bar" role="progressbar" aria-valuenow="${l.effortRate}" aria-valuemin="0" aria-valuemax="100" style="width: ${l.effortRate}%;">
@@ -213,7 +213,7 @@
                                                         </td>
                                                         <td>${p.startDate}</td>
                                                         <td>
-                                                            <a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#largeModal${p.id}">
+                                                            <a href="project/milestone?projectId=${p.id}" class="btn" >
                                                                 <strong>Project Detail</strong>
                                                             </a>
                                                         </td>
@@ -221,7 +221,7 @@
                                                 </c:forEach>
                                             </tbody>
                                         </table>
-                                        <c:if test="${searchSize==0}">
+                                        <c:if test="${empty tableData}">
                                             <div class="card-body text-center">
                                                 <h4>No result found!</h4>
                                             </div>
@@ -232,7 +232,7 @@
                                                     <c:forEach begin="${1}" end="${num}" var="i">
                                                     <li class="page-item ${i==page?'active':''}"><a class="page-link" href="${pageContext.request.contextPath}/dashboard?page=${i}">${i}</a></li>
                                                     </c:forEach>
-                                                <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/dashboard?page=${page+1}">Next</a></li>
+                                                <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/dashboard?page=${page!=num?page+1:page}">Next</a></li>
                                             </ul>
                                         </nav>
                                     </div>

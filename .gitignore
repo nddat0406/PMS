@@ -2,13 +2,15 @@
 *.log
 *.class
 *.properties
-private.properties
-private.xml
+/private/private.properties
+/private/private.xml
+context.xml
+app.properties
 
 #ignore ALL files in ANY directory named temp
 temp
 /build/*
-**/nbproject/private/
+**/nbproject/private/*
 **/nbproject/Makefile-*.mk
 **/nbproject/Package-*.bash
 build/

@@ -67,17 +67,22 @@
 
                                         <!-- Filter by Name -->
                                         <div class="col-md-3">
-                                            <input type="text" name="keyword" class="form-control" placeholder="Filter by Name" value="${keyword}">
+                                            <select name="keywordPri" class="form-control">
+                                                <option value="">Filter by Priority</option>
+                                                <option value="1" ${keyword == 1 ? 'selected' : ''}>Priority 1</option>
+                                                <option value="2" ${keyword == 2 ? 'selected' : ''}>Priority 2</option>
+                                                <option value="3" ${keyword == 3 ? 'selected' : ''}>Priority 3</option>
+                                            </select>
+                                            
                                         </div>
 
                                         <!-- Filter by Status -->
                                         <div class="col-md-3">
                                             <select name="filterStatus" class="form-control">
-                                                <option value="">Filter by Status</option>
-                                                <option value="1" ${filterStatus == 1 ? 'selected' : ''}>Active</option>
-                                                <option value="0" ${filterStatus == 0 ? 'selected' : ''}>Inactive</option>
-
-                                            </select>
+    <option value="">Filter by Status</option>
+    <option value="1" ${filterStatus != null && filterStatus.equals("1") ? "selected" : ""}>Active</option>
+    <option value="0" ${filterStatus != null && filterStatus.equals("0") ? "selected" : ""}>Inactive</option>
+</select>
                                         </div>
 
                                         <!-- Filter Button -->
@@ -130,8 +135,8 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <!-- Form ch?nh s?a -->
-                                                    <form action="settings?action=detail" method="get" style="display: inline-block;">
-                                                        <input type="hidden" name="action" value="detail">
+                                                    <form action="settings" method="get" style="display: inline-block;">
+                                                        <input type="hidden" name="action" value="edit">
                                                         <input type="hidden" name="id" value="${setting.id}">
                                                         <button type="submit" class="btn btn-sm btn-outline-success">
                                                             <i class="fa fa-info-circle"></i> 
@@ -139,12 +144,24 @@
                                                     </form>
 
                                                     <!-- Form xóa -->
-                                                    <form action="settings" method="post" onsubmit="return confirm('Are you sure you want to delete this setting?');" style="display: inline-block;">
-                                                        <input type="hidden" name="action" value="delete">
+                                                    <form action="settings" method="post" onsubmit="return confirm('Are you sure you want to change this setting?');" style="display: inline-block;">
+                                                        <input type="hidden" name="action" value="change">
                                                         <input type="hidden" name="id" value="${setting.id}">
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                            <i class="fa fa-trash"></i>
-                                                        </button>
+                                                        <c:choose>
+                                                            <c:when test="${setting.status}">
+                                                                <button type="submit" >
+                                                                    <input type="hidden" name="idSettingCheck" value="0">
+                                                                    <i>Inactive</i>
+                                                                </button>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <button type="submit" >
+                                                                    <input type="hidden" name="idSettingCheck" value="1">
+                                                                    <i>Active</i>
+                                                                </button>
+                                                            </c:otherwise>
+                                                        </c:choose>
+
                                                     </form>
                                                 </td>
                                             </tr>
@@ -157,13 +174,13 @@
                                     <ul class="pagination">
                                         <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
                                             <a class="page-link" href="?action=list&page=${currentPage - 1}" aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
+                                                <span aria-hidden="true">;</span>
                                             </a>
                                         </li>
                                         <li class="page-item active"><a class="page-link">${currentPage}</a></li>
                                         <li class="page-item">
                                             <a class="page-link" href="?action=list&page=${currentPage + 1}" aria-label="Next">
-                                                <span aria-hidden="true">&raquo;</span>
+                                                <span aria-hidden="true">;</span>
                                             </a>
                                         </li>
                                     </ul>

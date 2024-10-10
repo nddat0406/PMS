@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Sort</title>
+    <style>
+        th {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <table border="1">
+        <thead>
+            <tr>
+                <th name="name" sortBy="asc">Name</th>
+                <th name="age" sortBy="asc">Age</th>
+                <th name="date" sortBy="asc">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>John Doe</td>
+                <td>30</td>
+                <td>2023-09-01</td>
+            </tr>
+            <tr>
+                <td>Jane Smith</td>
+                <td>25</td>
+                <td>2023-09-02</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Function to handle the click event on table headers
+        function handleTableHeaderClick(event) {
+            const th = event.target; // Get the clicked <th> element
+            const name = th.getAttribute('name'); // Get the 'name' attribute
+            let sortBy = th.getAttribute('sortBy'); // Get the 'sortBy' attribute
+
+            // Log the name and sortBy attributes to the console
+            console.log(`Name: ${name}, SortBy: ${sortBy}`);
+
+            // Toggle the sortBy attribute between 'asc' and 'desc'
+            if (sortBy === 'asc') {
+                sortBy = 'desc';
+            } else {
+                sortBy = 'asc';
+            }
+
+            // Set the updated sortBy attribute back to the <th>
+            th.setAttribute('sortBy', sortBy);
+
+            // Log the new sortBy value after the change
+            console.log(`Updated SortBy: ${sortBy}`);
+        }
+
+        // Attach event listeners to all <th> elements
+        const tableHeaders = document.querySelectorAll('th');
+        tableHeaders.forEach(th => {
+            th.addEventListener('click', handleTableHeaderClick);
+        });
+    </script>
+</body>
+</html>

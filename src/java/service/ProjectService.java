@@ -4,13 +4,20 @@
  */
 package service;
 
+import dal.CriteriaDAO;
+import dal.MilestoneDAO;
 import dal.ProjectDAO;
 import dal.UserDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Allocation;
+import model.Criteria;
+import model.Milestone;
 import model.Project;
+import model.User;
 import static service.BaseService.*;
 
 /**
@@ -21,6 +28,8 @@ public class ProjectService {
 
     private UserDAO udao = new UserDAO();
     private ProjectDAO pdao = new ProjectDAO();
+    private CriteriaDAO cdao = new CriteriaDAO();
+    private MilestoneDAO mdao = new MilestoneDAO();
 
     public List<Allocation> getByUser(int id, int role) throws SQLException {
         try {
@@ -32,10 +41,6 @@ public class ProjectService {
         } catch (SQLException e) {
             throw new SQLException(e);
         }
-    }
-
-    public static void main(String[] args) throws SQLException {
-        System.out.println(new ProjectService().getByUser(4, 2));
     }
 
     public List<Allocation> searchFilter(List<Allocation> list, int deptFilter, int domainFilter, int statusFilter, String searchKey) {
@@ -51,6 +56,11 @@ public class ProjectService {
             }
         }
         return pList;
+    }
+
+    public List<User> getProjectMembers(int pID) throws SQLException {
+        return pdao.getAllUser(pID);
+
     }
 
 }
