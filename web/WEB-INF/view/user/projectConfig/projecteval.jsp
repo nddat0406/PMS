@@ -143,7 +143,7 @@
                                                         <div style="display: flex; justify-content: space-evenly">
                                                             <div class="input-group mb-3" style="width: 25%">
                                                                 <span class="input-group-text" id="basic-addon11">Milestone</span>
-                                                                <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter" onchange="ChangeFilter()">
+                                                                <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter">
                                                                     <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
                                                                     <c:forEach items="${msList}" var="m">
                                                                         <option value="${m.id}" ${milestoneFilter==m.id?'selected':''}>${m.name}</option>
@@ -152,7 +152,7 @@
                                                             </div>
                                                             <div class="input-group mb-3" style="width: 25%">
                                                                 <span class="input-group-text" id="basic-addon11">Status</span>
-                                                                <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter" onchange="ChangeFilter()">
+                                                                <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter">
                                                                     <option value="0" ${sessionScope.statusFilter==0?'selected':''}>All Status</option>
                                                                     <option value="1" ${sessionScope.statusFilter==1?'selected':''}>Active</option>
                                                                     <option value="2" ${sessionScope.statusFilter==2?'selected':''}>InActive</option>
@@ -464,6 +464,7 @@
                 });
             }
             ;
+            history.pushState(null, "", location.href.split("?")[0]);
         </script>
     </body>
 </html>

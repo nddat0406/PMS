@@ -49,7 +49,10 @@
                         $('.tableBody').load("${pageContext.request.contextPath}/project/milestone?page=${page} .tableBody > *");
                     }
                 });
-            };
+            }
+            ;
+
+            history.pushState(null, "", location.href.split("?")[0]);
         </script>
     </head>
     <body>

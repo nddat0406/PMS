@@ -104,7 +104,7 @@ public class LoginController extends HttpServlet {
             } else if (contain.contains("verify")) {
                 verifyPost(request, response);
             } else if (contain.contains("reset")) {
-                resetPost(request,response);
+                resetPost(request, response);
             }
         }
 
@@ -128,7 +128,10 @@ public class LoginController extends HttpServlet {
                 request.getSession().setAttribute("loginedUser", uService.getUserByEmail(email));
                 response.sendRedirect(request.getContextPath() + "/dashboard");
             } else {
-                request.getSession().setAttribute("errorMess", "Sai tài khoản mật khẩu");
+                
+                request.getSession().setAttribute("email", email);
+                request.getSession().setAttribute("pass", pass);
+                request.getSession().setAttribute("errorMess", "Sai tài khoản hoặc mật khẩu");
                 request.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
             }
         } catch (SQLException ex) {
@@ -138,8 +141,7 @@ public class LoginController extends HttpServlet {
     }
 
     private void registerPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String firstName = request.getParameter("firstName").trim();
-        String lastName = request.getParameter("lastName").trim();
+        String fullName = request.getParameter("fullName").trim();
         String email = request.getParameter("email").trim();
         String password = request.getParameter("password").trim();
         String rePassword = request.getParameter("rePassword").trim();
@@ -158,7 +160,6 @@ public class LoginController extends HttpServlet {
             request.setAttribute("rePasswordError", "Re-enter password does not match");
             request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
         }
-        String fullName = firstName.concat(" " + lastName);
         if (!uService.createUser(fullName, email, password)) {
             request.setAttribute("error", "Register unsuccessfully");
             request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
@@ -187,7 +188,7 @@ public class LoginController extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         if (user == null) {
             request.setAttribute("error", "User is null");
             request.getRequestDispatcher("/WEB-INF/view/user/verify.jsp").forward(request, response);
@@ -203,20 +204,20 @@ public class LoginController extends HttpServlet {
 
     private void resetPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
-                String password = request.getParameter("password");
-                String rePassword = request.getParameter("re-password");
-                if (!rePassword.trim().equals(password.trim())) {
-                    request.setAttribute("error", "Password is not match");
-                    request.setAttribute("email", email);
-                    request.getRequestDispatcher("/WEB-INF/view/user/resetpassword.jsp").forward(request, response);
-                }
-                boolean check = uService.resetPassword(email, rePassword);
-                if (!check) {
-                    request.setAttribute("errorMess", "Can not save new password");
-                    request.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
-                }
-                request.setAttribute("success", "Change password successfully");
-                request.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
+        String password = request.getParameter("password");
+        String rePassword = request.getParameter("re-password");
+        if (!rePassword.trim().equals(password.trim())) {
+            request.setAttribute("error", "Password is not match");
+            request.setAttribute("email", email);
+            request.getRequestDispatcher("/WEB-INF/view/user/resetpassword.jsp").forward(request, response);
+        }
+        boolean check = uService.resetPassword(email, rePassword);
+        if (!check) {
+            request.setAttribute("errorMess", "Can not save new password");
+            request.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
+        }
+        request.setAttribute("success", "Change password successfully");
+        request.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
     }
 
 }

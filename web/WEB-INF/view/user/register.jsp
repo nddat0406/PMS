@@ -56,12 +56,8 @@
                             <div class="card-body">
                                 <form action="${pageContext.request.contextPath}/register" method="POST">
                                     <div class="form-floating mb-1">
-                                        <input type="first-name" name="firstName" class="form-control" placeholder="first-name">
-                                        <label>First Name</label>
-                                    </div>
-                                    <div class="form-floating mb-1">
-                                        <input type="last-name" name="lastName" class="form-control" placeholder="last-name">
-                                        <label>Last Name</label>
+                                        <input type="full-name" name="fullName" class="form-control" placeholder="full-name">
+                                        <label>Full Name</label>
                                     </div>
                                     <div class="form-floating mb-1">
                                         <input type="email" name="email" class="form-control" placeholder="name@example.com">

@@ -134,6 +134,11 @@
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <h6 class="card-title">Project Member</h6>
+                                                        <ul class="header-dropdown">
+                                                            <li>
+                                                                <button onclick="exportToExel()" class="btn btn-success"><i class="fa fa-download"></i><span>&nbsp;Export to Excel</span></button>
+                                                            </li>
+                                                        </ul>
 
                                                     </div>
                                                     <div class="card-body" id="cardbody">
@@ -142,16 +147,16 @@
                                                             <div style="display: flex; justify-content: space-evenly">
                                                                 <div class="input-group mb-3" style="width: 25%">
                                                                     <span class="input-group-text" id="basic-addon11">Milestone</span>
-                                                                    <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter" onchange="ChangeFilter()">
-                                                                        <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
-                                                                    <c:forEach items="${msList}" var="m">
-                                                                        <option value="${m.id}" ${milestoneFilter==m.id?'selected':''}>${m.name}</option>
+                                                                    <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter">
+                                                                        <option value="0" ${deptFilter==0?'selected':''}>All Department</option>
+                                                                    <c:forEach items="${deptList}" var="d">
+                                                                        <option value="${m.id}" ${deptFilter==d.id?'selected':''}>${m.name}</option>
                                                                     </c:forEach>
                                                                 </select>
                                                             </div>
                                                             <div class="input-group mb-3" style="width: 25%">
                                                                 <span class="input-group-text" id="basic-addon11">Status</span>
-                                                                <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter" onchange="ChangeFilter()">
+                                                                <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter">
                                                                     <option value="0" ${sessionScope.statusFilter==0?'selected':''}>All Status</option>
                                                                     <option value="1" ${sessionScope.statusFilter==1?'selected':''}>Active</option>
                                                                     <option value="2" ${sessionScope.statusFilter==2?'selected':''}>InActive</option>
@@ -167,21 +172,20 @@
                                                     <table id="pro_list" class="table table-hover mb-0 justify-content-end">
                                                         <thead id="tableHead">
                                                             <tr>
-                                                                <th name="id" sortBy="desc" class="sortTableHead">id&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="name" sortBy="desc" class="sortTableHead" >Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="weight" sortBy="desc" class="sortTableHead">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="milestone.name" sortBy="desc" class="sortTableHead">team&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th>department</th>
-                                                                    <c:if test="${loginedUser.role!=2}">
-                                                                    <th>action</th>
-                                                                    </c:if>
+                                                                <th name="user.id" sortBy="desc" class="sortTableHead">id&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="user.fullname" sortBy="desc" class="sortTableHead" >Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="user.role" sortBy="desc" class="sortTableHead">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="effortRate" sortBy="desc" class="sortTableHead">Effort Rate&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="user.department.name" sortBy="desc" class="sortTableHead">department&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+
                                                                 <th>status</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody class="table-hover tableBody">
-                                                            <c:forEach items="${tableData}" var="i">
-                                                                <tr>
-                                                                    <td class="width45">
+                                                            <c:forEach items="${tableData}" var="t">
+                                                                <c:set value="${t.user}" var="i"></c:set>
+                                                                    <tr>
+                                                                        <td class="width45">
                                                                         ${i.id}
                                                                     </td>
                                                                     <td class="nameTd">
@@ -189,27 +193,27 @@
                                                                         <div><h6 class="mb-0">${i.fullname}</h6>
                                                                             <span>${i.email}</span>
                                                                         </div>
-
                                                                     </td>
-                                                                    <td><span class="badge bg-danger">${i.role}</span></td>
-                                                                    <td>24 Jun, 2015</td>
-                                                                    <td>CEO and Founder</td>
+                                                                    <td><span class="badge bg-danger">${i.getRoleString()}</span></td>
+                                                                    <td>
+                                                                        <div class="progress" style="height: 5px;">
+                                                                            <div class="progress-bar" role="progressbar" aria-valuenow="${t.effortRate}" aria-valuemin="0" aria-valuemax="100" style="width: ${t.effortRate}%;">
+                                                                            </div>
+                                                                        </div>
+                                                                        <small>Effort Rate: ${t.effortRate}%</small>
+                                                                    </td>
+                                                                    <td>${i.department.name}</td>
                                                                     <c:if test="${loginedUser.role!=2}">
-                                                                        <td>
-                                                                            aaa
-                                                                        </td>
-                                                                    </c:if>
-                                                                    <c:if test="${loginedUser.role!=2}">
-                                                                        <td style="width: 150px" class="statusCell" onclick="changeStatus(${i.id})" id="status${i.id}">
+                                                                        <td style="width: 150px" class="statusCell" onclick="changeStatus(${t.id})" id="status${t.id}">
                                                                         </c:if>
                                                                         <c:if test="${loginedUser.role==2}">
                                                                         <td style="width: 150px" class="statusCell">
                                                                         </c:if>
                                                                         <c:choose >
-                                                                            <c:when test="${i.isStatus()==true}">
+                                                                            <c:when test="${t.isStatus()==true}">
                                                                                 <span class="badge bg-success">Active</span><br>
                                                                             </c:when>
-                                                                            <c:when test="${i.isStatus()==false}">
+                                                                            <c:when test="${t.isStatus()==false}">
                                                                                 <span class="badge bg-secondary">Inactive</span><br>
                                                                             </c:when>
                                                                         </c:choose>
@@ -225,11 +229,11 @@
                                                     </c:if>
                                                     <nav aria-label="Page navigation example">
                                                         <ul class="pagination">
-                                                            <li class="page-item"><a class="page-link" href="eval?page=${page==1?1:page-1}">Previous</a></li>
+                                                            <li class="page-item"><a class="page-link" href="member?page=${page==1?1:page-1}">Previous</a></li>
                                                                 <c:forEach begin="${1}" end="${num}" var="i">
-                                                                <li class="page-item ${i==page?'active':''}"><a class="page-link" href="eval?page=${i}">${i}</a></li>
+                                                                <li class="page-item ${i==page?'active':''}"><a class="page-link" href="member?page=${i}">${i}</a></li>
                                                                 </c:forEach>
-                                                            <li class="page-item"><a class="page-link" href="eval?page=${page!=num?page+1:page}">Next</a></li>
+                                                            <li class="page-item"><a class="page-link" href="member?page=${page!=num?page+1:page}">Next</a></li>
                                                         </ul>
                                                     </nav>
                                                 </div>
@@ -250,28 +254,6 @@
 
         <!-- page js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-        <c:if test="${requestScope.successMess!=null}">
-            <script>
-                                                                        Swal.fire({
-                                                                            position: 'top-end',
-                                                                            icon: 'success',
-                                                                            title: '${successMess}',
-                                                                            showConfirmButton: false,
-                                                                            timer: 1500
-                                                                        });
-            </script>
-        </c:if>
-        <c:if test="${requestScope.errorMess!=null}">
-            <script>
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: '${errorMess}',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            </script>
-        </c:if>
         <script>
             $(document).ready(function () {
                 // Event handler for clicking on the table headers
@@ -321,55 +303,62 @@
                     $(this).text('Read More');
                 }
             });
-            <c:if test="${loginedUser.role!=2}">
-
-            function changeStatus(id) {
+            function exportToExel() {
                 $.ajax({
-                    url: "eval",
-                    type: 'post',
-                    data: {
-                        criteriaId: id,
-                        action: "changeStatus"
+                    type: "POST",
+                    url: "member", // URL của Servlet
+                    data: {action: "export"}, // Gửi action là "export"
+                    xhrFields: {
+                        responseType: 'blob' // Đặt response là blob để nhận file
                     },
-                    success: function () {
-                        $(' #status' + id).load("${pageContext.request.contextPath}/project/eval?page=${page} #status" + id + " > *");
-                    }
-                });
-            }
-            ;
-            function deleteStatus(id) {
-                Swal.fire({
-                    title: "Do you want to delete criteria with id=" + id + " ?",
-                    showCancelButton: true,
-                    confirmButtonText: "Delete",
-                    confirmButtonColor: "#FC5A69"
-                }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "eval",
-                            type: 'post',
-                            data: {
-                                criteriaId: id,
-                                action: "delete"
-                            },
-                            success: function () {
-                                Swal.fire("Deleted!", "", "success");
-                                $(' .tableBody').load("${pageContext.request.contextPath}/project/eval?page=${page} .tableBody > *");
-                            }
+                    success: function (data, status, xhr) {
+                        var filename = "Project_Members.xlsx"; // Tên file tải về
+
+                        // Tạo URL từ dữ liệu blob
+                        var url = window.URL.createObjectURL(data);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+
+                        // Append link ẩn và tự động nhấn để tải file
+                        document.body.appendChild(a);
+                        a.click();
+
+                        // Xóa URL khi không còn cần nữa
+                        window.URL.revokeObjectURL(url);
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Error Exporting File!',
+                            showConfirmButton: false,
+                            timer: 1500
                         });
                     }
                 });
             }
-            ;
-            function getModal(id) {
-                $(' #updateCriteria').load("${pageContext.request.contextPath}/project/eval?page=${page}&modalItemID=" + id + " #updateCriteria > *");
+            ;            
+            <c:if test="${loginedUser.role!=2}">
+
+            function changeStatus(id) {
+                $.ajax({
+                    url: "member",
+                    type: 'post',
+                    data: {
+                        allocateId: id,
+                        action: "changeStatus"
+                    },
+                    success: function () {
+                        $(' #status' + id).load("${pageContext.request.contextPath}/project/member?page=${page} #status" + id + " > *");
+                    }
+                });
             }
             ;
             </c:if>
             function changeSort(name, sortBy) {
                 $.ajax({
-                    url: "eval",
+                    url: "member",
                     type: 'post',
                     data: {
                         sortBy: sortBy,
@@ -377,11 +366,13 @@
                         action: "sort"
                     },
                     success: function () {
-                        $('.tableBody').load("${pageContext.request.contextPath}/project/eval?page=${page} .tableBody > *");
+                        $('.tableBody').load("${pageContext.request.contextPath}/project/member?page=${page} .tableBody > *");
                     }
                 });
             }
             ;
+            
+            history.pushState(null, "", location.href.split("?")[0]);
         </script>
     </body>
 </html>
