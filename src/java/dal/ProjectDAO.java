@@ -104,7 +104,8 @@ public class ProjectDAO extends BaseDAO {
     private Allocation setAllocationInfor(ResultSet rs) throws SQLException {
         try {
             Allocation temp = new Allocation();
-            temp.setUser(udao.getActiveUserById(rs.getInt(1)));
+            temp.setId(rs.getInt(8));
+            temp.setUser(udao.getActiveUserByIdNull(rs.getInt(1)));
             temp.setProject(getById(rs.getInt(2)));
             temp.setStartDate(rs.getDate(3));
             temp.setEndDate(rs.getDate(4));
@@ -143,32 +144,32 @@ public class ProjectDAO extends BaseDAO {
         }
     }
 
-    public List<User> getAllUser(int id) throws SQLException {
-        String str = "select u.* from allocation a join user u on u.id = a.userId where a.projectId = ?";
+    public List<Allocation> getAllMember(int id) throws SQLException {
+        String str = "select a.* from allocation a join user u on u.id = a.userId where a.projectId = ?";
         PreparedStatement pre = getConnection().prepareStatement(str);
         pre.setInt(1, id);
         ResultSet rs = pre.executeQuery();
 
-        List<User> userList = new ArrayList<>();
+        List<Allocation> userList = new ArrayList<>();
         while (rs.next()) {
-            User user = new User();
-            user.setId(rs.getInt(1));
-            user.setEmail(rs.getString(2));
-            user.setFullname(rs.getString(3));
-            user.setMobile(rs.getString(4));
-            user.setPassword(rs.getString(5));
-            user.setNote(rs.getString(6));
-            user.setRole(rs.getInt(7));
-            user.setStatus(rs.getInt(8));
-            user.setDepartment(new Group(gdao.getDeptNameById(rs.getInt(9))));
-            user.setImage(rs.getString(10));
-            user.setAddress(rs.getString(11));
-            user.setGender(rs.getBoolean(12));
-            user.setBirthdate(rs.getDate(13));
-            userList.add(user);
+            Allocation user = setAllocationInfor(rs);
+            if (user.getUser() != null) {
+                userList.add(user);
+            }
         }
         return userList;
 
+    }
+
+    public void flipStatusMemberOfPrj(int id) throws SQLException {
+        String sql = """
+                     UPDATE `pms`.`allocation`
+                     SET
+                     `status` = status ^ 1
+                     WHERE `id` = ?""";
+        PreparedStatement st = getConnection().prepareStatement(sql);
+        st.setInt(1, id);
+        st.executeUpdate();
     }
 
 }

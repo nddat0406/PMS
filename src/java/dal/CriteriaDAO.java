@@ -55,6 +55,7 @@ public class CriteriaDAO extends BaseDAO {
             st.setInt(1, id);
 
             st.executeUpdate();
+
         } catch (SQLException e) {
             throw new SQLException(e);
         }
@@ -86,6 +87,7 @@ public class CriteriaDAO extends BaseDAO {
         temp.setStatus(rs.getBoolean(5));
         temp.setDescription(rs.getString(6));
         temp.setMilestone(mdao.getMilestoneById(rs.getInt(7)));
+
         return temp;
     }
 
@@ -108,6 +110,7 @@ public class CriteriaDAO extends BaseDAO {
         pre.setInt(5, c.getMilestone().getId());
         pre.setInt(6, c.getId());
         pre.executeUpdate();
+
     }
 
     public void addCriteriaProject(Criteria c) throws SQLException {

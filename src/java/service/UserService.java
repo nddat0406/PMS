@@ -27,7 +27,6 @@ import static service.BaseService.*;
 public class UserService {
 
     private UserDAO udao = new UserDAO();
-
     private BaseService baseService = new BaseService();
 
     public User getUserProfile(int userId) throws SQLException {
