@@ -146,11 +146,11 @@
                                                             <input hidden type="text" value="filter" name="action">
                                                             <div style="display: flex; justify-content: space-evenly">
                                                                 <div class="input-group mb-3" style="width: 25%">
-                                                                    <span class="input-group-text" id="basic-addon11">Milestone</span>
-                                                                    <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter">
+                                                                    <span class="input-group-text" id="basic-addon11">Department</span>
+                                                                    <select class="form-select" aria-label="Default select example" name="deptFilter" id="deptFilter">
                                                                         <option value="0" ${deptFilter==0?'selected':''}>All Department</option>
                                                                     <c:forEach items="${deptList}" var="d">
-                                                                        <option value="${m.id}" ${deptFilter==d.id?'selected':''}>${m.name}</option>
+                                                                        <option value="${d.id}" ${deptFilter==d.id?'selected':''}>${d.name}</option>
                                                                     </c:forEach>
                                                                 </select>
                                                             </div>

@@ -263,16 +263,13 @@
                                 <div class="modal-body">
                                     <div class="row g-2">
                                         <input type="text" name="action" hidden value="update">
-                                        <div class="col-md-12">
-                                            <label>ID:</label>
-                                            <input type="text" class="form-control" placeholder="ID" name="uID" readonly value="${modalItem.id}">
-                                        </div>
-                                        <div class="col-md-12">
+                                        
+                                        <div class="col-md-6">
                                             <label>Name*:</label>
 
                                             <input type="text" class="form-control" placeholder="Name" name="uName" value="${modalItem.name}">
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col-md-6">
                                             <label>Weight:</label>
                                             <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="uWeight" value="${modalItem.weight}">
                                         </div>
