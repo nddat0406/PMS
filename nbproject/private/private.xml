@@ -44,5 +44,8 @@
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/DomainConfigController.java</file>
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/SettingDetails.jsp</file>
         </group>
+        <group name="test">
+            <file>file:/D:/FPTU/SWP391/project/PMS2/src/java/controller/ProjectConfigController.java</file>
+        </group>
     </open-files>
 </project-private>
