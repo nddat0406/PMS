@@ -39,7 +39,7 @@ import service.UserService;
  * @author HP
  */
 @WebServlet(name = "ProjectController", urlPatterns = {"/project", "/project/list", "/project/eval", "/project/milestone", "/project/member"})
-public class ProjectController extends HttpServlet {
+public class ProjectConfigController extends HttpServlet {
 
     private ProjectService pService = new ProjectService();
     private BaseService baseService = new BaseService();
