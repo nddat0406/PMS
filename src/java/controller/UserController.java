@@ -200,7 +200,7 @@ public class UserController extends HttpServlet {
             session.setAttribute("domainList", gService.getAllDomains());
             pagination(request, response, list, "/WEB-INF/view/Dashboard.jsp");
         } catch (SQLException ex) {
-            response.getWriter().print(ex.getMessage());
+            throw new ServletException(ex);
         }
     }
 
@@ -292,7 +292,7 @@ public class UserController extends HttpServlet {
         try {
             user.setBirthdate(new Date(formatter.parse(birthdate).getTime()));
             Part part = request.getPart("image");
-            user.setImage(request.getContextPath() + "/images/" + part.getSubmittedFileName());
+            user.setImage(request.getContextPath() + "/images/" +user.getId()+"_"+part.getSubmittedFileName());
             //update profile
             uService.updateProfile(user, part);
             session.setAttribute("loginedUser", uService.getUserByEmail(user.getEmail()));
@@ -342,7 +342,6 @@ public class UserController extends HttpServlet {
             response.getWriter().print(ex.getMessage());
         }
     }
-
     private void postSort(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String fieldName = request.getParameter("fieldName");
         String order = request.getParameter("sortBy");

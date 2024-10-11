@@ -45,6 +45,29 @@ public class UserDAO extends BaseDAO {
             throw new SQLException("User not exis or not active");
         }
     }
+    public User getActiveUserByIdNull(int userId) throws SQLException {
+        String str = "SELECT * FROM pms.user where id=? and status = 1";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            pre.setInt(1, userId);
+            ResultSet rs = pre.executeQuery();
+            rs.next();
+            User user = new User();
+            user.setId(rs.getInt(1));
+            user.setEmail(rs.getString(2));
+            user.setFullname(rs.getString(3));
+            user.setMobile(rs.getString(4));
+            user.setRole(rs.getInt(7));
+            user.setDepartment(new Group(gdao.getDeptNameById(rs.getInt(9))));
+            user.setImage(rs.getString(10));
+            user.setAddress(rs.getString(11));
+            user.setGender(rs.getBoolean(12));
+            user.setBirthdate(rs.getDate(13));
+            return user;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
 // Phương thức đăng nhập người dùng
 
     public User getUserLogin(String username, String password) throws Exception {

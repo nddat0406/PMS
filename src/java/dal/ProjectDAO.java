@@ -25,7 +25,7 @@ public class ProjectDAO extends BaseDAO {
 
     private GroupDAO gdao = new GroupDAO();
     private UserDAO udao = new UserDAO();
-    private MilestoneDAO mdao= new MilestoneDAO();
+    private MilestoneDAO mdao = new MilestoneDAO();
 
     public List<Allocation> getAllInAllocation() throws SQLException {
         String str = "select * from project";
@@ -104,7 +104,8 @@ public class ProjectDAO extends BaseDAO {
     private Allocation setAllocationInfor(ResultSet rs) throws SQLException {
         try {
             Allocation temp = new Allocation();
-            temp.setUser(udao.getActiveUserById(rs.getInt(1)));
+            temp.setId(rs.getInt(8));
+            temp.setUser(udao.getActiveUserByIdNull(rs.getInt(1)));
             temp.setProject(getById(rs.getInt(2)));
             temp.setStartDate(rs.getDate(3));
             temp.setEndDate(rs.getDate(4));
@@ -143,5 +144,32 @@ public class ProjectDAO extends BaseDAO {
         }
     }
 
+    public List<Allocation> getAllMember(int id) throws SQLException {
+        String str = "select a.* from allocation a join user u on u.id = a.userId where a.projectId = ?";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setInt(1, id);
+        ResultSet rs = pre.executeQuery();
+
+        List<Allocation> userList = new ArrayList<>();
+        while (rs.next()) {
+            Allocation user = setAllocationInfor(rs);
+            if (user.getUser() != null) {
+                userList.add(user);
+            }
+        }
+        return userList;
+
+    }
+
+    public void flipStatusMemberOfPrj(int id) throws SQLException {
+        String sql = """
+                     UPDATE `pms`.`allocation`
+                     SET
+                     `status` = status ^ 1
+                     WHERE `id` = ?""";
+        PreparedStatement st = getConnection().prepareStatement(sql);
+        st.setInt(1, id);
+        st.executeUpdate();
+    }
 
 }

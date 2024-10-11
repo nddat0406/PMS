@@ -27,7 +27,6 @@ import static service.BaseService.*;
 public class UserService {
 
     private UserDAO udao = new UserDAO();
-
     private BaseService baseService = new BaseService();
 
     public User getUserProfile(int userId) throws SQLException {
@@ -78,7 +77,7 @@ public class UserService {
                 ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
                 InputStream inputStream = classLoader.getResourceAsStream("app.properties");
                 props.load(inputStream);
-                String path = props.getProperty("image.user.path") + File.separator + part.getSubmittedFileName();
+                String path = props.getProperty("image.user.path") + File.separator +user.getId()+"_"+part.getSubmittedFileName();
                 String[] temp = udao.getActiveUserById(user.getId()).getImage().split("/");
                 String oldImageName = temp[temp.length - 1];
                 String oldPath = props.getProperty("image.user.path") + File.separator + oldImageName;

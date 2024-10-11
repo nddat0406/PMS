@@ -19,7 +19,7 @@ import model.User;
 public class GroupDAO extends BaseDAO {
 
     public String getDeptNameById(int id) throws SQLException {
-        String str = "SELECT name FROM pms.department  where id=? ";
+        String str = "SELECT name FROM pms.group  where type=0 and id=? ";
         try {
             PreparedStatement pre = getConnection().prepareStatement(str);
             pre.setInt(1, id);
@@ -33,7 +33,7 @@ public class GroupDAO extends BaseDAO {
     }
 
     public String getDomainName(int id) throws SQLException {
-        String str = "SELECT name FROM pms.domain  where id=? ";
+        String str = "SELECT name FROM pms.group  where type=1 and id=? ";
         try {
             PreparedStatement pre = getConnection().prepareStatement(str);
             pre.setInt(1, id);
@@ -48,7 +48,7 @@ public class GroupDAO extends BaseDAO {
 
     public int Delete(int domainID) {
         int n = 0;
-        String sql = "DELETE FROM domain WHERE id = ?";
+        String sql = "DELETE FROM pms.group  where type=1 and id = ?";
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
             pre.setInt(1, domainID);
@@ -67,7 +67,7 @@ public class GroupDAO extends BaseDAO {
         int offset = (pageNumber - 1) * pageSize;
 
         // Câu truy vấn với limit và offset để phân trang
-        String sql = "SELECT * FROM domain LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM pms.group  where type=1  LIMIT ? OFFSET ?";
 
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
@@ -100,7 +100,7 @@ public class GroupDAO extends BaseDAO {
 // Thêm domain mới 
     public int Add(String code, String name, String details, int status) {
         int n = 0;
-        String sql = "INSERT INTO domain (code, name, details, status) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO pms.group (code, name, details, status,type) VALUES (?, ?, ?, ?, 1)";
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
 
@@ -120,7 +120,7 @@ public class GroupDAO extends BaseDAO {
     // update Domain 
     public int Update(int domainID, String code, String name, String details, int status) {
         int n = 0;
-        String sql = "UPDATE domain SET code = ?, name = ?, details = ?, status = ? WHERE id = ?";
+        String sql = "UPDATE pms.group SET code = ?, name = ?, details = ?, status = ? WHERE id = ?";
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
 
@@ -143,7 +143,7 @@ public class GroupDAO extends BaseDAO {
 // Lấy thông tin chi tiết của domain theo ID
     public Group Detail(int domainID) {
         Group domain = null;
-        String sql = "SELECT * FROM domain WHERE id = ?";
+        String sql = "SELECT * FROM pms.group  where type=1 and id = ?";
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
             pre.setInt(1, domainID);
@@ -167,7 +167,7 @@ public class GroupDAO extends BaseDAO {
 
     public List<Group> Search(String keyword) {
         List<Group> list = new ArrayList<>();
-        String sql = "SELECT * FROM domain WHERE code LIKE ? OR name LIKE ? OR details LIKE ?";
+        String sql = "SELECT * FROM pms.group  where type=1 and code LIKE ? OR name LIKE ? OR details LIKE ?";
 
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
@@ -201,7 +201,7 @@ public class GroupDAO extends BaseDAO {
 
     public List<Group> filterGroups(int pageNumber, int pageSize, String name, String code, Integer status) {
         List<Group> groups = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM domain WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT * FROM pms.group  where type=1 and 1=1");
 
         // Append các điều kiện filter
         if (name != null && !name.isEmpty()) {
@@ -274,7 +274,7 @@ public class GroupDAO extends BaseDAO {
 
     public List<Group> getAllDomain() throws SQLException {
         List<Group> listD = new ArrayList<>();
-        String sql = "SELECT * FROM domain";
+        String sql = "SELECT * FROM pms.group  where type=1";
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
             ResultSet rs = pre.executeQuery();
@@ -300,7 +300,7 @@ public class GroupDAO extends BaseDAO {
 
     public List<Group> getAllDepartment() throws SQLException {
         List<Group> listD = new ArrayList<>();
-        String sql = "SELECT * FROM department";
+        String sql = "SELECT * FROM pms.group  where type=0";
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
             ResultSet rs = pre.executeQuery();
@@ -334,7 +334,7 @@ public class GroupDAO extends BaseDAO {
     }
 
     public Group getParentDepartmentById(int id) {
-        String sql = "SELECT * FROM department WHERE id = ?";
+        String sql = "SELECT * FROM pms.group  where type=0 and id = ?";
         Group department = null;
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
@@ -357,7 +357,7 @@ public class GroupDAO extends BaseDAO {
     // Lấy tất cả phòng ban
     public List<Group> Read() throws SQLException {
         List<Group> listD = new ArrayList<>();
-        String sql = "SELECT * FROM department";
+        String sql = "SELECT * FROM pms.group  where type=0";
 
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
@@ -398,7 +398,7 @@ public class GroupDAO extends BaseDAO {
         int offset = (pageNumber - 1) * pageSize;
 
         // Câu truy vấn với limit và offset để phân trang
-        String sql = "SELECT * FROM department LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM pms.group  where type=0 LIMIT ? OFFSET ?";
 
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
@@ -439,7 +439,7 @@ public class GroupDAO extends BaseDAO {
 
     // Thêm phòng ban mới
     public int Add(String code, String name, String details, Integer parent, int status) {
-        String sql = "INSERT INTO department (code, name, details, status" + (parent != null ? ", parent" : "") + ") VALUES (?, ?, ?, ?" + (parent != null ? ", ?" : "") + ")";
+        String sql = "INSERT INTO pms.group (code, name, details, status" + (parent != null ? ", parent" : "") + ") VALUES (?, ?, ?, ?" + (parent != null ? ", ?" : "") + ")";
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, code);
@@ -459,7 +459,7 @@ public class GroupDAO extends BaseDAO {
     // Cập nhật thông tin phòng ban
     public int Update(int departmentID, String code, String name, String details, Integer parent, int status) {
         int n = 0;
-        String sql = "UPDATE department SET code = ?, name = ?, details = ?, parent = ?, status = ? WHERE id = ?";
+        String sql = "UPDATE pms.group SET code = ?, name = ?, details = ?, parent = ?, status = ? WHERE id = ?";
 
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
@@ -487,7 +487,7 @@ public class GroupDAO extends BaseDAO {
     // Lấy thông tin chi tiết của phòng ban theo ID
     public Group getDepartmentDetail(int departmentID) {
         Group department = null;
-        String sql = "SELECT * FROM department WHERE id = ?";
+        String sql = "SELECT * FROM pms.group  where type=0 and id = ?";
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
             pre.setInt(1, departmentID);
@@ -521,7 +521,7 @@ public class GroupDAO extends BaseDAO {
     // Phương thức lọc phòng ban theo mã, tên, phòng ban cha và trạng thái
     public List<Group> filter(int pageNumber, int pageSize, String code, String name, Integer status) {
         List<Group> departments = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM department WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT * FROM pms.group  where type=0 and 1=1");
 
         // Append các điều kiện filter
         if (code != null && !code.isEmpty()) {
@@ -582,7 +582,7 @@ public class GroupDAO extends BaseDAO {
     // Tìm kiếm phòng ban theo từ khóa
     public List<Group> searchDepartments(String keyword) {
         List<Group> list = new ArrayList<>();
-        String sql = "SELECT * FROM department WHERE code LIKE ? OR name LIKE ? OR details LIKE ?";
+        String sql = "SELECT * FROM pms.group  where type=0 and code LIKE ? OR name LIKE ? OR details LIKE ?";
 
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
@@ -625,7 +625,7 @@ public class GroupDAO extends BaseDAO {
 
     // validation code va name 
     public boolean isCodeExists(String code) {
-        String query = "SELECT COUNT(*) FROM department  WHERE code = ?";
+        String query = "SELECT COUNT(*) FROM pms.group  where type=0 and code = ?";
         try {
             PreparedStatement ps = getConnection().prepareStatement(query);
             ps.setString(1, code);
@@ -640,7 +640,7 @@ public class GroupDAO extends BaseDAO {
     }
 
     public boolean isNameExists(String name) {
-        String query = "SELECT COUNT(*) FROM department  WHERE name = ?";
+        String query = "SELECT COUNT(*) FROM pms.group  where type=0 and name = ?";
         try {
             PreparedStatement ps = getConnection().prepareStatement(query);
             ps.setString(1, name);

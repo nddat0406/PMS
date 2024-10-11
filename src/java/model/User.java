@@ -29,9 +29,6 @@ public class User {
     private String otp;
     private Date otp_expiry;//Sử dụng kiểu dữ liệu Date cho thời gian hết hạn OTP
 
-    public User() {
-    }
-
     public int getId() {
         return id;
     }
@@ -95,9 +92,31 @@ public class User {
     public void setRole(int role) {
         this.role = role;
     }
+    
+    public String getRoleString(){
+        switch (this.role) {
+            case 1:
+                return "Admin";
+            case 2:
+                return "Member";
+            case 3:
+                return "Project QA";
+            case 4:
+                return "Project Manager";
+            case 5:
+                return "Department Manager ";
+            case 6:
+                return "PMO Manager";
+            default:
+                throw new AssertionError();
+        }
+    }
 
     public int getStatus() {
         return status;
+    }
+    public boolean isStatus() {
+        return status==1;
     }
 
     public void setStatus(int status) {

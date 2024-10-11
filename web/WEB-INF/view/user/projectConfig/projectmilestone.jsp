@@ -50,6 +50,9 @@
                     }
                 });
             }
+            ;
+
+            history.pushState(null, "", location.href.split("?")[0]);
         </script>
     </head>
     <body>

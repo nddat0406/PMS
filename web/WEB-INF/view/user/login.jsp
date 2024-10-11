@@ -44,19 +44,26 @@
                             <div class="card-header">
                                 <p class="fs-5 mb-0">Login to your account</p>
                             </div>
+                            <c:if test="${not empty errorMess}">
+                                        <div style="color: red; margin-top: 10px;">
+                                        ${errorMess}
+                                        </div>
+                                    </c:if>
                             <c:if test="${not empty requestScope.success}">
                                 <div style="color: green; margin-top: 10px;">
-                                ${requestScope.success}
+                                    ${requestScope.success}
                                 </div>
                             </c:if>
                             <div class="card-body">
                                 <form action="${pageContext.request.contextPath}/login" method="POST">
                                     <div class="form-floating mb-1">
-                                        <input type="email" name="email" class="form-control" placeholder="name@example.com">
+                                        <input type="email" name="email" class="form-control" placeholder="name@example.com"
+                                               value="${email}"/>
                                         <label>Email address</label>
                                     </div>
                                     <div class="form-floating">
-                                        <input type="password" name="password" class="form-control" placeholder="Password">
+                                        <input type="password" name="password" class="form-control" placeholder="Password"
+                                           value="${pass}"/>
                                         <label>Password</label>
                                     </div>
                                     <div class="form-check my-3">
@@ -70,7 +77,7 @@
                                 </form>
                                 <div class="d-grid gap-2 mt-3 pt-3">
                                     <div class="text-center"><span>OR</span></div>
-                                    <button class="btn btn-light"><i class="fab fa-google"></i> Sign in with Gmail</button>
+                                    <a href="" class="btn btn-light"><i class="fab fa-google"></i> Sign in with Gmail</a>  
                                 </div>
                                 <div class="mt-3 pt-3 border-top">
                                     <p class="mb-1"><a href="${pageContext.request.contextPath}/forgot-password"><i class="fa fa-lock me-2"></i>Forgot password?</a></p>
@@ -85,17 +92,7 @@
         </div>
 
         <script src="${pageContext.request.contextPath}/assets/bundles/sweetalert2.bundle.js"></script>
-        <c:if test="${errorMess!=null}">
-            <script>
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: '${errorMess}',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            </script>
-        </c:if>
+
     </body>
 
     <!-- Mirrored from wrraptheme.com/templates/lucid/hr/bs5/dist/page-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 13 Sep 2024 06:42:34 GMT -->

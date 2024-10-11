@@ -213,7 +213,7 @@
                                                         </td>
                                                         <td>${p.startDate}</td>
                                                         <td>
-                                                            <a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#largeModal${p.id}">
+                                                            <a href="project/milestone?projectId=${p.id}" class="btn" >
                                                                 <strong>Project Detail</strong>
                                                             </a>
                                                         </td>
@@ -221,7 +221,7 @@
                                                 </c:forEach>
                                             </tbody>
                                         </table>
-                                        <c:if test="${searchSize==0}">
+                                        <c:if test="${empty tableData}">
                                             <div class="card-body text-center">
                                                 <h4>No result found!</h4>
                                             </div>
@@ -243,42 +243,6 @@
                 </div>
             </div>
         </div>
-        <c:forEach items="${tableData}" var="l">
-            <c:set value="${l.project}" var="p"></c:set>
-            <div class="modal fade" id="largeModal${p.id}" tabindex="-1" aria-labelledby="largeModal" aria-hidden="true" style="display: none;">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Project details</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-
-                            <table class="table table-bordered border-primary">
-
-                                <tbody>
-                                    <tr>
-                                        <td>Managed Department </td>
-                                        <td>${p.department.name} </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Managed Domain </td>
-                                        <td>${p.domain.name}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Descriptions</td>
-                                        <td>${p.details}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </c:forEach>
 
         <!-- core js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
@@ -311,6 +275,7 @@
                                                                 $th.attr('sortBy', sortBy);
                                                             });
                                                         });
+
         </script>
     </body>
 </html>

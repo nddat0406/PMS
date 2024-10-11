@@ -25,12 +25,18 @@
             .content-wrapper {
                 max-height: 50px; /* Define the height for the collapsed state */
                 overflow: hidden; /* Hide the overflow */
-                transition: max-height 0.4s ease-in-out; /* Smooth ease-in-out transition */
+                transition-timing-function: ease-in;
+                /* Quick on the way out */
+                transition: 0.25s;
                 position: relative;
             }
 
             /* When expanded, make the max height very large to reveal all content */
             .content-wrapper.expanded {
+                /* This timing applies on the way IN */
+                transition-timing-function: ease-out;
+                /* A litttttle slower on the way in */
+                transition: 0.5s;
                 max-height: 1000px; /* Can be any large value to show the full text */
             }
 
@@ -42,7 +48,11 @@
                 left: 0;
                 right: 0;
                 height: 10px; /* Height of the gradient */
-                background: linear-gradient(to bottom, transparent); /* Gradient fading to white */
+                background: linear-gradient(to bottom, transparent,); /* Gradient fading to white */
+                transition-timing-function: ease-out;
+                /* A litttttle slower on the way in */
+                transition: 0.5s;
+
                 display: block;
             }
 
@@ -59,6 +69,16 @@
             }
             .statusCell{
                 cursor: pointer;
+            }
+            th {
+                cursor: pointer;
+                position: relative;
+            }
+            .sort-icon {
+                margin-left: 5px;
+                font-size: 12px;
+                width: 10px;
+                height: 20px;
             }
         </style>
     </head>
@@ -108,20 +128,23 @@
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <h6 class="card-title">Evaluation Criteria</h6>
+                                                    <c:if test="${loginedUser.role!=2}">
+
                                                         <ul class="header-dropdown">
                                                             <li>
-                                                                <a href="eval/add" class="btn btn-sm btn-outline-secondary" >Add New</a>
+                                                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addCriteria">Add New</button>
                                                             </li>
                                                         </ul>
-                                                    </div>
-                                                    <div class="card-body" id="cardbody">
-                                                        <form action="eval" method="post">
-                                                            <input hidden type="text" value="filter" name="action">
-                                                            <div style="display: flex; justify-content: space-evenly">
-                                                                <div class="input-group mb-3" style="width: 25%">
-                                                                    <span class="input-group-text" id="basic-addon11">Milestone</span>
-                                                                    <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter" onchange="ChangeFilter()">
-                                                                        <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
+                                                    </c:if>
+                                                </div>
+                                                <div class="card-body" id="cardbody">
+                                                    <form action="eval" method="post">
+                                                        <input hidden type="text" value="filter" name="action">
+                                                        <div style="display: flex; justify-content: space-evenly">
+                                                            <div class="input-group mb-3" style="width: 25%">
+                                                                <span class="input-group-text" id="basic-addon11">Milestone</span>
+                                                                <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter">
+                                                                    <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
                                                                     <c:forEach items="${msList}" var="m">
                                                                         <option value="${m.id}" ${milestoneFilter==m.id?'selected':''}>${m.name}</option>
                                                                     </c:forEach>
@@ -129,7 +152,7 @@
                                                             </div>
                                                             <div class="input-group mb-3" style="width: 25%">
                                                                 <span class="input-group-text" id="basic-addon11">Status</span>
-                                                                <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter" onchange="ChangeFilter()">
+                                                                <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter">
                                                                     <option value="0" ${sessionScope.statusFilter==0?'selected':''}>All Status</option>
                                                                     <option value="1" ${sessionScope.statusFilter==1?'selected':''}>Active</option>
                                                                     <option value="2" ${sessionScope.statusFilter==2?'selected':''}>InActive</option>
@@ -145,12 +168,14 @@
                                                     <table id="pro_list" class="table table-hover mb-0 justify-content-end">
                                                         <thead id="tableHead">
                                                             <tr>
-                                                                <th>id</th>
-                                                                <th>Name</th>
-                                                                <th>weight</th>
-                                                                <th>milestone</th>
+                                                                <th name="id" sortBy="desc" class="sortTableHead">id&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="name" sortBy="desc" class="sortTableHead">Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="weight" sortBy="desc" class="sortTableHead">weight&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="milestone.name" sortBy="desc" class="sortTableHead">milestone&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th>description</th>
-                                                                <th>action</th>
+                                                                    <c:if test="${loginedUser.role!=2}">
+                                                                    <th>action</th>
+                                                                    </c:if>
                                                                 <th>status</th>
                                                             </tr>
                                                         </thead>
@@ -177,13 +202,18 @@
                                                                         </div>
                                                                         <span class="read-more-btn" id="readMoreBtn">Read More</span>
                                                                     </td>
-
-                                                                    <td style="width: 200px">
-                                                                        <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#updateCriteria"><i class="fa fa-pencil" ></i></a>
-                                                                        <a href="javascript:void(0);" class="btn btn-sm btn-outline-danger" onclick="deleteStatus(${i.id})"><i class="fa fa-trash"></i></a>
-                                                                    </td>
-                                                                    <td style="width: 150px" class="statusCell" onclick="changeStatus(${i.id})" id="status${i.id}">
-
+                                                                    <c:if test="${loginedUser.role!=2}">
+                                                                        <td style="width: 200px">
+                                                                            <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#updateCriteria" onclick="getModal(${i.id})"><i class="fa fa-pencil" ></i></a>
+                                                                            <a href="javascript:void(0);" class="btn btn-sm btn-outline-danger" onclick="deleteStatus(${i.id})"><i class="fa fa-trash"></i></a>
+                                                                        </td>
+                                                                    </c:if>
+                                                                    <c:if test="${loginedUser.role!=2}">
+                                                                        <td style="width: 150px" class="statusCell" onclick="changeStatus(${i.id})" id="status${i.id}">
+                                                                        </c:if>
+                                                                        <c:if test="${loginedUser.role==2}">
+                                                                        <td style="width: 150px" class="statusCell">
+                                                                        </c:if>
                                                                         <c:choose >
                                                                             <c:when test="${i.status==true}">
                                                                                 <span class="badge bg-success">Active</span><br>
@@ -197,7 +227,7 @@
                                                             </c:forEach>
                                                         </tbody>
                                                     </table>
-                                                    <c:if test="${searchSize==0}">
+                                                    <c:if test="${empty tableData}">
                                                         <div class="card-body text-center">
                                                             <h4>No result found!</h4>
                                                         </div>
@@ -215,58 +245,99 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="updateCriteria" tabindex="-1" aria-labelledby="updateCriteria" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <form action="eval/update">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="defaultModalLabel">Update Criteria</h5>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row g-2">
+            <c:if test="${loginedUser.role!=2}">
 
+                <div class="modal fade" id="updateCriteria" tabindex="-1" aria-labelledby="updateCriteria" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form action="eval" method="post">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="defaultModalLabel">Update Criteria</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row g-2">
+                                        <input type="text" name="action" hidden value="update">
+                                        <div class="col-md-12">
+                                            <label>ID:</label>
+                                            <input type="text" class="form-control" placeholder="ID" name="uID" readonly value="${modalItem.id}">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Name*:</label>
 
-                                    <div class="col-md-12">
-                                        <label>ID:</label>
-                                        <input type="text" class="form-control" placeholder="ID" name="uID" readonly value="${modalItem.id}">
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label>Name*:</label>
-
-                                        <input type="text" class="form-control" placeholder="Name" name="uName" value="${modalItem.name}">
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label>Weight:</label>
-                                        <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="uWeight" value="${modalItem.weight}">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label>Milestone</label>
-                                        <select name="uMilestone" class="form-select">
-                                            <c:forEach items="${msList}" var="m">
-                                                <option value="${m.id}" ${modalItem.milestone.id==m.id?'selected':''}>${m.name}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <textarea id="id" class="form-control" name="name" rows="8" cols="60">${modalItem.description}</textarea>
+                                            <input type="text" class="form-control" placeholder="Name" name="uName" value="${modalItem.name}">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Weight:</label>
+                                            <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="uWeight" value="${modalItem.weight}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Milestone</label>
+                                            <select name="uMilestone" class="form-select">
+                                                <c:forEach items="${msList}" var="m">
+                                                    <option value="${m.id}" ${modalItem.milestone.id==m.id?'selected':''}>${m.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <textarea id="id" class="form-control" name="uDescript" rows="8" cols="60">${modalItem.description}</textarea>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary">Add</button>
-                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </form>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
+                <div class="modal fade" id="addCriteria" tabindex="-1" aria-labelledby="addCriteria" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="defaultModalLabel">Add Criteria</h5>
+                            </div>
+                            <form action="eval" method="post">
+                                <div class="modal-body">
+                                    <div class="row g-2">
+                                        <input type="text" name="action" hidden value="add">
+                                        <div class="col-md-6">
+                                            <label>Name*:</label>
+                                            <input type="text" class="form-control" placeholder="Name" name="Name" value="${oldItem.name}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Weight:</label>
+                                            <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="Weight" value="${oldItem.weight}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Milestone</label>
+                                            <select name="Milestone" class="form-select">
+                                                <c:forEach items="${msList}" var="m">
+                                                    <option value="${m.id}" ${oldItem.milestone.id==m.id?'selected':''}>${m.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Description:</label>
+                                            <textarea id="id" class="form-control" name="Descript" rows="8" cols="60">${oldItem.description}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Add</button>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
         </div>
 
         <!-- core js file -->
@@ -275,61 +346,125 @@
 
         <!-- page js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-
-        <script>
-
-                                                                        $readMoreBtn = $(' .read-more-btn');
-                                                                        $readMoreBtn.on('click', function () {
-                                                                            $contentWrapper = $(this).parent().find(' .content-wrapper');
-                                                                            // Toggle the "expanded" class on the content wrapper
-                                                                            $contentWrapper.toggleClass('expanded');
-                                                                            // Toggle the button text between "Read More" and "Read Less"
-                                                                            if ($contentWrapper.hasClass('expanded')) {
-                                                                                $(this).text('Read Less');
-                                                                            } else {
-                                                                                $(this).text('Read More');
-                                                                            }
-                                                                        });
-                                                                        function changeStatus(id) {
-                                                                            $.ajax({
-                                                                                url: "eval",
-                                                                                type: 'post',
-                                                                                data: {
-                                                                                    criteriaId: id,
-                                                                                    action: "changeStatus"
-                                                                                },
-                                                                                success: function () {
-                                                                                    $(' #status' + id).load("${pageContext.request.contextPath}/project/eval?page=${page} #status" + id + " > *");
-                                                                                }
-                                                                            });
-                                                                        }
-                                                                        ;
-                                                                        function deleteStatus(id) {
+        <c:if test="${requestScope.successMess!=null}">
+            <script>
                                                                             Swal.fire({
-                                                                                title: "Do you want to delete criteria with id=" + id + " ?",
-                                                                                showCancelButton: true,
-                                                                                confirmButtonText: "Delete",
-                                                                                confirmButtonColor: "#FC5A69"
-                                                                            }).then((result) => {
-                                                                                /* Read more about isConfirmed, isDenied below */
-                                                                                if (result.isConfirmed) {
-                                                                                    $.ajax({
-                                                                                        url: "eval",
-                                                                                        type: 'post',
-                                                                                        data: {
-                                                                                            criteriaId: id,
-                                                                                            action: "delete"
-                                                                                        },
-                                                                                        success: function () {
-                                                                                            Swal.fire("Deleted!", "", "success");
-                                                                                            $(' .tableBody').load("${pageContext.request.contextPath}/project/eval?page=${page} .tableBody > *");
-                                                                                        }
-                                                                                    });
-                                                                                }
+                                                                                position: 'top-end',
+                                                                                icon: 'success',
+                                                                                title: '${successMess}',
+                                                                                showConfirmButton: false,
+                                                                                timer: 1500
                                                                             });
-                                                                        }
-                                                                        ;
+            </script>
+        </c:if>
+        <c:if test="${requestScope.errorMess!=null}">
+            <script>
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: '${errorMess}',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            </script>
+        </c:if>
+        <script>
+            $(document).ready(function () {
+                // Event handler for clicking on the table headers
+                $(' .sortTableHead').on('click', function () {
+                    var $th = $(this);  // Get the clicked <th> element as a jQuery object
 
+                    var name = $th.attr('name');  // Get the 'name' attribute
+                    var sortBy = $th.attr('sortBy');  // Get the 'sortBy' attribute
+                    changeSort(name, sortBy);
+                    $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+
+                    // Toggle the sortBy attribute between 'asc' and 'desc'
+                    if (sortBy === 'asc') {
+                        sortBy = 'desc';
+                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down'); // Change icon to down
+                    } else {
+                        sortBy = 'asc';
+                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up'); // Change icon to up
+                    }
+
+                    // Set the updated sortBy attribute
+                    $th.attr('sortBy', sortBy);
+                });
+            });
+            $readMoreBtn = $(' .read-more-btn');
+            $readMoreBtn.on('click', function () {
+                $contentWrapper = $(this).parent().find(' .content-wrapper');
+                // Toggle the "expanded" class on the content wrapper
+                $contentWrapper.toggleClass('expanded');
+                // Toggle the button text between "Read More" and "Read Less"
+                if ($contentWrapper.hasClass('expanded')) {
+                    $(this).text('Read Less');
+                } else {
+                    $(this).text('Read More');
+                }
+            });
+            <c:if test="${loginedUser.role!=2}">
+            function changeStatus(id) {
+                $.ajax({
+                    url: "eval",
+                    type: 'post',
+                    data: {
+                        criteriaId: id,
+                        action: "changeStatus"
+                    },
+                    success: function () {
+                        $(' #status' + id).load("${pageContext.request.contextPath}/project/eval?page=${page} #status" + id + " > *");
+                    }
+                });
+            }
+            ;
+            function deleteStatus(id) {
+                Swal.fire({
+                    title: "Do you want to delete criteria with id=" + id + " ?",
+                    showCancelButton: true,
+                    confirmButtonText: "Delete",
+                    confirmButtonColor: "#FC5A69"
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "eval",
+                            type: 'post',
+                            data: {
+                                criteriaId: id,
+                                action: "delete"
+                            },
+                            success: function () {
+                                Swal.fire("Deleted!", "", "success");
+                                $(' .tableBody').load("${pageContext.request.contextPath}/project/eval?page=${page} .tableBody > *");
+                            }
+                        });
+                    }
+                });
+            }
+            ;
+            function getModal(id) {
+                $(' #updateCriteria').load("${pageContext.request.contextPath}/project/eval?page=${page}&modalItemID=" + id + " #updateCriteria > *");
+            }
+            ;
+            </c:if>
+            function changeSort(name, sortBy) {
+                $.ajax({
+                    url: "eval",
+                    type: 'post',
+                    data: {
+                        sortBy: sortBy,
+                        fieldName: name,
+                        action: "sort"
+                    },
+                    success: function () {
+                        $('.tableBody').load("${pageContext.request.contextPath}/project/eval?page=${page} .tableBody > *");
+                    }
+                });
+            }
+            ;
+            history.pushState(null, "", location.href.split("?")[0]);
         </script>
     </body>
 </html>
