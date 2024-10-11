@@ -16,39 +16,39 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.List;
 import java.sql.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Allocation;
 import model.Criteria;
 import model.Project;
 import service.BaseService;
 import model.Milestone;
-import model.User;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Row;
+import model.Team;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import service.CriteriaService;
 import service.GroupService;
 import service.MilestoneService;
 import service.ProjectService;
-import service.UserService;
+import service.TeamService;
 
 /**
  *
  * @author HP
  */
-@WebServlet(name = "ProjectController", urlPatterns = {"/project", "/project/list", "/project/eval", "/project/milestone", "/project/member"})
-public class ProjectController extends HttpServlet {
+
+@WebServlet(name = "ProjectConfigController", urlPatterns = {"/project", "/project/eval", "/project/milestone", "/project/member", "/project/team"})
+
+public class ProjectConfigController extends HttpServlet {
 
     private ProjectService pService = new ProjectService();
     private BaseService baseService = new BaseService();
     private MilestoneService mService = new MilestoneService();
     private CriteriaService cService = new CriteriaService();
+    private GroupService gService = new GroupService();
+    private TeamService tService = new TeamService();
 
     private String linkEval = "/WEB-INF/view/user/projectConfig/projecteval.jsp";
     private String linkMile = "/WEB-INF/view/user/projectConfig/projectmilestone.jsp";
     private String linkMember = "/WEB-INF/view/user/projectConfig/projectmember.jsp";
+    private String linkTeam = "/WEB-INF/view/user/projectConfig/projectteam.jsp";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -115,6 +115,14 @@ public class ProjectController extends HttpServlet {
                     getProjectMember(request, response);
                 }
             }
+            case "team" -> {
+                if (request.getParameter("page") != null) {
+                    List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
+                    pagination(request, response, list, linkMember);
+                } else {
+                    getProjectTeam(request, response);
+                }
+            }
             case "milestone" ->
                 getProjectMilestone(request, response);
             default ->
@@ -162,6 +170,8 @@ public class ProjectController extends HttpServlet {
                         postMemberSort(request, response);
                     case "changeStatus" ->
                         postMemberFlipStatus(request, response);
+                    case "filter" ->
+                        postMemberFilter(request, response);
                     case "export" ->
                         exportToExcel(response, request);
                     default ->
@@ -181,7 +191,6 @@ public class ProjectController extends HttpServlet {
             default ->
                 throw new AssertionError();
         }
-
     }
 
     /**
@@ -219,13 +228,17 @@ public class ProjectController extends HttpServlet {
             pagination(request, response, list, linkEval);
         } catch (SQLException ex) {
             throw new ServletException(ex);
-
         }
     }
 
     private void getProjectMember(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             HttpSession session = request.getSession();
+            session.removeAttribute("searchKey");
+            session.removeAttribute("deptFilter");
+            session.removeAttribute("statusFilter");
+            session.removeAttribute("sortFieldName");
+            session.removeAttribute("sortOrder");
             Integer pID;
             String pIdRaw = request.getParameter("projectId");
             if (pIdRaw == null) {
@@ -239,6 +252,7 @@ public class ProjectController extends HttpServlet {
             }
             List<Allocation> list = pService.getProjectMembers(pID);
             session.setAttribute("memberList", list);
+            session.setAttribute("deptList", gService.getAllDepartment());
             pagination(request, response, list, linkMember);
         } catch (SQLException ex) {
             throw new ServletException(ex);
@@ -269,6 +283,34 @@ public class ProjectController extends HttpServlet {
             response.getWriter().print("An error occurred: " + ex.getMessage());
         }
 
+    }
+
+    private void getProjectTeam(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            HttpSession session = request.getSession();
+            session.removeAttribute("searchKey");
+            session.removeAttribute("milestoneFilter");
+            session.removeAttribute("statusFilter");
+            session.removeAttribute("sortFieldName");
+            session.removeAttribute("sortOrder");
+            Integer pID;
+            String pIdRaw = request.getParameter("projectId");
+            if (pIdRaw == null) {
+                pID = (Integer) session.getAttribute("selectedProject");
+                if (pID == null) {
+                    throw new ServletException("Some thing went wrong, cannot find the project id");
+                }
+            } else {
+                pID = Integer.valueOf(pIdRaw);
+                session.setAttribute("selectedProject", pID);
+            }
+            List<Team> list = tService.getTeamsByProject(pID);
+            session.setAttribute("teamList", list);
+            session.setAttribute("msList", mService.getAllMilestone(pID));
+            pagination(request, response, list, linkTeam);
+        } catch (SQLException ex) {
+            throw new ServletException(ex);
+        }
     }
 
     public void pagination(HttpServletRequest request, HttpServletResponse response, List<?> list, String link) throws ServletException, IOException {
@@ -478,14 +520,14 @@ public class ProjectController extends HttpServlet {
 
     private List<Allocation> refreshMemberChanges(HttpServletRequest request) throws ServletException {
         HttpSession session = request.getSession();
-//        String searchKey = (String) session.getAttribute("searchKey");
-//        Integer mileFilter = (Integer) session.getAttribute("milestoneFilter");
-//        Integer statusFilter = (Integer) session.getAttribute("statusFilter");
+        String searchKey = (String) session.getAttribute("searchKey");
+        Integer deptFilter = (Integer) session.getAttribute("deptFilter");
+        Integer statusFilter = (Integer) session.getAttribute("statusFilter");
         String fieldName = request.getParameter("fieldName");
         String order = request.getParameter("sortBy");
         try {
             List<Allocation> list = pService.getProjectMembers((int) session.getAttribute("selectedProject"));
-//            list = pService.searchFilterMember(list, mileFilter, statusFilter, searchKey);
+            list = pService.searchFilterMember(list, deptFilter, statusFilter, searchKey);
             if (fieldName != null && order != null) {
                 baseService.sortListByField(list, fieldName, order);
             }
@@ -493,6 +535,27 @@ public class ProjectController extends HttpServlet {
             return list;
         } catch (SQLException ex) {
             throw new ServletException(ex);
+        }
+    }
+
+    private void postMemberFilter(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String deptFilterRaw = request.getParameter("deptFilter");
+        String statusFilterRaw = request.getParameter("statusFilter");
+        try {
+            int deptFilter = baseService.TryParseInt(deptFilterRaw);
+            int statusFilter = baseService.TryParseInt(statusFilterRaw);
+            String searchKey = request.getParameter("searchKey");
+            HttpSession session = request.getSession();
+            List<Allocation> list = pService.getProjectMembers((int) session.getAttribute("selectedProject"));
+            list = pService.searchFilterMember(list, deptFilter, statusFilter, searchKey);
+            session.setAttribute("searchKey", searchKey);
+            session.setAttribute("deptFilter", deptFilter);
+            session.setAttribute("statusFilter", statusFilter);
+            session.setAttribute("memberList", list);
+            
+            pagination(request, response, list, linkMember);
+        } catch (SQLException e) {
+            throw new ServletException(e);
         }
     }
 
@@ -523,4 +586,5 @@ public class ProjectController extends HttpServlet {
             throw new ServletException(ex);
         }
     }
+
 }

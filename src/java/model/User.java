@@ -113,9 +113,9 @@ public class User {
     }
 
     public int getStatus() {
-        return status;
+        return this.status;
     }
-    public boolean isStatus() {
+    public boolean getStatusBoolean() {
         return status==1;
     }
 

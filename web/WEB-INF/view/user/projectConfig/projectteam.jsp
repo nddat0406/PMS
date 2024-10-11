@@ -86,6 +86,21 @@
             .nameTd img{
                 margin: 0px 15px;
             }
+            .accordion-item{
+                margin: 10px;
+            }
+            #accordionExample{
+                margin-top: 10px;
+            }
+            .accordion-button span:first-child{
+                width: 80px;
+            }
+            .starIcon{
+                width: 24px;
+                height: 24px;
+                fill: currentcolor;
+                color: rgb(237, 108, 2);
+            }
         </style>
     </head>
 
@@ -123,8 +138,8 @@
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                                 <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Overview-tab" href="milestone" role="tab">Milestone</a></li>
                                                 <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab " href="eval" role="tab">Evaluation criteria</a></li>
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link active" id="Settings-tab" href="member" role="tab">Member</a></li>
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab" href="team" role="tab">Team</a></li>
+                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab" href="member" role="tab">Member</a></li>
+                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link active" id="Settings-tab" href="team" role="tab">Team</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -133,24 +148,18 @@
                                             <div class="col-lg-12 col-md-12">
                                                 <div class="card">
                                                     <div class="card-header">
-                                                        <h6 class="card-title">Project Member</h6>
-                                                        <ul class="header-dropdown">
-                                                            <li>
-                                                                <button onclick="exportToExel()" class="btn btn-success"><i class="fa fa-download"></i><span>&nbsp;Export to Excel</span></button>
-                                                            </li>
-                                                        </ul>
-
+                                                        <h6 class="card-title">Project Teams</h6>
                                                     </div>
                                                     <div class="card-body" id="cardbody">
-                                                        <form action="member" method="post">
+                                                        <form action="team" method="post">
                                                             <input hidden type="text" value="filter" name="action">
                                                             <div style="display: flex; justify-content: space-evenly">
                                                                 <div class="input-group mb-3" style="width: 25%">
-                                                                    <span class="input-group-text" id="basic-addon11">Department</span>
-                                                                    <select class="form-select" aria-label="Default select example" name="deptFilter" id="deptFilter">
-                                                                        <option value="0" ${deptFilter==0?'selected':''}>All Department</option>
-                                                                    <c:forEach items="${deptList}" var="d">
-                                                                        <option value="${d.id}" ${deptFilter==d.id?'selected':''}>${d.name}</option>
+                                                                    <span class="input-group-text" id="basic-addon11">Milestone</span>
+                                                                    <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="milestoneFilter">
+                                                                        <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
+                                                                    <c:forEach items="${msList}" var="ms">
+                                                                        <option value="${ms.id}" ${milestoneFilter==ms.id?'selected':''}>${ms.name}</option>
                                                                     </c:forEach>
                                                                 </select>
                                                             </div>
@@ -169,59 +178,30 @@
                                                         </div>
                                                     </form>
 
-                                                    <table id="pro_list" class="table table-hover mb-0 justify-content-end">
-                                                        <thead id="tableHead">
-                                                            <tr>
-                                                                <th name="user.id" sortBy="desc" class="sortTableHead">id&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="user.fullname" sortBy="desc" class="sortTableHead" >Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="user.role" sortBy="desc" class="sortTableHead">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="effortRate" sortBy="desc" class="sortTableHead">Effort Rate&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="user.department.name" sortBy="desc" class="sortTableHead">department&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-
-                                                                <th>status</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="table-hover tableBody">
-                                                            <c:forEach items="${tableData}" var="t">
-                                                                <c:set value="${t.user}" var="i"></c:set>
-                                                                    <tr>
-                                                                        <td class="width45">
-                                                                        ${i.id}
-                                                                    </td>
-                                                                    <td class="nameTd">
-                                                                        <img src="${i.image}" class="rounded-circle" style="width: 50px; height: 50px" alt="user picture">
-                                                                        <div><h6 class="mb-0">${i.fullname}</h6>
-                                                                            <span>${i.email}</span>
+                                                    <div class="accordion" id="accordionExample">
+                                                        <c:forEach items="${tableData}" var="i">
+                                                            <div class="justify-content-center" style=" display: flex;justify-content: center">
+                                                                <div class="accordion-item col-lg-10 col-md-10">
+                                                                    <h2 class="accordion-header" id="heading${i.id}">
+                                                                        <button class="accordion-button align-content-around" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${i.id}" aria-expanded="true" aria-controls="collapse${i.id}">
+                                                                            <span> <h5>${i.name}</h5></span> 
+                                                                            <span> <h5>(${i.getTeamSize()} Members)</h5></span>
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="collapse${i.id}" class="accordion-collapse collapse" aria-labelledby="heading${i.id}" data-bs-parent="#accordionExample">
+                                                                        <div class="accordion-body">
+                                                                            <span><p>${i.teamLeader.getStatus()==0?"Deactivated User":i.teamLeader.fullname} <svg class="starIcon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarsIcon"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"></path></svg>
+                                                                                </p></span>
+                                                                            
+                                                                            <c:forEach items="${i.members}" var="m">
+                                                                                <p>${m.getStatus()==0?"Deactivated User":m.fullname}</p>
+                                                                            </c:forEach>
                                                                         </div>
-                                                                    </td>
-                                                                    <td><span class="badge bg-danger">${i.getRoleString()}</span></td>
-                                                                    <td>
-                                                                        <div class="progress" style="height: 5px;">
-                                                                            <div class="progress-bar" role="progressbar" aria-valuenow="${t.effortRate}" aria-valuemin="0" aria-valuemax="100" style="width: ${t.effortRate}%;">
-                                                                            </div>
-                                                                        </div>
-                                                                        <small>Effort Rate: ${t.effortRate}%</small>
-                                                                    </td>
-                                                                    <td>${i.department.name}</td>
-                                                                    <c:if test="${loginedUser.role!=2}">
-                                                                        <td style="width: 150px" class="statusCell" onclick="changeStatus(${t.id})" id="status${t.id}">
-                                                                        </c:if>
-                                                                        <c:if test="${loginedUser.role==2}">
-                                                                        <td style="width: 150px" class="statusCell">
-                                                                        </c:if>
-                                                                        <c:choose >
-                                                                            <c:when test="${t.isStatus()==true}">
-                                                                                <span class="badge bg-success">Active</span><br>
-                                                                            </c:when>
-                                                                            <c:when test="${t.isStatus()==false}">
-                                                                                <span class="badge bg-secondary">Inactive</span><br>
-                                                                            </c:when>
-                                                                        </c:choose>
-                                                                    </td>
-                                                                </tr>
-                                                            </c:forEach>
-                                                        </tbody>
-                                                    </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </c:forEach>
+                                                    </div>
                                                     <c:if test="${empty tableData}">
                                                         <div class="card-body text-center">
                                                             <h4>No result found!</h4>
@@ -229,11 +209,11 @@
                                                     </c:if>
                                                     <nav aria-label="Page navigation example">
                                                         <ul class="pagination">
-                                                            <li class="page-item"><a class="page-link" href="member?page=${page==1?1:page-1}">Previous</a></li>
+                                                            <li class="page-item"><a class="page-link" href="team?page=${page==1?1:page-1}">Previous</a></li>
                                                                 <c:forEach begin="${1}" end="${num}" var="i">
-                                                                <li class="page-item ${i==page?'active':''}"><a class="page-link" href="member?page=${i}">${i}</a></li>
+                                                                <li class="page-item ${i==page?'active':''}"><a class="page-link" href="team?page=${i}">${i}</a></li>
                                                                 </c:forEach>
-                                                            <li class="page-item"><a class="page-link" href="member?page=${page!=num?page+1:page}">Next</a></li>
+                                                            <li class="page-item"><a class="page-link" href="team?page=${page!=num?page+1:page}">Next</a></li>
                                                         </ul>
                                                     </nav>
                                                 </div>
@@ -306,7 +286,7 @@
             function exportToExel() {
                 $.ajax({
                     type: "POST",
-                    url: "member", // URL của Servlet
+                    url: "team", // URL của Servlet
                     data: {action: "export"}, // Gửi action là "export"
                     xhrFields: {
                         responseType: 'blob' // Đặt response là blob để nhận file
@@ -338,19 +318,19 @@
                     }
                 });
             }
-            ;            
+            ;
             <c:if test="${loginedUser.role!=2}">
 
             function changeStatus(id) {
                 $.ajax({
-                    url: "member",
+                    url: "team",
                     type: 'post',
                     data: {
                         allocateId: id,
                         action: "changeStatus"
                     },
                     success: function () {
-                        $(' #status' + id).load("${pageContext.request.contextPath}/project/member?page=${page} #status" + id + " > *");
+                        $(' #status' + id).load("${pageContext.request.contextPath}/project/team?page=${page} #status" + id + " > *");
                     }
                 });
             }
@@ -358,7 +338,7 @@
             </c:if>
             function changeSort(name, sortBy) {
                 $.ajax({
-                    url: "member",
+                    url: "team",
                     type: 'post',
                     data: {
                         sortBy: sortBy,
@@ -366,12 +346,12 @@
                         action: "sort"
                     },
                     success: function () {
-                        $('.tableBody').load("${pageContext.request.contextPath}/project/member?page=${page} .tableBody > *");
+                        $('.tableBody').load("${pageContext.request.contextPath}/project/team?page=${page} .tableBody > *");
                     }
                 });
             }
             ;
-            
+
             history.pushState(null, "", location.href.split("?")[0]);
         </script>
     </body>

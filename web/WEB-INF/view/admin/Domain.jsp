@@ -35,6 +35,24 @@
             display: inline-block; /* ??m b?o nt b?m khng b? v? dng */
             margin-bottom: 0; /* Lo?i b? margin d??i n?u c */
         }
+        .action-bar {
+            display: flex;
+            justify-content: flex-end; /* Đẩy nút sang góc phải */
+            margin-bottom: 10px; /* Khoảng cách dưới nút */
+        }
+
+        .action-bar .btn {
+            background-color: #1f8eed; /* Màu nền */
+            color: white; /* Màu chữ */
+            padding: 10px 20px; /* Khoảng cách trong nút */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .action-bar .btn:hover {
+            background-color: #0f7dd4; /* Màu khi hover */
+        }
 
     </style>
     <body>
@@ -48,44 +66,47 @@
                 <jsp:include page="../common/topNavbar.jsp"></jsp:include>
                 <jsp:include page="../common/sidebar.jsp"></jsp:include>
 
-                <div id="main-content">
-                    <div class="container-fluid">
+                    <div id="main-content">
+                        <div class="container-fluid">
 
-                        <div class="block-header py-lg-4 py-3">
-                            <div class="row g-3">
-                                <div class="col-md-6 col-sm-12">
-                                    <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Domain</h2>
-                                    <ul class="breadcrumb mb-0">
+                            <div class="block-header py-lg-4 py-3">
+                                <div class="row g-3">
+                                    <div class="col-md-6 col-sm-12">
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Domain</h2>
+                                        <ul class="breadcrumb mb-0">
 
-                                    </ul>
+                                        </ul>
+                                    </div>
+
                                 </div>
-
                             </div>
-                        </div>
 
-                        <div class="row clearfix">
-                            <div class="col-lg-12 col-md-12">
+                            <div class="row clearfix">
+                                <div class="col-lg-12 col-md-12">
 
-                                <div class="card mb-4">
-                                    <form action="domain?action=add" method="get">
-                                        <input type="hidden" name="action" value="add">
-                                        <button type="submit" class="btn btn-outline-secondary">Add New</button>
-                                    </form>
-                                    <form method="get" action="domain">
-                                        <input type="hidden" name="action" value="filter">
+                                    <div class="card mb-4">
+                                        <div class="action-bar">
+                                            <form action="domain?action=add" method="get">
+                                                <input type="hidden" name="action" value="add">
+                                                <button type="submit" class="btn btn-outline-secondary">Add New</button>
+                                            </form>
+                                        </div>
 
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <input type="text" name="name" class="form-control" placeholder="Filter by Name" value="${filterName}">
-                                            </div>
-                                            <div class="col-md-3">
-                                                <input type="text" name="code" class="form-control" placeholder="Filter by Code" value="${filterCode}">
-                                            </div>
+                                        <form method="get" action="domain">
+                                            <input type="hidden" name="action" value="filter">
+
+                                            <div class="row">
+                                                <!--                                            <div class="col-md-3">
+                                                                                                <input type="text" name="name" class="form-control" placeholder="Filter by Code" value="${filterName}">
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <input type="text" name="code" class="form-control" placeholder="Filter by Name" value="${filterCode}">
+                                                                                            </div>-->
                                             <div class="col-md-3">
                                                 <select name="status" class="form-control">
-                                                    <option value="">Filter by Status</option>
+                                                    <option value="">Status</option>
                                                     <option value="1" ${filterStatus == 1 ? 'selected' : ''}>Active</option>
-                                                    <option value="0" ${filterStatus == 0 ? 'selected' : ''}>Inactive</option>
+                                                    <option value="0" ${filterStatus == 0 ? 'selected' : ''}>Deactive</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3">
@@ -114,7 +135,7 @@
                                                     <th>Id</th>
                                                     <th>Name</th>
                                                     <th>Code</th>
-                                                    <th>Detail</th>
+<!--                                                    <th>Detail</th>-->
                                                     <th>Status</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -126,37 +147,34 @@
                                                         <td>${d.id}</td>
                                                         <td class="project-title">
                                                             <h6 class="fs-6 mb-0">${d.code}</h6>
-                                                            <!--                                                <small>Created 14 July, 2021</small>-->
+                                                           
                                                         </td>
                                                         <td>${d.name}</td>
-                                                        <td>
-                                                            <!--                                                <div class="progress" style="height: 5px;">
-                                                                                                                <div class="progress-bar" role="progressbar" aria-valuenow="48" aria-valuemin="0" aria-valuemax="100" style="width: 48%;">
-                                                                                                                </div>
-                                                                                                            </div>-->
+<!--                                                        <td>
+
                                                             <small>${d.details}</small>
-                                                        </td>
+                                                        </td>-->
 
                                                         <td>
                                                             <c:choose>
                                                                 <c:when test="${d.status == '1'}">
-                                                                    <span class="badge bg-success">Active</span>
+                                                                    <span >Active</span>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <span class="badge bg-danger">Inactive</span>
+                                                                    <span >Deactive</span>
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </td>
 
                                                         <td class="Domain-actions">
                                                             <div class="btn-group">
-                                                                <form action="domain?action=detail" method="get" style="display: inline-block;">
-                                                                    <input type="hidden" name="action" value="detail">
-                                                                    <input type="hidden" name="id" value="${d.id}">
-                                                                    <button type="submit" class="btn btn-sm btn-outline-primary">
-                                                                        <i class="fa fa-info-circle"></i> 
-                                                                    </button>
-                                                                </form>
+                                                                <!--                                                                <form action="domain?action=detail" method="get" style="display: inline-block;">
+                                                                                                                                    <input type="hidden" name="action" value="detail">
+                                                                                                                                    <input type="hidden" name="id" value="">
+                                                                                                                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                                                                                                        <i class="fa fa-info-circle"></i> 
+                                                                                                                                    </button>
+                                                                                                                                </form>-->
                                                                 <form action="domain?action=edit" method="get" style="display: inline-block;">
                                                                     <input type="hidden" name="action" value="edit">
                                                                     <input type="hidden" name="id" value="${d.id}">

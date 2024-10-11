@@ -58,6 +58,30 @@ public class UserDAO extends BaseDAO {
             user.setFullname(rs.getString(3));
             user.setMobile(rs.getString(4));
             user.setRole(rs.getInt(7));
+            user.setDepartment(new Group(rs.getInt(9),gdao.getDeptNameById(rs.getInt(9))));
+            user.setImage(rs.getString(10));
+            user.setAddress(rs.getString(11));
+            user.setGender(rs.getBoolean(12));
+            user.setBirthdate(rs.getDate(13));
+            return user;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+    public User getUserFullById(int userId) throws SQLException {
+        String str = "SELECT * FROM pms.user where id=?";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            pre.setInt(1, userId);
+            ResultSet rs = pre.executeQuery();
+            rs.next();
+            User user = new User();
+            user.setId(rs.getInt(1));
+            user.setEmail(rs.getString(2));
+            user.setFullname(rs.getString(3));
+            user.setMobile(rs.getString(4));
+            user.setRole(rs.getInt(7));
+            user.setStatus(rs.getInt(8));
             user.setDepartment(new Group(gdao.getDeptNameById(rs.getInt(9))));
             user.setImage(rs.getString(10));
             user.setAddress(rs.getString(11));
@@ -403,7 +427,7 @@ public class UserDAO extends BaseDAO {
     }
 
     public static void main(String[] args) throws SQLException {
-        new UserDAO().deleteUser(15);
+        System.out.println( new UserDAO().getAll());
     }
 
     public boolean emailExists(String email) throws SQLException {
