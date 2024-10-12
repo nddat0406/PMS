@@ -403,7 +403,7 @@ public class UserDAO extends BaseDAO {
     }
 
     public static void main(String[] args) throws SQLException {
-        new UserDAO().deleteUser(15);
+        System.out.println( new UserDAO().getAll());
     }
 
     public boolean emailExists(String email) throws SQLException {

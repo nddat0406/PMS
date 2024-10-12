@@ -92,12 +92,13 @@
 
                                                             <div class="input-group mb-3" style="width: 100%">
                                                                 <!-- Keyword Search -->
-                                                                <input value="${param.keyword}" class="form-control" name="keyword" placeholder="Search here..." type="text" style="width: 20%;">
+                                                                <input value="${param.keyword}" class="form-control" name="keyword" placeholder="Search here..." type="text" style="width: 20%">
 
                                                                 <!-- Department Filter -->
                                                                 <label for="department" class="input-group-text">Department:</label>
                                                                 <select name="departmentId" id="department" class="form-select" style="width: 15%;">
-                                                                    <option value="">All Departments</option>
+                                                                    <option value="">All Departments</option> 
+                                                                    
                                                                     <c:forEach items="${departments}" var="department">
                                                                         <option value="${department.id}" <c:if test="${param.departmentId == department.id}">selected</c:if>>${department.name}</option>
                                                                     </c:forEach>
@@ -107,8 +108,8 @@
                                                                 <label for="status" class="input-group-text">Status:</label>
                                                                 <select name="status" id="status" class="form-select" style="width: 10%;">
                                                                     <option value="">All Status</option>
-                                                                    <option value="1" <c:if test="${param.status == '1'}">selected</c:if>>Active</option>
-                                                                    <option value="0" <c:if test="${param.status == '0'}">selected</c:if>>Inactive</option>
+                                                                    <option value="1" <c:if test="${param.status == 'true'}">selected</c:if>>Active</option>
+                                                                    <option value="0" <c:if test="${param.status == 'false'}">selected</c:if>>Inactive</option>
                                                                     </select>
 
                                                                     <!-- Search Button -->
@@ -169,11 +170,11 @@
                                                                         <td>
                                                                             <div class="input-group mb-3" style="width: 25%">
                                                                                 <c:choose >
-                                                                                    <c:when test="${d.status == 1}">
+                                                                                    <c:when test="${d.status == true}">
                                                                                         <span class="badge bg-success">Active</span><br>
 
                                                                                     </c:when>
-                                                                                    <c:when test="${d.status == 0}">
+                                                                                    <c:when test="${d.status == false}">
                                                                                         <span class="badge bg-secondary">Inactive</span><br>
                                                                                     </c:when>
 
@@ -188,9 +189,9 @@
                                                                             </button>
                                                                             <form action="${pageContext.request.contextPath}/admin/userlist?action=changeStatus" method="POST">
                                                                                 <input type="hidden" name="id" value="${d.id}">
-                                                                                <input type="hidden" name="status" value="${d.status == 1 ? 0 : 1}">
-                                                                                <button type="submit" class="btn btn-sm ${d.status == 1 ? 'btn-warning' : 'btn-success'}">
-                                                                                    ${d.status == 1 ? 'Deactivate' : 'Activate'}
+                                                                                <input type="hidden" name="status" value="${d.status == true ? false : true}">
+                                                                                <button type="submit" class="btn btn-sm ${d.status == true ? 'btn-warning' : 'btn-success'}">
+                                                                                    ${d.status == true ? 'Deactivate' : 'Activate'}
                                                                                 </button>
                                                                             </form>
 
@@ -277,8 +278,8 @@
                                                                                     <label for="status">Status:</label>
                                                                                     <select class="form-control" id="status" name="status" required>
                                                                                         <option value="">-- Select Status --</option>
-                                                                                        <option value="0">Active</option>
-                                                                                        <option value="1">Inactive</option>
+                                                                                        <option value="1">Active</option>
+                                                                                        <option value="0">Inactive</option>
 
                                                                                     </select>
                                                                                 </div>

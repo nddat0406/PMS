@@ -113,7 +113,7 @@ public class User {
     }
 
     public int getStatus() {
-        return status;
+        return this.status;
     }
     public boolean isStatus() {
         return status==1;
