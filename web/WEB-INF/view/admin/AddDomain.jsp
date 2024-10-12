@@ -44,28 +44,31 @@
                         <form action="domain?action=add" method="post">
                             <div class="form-group">
                                 <label for="code">Code:</label>
-                                <input type="text" id="code" name="code" class="form-control" required>
+                                <input type="text" id="code" name="code" class="form-control" >
                             </div>
                             <div class="form-group">
                                 <label for="name">Name:</label>
-                                <input type="text" id="name" name="name" class="form-control" required>
+                                <input type="text" id="name" name="name" class="form-control" >
                             </div>
                             <div class="form-group">
                                 <label for="details">Detail:</label>
-                                <textarea id="details" name="details" class="form-control" required></textarea>
+                                <textarea id="details" name="details" class="form-control" ></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="status">Status:</label>
-                                <select id="status" name="status" class="form-control custom-select">
-                                    <option value="1">Active</option>
-                                    <option value="0">Inactive</option>
-                                </select>
+                                <label for="status">Status:</label><br>
+                                <!-- Checkbox 'Active' sẽ được chọn mặc định -->
+                                <input type="checkbox" id="active" name="status" value="1" checked>
+                                <label for="active">Active</label><br>
+                                <input type="checkbox" id="inactive" name="status" value="0">
+                                <label for="inactive">Deactive</label>
                             </div>
+
+
 
                             <!-- Các nút hành động -->
                             <div class="form-actions text-center">
                                 <button type="submit" class="btn btn-success">Add Domain</button>
-                                <a href="http://localhost:9999/Project_Management/domain" class="btn btn-secondary mt-3">Back</a>
+                                <a href="${pageContext.request.contextPath}/admin/domain" class="btn btn-secondary ">Back</a>
                             </div>
                         </form>
                     </div>
@@ -78,4 +81,19 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
     </body>
+    <script>
+        document.getElementById("active").addEventListener('change', function () {
+            if (this.checked) {
+                document.getElementById("inactive").checked = false;
+            }
+        });
+
+        document.getElementById("inactive").addEventListener('change', function () {
+            if (this.checked) {
+                document.getElementById("active").checked = false;
+            }
+        });
+    </script>
+
+
 </html>
