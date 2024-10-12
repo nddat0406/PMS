@@ -69,8 +69,18 @@ public class ProjectService {
         }
     }
 
-    public List<Allocation> searchFilterMember(List<Allocation> list, Integer mileFilter, Integer statusFilter, String searchKey) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public List<Allocation> searchFilterMember(List<Allocation> list, Integer deptFilter, Integer statusFilter, String searchKey) {
+        List<Allocation> pList = new ArrayList<>();
+        for (Allocation allocation : list) {
+            User temp = allocation.getUser();
+            if ((temp.getDepartment().getId() == deptFilter || deptFilter == 0)
+                    && (temp.getStatus() == statusFilter || statusFilter == 0)) {
+                if (searchKey == null || searchKey.isBlank() || temp.getFullname().toLowerCase().contains(searchKey.toLowerCase())) {
+                    pList.add(allocation);
+                }
+            }
+        }
+        return pList;
     }
 
     public Workbook exportProjectMember(List<Allocation> list) throws IOException {

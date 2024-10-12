@@ -11,5 +11,26 @@
             <file>file:/D:/FALL2024/SWP391/PRJ/team6/src/java/controller/LoginController.java</file>
             <file>file:/D:/FALL2024/SWP391/PRJ/team6/web/WEB-INF/view/user/projectConfig/projecteval.jsp</file>
         </group>
+<<<<<<< HEAD
+        <group name="test">
+            <file>file:/D:/FPTU/SWP391/project/PMS2/src/java/controller/ProjectConfigController.java</file>
+=======
+        <group name="heelo">
+            <file>file:/D:/FPTU/SWP391/project/test/web/META-INF/context.xml</file>
+            <file>file:/D:/FPTU/SWP391/project/test/web/WEB-INF/web.xml</file>
+            <file>file:/D:/FPTU/SWP391/project/test/src/java/controller/UserController.java</file>
+        </group>
+        <group name="test">
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projectmilestone.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/ProjectService.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/ProjectDAO.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/UserDAO.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projectmember.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/MilestoneService.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/ProjectConfigController.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projectteam.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/META-INF/context.xml</file>
+>>>>>>> 6aeea90cc8af8552270d4d193a0fd12e05040f41
+        </group>
     </open-files>
 </project-private>

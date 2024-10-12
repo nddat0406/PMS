@@ -9,10 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 import model.Group;
 
-/**
- *
- * @author HP
- */
+
 public class GroupService {
 
     private GroupDAO gdao = new GroupDAO();
@@ -31,6 +28,13 @@ public class GroupService {
 
     public int addGroup(String code, String name, String details, int status) {
         validateGroup(code, name, details, status);
+        // Kiểm tra xem code hoặc name đã tồn tại chưa
+        if (gdao.isCodeExists(code)) {
+            throw new IllegalArgumentException("Code already exists.");
+        }
+        if (gdao.isCodeExists(name)) {
+            throw new IllegalArgumentException("Name already exists.");
+        }
         return gdao.Add(code, name, details, status);
     }
 
@@ -39,6 +43,13 @@ public class GroupService {
             throw new IllegalArgumentException("Domain ID must be greater than 0.");
         }
         validateGroup(code, name, details, status);
+        // Kiểm tra xem code hoặc name đã tồn tại chưa khi cập nhật
+//        if (gdao.isCodeExist(code)) {
+//            throw new IllegalArgumentException("Code already exists.");
+//        }
+//        if (gdao.isNameExist(name)) {
+//            throw new IllegalArgumentException("Name already exists.");
+//        }
         return gdao.Update(domainID, code, name, details, status);
     }
 
@@ -85,7 +96,10 @@ public class GroupService {
         }
         // Có thể thêm kiểm tra cho 'details' nếu cần
     }
-
+    
+    
+    
+//department
     public List<Group> getAllDepartment() throws SQLException {
         try {
             return gdao.getAllDepartment();
@@ -126,6 +140,7 @@ public class GroupService {
 
     // Thêm phòng ban mới
     public boolean addDepartment(String code, String name, String details, Integer parent, int status) {
+        validateGroup(code, name, details, status);
         int rowsAffected = gdao.Add(code, name, details, parent, status);
         return rowsAffected > 0;
     }
