@@ -16,12 +16,16 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.List;
 import java.sql.Date;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Allocation;
 import model.Criteria;
 import model.Project;
 import service.BaseService;
 import model.Milestone;
 import model.Team;
+import model.User;
 import org.apache.poi.ss.usermodel.Workbook;
 import service.CriteriaService;
 import service.GroupService;
@@ -33,7 +37,6 @@ import service.TeamService;
  *
  * @author HP
  */
-
 @WebServlet(name = "ProjectConfigController", urlPatterns = {"/project", "/project/eval", "/project/milestone", "/project/member", "/project/team"})
 
 public class ProjectConfigController extends HttpServlet {
@@ -118,7 +121,27 @@ public class ProjectConfigController extends HttpServlet {
             case "team" -> {
                 if (request.getParameter("page") != null) {
                     List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
-                    pagination(request, response, list, linkMember);
+                    String modalItemIDRaw = request.getParameter("modalItemID");
+                    String teamAddId = request.getParameter("teamAddId");
+                    if (teamAddId != null) {
+                        try {
+                            int teamId = Integer.parseInt(teamAddId);
+                            Integer pID = (Integer) request.getSession().getAttribute("selectedProject");
+                            request.setAttribute("addMemberList", tService.getAddMemberList(teamId, pID));
+                        } catch (SQLException ex) {
+                            throw new ServletException(ex);
+                        }
+
+                    }
+                    if (modalItemIDRaw != null) {
+                        try {
+                            int modalItemID = Integer.parseInt(modalItemIDRaw);
+                            request.setAttribute("modalItem", tService.getTeamById(modalItemID, list));
+                        } catch (SQLException ex) {
+                            throw new ServletException(ex);
+                        }
+                    }
+                    pagination(request, response, list, linkTeam);
                 } else {
                     getProjectTeam(request, response);
                 }
@@ -185,6 +208,36 @@ public class ProjectConfigController extends HttpServlet {
                         updateMilestone(request, response);
                     } catch (SQLException ex) {
                         response.getWriter().print("Update error: " + ex.getMessage());
+                    }
+                }
+            }
+            case "team" -> {
+                String action = request.getParameter("action");
+                if (null != action) {
+                    switch (action) {
+                        case "add" -> {
+                            postTeamAdd(request, response);
+                        }
+                        case "update" -> {
+                            postTeamUpdate(request, response);
+                        }
+                        case "delete" -> {
+                            postTeamDelete(request, response);
+                        }
+                        case "filter" -> {
+                            postTeamFilter(request, response);
+                        }
+                        case "addMember" -> {
+                            postAddTeamMember(request, response);
+                        }
+                        case "deleteMember" -> {
+                            postDeleteTeamMember(request, response);
+                        }
+                        case "changeRole" -> {
+                            postChangeRoleTeam(request, response);
+                        }
+                        default ->
+                            getProjectTeam(request, response);
                     }
                 }
             }
@@ -418,7 +471,6 @@ public class ProjectConfigController extends HttpServlet {
             int uMilestone = Integer.parseInt(request.getParameter("uMilestone"));
             String uDescription = request.getParameter("uDescript");
             int projectId = (int) request.getSession().getAttribute("selectedProject");
-
             Criteria c = new Criteria();
             c.setId(uID);
             c.setName(uName);
@@ -430,14 +482,16 @@ public class ProjectConfigController extends HttpServlet {
             p.setId(projectId);
             c.setProject(p);
             c.setDescription(uDescription);
+            request.setAttribute("modalItem", c);
             List<Criteria> list = (List<Criteria>) request.getSession().getAttribute("criteriaList");
             cService.updateEvalProject(c, list);
             list = refreshEvalChanges(request);
             request.setAttribute("successMess", "Update successfull");
+            request.removeAttribute("modalItem");
             pagination(request, response, list, linkEval);
         } catch (SQLException ex) {
-            request.setAttribute("errorMess", ex.getMessage());
-            request.setAttribute("isAdd", "true");
+            request.setAttribute("UpdateErrorMess", ex.getMessage());
+            request.setAttribute("isUpdate", "true");
             List<Criteria> list = (List<Criteria>) request.getSession().getAttribute("criteriaList");
             pagination(request, response, list, linkEval);
         }
@@ -461,14 +515,16 @@ public class ProjectConfigController extends HttpServlet {
             p.setId(projectId);
             c.setProject(p);
             c.setDescription(Description);
+            request.setAttribute("oldAddItem", c);
             List<Criteria> list = (List<Criteria>) request.getSession().getAttribute("criteriaList");
             cService.addEvalProject(c, list);
             list = refreshEvalChanges(request);
             request.setAttribute("successMess", "Add successfull");
+            request.removeAttribute("oldAddItem");
 
             pagination(request, response, list, linkEval);
         } catch (SQLException ex) {
-            request.setAttribute("errorMess", ex.getMessage());
+            request.setAttribute("AddErrorMess", ex.getMessage());
             request.setAttribute("isAdd", "true");
             List<Criteria> list = (List<Criteria>) request.getSession().getAttribute("criteriaList");
             pagination(request, response, list, linkEval);
@@ -552,7 +608,7 @@ public class ProjectConfigController extends HttpServlet {
             session.setAttribute("deptFilter", deptFilter);
             session.setAttribute("statusFilter", statusFilter);
             session.setAttribute("memberList", list);
-            
+
             pagination(request, response, list, linkMember);
         } catch (SQLException e) {
             throw new ServletException(e);
@@ -587,4 +643,156 @@ public class ProjectConfigController extends HttpServlet {
         }
     }
 
+    private void postTeamAdd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            String name = request.getParameter("Name");
+            Integer mile = Integer.valueOf(request.getParameter("Milestone"));
+            String topic = request.getParameter("Topic");
+            String des = request.getParameter("Description");
+            int projectId = (int) request.getSession().getAttribute("selectedProject");
+            Team t = new Team();
+            t.setName(name);
+            t.setTopic(topic);
+            Milestone m = new Milestone();
+            m.setId(mile);
+            t.setMilestone(m);
+            t.setDetails(des);
+            Project p = new Project();
+            p.setId(projectId);
+            t.setProject(p);
+            request.setAttribute("oldAddItem", t);
+            List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
+            tService.addTeam(t, list);
+            list = refreshTeamChanges(request);
+            request.setAttribute("successMess", "Add successfull");
+            request.removeAttribute("oldAddItem");
+            pagination(request, response, list, linkTeam);
+        } catch (SQLException | NumberFormatException ex) {
+            request.setAttribute("AddErrorMess", ex.getMessage());
+            request.setAttribute("isAdd", "true");
+            List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
+            pagination(request, response, list, linkTeam);
+        }
+    }
+
+    private void postTeamUpdate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            int uID = Integer.parseInt(request.getParameter("uID"));
+            String uName = request.getParameter("uName");
+            String uTopic = request.getParameter("uTopic");
+            int uMilestone = Integer.parseInt(request.getParameter("uMilestone"));
+            String uDescription = request.getParameter("uDescription");
+            int projectId = (int) request.getSession().getAttribute("selectedProject");
+            Team t = new Team();
+            t.setId(uID);
+            t.setName(uName);
+            t.setTopic(uTopic);
+            Milestone m = new Milestone();
+            m.setId(uMilestone);
+            t.setMilestone(m);
+            t.setDetails(uDescription);
+            Project p = new Project();
+            p.setId(projectId);
+            t.setProject(p);
+            request.setAttribute("modalItem", t);
+            List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
+            tService.updateTeam(t, list);
+            list = refreshTeamChanges(request);
+            request.setAttribute("successMess", "Update successfull");
+            request.removeAttribute("modalItem");
+            pagination(request, response, list, linkTeam);
+        } catch (SQLException | NumberFormatException ex) {
+            request.setAttribute("UpdateErrorMess", ex.getMessage());
+            request.setAttribute("isUpdate", "true");
+            List<Criteria> list = (List<Criteria>) request.getSession().getAttribute("teamList");
+            pagination(request, response, list, linkTeam);
+        }
+    }
+
+    private void postTeamDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            int id = Integer.parseInt(request.getParameter("teamId"));
+            List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
+            tService.deleteTeam(id, list);
+            list = refreshTeamChanges(request);
+            pagination(request, response, list, linkTeam);
+        } catch (NumberFormatException | SQLException e) {
+            throw new ServletException(e);
+        }
+    }
+
+    private List<Team> refreshTeamChanges(HttpServletRequest request) throws ServletException {
+        HttpSession session = request.getSession();
+        String searchKey = (String) session.getAttribute("searchKey");
+        Integer mileFilter = (Integer) session.getAttribute("milestoneFilter");
+        try {
+            List<Team> list = tService.getTeamsByProject((int) session.getAttribute("selectedProject"));
+            list = tService.searchFilter(list, mileFilter, searchKey);
+            session.setAttribute("teamList", list);
+            return list;
+        } catch (SQLException ex) {
+            throw new ServletException(ex);
+        }
+    }
+
+    private void postTeamFilter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String mileFilterRaw = request.getParameter("milestoneFilter");
+        try {
+            int mileFilter = baseService.TryParseInt(mileFilterRaw);
+            String searchKey = request.getParameter("searchKey");
+            HttpSession session = request.getSession();
+            List<Team> list = tService.getTeamsByProject((int) session.getAttribute("selectedProject"));
+            list = tService.searchFilter(list, mileFilter, searchKey);
+            session.setAttribute("searchKey", searchKey);
+            session.setAttribute("milestoneFilter", mileFilter);
+            session.setAttribute("teamList", list);
+            pagination(request, response, list, linkTeam);
+        } catch (SQLException e) {
+            throw new ServletException(e);
+        }
+    }
+
+    private void postAddTeamMember(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        try {
+            String[] json = request.getParameterValues("json");
+            int teamId = Integer.parseInt(request.getParameter("teamId"));
+            String temp = json[0];
+            String[] stringNumbers = temp.replaceAll("[\\[\\]\"]", "").split(",");
+            // Convert to int array
+            int[] numbers = Arrays.stream(stringNumbers).mapToInt(Integer::parseInt).toArray();
+            List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
+            tService.addMembers(numbers, teamId, list);
+            list = refreshTeamChanges(request);
+            pagination(request, response, list, linkTeam);
+        } catch (SQLException ex) {
+            throw new ServletException(ex);
+        }
+
+    }
+
+    private void postDeleteTeamMember(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            int teamId = Integer.parseInt(request.getParameter("teamId"));
+            int memberId = Integer.parseInt(request.getParameter("memberId"));
+            List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
+            tService.deleteMember(teamId, memberId, list);
+            list = refreshTeamChanges(request);
+            pagination(request, response, list, linkTeam);
+        } catch (NumberFormatException | SQLException e) {
+            throw new ServletException(e);
+        }
+    }
+
+    private void postChangeRoleTeam(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            int teamId = Integer.parseInt(request.getParameter("teamId"));
+            int memberId = Integer.parseInt(request.getParameter("memberId"));
+            List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
+            tService.changeRole(teamId, memberId, list);
+            list = refreshTeamChanges(request);
+            pagination(request, response, list, linkTeam);
+        } catch (NumberFormatException | SQLException e) {
+            throw new ServletException(e);
+        }
+    }
 }

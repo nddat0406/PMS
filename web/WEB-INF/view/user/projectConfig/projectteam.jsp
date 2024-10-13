@@ -21,52 +21,6 @@
 
 
         <style>
-            /* Container for the text */
-            .content-wrapper {
-                max-height: 50px; /* Define the height for the collapsed state */
-                overflow: hidden; /* Hide the overflow */
-                transition-timing-function: ease-in;
-                /* Quick on the way out */
-                transition: 0.25s;
-                position: relative;
-            }
-
-            /* When expanded, make the max height very large to reveal all content */
-            .content-wrapper.expanded {
-                /* This timing applies on the way IN */
-                transition-timing-function: ease-out;
-                /* A litttttle slower on the way in */
-                transition: 0.5s;
-                max-height: 1000px; /* Can be any large value to show the full text */
-            }
-
-            /* Optional: Add a background gradient at the bottom to indicate more content */
-            .content-wrapper::after {
-                content: "";
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 10px; /* Height of the gradient */
-                background: linear-gradient(to bottom, transparent,); /* Gradient fading to white */
-                transition-timing-function: ease-out;
-                /* A litttttle slower on the way in */
-                transition: 0.5s;
-
-                display: block;
-            }
-
-            /* Remove the gradient when fully expanded */
-            .content-wrapper.expanded::after {
-                display: none;
-            }
-
-            /* The "Read More" button */
-            .read-more-btn {
-                display: inline-block;
-                color: #008ce6;
-                cursor: pointer;
-            }
             .statusCell{
                 cursor: pointer;
             }
@@ -100,6 +54,23 @@
                 height: 24px;
                 fill: currentcolor;
                 color: rgb(237, 108, 2);
+            }
+            .accordion-body div:first-child{
+                margin: 10px 60px;
+            }
+            td:first-child {
+                border-top-left-radius: 20px;
+                border-bottom-left-radius: 20px;
+            }
+            td:last-child {
+                border-top-right-radius: 20px;
+                border-bottom-right-radius: 20px;
+            }
+            td div{
+                padding-bottom: 8px;
+            }
+            td div img{
+                margin-right: 25px
             }
         </style>
     </head>
@@ -149,26 +120,26 @@
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <h6 class="card-title">Project Teams</h6>
-                                                    </div>
-                                                    <div class="card-body" id="cardbody">
-                                                        <form action="team" method="post">
-                                                            <input hidden type="text" value="filter" name="action">
-                                                            <div style="display: flex; justify-content: space-evenly">
-                                                                <div class="input-group mb-3" style="width: 25%">
-                                                                    <span class="input-group-text" id="basic-addon11">Milestone</span>
-                                                                    <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="milestoneFilter">
-                                                                        <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
+                                                    <c:if test="${loginedUser.role!=2}">
+                                                        <ul class="header-dropdown">
+                                                            <li>
+                                                                <button type="button" id="addTeamButton" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addTeam">Add New Team</button>
+                                                            </li>
+                                                            <a class="btn btn-sm btn-outline-success" id="showUpdateMess" hidden data-bs-toggle="modal" data-bs-target="#updateTeam"><i class="fa fa-pencil" ></i></a>
+                                                        </ul>
+                                                    </c:if>
+                                                </div>
+                                                <div class="card-body" id="cardbody">
+                                                    <form action="team" method="post">
+                                                        <input hidden type="text" value="filter" name="action">
+                                                        <div style="display: flex; justify-content: space-evenly">
+                                                            <div class="input-group mb-3" style="width: 25%">
+                                                                <span class="input-group-text" id="basic-addon11">Milestone</span>
+                                                                <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="milestoneFilter">
+                                                                    <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
                                                                     <c:forEach items="${msList}" var="ms">
                                                                         <option value="${ms.id}" ${milestoneFilter==ms.id?'selected':''}>${ms.name}</option>
                                                                     </c:forEach>
-                                                                </select>
-                                                            </div>
-                                                            <div class="input-group mb-3" style="width: 25%">
-                                                                <span class="input-group-text" id="basic-addon11">Status</span>
-                                                                <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter">
-                                                                    <option value="0" ${sessionScope.statusFilter==0?'selected':''}>All Status</option>
-                                                                    <option value="1" ${sessionScope.statusFilter==1?'selected':''}>Active</option>
-                                                                    <option value="2" ${sessionScope.statusFilter==2?'selected':''}>InActive</option>
                                                                 </select>
                                                             </div>
                                                             <div class="input-group mb-3" style="width: 15%">
@@ -177,25 +148,110 @@
                                                             </div>
                                                         </div>
                                                     </form>
-
                                                     <div class="accordion" id="accordionExample">
                                                         <c:forEach items="${tableData}" var="i">
-                                                            <div class="justify-content-center" style=" display: flex;justify-content: center">
+                                                            <div class="justify-content-center" style=" display: flex;justify-content: center" id="accordionCont${i.id}">
                                                                 <div class="accordion-item col-lg-10 col-md-10">
                                                                     <h2 class="accordion-header" id="heading${i.id}">
-                                                                        <button class="accordion-button align-content-around" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${i.id}" aria-expanded="true" aria-controls="collapse${i.id}">
-                                                                            <span> <h5>${i.name}</h5></span> 
-                                                                            <span> <h5>(${i.getTeamSize()} Members)</h5></span>
-                                                                        </button>
+                                                                        <div class="accordion-button align-content-around collapsed" data-bs-toggle="collapse" data-bs-target="#collapse${i.id}" aria-expanded="true" aria-controls="collapse${i.id}">
+                                                                            <table>
+                                                                                <tr>
+                                                                                    <td style="width: 100px">                                                                            
+                                                                                        <span><h4>${i.name}</h4></span>
+                                                                                    </td>
+                                                                                    <td style="width: 300px">
+                                                                                        <span> <h5>(${i.getTeamSize()} Members)</h5></span>
+                                                                                    </td>
+                                                                                    <td style="width: 300px">
+                                                                                        <span><h6>Topic: ${i.topic}</h6></span>
+                                                                                    </td>
+                                                                                    <td style="width: 300px">
+                                                                                        <span><h6>Milestone: ${i.milestone.name}</h6></span>
+                                                                                    </td>
+                                                                                    <c:if test="${loginedUser.role!=2}">
+                                                                                        <td  style="width: 200px">
+                                                                                            <a class="btn btn-sm btn-outline-success stop-toggle" data-bs-toggle="modal" data-bs-target="#updateTeam" 
+                                                                                               onclick="getModal(${i.id})"><i class="fa fa-pencil" ></i></a>
+                                                                                            <a class="btn btn-sm btn-outline-danger stop-toggle" 
+                                                                                               onclick="deleteTeam(${i.id}, '${i.name}')"><i class="fa fa-trash"></i></a>
+                                                                                        </td>
+                                                                                    </c:if>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </div>
                                                                     </h2>
                                                                     <div id="collapse${i.id}" class="accordion-collapse collapse" aria-labelledby="heading${i.id}" data-bs-parent="#accordionExample">
+                                                                        <div  class="card-header" style="padding: 10px 10px 0px 15px">
+                                                                            <h6 >Team members:</h6>
+                                                                            <c:if test="${loginedUser.role!=2}">
+                                                                                <ul class="header-dropdown list-unstyled">
+                                                                                    <li>
+                                                                                        <button style="margin-top: 20px" type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addMember" 
+                                                                                                onclick="getAddMemberList(${i.id})">Add New Member</button>
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </c:if>
+                                                                        </div>
                                                                         <div class="accordion-body">
-                                                                            <span><p>${i.teamLeader.getStatus()==0?"Deactivated User":i.teamLeader.fullname} <svg class="starIcon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarsIcon"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"></path></svg>
-                                                                                </p></span>
-                                                                            
-                                                                            <c:forEach items="${i.members}" var="m">
-                                                                                <p>${m.getStatus()==0?"Deactivated User":m.fullname}</p>
-                                                                            </c:forEach>
+                                                                            <div>
+                                                                                <table class="table table-hover" id="memberTable${i.id}">
+                                                                                    <tbody>
+                                                                                        <c:if test="${i.teamLeader!=null}">
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    <div style="display: flex">
+                                                                                                        <img src="${i.teamLeader.image}" class="rounded-circle" style="width: 50px; height: 50px" alt="user picture">
+                                                                                                        <span>
+                                                                                                            <h5 class="mb-0">${i.teamLeader.getStatus()==0?"Deactivated User":i.teamLeader.fullname}&nbsp;<svg class="starIcon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="StarsIcon"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"></path></svg>
+                                                                                                            </h5>
+                                                                                                            <span>${i.teamLeader.email}</span>
+                                                                                                        </span>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <c:if test="${loginedUser.role!=2}">
+                                                                                                    <td style="width: 200px">
+                                                                                                        <a class="btn btn-sm btn-outline-danger" onclick="deleteMember(${i.id},${i.teamLeader.id}, '${i.teamLeader.getStatus()==0?"Deactivated User":i.teamLeader.fullname}', '${i.name}')"><i class="fa fa-trash"></i></a>
+                                                                                                    </td>
+                                                                                                </c:if>
+                                                                                            </tr>
+                                                                                        </c:if>
+                                                                                        <c:forEach items="${i.members}" var="m">
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    <div style="display: flex">
+                                                                                                        <img src="${m.image}" class="rounded-circle" style="width: 50px; height: 50px" alt="user picture">
+                                                                                                        <span>
+                                                                                                            <h5 class="mb-0">${m.getStatus()==0?"Deactivated User":m.fullname}&nbsp;
+                                                                                                            </h5>
+                                                                                                            <span>${m.email}</span></span>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <c:if test="${loginedUser.role!=2}">
+                                                                                                    <td style="width: 200px">
+                                                                                                        <a class="btn btn-sm btn-outline-success" 
+                                                                                                           onclick="ChangeRole(${i.id},${m.id}, '${m.getStatus()==0?"Deactivated User":m.fullname}', '${i.name}')"><i class="fa fa-pencil" ></i></a>
+                                                                                                        <a class="btn btn-sm btn-outline-danger" 
+                                                                                                           onclick="deleteMember(${i.id},${m.id}, '${m.getStatus()==0?"Deactivated User":m.fullname}', '${i.name}')"><i class="fa fa-trash"></i></a>
+                                                                                                    </td>
+                                                                                                </c:if>
+                                                                                            </tr>
+                                                                                        </c:forEach>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+
+                                                                            <div>
+                                                                                <P>
+                                                                                    <button class="btn btn-primary collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDes${i.id}" aria-expanded="false" aria-controls="collapseDes${i.id}">
+                                                                                        Description
+                                                                                    </button>
+                                                                                </P>
+                                                                                <div class="collapse" id="collapseDes${i.id}" style="width: 800px">
+                                                                                    <div class="card card-body">
+                                                                                        ${i.details}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -226,6 +282,171 @@
                     </div>
                 </div>
             </div>
+            <c:if test="${loginedUser.role!=2}">
+                <div class="modal fade" id="updateTeam" tabindex="-1" aria-labelledby="updateTeam" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form action="team" method="post">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="defaultModalLabel">Update Criteria</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row g-2">
+                                        <input type="text" name="action" hidden value="update">
+                                        <input type="text" name="uID" hidden value="${modalItem.id}">
+                                        <div class="col-md-6">
+                                            <label>Name*:</label>
+                                            <input type="text" class="form-control" placeholder="Name" name="uName" value="${modalItem.name}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Milestone</label>
+                                            <select name="uMilestone" class="form-select">
+                                                <c:forEach items="${msList}" var="m">
+                                                    <option value="${m.id}" ${modalItem.milestone.id==m.id?'selected':''}>${m.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Topic:</label>
+                                            <input type="text" class="form-control" placeholder="Topic" name="uTopic" value="${modalItem.topic}">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <textarea class="form-control" name="uDescription" rows="8" cols="60">${modalItem.details}</textarea>
+                                        </div>
+                                    </div>
+                                    <c:if test="${UpdateErrorMess!=null}">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            <i class="fa fa-times-circle"></i>${UpdateErrorMess}<br>
+                                        </div>
+                                    </c:if>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="addTeam" tabindex="-1" aria-labelledby="addTeam" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="defaultModalLabel">Add Team</h5>
+                            </div>
+                            <form action="team" method="post">
+                                <div class="modal-body">
+                                    <div class="row g-2">
+                                        <input type="text" name="action" hidden value="add">
+                                        <div class="col-md-6">
+                                            <label>Name*:</label>
+                                            <input type="text" class="form-control" placeholder="Name" name="Name" value="${oldAddItem.name}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Milestone</label>
+                                            <select name="Milestone" class="form-select">
+                                                <c:forEach items="${msList}" var="m">
+                                                    <option value="${m.id}" ${oldAddItem.milestone.id==m.id?'selected':''}>${m.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Topic:</label>
+                                            <input type="text" class="form-control" placeholder="Topic" name="Topic" value="${oldAddItem.topic}">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Description:</label>
+                                            <textarea class="form-control" name="Description" rows="8" cols="60">${oldAddItem.details}</textarea>
+                                        </div>
+                                    </div>
+                                    <c:if test="${AddErrorMess!=null}">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            <i class="fa fa-times-circle"></i> ${AddErrorMess} <br>
+                                        </div>
+                                    </c:if>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Add</button>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="addMember" tabindex="-1" aria-labelledby="addMember" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="defaultModalLabel">Add Member To Team</h5>
+                            </div>
+                            <input type="hidden" id="teamAddMember" name="teamId">
+                            <div class="modal-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover c_list">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <label class="fancy-checkbox">
+                                                        <input class="select-all" type="checkbox" name="checkbox">
+                                                        <span></span>
+                                                    </label>
+                                                </th>
+                                                <th></th>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tableAddBody">
+                                            <c:forEach items="${addMemberList}" var="u">
+                                                <c:if test="${u!=null}">
+                                                    <tr>
+                                                        <td style="width: 50px;">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" name="addMembers" type="checkbox" value="${u.id}">
+                                                            </div>
+                                                        </td>
+                                                        <td style="width: 100px">
+                                                            <img src="${u.image}" class="rounded-circle avatar" alt="">
+                                                        </td>
+                                                        <td style="width: 250px">
+                                                            <p class="c_name">${u.fullname}
+                                                                <c:if test="${u.role==1}">
+                                                                        <span class="badge bg-danger hidden-sm-down">${u.getRoleString()}</span>
+
+                                                                    </c:if>
+                                                                    <c:if test="${u.role==2}">
+                                                                        <span class="badge bg-secondary hidden-sm-down">${u.getRoleString()}</span>
+
+                                                                    </c:if>
+                                                                    <c:if test="${u.role==3||u.role==4}">
+                                                                        <span class="badge bg-success hidden-sm-down">${u.getRoleString()}</span>
+                                                                    </c:if>
+                                                                    <c:if test="${u.role==5||u.role==6}">
+                                                                        <span class="badge bg-info hidden-sm-down">${u.getRoleString()}</span>
+                                                                    </c:if>
+                                                            </p>
+                                                        </td>
+                                                        <td style="width: 200px">
+                                                            <span class="email"><i class="fa fa-envelope"></i>&nbsp;&nbsp;${u.email}</span>
+                                                        </td>
+                                                    </tr>
+                                                </c:if>
+
+                                            </c:forEach>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="addMembers()">Add</button>
+                                <button type="button" id="closeModalBtn" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
         </div>
 
         <!-- core js file -->
@@ -234,6 +455,26 @@
 
         <!-- page js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/pages/table/table-basic.js"></script>
+        <c:if test="${requestScope.successMess!=null}">
+            <script>
+                                    Swal.fire({
+                                        position: 'top-end',
+                                        icon: 'success',
+                                        title: '${successMess}',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
+
+            </script>
+        </c:if>
+
+        <c:if test="${isAdd!=null}">
+            <script>$('#addTeamButton').click();</script>
+        </c:if>
+        <c:if test="${isUpdate!=null}">
+            <script>$('#showUpdateMess')[0].click();</script>
+        </c:if>
         <script>
             $(document).ready(function () {
                 // Event handler for clicking on the table headers
@@ -253,86 +494,128 @@
                         sortBy = 'asc';
                         $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up'); // Change icon to up
                     }
-
                     // Set the updated sortBy attribute
                     $th.attr('sortBy', sortBy);
                 });
             });
-            $readMoreBtn = $(' .read-more-btn');
-            $readMoreBtn.on('click', function () {
-                $contentWrapper = $(this).parent().find(' .content-wrapper');
-                // Toggle the "expanded" class on the content wrapper
-                $contentWrapper.toggleClass('expanded');
-                // Toggle the button text between "Read More" and "Read Less"
-                if ($contentWrapper.hasClass('expanded')) {
-                    $(this).text('Read Less');
-                } else {
-                    $(this).text('Read More');
-                }
-            });
 
-            $readMoreBtn = $(' .read-more-btn');
-            $readMoreBtn.on('click', function () {
-                $contentWrapper = $(this).parent().find(' .content-wrapper');
-                // Toggle the "expanded" class on the content wrapper
-                $contentWrapper.toggleClass('expanded');
-                // Toggle the button text between "Read More" and "Read Less"
-                if ($contentWrapper.hasClass('expanded')) {
-                    $(this).text('Read Less');
-                } else {
-                    $(this).text('Read More');
-                }
-            });
-            function exportToExel() {
+            <c:if test="${loginedUser.role!=2}">
+            function addMembers() {
+                // Get all selected checkbox values
+                var selectedOptions = [];
+                $('input[name="addMembers"]:checked').each(function () {
+                    selectedOptions.push(this.value);
+                });
+                var tId = $('#teamAddMember').val();
+                var json = JSON.stringify(selectedOptions);
+                $('#closeModalBtn').click();
                 $.ajax({
-                    type: "POST",
-                    url: "team", // URL của Servlet
-                    data: {action: "export"}, // Gửi action là "export"
-                    xhrFields: {
-                        responseType: 'blob' // Đặt response là blob để nhận file
+                    url: "team",
+                    type: 'post',
+                    data: {
+                        json: json,
+                        teamId: tId,
+                        action: "addMember"
                     },
-                    success: function (data, status, xhr) {
-                        var filename = "Project_Members.xlsx"; // Tên file tải về
-
-                        // Tạo URL từ dữ liệu blob
-                        var url = window.URL.createObjectURL(data);
-                        var a = document.createElement('a');
-                        a.href = url;
-                        a.download = filename;
-
-                        // Append link ẩn và tự động nhấn để tải file
-                        document.body.appendChild(a);
-                        a.click();
-
-                        // Xóa URL khi không còn cần nữa
-                        window.URL.revokeObjectURL(url);
-                    },
-                    error: function (xhr, status, error) {
-                        Swal.fire({
-                            position: 'top-end',
-                            icon: 'error',
-                            title: 'Error Exporting File!',
-                            showConfirmButton: false,
-                            timer: 1500
+                    success: function () {
+                        Swal.fire("Added!", "", "success");
+                        $(' #memberTable' + tId).load("${pageContext.request.contextPath}/project/team?page=${page} #memberTable" + tId + " > *");
+                    }
+                });
+            }
+            ;
+            function ChangeRole(tId, mId, name, tname) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "Do you want to make " + name + " to be leader of " + tname + " team ?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Confirm",
+                    confirmButtonColor: "#04AA6D"
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "team",
+                            type: 'post',
+                            data: {
+                                memberId: mId,
+                                teamId: tId,
+                                action: "changeRole"
+                            },
+                            success: function () {
+                                Swal.fire("Changed!", "", "success");
+                                $(' #memberTable' + tId).load("${pageContext.request.contextPath}/project/team?page=${page} #memberTable" + tId + " > *");
+                            }
                         });
                     }
                 });
             }
             ;
-            <c:if test="${loginedUser.role!=2}">
-
-            function changeStatus(id) {
-                $.ajax({
-                    url: "team",
-                    type: 'post',
-                    data: {
-                        allocateId: id,
-                        action: "changeStatus"
-                    },
-                    success: function () {
-                        $(' #status' + id).load("${pageContext.request.contextPath}/project/team?page=${page} #status" + id + " > *");
+            function deleteMember(tId, mId, name, tname) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "Do you want to delete " + name + " from " + tname + " team ?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Delete",
+                    confirmButtonColor: "#FC5A69"
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "team",
+                            type: 'post',
+                            data: {
+                                memberId: mId,
+                                teamId: tId,
+                                action: "deleteMember"
+                            },
+                            success: function () {
+                                Swal.fire("Deleted!", "", "success");
+                                $(' #memberTable' + tId).load("${pageContext.request.contextPath}/project/team?page=${page} #memberTable" + tId + " > *");
+                            }
+                        });
                     }
                 });
+            }
+            ;
+            function deleteTeam(id, name) {
+                event.stopPropagation();
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "Do you want to delete the " + name + " team ?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Delete",
+                    confirmButtonColor: "#FC5A69"
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "team",
+                            type: 'post',
+                            data: {
+                                teamId: id,
+                                action: "delete"
+                            },
+                            success: function () {
+                                Swal.fire("Deleted!", "", "success");
+                                $(' #accordionExample').load("${pageContext.request.contextPath}/project/team?page=${page} #accordionExample > *");
+                            }
+                        });
+                    }
+                });
+            }
+            ;
+            function getModal(id) {
+                $(' #updateTeam').load("${pageContext.request.contextPath}/project/team?page=${page}&modalItemID=" + id + " #updateTeam > *");
+            }
+            ;
+            function getAddMemberList(id) {
+                $(' #teamAddMember').val(id);
+                console.log(id);
+                $(' #tableAddBody').load("${pageContext.request.contextPath}/project/team?page=${page}&teamAddId=" + id + " #tableAddBody > *");
             }
             ;
             </c:if>
@@ -351,7 +634,6 @@
                 });
             }
             ;
-
             history.pushState(null, "", location.href.split("?")[0]);
         </script>
     </body>

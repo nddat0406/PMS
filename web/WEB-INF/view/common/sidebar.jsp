@@ -50,7 +50,7 @@
                 </nav>
             </div>
         </c:if>
-        <c:if test="${sessionScope.loginedUser.role==2}">
+        <c:if test="${sessionScope.loginedUser.role!=1}">
             <div class="tab-pane active" id="hr_menu">
                 <nav class="sidebar-nav">
                     <ul class="main-menu metismenu list-unstyled">
@@ -60,10 +60,12 @@
                             <ul class="list-unstyled">
                                 <li><a href="emp-all.html">Project issue</a></li>
                                 <li><a href="emp-leave.html">Timesheet</a></li>
+                                <li><a href="emp-leave.html">Requirement</a></li>
+                                <li><a href="emp-leave.html">Milestone</a></li>
                             </ul>
                         </li>
+                        <li><a href="${pageContext.request.contextPath}/admin/domain"><i class="fa fa-building"></i><span>Domain List</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/user/profile"><i class="fa fa-user"></i><span>Users profile</span></a></li>
-                        <li><a href="app-users.html"><i class="fa fa-building"></i><span>Department</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/logout"><i class="fa fa-sign-out"></i><span>Logout</span></a></li>
                     </ul>
                 </nav>

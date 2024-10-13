@@ -77,11 +77,8 @@ public class DomainConfigController extends HttpServlet {
                     list = (List<Group>) session.getAttribute("doaminuser");
                     session.removeAttribute("listUser");
                 } else {
-                    
                 }
-            }
-                
-                
+            } 
             default ->{
                 throw new AssertionError();
         }

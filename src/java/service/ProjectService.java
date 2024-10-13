@@ -58,7 +58,6 @@ public class ProjectService {
 
     public List<Allocation> getProjectMembers(int pID) throws SQLException {
         return pdao.getAllMember(pID);
-
     }
 
     public void flipStatusMember(int id, List<Allocation> list) throws SQLException {
@@ -71,6 +70,8 @@ public class ProjectService {
 
     public List<Allocation> searchFilterMember(List<Allocation> list, Integer deptFilter, Integer statusFilter, String searchKey) {
         List<Allocation> pList = new ArrayList<>();
+        deptFilter = baseService.TryParseInteger(deptFilter);
+        statusFilter = baseService.TryParseInteger(statusFilter);
         for (Allocation allocation : list) {
             User temp = allocation.getUser();
             if ((temp.getDepartment().getId() == deptFilter || deptFilter == 0)
@@ -108,6 +109,15 @@ public class ProjectService {
             row.createCell(6).setCellValue(a.getStatusString());
         }
         return workbook;
+    }
+
+    public List<User> getProjectUsers(Integer pID) throws SQLException {
+        List<Allocation> list = pdao.getAllMember(pID);
+        List<User> temp = new ArrayList<>();
+        for (Allocation allocation : list) {
+            temp.add(allocation.getUser());
+        }
+        return temp;
     }
 
 }

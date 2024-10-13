@@ -11,6 +11,7 @@ public class Setting {
     private int priority;
     private boolean status; // 1: Active, 0: Inactive
     private String description;
+    private Group domain;
 
     // Constructor
     public Setting() {
