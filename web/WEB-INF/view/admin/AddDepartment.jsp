@@ -41,29 +41,30 @@
                         <form action="department?action=add" method="post">
                             <div class="form-group">
                                 <label for="code">Code:</label>
-                                <input type="text" id="code" name="code" class="form-control" required>
+                                <input type="text" id="code" name="code" class="form-control" >
                             </div>
                             <div class="form-group">
                                 <label for="name">Name:</label>
-                                <input type="text" id="name" name="name" class="form-control" required>
+                                <input type="text" id="name" name="name" class="form-control" >
                             </div>
                             <div class="form-group">
                                 <label for="details">Detail:</label>
-                                <textarea id="details" name="details" class="form-control" required></textarea>
+                                <textarea id="details" name="details" class="form-control" ></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="status">Status:</label>
-                                <select id="status" name="status" class="form-control custom-select">
-                                    <option value="1">Active</option>
-                                    <option value="0">Inactive</option>
-                                </select>
+                                <label for="status">Status:</label><br>
+                                <!-- Checkbox 'Active' sẽ được chọn mặc định -->
+                                <input type="checkbox" id="active" name="status" value="1" checked>
+                                <label for="active">Active</label><br>
+                                <input type="checkbox" id="inactive" name="status" value="0">
+                                <label for="inactive">Deactive</label>
                             </div>
                             <div class="form-group">
                                 <label for="parent_department">Phòng ban cha:</label>
                                 <select id="parent_department" name="parent_department" class="form-control custom-select">
                                     <option value="">Parent</option>
                                     <c:forEach var="parent" items="${listParentDepartments}">
-                                        <option value="${parent.id}">${parent.code}</option>
+                                        <option value="${parent.id}">${parent.name}</option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -71,7 +72,7 @@
                             <!-- Các nút hành động -->
                             <div class="form-actions text-center">
                                 <button type="submit" class="btn btn-success">Add Department</button>
-                                <a href="${pageContext.request.contextPath}/department" class="btn btn-secondary ">Back</a>
+                                <a href="${pageContext.request.contextPath}/admin/department" class="btn btn-secondary ">Back</a>
                             </div>
                         </form>
                     </div>
@@ -83,5 +84,18 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+        <script>
+            document.getElementById("active").addEventListener('change', function () {
+                if (this.checked) {
+                    document.getElementById("inactive").checked = false;
+                }
+            });
+
+            document.getElementById("inactive").addEventListener('change', function () {
+                if (this.checked) {
+                    document.getElementById("active").checked = false;
+                }
+            });
+        </script>
     </body>
 </html>

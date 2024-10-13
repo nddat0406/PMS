@@ -56,16 +56,20 @@
                                 <textarea id="details" name="details" class="form-control">${groupDetail.details}</textarea>
                             </div>
                             <div class="form-group">
-                                <label for="status">Status:</label>
-                                <select id="status" name="status" class="form-control custom-select">
-                                    <option value="1" ${groupDetail.status == 1 ? 'selected' : ''}>Active</option>
-                                    <option value="0" ${groupDetail.status == 0 ? 'selected' : ''}>Inactive</option>
-                                </select>
+                                <label for="status">Status:</label><br>
+                                <input type="checkbox" id="active" name="status" value="1" ${status == 1 ? 'checked' : ''}>
+                                <label for="active">Active</label><br>
+                                <input type="checkbox" id="inactive" name="status" value="0" ${status == 0 ? 'checked' : ''}>
+                                <label for="inactive">Deactive</label>
                             </div>
-                            <button type="submit" class="btn btn-success">Update</button>
+                            <!-- Các nút hành động -->
+                            <div class="form-actions text-center">
+                                <button type="submit" class="btn btn-success">Update</button>
+                                <a href="${pageContext.request.contextPath}/admin/domain" class="btn btn-secondary ">Back</a>
+                            </div>
                         </form>
                     </c:if>
-                    <a href="http://localhost:9999/Project_Management/domain" class="btn btn-secondary mt-3">Back</a> 
+
                 </div>
             </div>
         </div>
@@ -74,5 +78,18 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+        <script>
+            document.getElementById("active").addEventListener('change', function () {
+                if (this.checked) {
+                    document.getElementById("inactive").checked = false;
+                }
+            });
+
+            document.getElementById("inactive").addEventListener('change', function () {
+                if (this.checked) {
+                    document.getElementById("active").checked = false;
+                }
+            });
+        </script>
     </body>
 </html>
