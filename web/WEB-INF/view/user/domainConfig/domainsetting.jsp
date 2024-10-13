@@ -47,23 +47,24 @@
                                         <div class="card-body">
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                                 <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link active" id="Overview-tab" href="ListDomainSettingsController" role="tab">Domain Settings</a>
+                                                    <a class="nav-link active" id="Overview-tab" href="DomainConfigController?action=domainSetting" role="tab">Domain Settings</a>
                                                 </li>
                                                 <li class="nav-item" role="presentation" style="width: 150px">
                                                     <a class="nav-link" id="Settings-tab" href="eval" role="tab">Evaluation Criteria</a>
                                                 </li>
                                                 <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link" id="Settings-tab" href="DomainUserController" role="tab">Domain Users</a>
+                                                    <a class="nav-link" id="Settings-tab" href="DomainConfigController?action=domainUser" role="tab">Domain Users</a>
                                                 </li>
                                                 <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link" id="Settings-tab" href="ProjectPhaseCriteriaController" role="tab">Project Phase</a>
+                                                    <a class="nav-link" id="Settings-tab" href="DomainConfigController?action=projectPhaseCriteria" role="tab">Project Phase</a>
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
 
                                     <div class="tab-content p-0" id="myTabContent">
-                                        <form action="ListDomainSettingsController" method="get" class="mb-3">
+                                        <form action="DomainConfigController" method="get" class="mb-3">
+                                            <input type="hidden" name="action" value="domainUser" />
                                             <div class="row g-3">
                                                 <div class="col-md-4">
                                                     <input type="text" name="search" class="form-control" 
@@ -92,11 +93,10 @@
                                                 <thead>
                                                     <tr>
                                                         <th>ID</th>
+                                                        <th>Setting</th>
                                                         <th>Type</th>
-                                                        <th>Name</th>
-                                                        <th>Details</th>
                                                         <th>Priority</th>
-                                                        <th>Domain ID</th>
+                                                        <th>Status</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -104,15 +104,14 @@
                                                     <c:forEach var="setting" items="${domainSettings}">
                                                         <tr>
                                                             <td>${setting.id}</td>
+                                                            <td>${setting.domain.name}</td>
                                                             <td>${setting.type}</td>
-                                                            <td>${setting.name}</td>
-                                                            <td>${setting.details}</td>
                                                             <td>${setting.priority}</td>
-                                                            <td>${setting.domainId}</td>
+                                                            <td>${setting.status == true ? "Active" : "Inactive"}</td>
                                                             <td>
-                                                                <a href="Detail" type="submit" class="btn btn-warning">Detail</a>
-                                                                |
-                                                                <a href="Deactive" type="submit" class="btn btn-danger">Deactive</a>
+                                                            <a href="Detail" type="submit" class="btn btn-warning">Detail</a>
+                                                            |
+                                                            <a href="Deactive" type="submit" class="btn btn-danger">Deactive</a>
                                                             </td>
                                                         </tr>
                                                     </c:forEach>

@@ -297,6 +297,28 @@ public class GroupDAO extends BaseDAO {
 
         return listD;
     }
+    public List<Group> getDomainUser() {
+        List<Group> list = new ArrayList<>();
+        String sql = "SELECT * FROM pms.domain_user";
+
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            ResultSet rs = pre.executeQuery();
+            UserDAO userDao = new UserDAO();
+            while (rs.next()) {
+                Group domain = new Group();
+                domain.setId(rs.getInt("id"));
+                domain.setStatus(rs.getInt("status"));
+                domain.setUser(userDao.getActiveUserById(rs.getInt("userId")));
+                domain.setParent(new Group(getDeptNameById(rs.getInt("domainId"))));
+                list.add(domain);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error:  " +e);
+        }
+
+        return list;
+    }
 
     public List<Group> getAllDepartment() throws SQLException {
         List<Group> listD = new ArrayList<>();
@@ -675,6 +697,23 @@ public class GroupDAO extends BaseDAO {
         }
         return list;
     }
+
+   public void addDomainUser(Group user) throws SQLException {
+        String sql = "INSERT INTO domain_user (id, userId, domainId, status) VALUES (?, ?, ?, ?)";
+        
+        try  {
+              PreparedStatement pstmt=getConnection().prepareStatement(sql);
+            pstmt.setInt(1, user.getId());
+            pstmt.setString(2, user.getUser().getId() + "");
+            pstmt.setInt(3, user.getParent().getId());
+            pstmt.setInt(4, user.getStatus());
+            pstmt.executeUpdate();
+        }catch(Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+  
     
 
 }
