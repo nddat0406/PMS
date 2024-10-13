@@ -11,6 +11,7 @@ package service;
 import dal.SettingDAO;
 import model.Setting;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -116,5 +117,14 @@ public List<Setting> filterSettings(String filterType, String filterStatus, Stri
     public boolean isNameOrTypeDuplicate(String name, int type) throws SQLException {
         List<Setting> settings = filterSettings(String.valueOf(type), null, name);
         return !settings.isEmpty();  // Trả về true nếu có setting trùng lặp
+    }
+        //for prj list vs prj detail 
+    public List<Setting> getAllBizTerms() {
+        try {
+            return settingDAO.getAllBizTerms();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Collections.emptyList(); // Trả về danh sách trống nếu có lỗi
+        }
     }
 }

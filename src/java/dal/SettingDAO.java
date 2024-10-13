@@ -199,7 +199,6 @@ public class SettingDAO extends BaseDAO {
         List<Setting> settings = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM setting WHERE 1=1");
 
-
         if (keyword != null && !keyword.isEmpty()) {
             sql.append(" AND name like ?");
         }
@@ -207,8 +206,6 @@ public class SettingDAO extends BaseDAO {
         try {
             PreparedStatement stmt = getConnection().prepareStatement(sql.toString());
             int index = 1;
-
-           
 
             if (keyword != null && !keyword.isEmpty()) {
                 stmt.setString(index++, "%" + keyword + "%");
@@ -229,5 +226,26 @@ public class SettingDAO extends BaseDAO {
             throw new SQLException(e);
         }
         return settings;
+    }
+    // lấy bizterm cho project list vs project detail
+
+    public List<Setting> getAllBizTerms() throws SQLException {
+        List<Setting> bizTerms = new ArrayList<>();
+        String sql = "SELECT id, name FROM setting WHERE type = 1 AND status = 1";
+
+        try {
+            PreparedStatement statement = getConnection().prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Setting setting = new Setting();
+                setting.setId(resultSet.getInt("id"));
+                setting.setName(resultSet.getString("name"));
+                bizTerms.add(setting);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bizTerms;
     }
 }
