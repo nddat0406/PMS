@@ -173,20 +173,18 @@ public class ProjectDAO extends BaseDAO {
         st.setInt(1, id);
         st.executeUpdate();
     }
-    
-    
-    
-   //  ------------------  project list vs project detail -----------------------------
+
+    //  ------------------  project list vs project detail -----------------------------
     //list prj
     public List<Project> listProjects(int userId, int page, int pageSize, String keyword, Integer status) {
         List<Project> projects = new ArrayList<>();
         StringBuilder query = new StringBuilder("SELECT p.id, p.bizTerm, p.code, p.name, p.details, p.startDate, p.status, "
-                + "d.id AS domainId, d.name AS domainName, "
-                + "dep.id AS departmentId, dep.name AS departmentName "
+                + "g1.id AS domainId, g1.name AS domainName, "
+                + "g2.id AS departmentId, g2.name AS departmentName "
                 + "FROM project p "
                 + "JOIN allocation a ON p.id = a.projectId "
-                + "JOIN domain d ON p.domainId = d.id "
-                + "JOIN department dep ON p.departmentId = dep.id "
+                + "JOIN `group` g1 ON p.domainId = g1.id AND g1.type = 1 " // Join với group để lấy thông tin domain (type = 1)
+                + "JOIN `group` g2 ON p.departmentId = g2.id AND g2.type = 0 " // Join với group để lấy thông tin department (type = 0)
                 + "WHERE a.userId = ? "); // Điều kiện để chỉ lấy các dự án của người dùng
 
         // Thêm điều kiện tìm kiếm theo keyword nếu có
@@ -305,11 +303,11 @@ public class ProjectDAO extends BaseDAO {
     public Project getProjectById(int id) {
         Project project = null;
         String query = "SELECT p.id, p.bizTerm, p.code, p.name, p.details, p.startDate, p.status, "
-                + "d.id AS domainId, d.name AS domainName, "
-                + "dep.id AS departmentId, dep.name AS departmentName "
+                + "g1.id AS domainId, g1.name AS domainName, "
+                + "g2.id AS departmentId, g2.name AS departmentName "
                 + "FROM project p "
-                + "JOIN domain d ON p.domainId = d.id "
-                + "JOIN department dep ON p.departmentId = dep.id "
+                + "JOIN `group` g1 ON p.domainId = g1.id AND g1.type = 1 " // Lấy thông tin domain từ group (type = 1)
+                + "JOIN `group` g2 ON p.departmentId = g2.id AND g2.type = 0 " // Lấy thông tin department từ group (type = 0)
                 + "WHERE p.id = ?";
 
         try {
@@ -346,8 +344,8 @@ public class ProjectDAO extends BaseDAO {
 
         return project;
     }
-    //thêm prj mới 
 
+    //thêm prj mới 
     public int addProject(Project project) throws SQLException {
         String sql = "INSERT INTO project (bizTerm, code, name, details, startDate, status, departmentId, domainId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try {
@@ -425,8 +423,8 @@ public class ProjectDAO extends BaseDAO {
             String query = "SELECT projectRole FROM allocation WHERE userId = ? AND projectId = ? LIMIT 1";
 
             PreparedStatement statement = getConnection().prepareStatement(query);
-            statement.setInt(1, userId); 
-            statement.setInt(2, projectId); 
+            statement.setInt(1, userId);
+            statement.setInt(2, projectId);
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -440,10 +438,8 @@ public class ProjectDAO extends BaseDAO {
         // Trả về role (nếu không có kết quả sẽ là null)
         return role;
     }
-    
-    
-    // Phương thức cập nhật trạng thái dự án
 
+    // Phương thức cập nhật trạng thái dự án
     public void updateProjectStatus(int projectId, int status) throws SQLException {
         String query = "UPDATE project SET status = ? WHERE id = ?";
 
@@ -458,6 +454,30 @@ public class ProjectDAO extends BaseDAO {
         } catch (SQLException e) {
             e.printStackTrace();
             throw new SQLException("Không thể cập nhật trạng thái dự án");
+        }
+    }
+    // Hàm main để chạy thử
+
+    public static void main(String[] args) {
+        ProjectDAO manager = new ProjectDAO();
+
+        // Test với userId = 1, page = 1, pageSize = 10, keyword là "Test", và status là 1
+        int userId = 4;
+        int page = 1;
+        int pageSize = 10;
+        String keyword = null;
+        Integer status = 1;
+
+        List<Project> projects = manager.listProjects(userId, page, pageSize, keyword, status);
+
+        // In ra kết quả
+        for (Project project : projects) {
+            System.out.println("Project ID: " + project.getId());
+            System.out.println("Project Name: " + project.getName());
+            System.out.println("Project Code: " + project.getCode());
+            System.out.println("Project Domain: " + project.getDomain().getName());
+            System.out.println("Project Department: " + project.getDepartment().getName());
+            System.out.println("-------------------------------------");
         }
     }
 }

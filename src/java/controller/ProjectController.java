@@ -49,7 +49,7 @@ public class ProjectController extends HttpServlet {
                     } catch (SQLException ex) {
                         Logger.getLogger(ProjectController.class.getName()).log(Level.SEVERE, null, ex);
                         request.setAttribute("error", "Unable to view project details: " + ex.getMessage());
-                        request.getRequestDispatcher("ErrorPage.jsp").forward(request, response);
+//                        request.getRequestDispatcher("ErrorPage.jsp").forward(request, response);
                     }
                     break;
                 }
@@ -206,7 +206,7 @@ public class ProjectController extends HttpServlet {
 
         // LẤY USER ID
 //        Integer userId = (Integer) request.getSession().getAttribute("userId");
-        Integer userId = 28;//ĐANG FIX CỨNG DO LỖI ĐĂNG NHẬP :))
+        Integer userId = 4;//ĐANG FIX CỨNG DO LỖI ĐĂNG NHẬP :))
         if (userId == null) {
             response.sendRedirect("login.jsp");
             return;
@@ -233,7 +233,7 @@ public class ProjectController extends HttpServlet {
         try {
             // LẤY USER ID
 //        Integer userId = (Integer) request.getSession().getAttribute("userId");
-            Integer userId = 28;//ĐANG FIX CỨNG DO LỖI ĐĂNG NHẬP :))
+            Integer userId = 4;//ĐANG FIX CỨNG DO LỖI ĐĂNG NHẬP :))
             if (userId == null) {
                 response.sendRedirect("login.jsp");
                 return;
