@@ -45,31 +45,32 @@
                                 <div class="col-lg-12 col-md-12">
                                     <div class="card mb-3">
                                         <div class="card-body">
-                                            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                                <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link active" id="Overview-tab" href="DomainConfigController?action=domainSetting" role="tab">Domain Settings</a>
-                                                </li>
-                                                <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link" id="Settings-tab" href="eval" role="tab">Evaluation Criteria</a>
-                                                </li>
-                                                <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link" id="Settings-tab" href="DomainConfigController?action=domainUser" role="tab">Domain Users</a>
-                                                </li>
-                                                <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link" id="Settings-tab" href="DomainConfigController?action=projectPhaseCriteria" role="tab">Project Phase</a>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <c:set var="baseUrl" value="${pageContext.request.contextPath}" />
+                                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                            <li class="nav-item" role="presentation" style="width: 150px">
+                                                <a class="nav-link active" id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
+                                            </li>
+                                            <li class="nav-item" role="presentation" style="width: 150px">
+                                                <a class="nav-link" id="Evaluation-tab" href="${baseUrl}/eval" role="tab">Evaluation Criteria</a>
+                                            </li>
+                                            <li class="nav-item" role="presentation" style="width: 150px">
+                                                <a class="nav-link" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
+                                            </li>
+                                            <li class="nav-item" role="presentation" style="width: 150px">
+                                                <a class="nav-link" id="ProjectPhase-tab" href="${baseUrl}/domain/projectphasecriteria" role="tab">Project Phase</a>
+                                            </li>
+                                        </ul>
                                     </div>
+                                </div>
 
-                                    <div class="tab-content p-0" id="myTabContent">
-                                        <form action="DomainConfigController" method="get" class="mb-3">
-                                            <input type="hidden" name="action" value="domainUser" />
-                                            <div class="row g-3">
-                                                <div class="col-md-4">
-                                                    <input type="text" name="search" class="form-control" 
-                                                           placeholder="Search by name" 
-                                                           value="${not empty searchName ? searchName : ''}">
+                                <div class="tab-content p-0" id="myTabContent">
+                                    <form action="${baseUrl}/domain/domainsetting" method="get" class="mb-3">
+                                        <input type="hidden" name="action" value="domainUser" />
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                <input type="text" name="search" class="form-control" 
+                                                       placeholder="Search by name" 
+                                                       value="${not empty searchName ? searchName : ''}">
                                             </div>
                                             <div class="col-md-4">
                                                 <select name="status" class="form-select">
@@ -109,9 +110,9 @@
                                                             <td>${setting.priority}</td>
                                                             <td>${setting.status == true ? "Active" : "Inactive"}</td>
                                                             <td>
-                                                            <a href="Detail" type="submit" class="btn btn-warning">Detail</a>
-                                                            |
-                                                            <a href="Deactive" type="submit" class="btn btn-danger">Deactive</a>
+                                                                <a href="Detail" type="submit" class="btn btn-warning">Detail</a>
+                                                                |
+                                                                <a href="Deactive" type="submit" class="btn btn-danger">Deactive</a>
                                                             </td>
                                                         </tr>
                                                     </c:forEach>
