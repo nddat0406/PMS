@@ -175,9 +175,10 @@
                                                                 <th name="user.id" sortBy="desc" class="sortTableHead">id&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="user.fullname" sortBy="desc" class="sortTableHead" >Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="user.role" sortBy="desc" class="sortTableHead">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="startDate" sortBy="desc" class="sortTableHead">Start Date&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="endDate" sortBy="desc" class="sortTableHead">End Date&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="effortRate" sortBy="desc" class="sortTableHead">Effort Rate&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="user.department.name" sortBy="desc" class="sortTableHead">department&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-
                                                                 <th>status</th>
                                                             </tr>
                                                         </thead>
@@ -194,7 +195,22 @@
                                                                             <span>${i.email}</span>
                                                                         </div>
                                                                     </td>
-                                                                    <td><span class="badge bg-danger">${i.getRoleString()}</span></td>
+                                                                    <c:if test="${i.role==1}">
+                                                                        <td><span class="badge bg-danger">${i.getRoleString()}</span></td>
+
+                                                                    </c:if>
+                                                                    <c:if test="${i.role==2}">
+                                                                        <td><span class="badge bg-secondary">${i.getRoleString()}</span></td>
+
+                                                                    </c:if>
+                                                                    <c:if test="${i.role==3||i.role==4}">
+                                                                        <td><span class="badge bg-success">${i.getRoleString()}</span></td>
+                                                                    </c:if>
+                                                                    <c:if test="${i.role==5||i.role==6}">
+                                                                        <td><span class="badge bg-info">${i.getRoleString()}</span></td>
+                                                                    </c:if>
+                                                                    <td><span class="datetime">${t.startDate}</span></td>
+                                                                    <td><span class="datetime">${t.endDate}</span></td>
                                                                     <td>
                                                                         <div class="progress" style="height: 5px;">
                                                                             <div class="progress-bar" role="progressbar" aria-valuenow="${t.effortRate}" aria-valuemin="0" aria-valuemax="100" style="width: ${t.effortRate}%;">
@@ -255,124 +271,124 @@
         <!-- page js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
         <script>
-            $(document).ready(function () {
-                // Event handler for clicking on the table headers
-                $(' .sortTableHead').on('click', function () {
-                    var $th = $(this);  // Get the clicked <th> element as a jQuery object
+                                                                            $(document).ready(function () {
+                                                                                // Event handler for clicking on the table headers
+                                                                                $(' .sortTableHead').on('click', function () {
+                                                                                    var $th = $(this);  // Get the clicked <th> element as a jQuery object
 
-                    var name = $th.attr('name');  // Get the 'name' attribute
-                    var sortBy = $th.attr('sortBy');  // Get the 'sortBy' attribute
-                    changeSort(name, sortBy);
-                    $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+                                                                                    var name = $th.attr('name');  // Get the 'name' attribute
+                                                                                    var sortBy = $th.attr('sortBy');  // Get the 'sortBy' attribute
+                                                                                    changeSort(name, sortBy);
+                                                                                    $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
 
-                    // Toggle the sortBy attribute between 'asc' and 'desc'
-                    if (sortBy === 'asc') {
-                        sortBy = 'desc';
-                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down'); // Change icon to down
-                    } else {
-                        sortBy = 'asc';
-                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up'); // Change icon to up
-                    }
+                                                                                    // Toggle the sortBy attribute between 'asc' and 'desc'
+                                                                                    if (sortBy === 'asc') {
+                                                                                        sortBy = 'desc';
+                                                                                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down'); // Change icon to down
+                                                                                    } else {
+                                                                                        sortBy = 'asc';
+                                                                                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up'); // Change icon to up
+                                                                                    }
 
-                    // Set the updated sortBy attribute
-                    $th.attr('sortBy', sortBy);
-                });
-            });
-            $readMoreBtn = $(' .read-more-btn');
-            $readMoreBtn.on('click', function () {
-                $contentWrapper = $(this).parent().find(' .content-wrapper');
-                // Toggle the "expanded" class on the content wrapper
-                $contentWrapper.toggleClass('expanded');
-                // Toggle the button text between "Read More" and "Read Less"
-                if ($contentWrapper.hasClass('expanded')) {
-                    $(this).text('Read Less');
-                } else {
-                    $(this).text('Read More');
-                }
-            });
+                                                                                    // Set the updated sortBy attribute
+                                                                                    $th.attr('sortBy', sortBy);
+                                                                                });
+                                                                            });
+                                                                            $readMoreBtn = $(' .read-more-btn');
+                                                                            $readMoreBtn.on('click', function () {
+                                                                                $contentWrapper = $(this).parent().find(' .content-wrapper');
+                                                                                // Toggle the "expanded" class on the content wrapper
+                                                                                $contentWrapper.toggleClass('expanded');
+                                                                                // Toggle the button text between "Read More" and "Read Less"
+                                                                                if ($contentWrapper.hasClass('expanded')) {
+                                                                                    $(this).text('Read Less');
+                                                                                } else {
+                                                                                    $(this).text('Read More');
+                                                                                }
+                                                                            });
 
-            $readMoreBtn = $(' .read-more-btn');
-            $readMoreBtn.on('click', function () {
-                $contentWrapper = $(this).parent().find(' .content-wrapper');
-                // Toggle the "expanded" class on the content wrapper
-                $contentWrapper.toggleClass('expanded');
-                // Toggle the button text between "Read More" and "Read Less"
-                if ($contentWrapper.hasClass('expanded')) {
-                    $(this).text('Read Less');
-                } else {
-                    $(this).text('Read More');
-                }
-            });
-            function exportToExel() {
-                $.ajax({
-                    type: "POST",
-                    url: "member", // URL của Servlet
-                    data: {action: "export"}, // Gửi action là "export"
-                    xhrFields: {
-                        responseType: 'blob' // Đặt response là blob để nhận file
-                    },
-                    success: function (data, status, xhr) {
-                        var filename = "Project_Members.xlsx"; // Tên file tải về
+                                                                            $readMoreBtn = $(' .read-more-btn');
+                                                                            $readMoreBtn.on('click', function () {
+                                                                                $contentWrapper = $(this).parent().find(' .content-wrapper');
+                                                                                // Toggle the "expanded" class on the content wrapper
+                                                                                $contentWrapper.toggleClass('expanded');
+                                                                                // Toggle the button text between "Read More" and "Read Less"
+                                                                                if ($contentWrapper.hasClass('expanded')) {
+                                                                                    $(this).text('Read Less');
+                                                                                } else {
+                                                                                    $(this).text('Read More');
+                                                                                }
+                                                                            });
+                                                                            function exportToExel() {
+                                                                                $.ajax({
+                                                                                    type: "POST",
+                                                                                    url: "member", // URL của Servlet
+                                                                                    data: {action: "export"}, // Gửi action là "export"
+                                                                                    xhrFields: {
+                                                                                        responseType: 'blob' // Đặt response là blob để nhận file
+                                                                                    },
+                                                                                    success: function (data, status, xhr) {
+                                                                                        var filename = "Project_Members.xlsx"; // Tên file tải về
 
-                        // Tạo URL từ dữ liệu blob
-                        var url = window.URL.createObjectURL(data);
-                        var a = document.createElement('a');
-                        a.href = url;
-                        a.download = filename;
+                                                                                        // Tạo URL từ dữ liệu blob
+                                                                                        var url = window.URL.createObjectURL(data);
+                                                                                        var a = document.createElement('a');
+                                                                                        a.href = url;
+                                                                                        a.download = filename;
 
-                        // Append link ẩn và tự động nhấn để tải file
-                        document.body.appendChild(a);
-                        a.click();
+                                                                                        // Append link ẩn và tự động nhấn để tải file
+                                                                                        document.body.appendChild(a);
+                                                                                        a.click();
 
-                        // Xóa URL khi không còn cần nữa
-                        window.URL.revokeObjectURL(url);
-                    },
-                    error: function (xhr, status, error) {
-                        Swal.fire({
-                            position: 'top-end',
-                            icon: 'error',
-                            title: 'Error Exporting File!',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                    }
-                });
-            }
-            ;            
+                                                                                        // Xóa URL khi không còn cần nữa
+                                                                                        window.URL.revokeObjectURL(url);
+                                                                                    },
+                                                                                    error: function (xhr, status, error) {
+                                                                                        Swal.fire({
+                                                                                            position: 'top-end',
+                                                                                            icon: 'error',
+                                                                                            title: 'Error Exporting File!',
+                                                                                            showConfirmButton: false,
+                                                                                            timer: 1500
+                                                                                        });
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                            ;
             <c:if test="${loginedUser.role!=2}">
 
-            function changeStatus(id) {
-                $.ajax({
-                    url: "member",
-                    type: 'post',
-                    data: {
-                        allocateId: id,
-                        action: "changeStatus"
-                    },
-                    success: function () {
-                        $(' #status' + id).load("${pageContext.request.contextPath}/project/member?page=${page} #status" + id + " > *");
-                    }
-                });
-            }
-            ;
+                                                                            function changeStatus(id) {
+                                                                                $.ajax({
+                                                                                    url: "member",
+                                                                                    type: 'post',
+                                                                                    data: {
+                                                                                        allocateId: id,
+                                                                                        action: "changeStatus"
+                                                                                    },
+                                                                                    success: function () {
+                                                                                        $(' #status' + id).load("${pageContext.request.contextPath}/project/member?page=${page} #status" + id + " > *");
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                            ;
             </c:if>
-            function changeSort(name, sortBy) {
-                $.ajax({
-                    url: "member",
-                    type: 'post',
-                    data: {
-                        sortBy: sortBy,
-                        fieldName: name,
-                        action: "sort"
-                    },
-                    success: function () {
-                        $('.tableBody').load("${pageContext.request.contextPath}/project/member?page=${page} .tableBody > *");
-                    }
-                });
-            }
-            ;
-            
-            history.pushState(null, "", location.href.split("?")[0]);
+                                                                            function changeSort(name, sortBy) {
+                                                                                $.ajax({
+                                                                                    url: "member",
+                                                                                    type: 'post',
+                                                                                    data: {
+                                                                                        sortBy: sortBy,
+                                                                                        fieldName: name,
+                                                                                        action: "sort"
+                                                                                    },
+                                                                                    success: function () {
+                                                                                        $('.tableBody').load("${pageContext.request.contextPath}/project/member?page=${page} .tableBody > *");
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                            ;
+
+                                                                            history.pushState(null, "", location.href.split("?")[0]);
         </script>
     </body>
 </html>

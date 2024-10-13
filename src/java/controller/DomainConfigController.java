@@ -82,6 +82,7 @@ public class DomainConfigController extends HttpServlet {
         String action = request.getParameter("action");
         action = action != null ? action : "";
         switch (action) {
+
             case "domainSetting":
                 this.domainSetting(request, response);
                 break;
@@ -91,8 +92,12 @@ public class DomainConfigController extends HttpServlet {
             case "projectPhaseCriteria":
 //                this.ProjectPhaseCriteria(request, response);
                 break;
-            default:
+            
+           
+             default:
                 this.domainSetting(request, response);
+                break;
+
         }
     }
 

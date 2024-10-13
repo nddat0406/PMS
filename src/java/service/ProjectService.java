@@ -9,9 +9,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import model.Allocation;
+import model.Milestone;
 import model.Project;
+import model.ProjectPhase;
 import model.User;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -58,7 +62,6 @@ public class ProjectService {
 
     public List<Allocation> getProjectMembers(int pID) throws SQLException {
         return pdao.getAllMember(pID);
-
     }
 
     public void flipStatusMember(int id, List<Allocation> list) throws SQLException {
@@ -71,6 +74,8 @@ public class ProjectService {
 
     public List<Allocation> searchFilterMember(List<Allocation> list, Integer deptFilter, Integer statusFilter, String searchKey) {
         List<Allocation> pList = new ArrayList<>();
+        deptFilter = baseService.TryParseInteger(deptFilter);
+        statusFilter = baseService.TryParseInteger(statusFilter);
         for (Allocation allocation : list) {
             User temp = allocation.getUser();
             if ((temp.getDepartment().getId() == deptFilter || deptFilter == 0)
@@ -108,6 +113,116 @@ public class ProjectService {
             row.createCell(6).setCellValue(a.getStatusString());
         }
         return workbook;
+    }
+
+    public List<User> getProjectUsers(Integer pID) throws SQLException {
+        List<Allocation> list = pdao.getAllMember(pID);
+        List<User> temp = new ArrayList<>();
+        for (Allocation allocation : list) {
+            temp.add(allocation.getUser());
+        }
+        return temp;
+    }
+//  ------------------  project list vs project detail -----------------------------
+
+    public List<Project> getProjects(int userId, int page, int pageSize, String keyword, Integer status) {
+        // Kiểm tra tính hợp lệ của page và pageSize
+        if (page <= 0 || pageSize <= 0) {
+            throw new IllegalArgumentException("Page and pageSize must be greater than 0.");
+        }
+
+        return pdao.listProjects(userId, page, pageSize, keyword, status);
+    }
+
+    public int getTotalProjects(int userId, String keyword, Integer status) {
+        // Gọi phương thức DAO để đếm tổng số dự án của người dùng
+        return pdao.getTotalProjects(userId, keyword, status);
+    }
+
+    public Project getProjectById(int id) {
+        return pdao.getProjectById(id);
+    }
+
+    public boolean addProjectWithMilestones(Project project) {
+        try {
+            // Gọi phương thức thêm project và lấy projectId
+            int projectId = pdao.addProject(project);
+
+            // Kiểm tra nếu projectId hợp lệ
+            if (projectId > 0) {
+                System.out.println("Project added with ID: " + projectId);
+                project.setId(projectId);
+
+                // Lấy danh sách các giai đoạn (phases) dựa trên domainId
+                List<ProjectPhase> phases = pdao.getPhasesByDomainId(project.getDomain().getId());
+                System.out.println("Number of phases found for domainId " + project.getDomain().getId() + ": " + phases.size());
+
+                // Kiểm tra nếu không có phases nào được trả về
+                if (phases.isEmpty()) {
+                    System.out.println("No phases found for domainId: " + project.getDomain().getId());
+                    return false;
+                }
+
+                // Thiết lập startDate cho các milestones
+                Date startDate = project.getStartDate();
+
+                // Lặp qua các giai đoạn và tạo milestones
+                for (ProjectPhase phase : phases) {
+                    System.out.println("Processing phase: " + phase.getName() + " with priority: " + phase.getPriority());
+
+                    // Tính toán endDate dựa trên priority của phase
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(startDate);
+                    calendar.add(Calendar.DAY_OF_YEAR, phase.getPriority() * 45);
+                    Date endDate = new Date(calendar.getTimeInMillis());
+                    System.out.println("Calculated endDate for phase " + phase.getName() + ": " + endDate);
+
+                    // Tạo đối tượng Milestone
+                    Milestone milestone = new Milestone();
+                    milestone.setName("Milestone for " + phase.getName());
+                    milestone.setPriority(phase.getPriority());
+                    milestone.setDetails("Generated milestone for phase: " + phase.getName());
+                    milestone.setEndDate(new java.sql.Date(endDate.getTime()));
+                    milestone.setStatus(false); // Default status (e.g., not started)
+                    milestone.setDeliver("Default deliverable");
+                    milestone.setProject(project); // Đặt đối tượng Project vào milestone
+                    milestone.setPhase(phase); // Đặt đối tượng Phase vào milestone
+
+                    // Thêm milestone vào cơ sở dữ liệu
+                    try {
+                        pdao.addMilestone(milestone);
+                        System.out.println("Milestone added for phase: " + phase.getName());
+                    } catch (SQLException e) {
+                        System.err.println("Error while adding milestone for phase: " + phase.getName());
+                        e.printStackTrace();
+                        return false;
+                    }
+
+                    // Cập nhật startDate cho mốc tiếp theo (bắt đầu sau khi mốc trước kết thúc)
+                    startDate = endDate;
+                }
+
+                // Nếu tất cả các milestones được thêm thành công, trả về true
+                return true;
+            } else {
+                System.out.println("Failed to retrieve a valid projectId.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error while adding project or retrieving phases: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // Trả về false nếu có bất kỳ lỗi nào xảy ra
+        return false;
+    }
+
+    public String getRoleByUserAndProject(int userId, int projectId) {
+        // Gọi hàm từ ProjectDAO
+        return pdao.getRoleByUserAndProject(userId, projectId);
+    }
+
+    public void updateProjectStatus(int projectId, int status) throws SQLException {
+        pdao.updateProjectStatus(projectId, status);
     }
 
 }
