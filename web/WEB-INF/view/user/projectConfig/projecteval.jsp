@@ -129,11 +129,11 @@
                                                     <div class="card-header">
                                                         <h6 class="card-title">Evaluation Criteria</h6>
                                                     <c:if test="${loginedUser.role!=2}">
-
                                                         <ul class="header-dropdown">
                                                             <li>
-                                                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addCriteria">Add New</button>
+                                                                <button type="button" id="addCriteriaBtn" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addCriteria">Add New</button>
                                                             </li>
+                                                            <a class="btn btn-sm btn-outline-success" id="showUpdateMess" hidden data-bs-toggle="modal" data-bs-target="#updateCriteria"><i class="fa fa-pencil" ></i></a>
                                                         </ul>
                                                     </c:if>
                                                 </div>
@@ -252,7 +252,6 @@
                 </div>
             </div>
             <c:if test="${loginedUser.role!=2}">
-
                 <div class="modal fade" id="updateCriteria" tabindex="-1" aria-labelledby="updateCriteria" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -263,7 +262,7 @@
                                 <div class="modal-body">
                                     <div class="row g-2">
                                         <input type="text" name="action" hidden value="update">
-                                        
+                                        <input type="text" name="uID" hidden value="${modalItem.id}">
                                         <div class="col-md-6">
                                             <label>Name*:</label>
 
@@ -285,6 +284,12 @@
                                             <textarea id="id" class="form-control" name="uDescript" rows="8" cols="60">${modalItem.description}</textarea>
                                         </div>
                                     </div>
+                                    <c:if test="${UpdateErrorMess!=null}">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            <i class="fa fa-times-circle"></i>${UpdateErrorMess}<br>
+                                        </div>
+                                    </c:if>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-primary">Save</button>
@@ -306,25 +311,31 @@
                                         <input type="text" name="action" hidden value="add">
                                         <div class="col-md-6">
                                             <label>Name*:</label>
-                                            <input type="text" class="form-control" placeholder="Name" name="Name" value="${oldItem.name}">
+                                            <input type="text" class="form-control" placeholder="Name" name="Name" value="${oldAddItem.name}">
                                         </div>
                                         <div class="col-md-6">
                                             <label>Weight:</label>
-                                            <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="Weight" value="${oldItem.weight}">
+                                            <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="Weight" value="${oldAddItem.weight}">
                                         </div>
                                         <div class="col-md-6">
                                             <label>Milestone</label>
                                             <select name="Milestone" class="form-select">
                                                 <c:forEach items="${msList}" var="m">
-                                                    <option value="${m.id}" ${oldItem.milestone.id==m.id?'selected':''}>${m.name}</option>
+                                                    <option value="${m.id}" ${oldAddItem.milestone.id==m.id?'selected':''}>${m.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
                                         <div class="col-md-12">
                                             <label>Description:</label>
-                                            <textarea id="id" class="form-control" name="Descript" rows="8" cols="60">${oldItem.description}</textarea>
+                                            <textarea id="id" class="form-control" name="Descript" rows="8" cols="60">${oldAddItem.description}</textarea>
                                         </div>
                                     </div>
+                                    <c:if test="${AddErrorMess!=null}">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            <i class="fa fa-times-circle"></i> ${AddErrorMess} <br>
+                                        </div>
+                                    </c:if>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-primary">Add</button>
@@ -352,19 +363,16 @@
                                                                                 showConfirmButton: false,
                                                                                 timer: 1500
                                                                             });
+
             </script>
         </c:if>
-        <c:if test="${requestScope.errorMess!=null}">
-            <script>
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: '${errorMess}',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            </script>
+        <c:if test="${isUpdate!=null}">
+            <script>$('#showUpdateMess')[0].click();</script>
         </c:if>
+        <c:if test="${isAdd!=null}">
+            <script>$('#addCriteriaBtn').click();</script>
+        </c:if>
+
         <script>
             $(document).ready(function () {
                 // Event handler for clicking on the table headers

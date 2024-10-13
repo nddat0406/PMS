@@ -12,6 +12,7 @@ import java.util.List;
  * @author HP
  */
 public class Project {
+
     private int id;
     private String bizTerm;
     private String code;
@@ -22,8 +23,6 @@ public class Project {
     private Group department;
     private Group domain;
     private List<User> manager;
-
-
 
     public int getId() {
         return id;
@@ -104,6 +103,12 @@ public class Project {
     public void setManager(List<User> manager) {
         this.manager = manager;
     }
-    
-    
+
+    public int getDepartmentId() {
+        return department != null ? department.getId() : 0; // Trả về 0 nếu department là null
+    }
+
+    public int getDomainId() {
+        return domain != null ? domain.getId() : 0; // Trả về 0 nếu domain là null
+    }
 }

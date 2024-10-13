@@ -5,12 +5,14 @@
 package model;
 
 public class Setting {
+
     private int id;
     private String name;
     private int type;
     private int priority;
     private boolean status; // 1: Active, 0: Inactive
     private String description;
+    private Group domain;
 
     // Constructor
     public Setting() {
@@ -72,5 +74,12 @@ public class Setting {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+     public Group getDomain() {
+        return domain;
+    }
+
+    public void setDomain(Group domain) {
+        this.domain = domain;
     }
 }

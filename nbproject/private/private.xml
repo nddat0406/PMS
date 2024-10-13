@@ -2,6 +2,100 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+<<<<<<< HEAD
         <group/>
+=======
+        <group name="PRO">
+<<<<<<< HEAD
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/model/User.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/fogotpassword.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/UserDetails.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/web.xml</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/SettingDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/LoginController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/UserService.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/GroupDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/META-INF/context.xml</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/domainConfig/domainsetting.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/DepartmentController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/verify.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/SettingDetails.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/UserDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/nbproject/build-impl.xml</file>
+=======
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/LoginController.java</file>
+>>>>>>> c5aad357a412ad7e3f99f22f0c3d4d99210db588
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/AddDepartment.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/projectConfig/projecteval.jsp</file>
+<<<<<<< HEAD
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/UserList.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/testM.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/AdminController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/GroupService.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/DomainConfigController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/Department.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/SettingController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/domainConfig/domainprojectphase.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/model/Allocation.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/test.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/Dashboard.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/TeamService.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/GroupController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/login.jsp</file>
+=======
+>>>>>>> c5aad357a412ad7e3f99f22f0c3d4d99210db588
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/model/Group.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/GroupDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/domainConfig/domainuser.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/AdminController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/UserDetails.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/ProjectDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/model/User.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/META-INF/context.xml</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/login.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/SettingController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/domainConfig/domainsetting.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/filter/LoginFilter.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/domainConfig/domaineval.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/domainConfig/domainprojectphase.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/model/Criteria.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/UserService.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/UserDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/filter/RoleFilter.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/DepartmentController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/nbproject/build-impl.xml</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/verify.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/SettingList.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/Domain.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/model/Allocation.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/ProjectController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/SettingDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/GroupController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/profile.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/DomainDetail.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/Dashboard.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/UserList.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/fogotpassword.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/Department.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/ProjectService.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/UserController.java</file>
+<<<<<<< HEAD
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/domainConfig/domaineval.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/BaseDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/model/Criteria.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/ProjectDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/SettingList.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/domainConfig/domainuser.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/filter/RoleFilter.java</file>
+=======
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/DomainConfigController.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/SettingDetails.jsp</file>
+        </group>
+        <group name="test">
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/admin/Domain.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/common/sidebar.jsp</file>
+>>>>>>> c5aad357a412ad7e3f99f22f0c3d4d99210db588
+        </group>
+>>>>>>> da186aeb15afae6bfd8cc4e40e75f1d5b2228d0d
     </open-files>
 </project-private>

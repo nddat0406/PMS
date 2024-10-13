@@ -145,6 +145,9 @@ public class LoginController extends HttpServlet {
         String email = request.getParameter("email").trim();
         String password = request.getParameter("password").trim();
         String rePassword = request.getParameter("rePassword").trim();
+        String otp = BaseService.getRandom();
+        uService.saveOtp(email, otp);
+        boolean result = BaseService.sendEmail(email, otp);
         if (email.isBlank()) {
             request.setAttribute("emailError", "Email can not be blank");
             request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
@@ -164,8 +167,11 @@ public class LoginController extends HttpServlet {
             request.setAttribute("error", "Register unsuccessfully");
             request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
         }
-        request.setAttribute("success", "Register successfully");
-        request.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
+        if(result){
+            request.setAttribute("email", email);
+            request.getRequestDispatcher("/WEB-INF/view/user/verify.jsp").forward(request, response);
+        }   
+        
     }
 
     private void forgotPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -201,7 +207,7 @@ public class LoginController extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/view/user/verify.jsp").forward(request, response);
         }
     }
-
+    
     private void resetPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
