@@ -400,7 +400,7 @@ public class ProjectDAO extends BaseDAO {
             statement.setInt(2, milestone.getPriority());
             statement.setString(3, milestone.getDetails());
             statement.setDate(4, milestone.getEndDate());
-            statement.setBoolean(5, milestone.isStatus());
+            statement.setInt(5, milestone.getStatus());
             statement.setString(6, milestone.getDeliver());
             statement.setInt(7, milestone.getProject().getId());
             statement.setInt(8, milestone.getPhase().getId());

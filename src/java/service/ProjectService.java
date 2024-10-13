@@ -183,7 +183,7 @@ public class ProjectService {
                     milestone.setPriority(phase.getPriority());
                     milestone.setDetails("Generated milestone for phase: " + phase.getName());
                     milestone.setEndDate(new java.sql.Date(endDate.getTime()));
-                    milestone.setStatus(false); // Default status (e.g., not started)
+                    milestone.setStatus(0); // Default status (e.g., not started)
                     milestone.setDeliver("Default deliverable");
                     milestone.setProject(project); // Đặt đối tượng Project vào milestone
                     milestone.setPhase(phase); // Đặt đối tượng Phase vào milestone
