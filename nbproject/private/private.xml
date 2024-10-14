@@ -45,8 +45,8 @@
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/SettingDetails.jsp</file>
         </group>
         <group name="test">
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/admin/Domain.jsp</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/common/sidebar.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/Dashboard.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projectteam.jsp</file>
         </group>
     </open-files>
 </project-private>
