@@ -36,7 +36,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * @author HP
  */
-@WebServlet(name = "DomainConfigController", urlPatterns = {"/domain", "/domain/domainuser", "/domain/domainsetting", "/domain/projectphasecriteria"})
+@WebServlet(name = "DomainConfigController", urlPatterns = {"/domain", "/domain/domainuser", "/domain/domainsetting", "/domain/projectphasecriteria", "/domain/domaineval"})
 @MultipartConfig
 public class DomainConfigController extends HttpServlet {
 
@@ -64,6 +64,9 @@ public class DomainConfigController extends HttpServlet {
                 break;
             case "/domain/projectphasecriteria":
                 this.ProjectPhaseCriteria(request, response);
+                break;
+            case "/domain/domaineval":
+                this.domaineval(request, response);
                 break;
             default:
                 this.domainSetting(request, response);            
@@ -119,7 +122,24 @@ public class DomainConfigController extends HttpServlet {
             e.printStackTrace();
         }
     }
-
+     private void domaineval(HttpServletRequest request, HttpServletResponse response) {
+        CriteriaDAO dao = new CriteriaDAO();
+        try {
+            String searchName = request.getParameter("search");
+            String filterStatus = request.getParameter("status");
+            searchName = searchName != null ? searchName.trim() : null;
+            filterStatus = filterStatus != null ? filterStatus.trim() : null;
+            List<Criteria> criteriaList;
+            criteriaList = dao.getAllCriteriaPhase(searchName, filterStatus);
+            request.setAttribute("searchName", searchName);
+            request.setAttribute("filterStatus", filterStatus);
+            request.setAttribute("criteriaList", criteriaList);
+            request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domaineval.jsp").forward(request, response);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         
@@ -208,5 +228,7 @@ public class DomainConfigController extends HttpServlet {
             throw new ServletException("Error importing data from Excel file", e);
         }
     }
+
+   
 }
 
