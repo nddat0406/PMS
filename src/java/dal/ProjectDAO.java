@@ -368,7 +368,39 @@ public class ProjectDAO extends BaseDAO {
         }
         return 0; // Trả về 0 nếu không thành công
     }
+    // Hàm kiểm tra nếu code đã tồn tại
+    public boolean isCodeExists(String code) throws SQLException {
+        String query = "SELECT COUNT(*) FROM project WHERE code = ?";
+        
+        try (PreparedStatement statement = getConnection().prepareStatement(query)) {
+            statement.setString(1, code);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;  // Nếu COUNT > 0, tức là code đã tồn tại
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return false;
+    }
 
+    // Hàm kiểm tra nếu name đã tồn tại
+    public boolean isNameExists(String name) throws SQLException {
+        String query = "SELECT COUNT(*) FROM project WHERE name = ?";
+        
+        try (PreparedStatement statement = getConnection().prepareStatement(query)) {
+            statement.setString(1, name);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;  
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return false;
+    }
 // Lấy danh sách các giai đoạn dựa trên domainId từ bảng 'projectphase'
     public List<ProjectPhase> getPhasesByDomainId(int domainId) throws SQLException {
         List<ProjectPhase> phases = new ArrayList<>();
@@ -400,7 +432,7 @@ public class ProjectDAO extends BaseDAO {
             statement.setInt(2, milestone.getPriority());
             statement.setString(3, milestone.getDetails());
             statement.setDate(4, milestone.getEndDate());
-            statement.setBoolean(5, milestone.isStatus());
+            statement.setInt(5, milestone.getStatus());
             statement.setString(6, milestone.getDeliver());
             statement.setInt(7, milestone.getProject().getId());
             statement.setInt(8, milestone.getPhase().getId());

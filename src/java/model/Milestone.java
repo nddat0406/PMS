@@ -15,7 +15,7 @@ public class Milestone {
     private int priority;
     private String details;
     private Date endDate;
-    private boolean status;
+    private int status;
     private String deliver;
     private Project project;
     private ProjectPhase phase;
@@ -59,11 +59,11 @@ public class Milestone {
         this.endDate = endDate;
     }
 
-    public boolean isStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

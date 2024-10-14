@@ -24,32 +24,6 @@ public class GroupController extends HttpServlet {
 
     private GroupService Domain = new GroupService();
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet GroupController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet GroupController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -65,15 +39,6 @@ public class GroupController extends HttpServlet {
 
         try {
             switch (action) {
-                case "delete" -> {
-                    // Lấy id từ request và thực hiện xóa
-                    int id = Integer.parseInt(request.getParameter("id"));
-                    Domain.deleteGroup(id);  // Xóa group với id
-
-                    // Sau khi xóa, lấy danh sách nhóm mới với phân trang
-                    paginateList(request, response);
-                }
-
                 case "list" -> // Xử lý danh sách với phân trang
                     paginateList(request, response);
 
@@ -151,6 +116,21 @@ public class GroupController extends HttpServlet {
                 int updateStatus = Integer.parseInt(request.getParameter("status"));
 
                 try {
+                    // Kiểm tra xem các giá trị khác có null không, nếu null thì giữ nguyên giá trị cũ từ cơ sở dữ liệu
+                    Group detailEdit = Domain.getGroupDetail(updateId);
+
+                    if (updateCode == null || updateCode.isEmpty()) {
+                        updateCode = detailEdit.getCode();  // Giữ nguyên code cũ
+                    }
+
+                    if (updateName == null || updateName.isEmpty()) {
+                        updateName = detailEdit.getName();  // Giữ nguyên name cũ
+                    }
+
+                    if (updateDetails == null || updateDetails.isEmpty()) {
+                        updateDetails = detailEdit.getDetails();  // Giữ nguyên details cũ
+                    }
+
                     // Gọi phương thức cập nhật
                     Domain.updateGroup(updateId, updateCode, updateName, updateDetails, updateStatus);
 
@@ -162,6 +142,7 @@ public class GroupController extends HttpServlet {
 
                     // Lấy lại thông tin chi tiết của nhóm để hiển thị lại form
                     Group detailEdit = Domain.getGroupDetail(updateId);
+                    
                     request.setAttribute("groupDetail", detailEdit);
 
                     // Chuyển hướng về trang chỉnh sửa

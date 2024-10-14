@@ -5,6 +5,7 @@
 package model;
 
 public class Setting {
+
     private int id;
     private String name;
     private int type;
@@ -73,5 +74,12 @@ public class Setting {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+     public Group getDomain() {
+        return domain;
+    }
+
+    public void setDomain(Group domain) {
+        this.domain = domain;
     }
 }

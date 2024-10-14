@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.util.List;
 import model.Group;
 
-
 public class GroupService {
 
     private GroupDAO gdao = new GroupDAO();
@@ -29,10 +28,10 @@ public class GroupService {
     public int addGroup(String code, String name, String details, int status) {
         validateGroup(code, name, details, status);
         // Kiểm tra xem code hoặc name đã tồn tại chưa
-        if (gdao.isCodeExists(code)) {
+        if (gdao.isCodeExist(code)) {
             throw new IllegalArgumentException("Code already exists.");
         }
-        if (gdao.isCodeExists(name)) {
+        if (gdao.isNameExist(name)) {
             throw new IllegalArgumentException("Name already exists.");
         }
         return gdao.Add(code, name, details, status);
@@ -42,7 +41,6 @@ public class GroupService {
         if (domainID <= 0) {
             throw new IllegalArgumentException("Domain ID must be greater than 0.");
         }
-        validateGroup(code, name, details, status);
         // Kiểm tra xem code hoặc name đã tồn tại chưa khi cập nhật
 //        if (gdao.isCodeExist(code)) {
 //            throw new IllegalArgumentException("Code already exists.");
@@ -53,12 +51,7 @@ public class GroupService {
         return gdao.Update(domainID, code, name, details, status);
     }
 
-    public int deleteGroup(int groupID) {
-        if (groupID <= 0) {
-            throw new IllegalArgumentException("Group ID must be greater than 0.");
-        }
-        return gdao.Delete(groupID);
-    }
+
 
     public Group getGroupDetail(int groupID) {
         if (groupID <= 0) {
@@ -94,11 +87,10 @@ public class GroupService {
         if (status < 0 || status > 1) {
             throw new IllegalArgumentException("Status must be either 0 (inactive) or 1 (active).");
         }
+
         // Có thể thêm kiểm tra cho 'details' nếu cần
     }
-    
-    
-    
+
 //department
     public List<Group> getAllDepartment() throws SQLException {
         try {
@@ -116,7 +108,6 @@ public class GroupService {
         }
     }
 
-
     // Lấy tên phòng ban theo ID
     public String getDepartmentNameById(int id) {
         try {
@@ -127,11 +118,7 @@ public class GroupService {
         return null;
     }
 
-    // Xóa phòng ban theo ID
-    public boolean deleteDepartment(int departmentID) {
-        int rowsAffected = gdao.Delete(departmentID);
-        return rowsAffected > 0;
-    }
+
 
     // Đọc danh sách phòng ban với phân trang
     public List<Group> getDepartmentsByPage(int pageNumber, int pageSize) {

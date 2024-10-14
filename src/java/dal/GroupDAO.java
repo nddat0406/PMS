@@ -44,20 +44,6 @@ public class GroupDAO extends BaseDAO {
             throw new SQLException(e);
         }
     }
-    // xóa domain 
-
-    public int Delete(int domainID) {
-        int n = 0;
-        String sql = "DELETE FROM pms.group  where type=1 and id = ?";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(sql);
-            pre.setInt(1, domainID);
-            n = pre.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return n;
-    }
 //list all domai
 
     public List<Group> Read(int pageNumber, int pageSize) {
@@ -198,7 +184,35 @@ public class GroupDAO extends BaseDAO {
 
         return list;
     }
+    public boolean isCodeExist(String code) {
+        String query = "SELECT COUNT(*) FROM pms.group  where type=1 and code = ?";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(query);
+            ps.setString(1, code);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
+    public boolean isNameExist(String name) {
+        String query = "SELECT COUNT(*) FROM pms.group  where type=1 and name = ?";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(query);
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     public List<Group> filterGroups(int pageNumber, int pageSize, String name, String code, Integer status) {
         List<Group> groups = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM pms.group  where type=1 and 1=1");
@@ -252,25 +266,7 @@ public class GroupDAO extends BaseDAO {
         return groups;
     }
 
-    public static void main(String[] args) {
-        GroupDAO groupDAO = new GroupDAO();
 
-        // Tạo đối tượng Group để cập nhật
-        String code = "newCode"; // Mã mới
-        String name = "New Group Name"; // Tên mới
-        String details = "Updated details about the group."; // Chi tiết mới
-        int status = 1; // Trạng thái mới (1 cho Active, 0 cho Inactive)
-
-        // Gọi hàm Update
-        int result = groupDAO.Add(code, name, details, status);
-
-        // Kiểm tra và in kết quả
-        if (result > 0) {
-            System.out.println("Cập nhật thành công!");
-        } else {
-            System.out.println("Cập nhật không thành công.");
-        }
-    }
 
     public List<Group> getAllDomain() throws SQLException {
         List<Group> listD = new ArrayList<>();
@@ -296,6 +292,28 @@ public class GroupDAO extends BaseDAO {
         }
 
         return listD;
+    }
+    public List<Group> getDomainUser() {
+        List<Group> list = new ArrayList<>();
+        String sql = "SELECT * FROM pms.domain_user";
+
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            ResultSet rs = pre.executeQuery();
+            UserDAO userDao = new UserDAO();
+            while (rs.next()) {
+                Group domain = new Group();
+                domain.setId(rs.getInt("id"));
+                domain.setStatus(rs.getInt("status"));
+                domain.setUser(userDao.getActiveUserById(rs.getInt("userId")));
+                domain.setParent(new Group(getDeptNameById(rs.getInt("domainId"))));
+                list.add(domain);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error:  " +e);
+        }
+
+        return list;
     }
 
     public List<Group> getAllDepartment() throws SQLException {
@@ -653,28 +671,44 @@ public class GroupDAO extends BaseDAO {
         }
         return false;
     }
-    public List<Group> getAllUserDomain(){
+
+    public List<Group> getAllUserDomain() {
         List<Group> list = new ArrayList<>();
-        String sql="SELECT * FROM pms.domain_user JOIN pms.user ON domain_user.userId = user.id JOIN pms.domain ON domain_user.domainId = domain.id;";
-        try{
-            PreparedStatement ps=getConnection().prepareStatement(sql);
-            ResultSet rs=ps.executeQuery();
-            while(rs.next()){
-                String id=String.valueOf(rs.getInt(1));
-                String status=String.valueOf(rs.getInt(4));
-                String email=rs.getString(5);
-                String fullname=rs.getString(7);
-                
-                String mobile=rs.getString(8);
-                String domainName=rs.getString(21);
-                Group d=new Group();
+        String sql = "SELECT * FROM pms.domain_user JOIN pms.user ON domain_user.userId = user.id JOIN pms.domain ON domain_user.domainId = domain.id;";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String id = String.valueOf(rs.getInt(1));
+                String status = String.valueOf(rs.getInt(4));
+                String email = rs.getString(5);
+                String fullname = rs.getString(7);
+
+                String mobile = rs.getString(8);
+                String domainName = rs.getString(21);
+                Group d = new Group();
                 list.add(d);
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return list;
     }
-    
+
+   public void addDomainUser(Group user) throws SQLException {
+        String sql = "INSERT INTO domain_user (id, userId, domainId, status) VALUES (?, ?, ?, ?)";
+        
+        try  {
+              PreparedStatement pstmt=getConnection().prepareStatement(sql);
+            pstmt.setInt(1, user.getId());
+            pstmt.setString(2, user.getUser().getId() + "");
+            pstmt.setInt(3, user.getParent().getId());
+            pstmt.setInt(4, user.getStatus());
+            pstmt.executeUpdate();
+        }catch(Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
 
 }

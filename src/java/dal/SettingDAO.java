@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Group;
 
 public class SettingDAO extends BaseDAO {
+     private GroupDAO gdao = new GroupDAO();
 
     public List<Setting> getAllSettings() throws SQLException {
         List<Setting> settingsList = new ArrayList<>();
@@ -227,6 +229,57 @@ public class SettingDAO extends BaseDAO {
         }
         return settings;
     }
+
+
+     public List<Setting> getFilteredDomainSettings(String filterType, String filterStatus, String keyword) throws SQLException {
+        List<Setting> settings = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM domain_setting WHERE 1=1");
+
+        if (filterType != null && !filterType.isEmpty()) {
+            sql.append(" AND type = ?");
+        }
+
+        if (filterStatus != null && !filterStatus.isEmpty()) {
+            sql.append(" AND status = ?");
+        }
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND priority = ?");
+        }
+
+        try {
+            PreparedStatement stmt = getConnection().prepareStatement(sql.toString());
+            int index = 1;
+
+            if (filterType != null && !filterType.isEmpty()) {
+                stmt.setInt(index++, Integer.parseInt(filterType));
+            }
+
+            if (filterStatus != null && !filterStatus.isEmpty()) {
+                stmt.setInt(index++, Integer.parseInt(filterStatus));
+            }
+
+            if (keyword != null && !keyword.isEmpty()) {
+                stmt.setInt(index++, Integer.parseInt(keyword));
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Setting setting = new Setting();
+                setting.setId(rs.getInt("id"));
+                setting.setName(rs.getString("name"));
+                setting.setType(rs.getInt("type"));
+                setting.setPriority(rs.getInt("priority"));
+                setting.setStatus(rs.getBoolean("status"));
+                setting.setDomain(new Group(gdao.getDeptNameById(rs.getInt("domainId"))));
+                settings.add(setting);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e);
+        }
+        return settings;
+     }
+
     // lấy bizterm cho project list vs project detail
 
     public List<Setting> getAllBizTerms() throws SQLException {
@@ -247,5 +300,6 @@ public class SettingDAO extends BaseDAO {
             e.printStackTrace();
         }
         return bizTerms;
+
     }
 }

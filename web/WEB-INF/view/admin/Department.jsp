@@ -149,7 +149,7 @@
                                                         <td>${d.id}</td>
                                                         <td class="project-title">
                                                             <h6 class="fs-6 mb-0">${d.code}</h6>
-                                                            
+
                                                         </td>
                                                         <td>${d.name}</td>
                                                         <td>
@@ -177,11 +177,14 @@
                                                                         <i class="fa fa-edit"></i> 
                                                                     </button>
                                                                 </form>
-                                                                <form action="department" method="post" onsubmit="return confirm('Are you sure you want to delete this department?');" style="display: inline-block;">
-                                                                    <input type="hidden" name="action" value="delete">
+                                                                <!-- Nút chuyển đổi trạng thái -->
+                                                                <form action="department?action=update" method="post" style="display: inline-block;">
                                                                     <input type="hidden" name="id" value="${d.id}">
-                                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                                        <i class="fa fa-trash"></i>
+                                                                    <input type="hidden" name="status" value="${d.status == 1 ? 0 : 1}">
+                                                                    <!-- Nút chuyển đổi trạng thái -->
+                                                                    <button type="submit" class="btn btn-sm ${d.status == 1 ? 'btn-outline-danger' : 'btn-outline-primary'}">
+                                                                        <i class="fa ${d.status == 1 ? 'fa-times' : 'fa-check'}"></i> 
+                                                                        ${d.status == 1 ? 'Inactive' : 'Active'}
                                                                     </button>
                                                                 </form>
 
@@ -233,23 +236,23 @@
         <!-- page js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
         <script>
-                                                                    $(document).ready(function () {
-                                                                        var extensions = {
-                                                                            "sFilter": "dataTables_filter custom_filter_class"
-                                                                        }
-                                                                        $.extend($.fn.dataTableExt.oStdClasses, extensions);
-                                                                        $('#project_list').dataTable({
-                                                                            responsive: true,
-                                                                            pageLength: 10,
-                                                                            lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 100]]
-                                                                        });
+            $(document).ready(function () {
+                var extensions = {
+                    "sFilter": "dataTables_filter custom_filter_class"
+                }
+                $.extend($.fn.dataTableExt.oStdClasses, extensions);
+                $('#project_list').dataTable({
+                    responsive: true,
+                    pageLength: 10,
+                    lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 100]]
+                });
 
-                                                                        // Tooltip
-                                                                        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-                                                                        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                                                                            return new bootstrap.Tooltip(tooltipTriggerEl)
-                                                                        })
-                                                                    });
+                // Tooltip
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl)
+                })
+            });
         </script>
     </body>
 
