@@ -132,9 +132,23 @@ public class ProjectService {
     public Project getProjectById(int id) {
         return pdao.getProjectById(id);
     }
-
-    public boolean addProjectWithMilestones(Project project) {
+// hàm add project
+    public String addProjectWithMilestones(Project project) {
         try {
+            // Check Code length
+            if (project.getCode() != null && project.getCode().length() > 10) {
+                return "Project code must not exceed 10 characters.";  // Trả về thông báo lỗi
+            }
+            // check Code
+            if (pdao.isCodeExists(project.getCode())) {
+                return "Project code already exists";  // Trả về thông báo lỗi
+            }
+
+            // check Name
+            if (pdao.isNameExists(project.getName())) {
+                return "Project name already exists";  // Trả về thông báo lỗi
+            }
+
             // Gọi phương thức thêm project và lấy projectId
             int projectId = pdao.addProject(project);
 
@@ -149,12 +163,17 @@ public class ProjectService {
 
                 // Kiểm tra nếu không có phases nào được trả về
                 if (phases.isEmpty()) {
-                    System.out.println("No phases found for domainId: " + project.getDomain().getId());
-                    return false;
+                    return "No phases found for domainId: " + project.getDomain().getId();  // Trả về thông báo lỗi
                 }
 
                 // Thiết lập startDate cho các milestones
                 Date startDate = project.getStartDate();
+                java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
+
+                // Kiểm tra xem startDate có phải là ngày trong quá khứ không
+                if (startDate == null || startDate.before(currentDate)) {
+                    return "Start date must be today or in the future.";  // Trả về thông báo lỗi
+                }
 
                 // Lặp qua các giai đoạn và tạo milestones
                 for (ProjectPhase phase : phases) {
@@ -185,25 +204,23 @@ public class ProjectService {
                     } catch (SQLException e) {
                         System.err.println("Error while adding milestone for phase: " + phase.getName());
                         e.printStackTrace();
-                        return false;
+                        return "Error while adding milestone for phase: " + phase.getName();  // Trả về thông báo lỗi
                     }
 
                     // Cập nhật startDate cho mốc tiếp theo (bắt đầu sau khi mốc trước kết thúc)
                     startDate = endDate;
                 }
 
-                // Nếu tất cả các milestones được thêm thành công, trả về true
-                return true;
+                // Nếu tất cả các milestones được thêm thành công, trả về null (không có lỗi)
+                return null;
             } else {
-                System.out.println("Failed to retrieve a valid projectId.");
+                return "Failed to retrieve a valid projectId.";  // Trả về thông báo lỗi
             }
         } catch (SQLException e) {
             System.err.println("Error while adding project or retrieving phases: " + e.getMessage());
             e.printStackTrace();
+            return "An error occurred while adding the project: " + e.getMessage();  // Trả về thông báo lỗi
         }
-
-        // Trả về false nếu có bất kỳ lỗi nào xảy ra
-        return false;
     }
 
     public String getRoleByUserAndProject(int userId, int projectId) {

@@ -41,33 +41,41 @@
                         </div>
                     </c:if>
                     <c:if test="${not empty groupDetail}">
-                        <form action="domain?action=update" method="post" ">
+                        <form action="domain?action=update" method="post">
                             <input type="hidden" name="id" value="${groupDetail.id}">
+
                             <div class="form-group">
                                 <label for="code">Code:</label>
                                 <input type="text" id="code" name="code" class="form-control" value="${groupDetail.code}" required>
                             </div>
+
                             <div class="form-group">
                                 <label for="name">Name:</label>
                                 <input type="text" id="name" name="name" class="form-control" value="${groupDetail.name}" required>
                             </div>
+
                             <div class="form-group">
                                 <label for="details">Detail:</label>
                                 <textarea id="details" name="details" class="form-control">${groupDetail.details}</textarea>
                             </div>
+
                             <div class="form-group">
                                 <label for="status">Status:</label><br>
-                                <input type="checkbox" id="active" name="status" value="1" ${status == 1 ? 'checked' : ''}>
-                                <label for="active">Active</label><br>
-                                <input type="checkbox" id="inactive" name="status" value="0" ${status == 0 ? 'checked' : ''}>
-                                <label for="inactive">Deactive</label>
+                                <input type="checkbox" id="active" name="status" value="1" ${groupDetail.status == 1 ? 'checked' : ''}>
+                                <label for="active">Activate</label><br>
+
+                                <input type="checkbox" id="inactive" name="status" value="0" ${groupDetail.status == 0 ? 'checked' : ''}>
+                                <label for="inactive">Deactivate</label>
                             </div>
+
                             <!-- Các nút hành động -->
                             <div class="form-actions text-center">
                                 <button type="submit" class="btn btn-success">Update</button>
-                                <a href="${pageContext.request.contextPath}/admin/domain" class="btn btn-secondary ">Back</a>
+                                <a href="${pageContext.request.contextPath}/admin/domain" class="btn btn-secondary">Back</a>
                             </div>
                         </form>
+
+
                     </c:if>
 
                 </div>

@@ -59,14 +59,16 @@
                             <a href="#Employees" class="has-arrow"><i class="fa fa-users"></i><span>Project Tracking</span></a>
                             <ul class="list-unstyled">
                                 <li><a href="emp-all.html">Project issue</a></li>
-                                <li><a href="emp-leave.html">Timesheet</a></li>
+                                <li><a href="emp-leave.html">Timesheet</a></li>                                
                             </ul>
                         </li>
+                        <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-clipboard-list"></i><span>Project</span></a></li> 
                         <li><a href="${pageContext.request.contextPath}/user/profile"><i class="fa fa-user"></i><span>Users profile</span></a></li>
                         <li><a href="app-users.html"><i class="fa fa-building"></i><span>Department</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/logout"><i class="fa fa-sign-out"></i><span>Logout</span></a></li>
                     </ul>
                 </nav>
+
             </div>
         </c:if>
         <div class="tab-pane fade" id="setting_menu" role="tabpanel" >

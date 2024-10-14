@@ -58,9 +58,9 @@
                                 <label for="status">Status:</label><br>
                                 <!-- Checkbox 'Active' sẽ được chọn mặc định -->
                                 <input type="checkbox" id="active" name="status" value="1" checked>
-                                <label for="active">Active</label><br>
+                                <label for="active">Activate</label><br>
                                 <input type="checkbox" id="inactive" name="status" value="0">
-                                <label for="inactive">Deactive</label>
+                                <label for="inactive">Deactivate</label>
                             </div>
 
 

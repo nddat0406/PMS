@@ -50,11 +50,14 @@
     </style>
     <body>
         <div id="layout" class="theme-cyan">
-            <jsp:include page="WEB-INF/view/common/pageLoader.jsp"></jsp:include>
+            <jsp:include page="../../common/pageLoader.jsp"></jsp:include>
 
                 <div id="wrapper">
-                <jsp:include page="WEB-INF/view/common/topNavbar.jsp"></jsp:include>
-                <jsp:include page="WEB-INF/view/common/sidebar.jsp"></jsp:include>
+                    <!-- top navbar -->
+                <jsp:include page="../../common/topNavbar.jsp"></jsp:include>
+
+                    <!-- Sidbar menu -->
+                <jsp:include page="../../common/sidebar.jsp"></jsp:include>
                     <div id="main-content">
                         <div class="container-fluid">
                             <div class="block-header py-lg-4 py-3">
@@ -102,7 +105,7 @@
                                     <div class="card-body">
                                         <form id="navbar-search" class="navbar-form search-form position-relative d-none d-md-block" method="get" action="projectlist">
                                             <input type="hidden" name="action" value="search">
-                                            <input name="keyword" class="form-control" placeholder="Search here..." type="text" required>
+                                            <input name="keyword" class="form-control" placeholder="Search here..." type="text" >
                                             <button type="submit" class="btn btn-secondary">
                                                 <i class="fa fa-search"></i>
                                             </button>
@@ -141,7 +144,7 @@
                                                                     <span>Active</span>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <span>Deactive</span>
+                                                                    <span>Inactive</span>
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </td>

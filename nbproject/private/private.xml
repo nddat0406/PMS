@@ -3,9 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/src/java/dal/ProjectDAO.java</file>
-            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/web/Project.jsp</file>
-            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/src/java/controller/ProjectController.java</file>
+            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/web/WEB-INF/view/admin/EditDepartment.jsp</file>
+            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/src/java/controller/DepartmentController.java</file>
+            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/src/java/service/GroupService.java</file>
+            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/web/WEB-INF/view/admin/Department.jsp</file>
+            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/web/WEB-INF/view/admin/EditDomain.jsp</file>
+            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/web/WEB-INF/view/admin/Domain.jsp</file>
+            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/web/WEB-INF/view/admin/AddDepartment.jsp</file>
         </group>
     </open-files>
 </project-private>
