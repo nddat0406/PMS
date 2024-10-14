@@ -21,6 +21,7 @@ public class CriteriaDAO extends BaseDAO {
 
     private ProjectDAO pdao = new ProjectDAO();
     private MilestoneDAO mdao = new MilestoneDAO();
+    private PhaseDAO phdao = new PhaseDAO();
 
     public List<Criteria> getCriteriaByProject(int id) throws SQLException {
         String str = "SELECT * FROM pms.project_criteria where projectId=?";
@@ -164,5 +165,103 @@ public class CriteriaDAO extends BaseDAO {
         c.setDescription("123");
         c.setMilestone(m);
         System.out.println(c.getName().equals(new CriteriaDAO().getCriteria(c.getId()).getName()));
+    }
+
+    public List<Criteria> getAllCriteria(String name, String status) throws SQLException {
+        StringBuilder sql = new StringBuilder("SELECT * FROM pms.project_criteria");
+        List<String> conditions = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+
+        if (name != null && !name.isEmpty()) {
+            conditions.add("name LIKE ?");
+            params.add("%" + name + "%");
+        }
+
+        if (status != null && !status.isEmpty()) {
+            conditions.add("status = ?");
+            params.add(status);
+        }
+
+        if (!conditions.isEmpty()) {
+            sql.append(" WHERE ").append(String.join(" AND ", conditions));
+        }
+
+        List<Criteria> list = new ArrayList<>();
+        try (PreparedStatement pre = getConnection().prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                if (params.get(i) instanceof String) {
+                    pre.setString(i + 1, (String) params.get(i));
+                } else if (params.get(i) instanceof Integer) {
+                    pre.setInt(i + 1, (Integer) params.get(i));
+                }
+            }
+
+            ResultSet rs = pre.executeQuery();
+
+            while (rs.next()) {
+                Criteria temp = new Criteria();
+                temp.setId(rs.getInt(1));
+                temp.setName(rs.getString(2));
+                temp.setWeight(rs.getInt(3));
+                temp.setProject(pdao.getById(rs.getInt("projectId")));
+                temp.setStatus(rs.getBoolean(5));
+                temp.setDescription(rs.getString(6));
+                temp.setMilestone(mdao.getMilestoneById(rs.getInt(7)));
+                list.add(temp);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e);
+        }
+
+        return list;
+    }
+
+    public List<Criteria> getAllCriteriaPhase(String name, String status) throws SQLException {
+        StringBuilder sql = new StringBuilder("SELECT * FROM pms.projectphase_criteria");
+        List<String> conditions = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+
+        if (name != null && !name.isEmpty()) {
+            conditions.add("name LIKE ?");
+            params.add("%" + name + "%");
+        }
+
+        if (status != null && !status.isEmpty()) {
+            conditions.add("status = ?");
+            params.add(status);
+        }
+
+        if (!conditions.isEmpty()) {
+            sql.append(" WHERE ").append(String.join(" AND ", conditions));
+        }
+
+        List<Criteria> list = new ArrayList<>();
+        try (PreparedStatement pre = getConnection().prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                if (params.get(i) instanceof String) {
+                    pre.setString(i + 1, (String) params.get(i));
+                } else if (params.get(i) instanceof Integer) {
+                    pre.setInt(i + 1, (Integer) params.get(i));
+                }
+            }
+
+            ResultSet rs = pre.executeQuery();
+
+            while (rs.next()) {
+                Criteria temp = new Criteria();
+                temp.setId(rs.getInt(1));
+                temp.setName(rs.getString(2));
+                temp.setWeight(rs.getInt(3));
+                temp.setStatus(rs.getBoolean(4));
+                temp.setPhase(phdao.getPhaseById(rs.getInt("phaseId")));
+                temp.setDescription(rs.getString(6));
+
+                list.add(temp);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e);
+        }
+
+        return list;
     }
 }

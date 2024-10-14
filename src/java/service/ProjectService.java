@@ -62,7 +62,6 @@ public class ProjectService {
 
     public List<Allocation> getProjectMembers(int pID) throws SQLException {
         return pdao.getAllMember(pID);
-
     }
 
     public void flipStatusMember(int id, List<Allocation> list) throws SQLException {
@@ -75,6 +74,8 @@ public class ProjectService {
 
     public List<Allocation> searchFilterMember(List<Allocation> list, Integer deptFilter, Integer statusFilter, String searchKey) {
         List<Allocation> pList = new ArrayList<>();
+        deptFilter = baseService.TryParseInteger(deptFilter);
+        statusFilter = baseService.TryParseInteger(statusFilter);
         for (Allocation allocation : list) {
             User temp = allocation.getUser();
             if ((temp.getDepartment().getId() == deptFilter || deptFilter == 0)
@@ -114,7 +115,16 @@ public class ProjectService {
         return workbook;
     }
 
+    public List<User> getProjectUsers(Integer pID) throws SQLException {
+        List<Allocation> list = pdao.getAllMember(pID);
+        List<User> temp = new ArrayList<>();
+        for (Allocation allocation : list) {
+            temp.add(allocation.getUser());
+        }
+        return temp;
+    }
 //  ------------------  project list vs project detail -----------------------------
+
     public List<Project> getProjects(int userId, int page, int pageSize, String keyword, Integer status) {
         // Kiểm tra tính hợp lệ của page và pageSize
         if (page <= 0 || pageSize <= 0) {
@@ -192,7 +202,7 @@ public class ProjectService {
                     milestone.setPriority(phase.getPriority());
                     milestone.setDetails("Generated milestone for phase: " + phase.getName());
                     milestone.setEndDate(new java.sql.Date(endDate.getTime()));
-                    milestone.setStatus(false); // Default status (e.g., not started)
+                    milestone.setStatus(0); // Default status (e.g., not started)
                     milestone.setDeliver("Default deliverable");
                     milestone.setProject(project); // Đặt đối tượng Project vào milestone
                     milestone.setPhase(phase); // Đặt đối tượng Phase vào milestone

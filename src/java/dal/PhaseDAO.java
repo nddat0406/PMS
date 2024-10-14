@@ -52,5 +52,25 @@ public class PhaseDAO extends BaseDAO{
         
         return phases;
     }
+    public ProjectPhase getPhaseById(int id) throws SQLException {
+        String str = "SELECT * FROM pms.projectphase where id=?";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            pre.setInt(1, id);
+            ResultSet rs = pre.executeQuery();
+            rs.next();
+            ProjectPhase temp = new ProjectPhase();
+            temp.setId(rs.getInt(1));
+            temp.setName(rs.getString(2));
+            temp.setPriority(rs.getInt(3));
+            temp.setDetails(rs.getString(4));
+            temp.setFinalPhase(rs.getBoolean(5));
+            temp.setCompleteRate(rs.getInt(6));
+            temp.setStatus(rs.getBoolean(7));
+            return temp;
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
 }
 

@@ -18,6 +18,7 @@ public class Group {
     private Group parent;
     private int status;
     private List<User> manager;
+    private User user;
     private int type;
 
     public Group() {
@@ -94,6 +95,14 @@ public class Group {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
     
     

@@ -19,6 +19,7 @@ public class Team {
     private String details;
     private List<User> members;
     private User teamLeader;
+    private boolean status;
 
     public int getId() {
         return id;
@@ -78,6 +79,22 @@ public class Team {
     
     public int getTeamSize(){
         return this.members.size()+(teamLeader==null?0:1);
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
     
 }

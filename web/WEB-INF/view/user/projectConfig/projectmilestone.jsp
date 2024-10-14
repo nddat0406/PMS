@@ -94,7 +94,7 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                                                        <div class="input-group" style="width: 30%">
+<!--                                                        <div class="input-group" style="width: 30%">
                                                             <span class="input-group-text">Priority</span>
                                                             <select class="form-select" id="priorityFilter">
                                                                 <option value="0">All Priority</option>
@@ -114,7 +114,7 @@
                                                         <div class="input-group" style="width: 30%">
                                                             <input type="text" class="form-control" id="searchInput" placeholder="Search here...">
                                                             <button class="btn btn-secondary" type="button" onclick="applyFilters()"><i class="fa fa-search"></i></button>
-                                                        </div>
+                                                        </div>-->
                                                     </div>
 
                                                     <table id="milestone_list" class="table table-hover mb-0">
@@ -143,11 +143,17 @@
                                                                 </td>
                                                                 <td>
                                                                     <c:choose>
-                                                                        <c:when test="${milestone.status}">
-                                                                            <span class="badge bg-success">Active</span>
+                                                                        <c:when test="${milestone.status == '0'}">
+                                                                            <span class="badge bg-secondary">Closed</span>
+                                                                        </c:when>
+                                                                        <c:when test="${milestone.status == '1'}">
+                                                                            <span class="badge bg-primary">In Progress</span>
+                                                                        </c:when>
+                                                                        <c:when test="${milestone.status == '2'}">
+                                                                            <span class="badge bg-warning">Pending</span>
                                                                         </c:when>
                                                                         <c:otherwise>
-                                                                            <span class="badge bg-secondary">Inactive</span>
+                                                                            <span class="badge bg-info">${milestone.status}</span>
                                                                         </c:otherwise>
                                                                     </c:choose>
                                                                 </td>
@@ -167,7 +173,7 @@
                                                         <h4>No result found!</h4>
                                                     </div>
                                                 </c:if>
-                                                <nav aria-label="Page navigation">
+<!--                                                <nav aria-label="Page navigation">
                                                     <ul class="pagination mt-3">
                                                         <li class="page-item"><a class="page-link" href="milestone?page=${page==1?1:page-1}">Previous</a></li>
                                                             <c:forEach begin="1" end="${num}" var="i">
@@ -175,7 +181,23 @@
                                                             </c:forEach>
                                                         <li class="page-item"><a class="page-link" href="milestone?page=${page==num?num:page+1}">Next</a></li>
                                                     </ul>
-                                                </nav>
+                                                </nav>-->
+                                                <nav aria-label="Page navigation">
+    <ul class="pagination mt-3">
+        <li class="page-item ${page == 1 ? 'disabled' : ''}">
+            <a class="page-link" href="milestone?page=${page - 1}" ${page == 1 ? 'tabindex="-1" aria-disabled="true"' : ''}>Previous</a>
+        </li>
+        <c:forEach begin="1" end="${num}" var="i">
+            <li class="page-item ${i == page ? 'active' : ''}">
+                <a class="page-link" href="milestone?page=${i}" style="color: #000">${i}</a>
+            </li>
+        </c:forEach>
+        <li class="page-item ${page == num ? 'disabled' : ''}">
+            <a class="page-link" href="milestone?page=${page + 1}" ${page == num ? 'tabindex="-1" aria-disabled="true"' : ''}>Next</a>
+        </li>
+    </ul>
+</nav>
+
                                             </div>
                                         </div>
                                     </div>
@@ -221,8 +243,9 @@
                             <div class="mb-3">
                                 <label for="milestoneStatus" class="form-label">Status</label>
                                 <select class="form-select" id="modalMilestoneStatus" name="milestoneStatus">
-                                    <option value="1">Active</option>
-                                    <option value="0">Deactive</option>
+                                    <option value="0">Closed</option>
+                                    <option value="1">In Progress</option>
+                                    <option value="2">Pending</option>
                                 </select>
                             </div>
 
@@ -245,27 +268,41 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
         <script>
                             $(document).ready(function () {
-                                $('.view-details').on('click', function () {
-                                    var row = $(this).closest('tr');
-                                    var id = row.find('td:eq(0)').text();
-                                    var name = row.find('td:eq(1)').text();
-                                    var priority = row.find('td:eq(2)').text();
-                                    var endDate = row.find('td:eq(3)').text();
-                                    var status = row.find('td:eq(5) .badge').text().trim().toLowerCase() === 'active' ? 1 : 0;
-                                    var details = row.find('td:eq(4)').text() || 'No details available';
-                                    console.log(id);
-                                    // Đổ dữ liệu vào modal
-                                    $('#modalMilestoneId').val(id);
-                                    $('#modalMilestoneName').val(name);
-                                    $('#modalMilestonePriority').val(priority);
-                                    $('#modalMilestoneEndDate').val(endDate);
-                                    $('#modalMilestoneStatus').val(status);
-                                    $('#modalMilestoneDetails').val(details.trim());
+    $('.view-details').on('click', function () {
+        var row = $(this).closest('tr');
+        var id = row.find('td:eq(0)').text();
+        var name = row.find('td:eq(1)').text();
+        var priority = row.find('td:eq(2)').text();
+        var endDate = row.find('td:eq(3)').text();
+        // Thay đổi cách xác định status
+        var statusText = row.find('td:eq(5) .badge').text().trim();
+        var status;
+        switch(statusText) {
+            case 'Closed':
+                status = 0;
+                break;
+            case 'In Progress':
+                status = 1;
+                break;
+            case 'Pending':
+                status = 2;
+                break;
+            default:
+                status = 1; // Giá trị mặc định nếu không xác định được
+        }
+        var details = row.find('td:eq(4)').text() || 'No details available';
 
-                                    $('#milestoneDetailModal').modal('show');
-                                });
+        // Đổ dữ liệu vào modal
+        $('#modalMilestoneId').val(id);
+        $('#modalMilestoneName').val(name);
+        $('#modalMilestonePriority').val(priority);
+        $('#modalMilestoneEndDate').val(endDate);
+        $('#modalMilestoneStatus').val(status);
+        $('#modalMilestoneDetails').val(details.trim());
 
-                            });
+        $('#milestoneDetailModal').modal('show');
+    });
+});
 
         </script>
     </body>

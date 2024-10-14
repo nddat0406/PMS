@@ -97,7 +97,6 @@ public class UserDAO extends BaseDAO {
     public User getUserLogin(String username, String password) throws Exception {
         String query = "SELECT id, email, fullname, mobile, password, note, role, status, departmentId, image,gender, otp, otp_expiry "
                 + "FROM pms.user WHERE user_name = ?";
-
         try {
             PreparedStatement ps = getConnection().prepareStatement(query);
             ps.setString(1, username);

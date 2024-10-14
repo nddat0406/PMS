@@ -17,8 +17,6 @@
         <!-- MAIN CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
 
-        
-
     </head>
 
     <body>
@@ -49,19 +47,107 @@
                             </div>
                             <div class="row g-3">
                                 <div class="col-lg-12 col-md-12">
+                                    <div class="col-lg-12 col-md-12">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                            <c:set var="baseUrl" value="${pageContext.request.contextPath}" />
+                                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                                <li class="nav-item" role="presentation" style="width: 150px">
+                                                    <a class="nav-link active" id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
+                                                </li>
+                                                <li class="nav-item" role="presentation" style="width: 150px">
+                                                    <a class="nav-link" id="Evaluation-tab" href="${baseUrl}/domain/domaineval" role="tab">Evaluation Criteria</a>
+                                                </li>
+                                                <li class="nav-item" role="presentation" style="width: 150px">
+                                                    <a class="nav-link" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
+                                                </li>
+                                                <li class="nav-item" role="presentation" style="width: 150px">
+                                                    <a class="nav-link" id="ProjectPhase-tab" href="${baseUrl}/domain/projectphasecriteria" role="tab">Project Phase</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                     <div class="card mb-3">
                                         <div class="card-body">
-                                            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Overview-tab" href="setting" role="tab">Domain Settings</a></li>
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link active" id="Settings-tab " href="eval" role="tab">Evaluation criteria</a></li>
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab" href="user" role="tab">Domain Users</a></li>
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link " id="Settings-tab" href="phase" role="tab">Project Phase</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="tab-content p-0" id="myTabContent">
-                                    <div class="tab-pane fade active show" id="Tab1">
-                                        write contend here
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h6 class="card-title">Evaluation Criteria</h6>
+                                                    <c:if test="${loginedUser.role!=2}">
+                                                        <ul class="header-dropdown">
+                                                            <li>
+                                                                <button type="button" id="addCriteriaBtn" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addCriteria">Add New</button>
+                                                            </li>
+                                                            <a class="btn btn-sm btn-outline-success" id="showUpdateMess" hidden data-bs-toggle="modal" data-bs-target="#updateCriteria"><i class="fa fa-pencil" ></i></a>
+                                                        </ul>
+                                                    </c:if>
+                                                </div>
+                                                <form action="${baseUrl}/domain/domaineval.jsp" method="get" class="mb-3">
+                                                    <input type="hidden" name="action" value="domaineval" />
+                                                    <div class="row g-3">
+                                                        <div class="input-group mb-3" style="width: 25%">
+                                                            <span class="input-group-text" id="basic-addon11">Phase</span>
+                                                            <select class="form-select" aria-label="Default select example" name="phaseFilter" id="domainFilter">
+                                                                <option value="0" ${phaseFilter==0?'selected':''}>All Phase</option>
+                                                                <c:forEach items="${msList}" var="m">
+                                                                    <option value="${m.id}" ${phaseFilter==m.id?'selected':''}>${m.name}</option>
+                                                                </c:forEach>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <select name="status" class="form-select">
+                                                                <option value="">All Statuses</option>
+                                                                <option value="1" ${filterStatus == '1' ? 'selected' : ''}>Active</option> 
+                                                                <option value="0" ${filterStatus == '0' ? 'selected' : ''}>Inactive</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <button type="submit" class="btn btn-primary">Search</button>
+                                                        </div>
+
+                                                        <div class="input-group mb-3" style="width: 15%">
+                                                            <input value="${searchKey.trim()}" class="form-control" name="searchKey" placeholder="Search here..." type="text">
+                                                            <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+
+
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Name</th>
+                                                            <th>Weight</th>
+                                                            <th>Phase</th>
+                                                            <th>Description</th>
+                                                            <th>Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <c:forEach var="criteria" items="${criteriaList}">
+                                                            <tr>
+                                                                <td>${criteria.id}</td>
+                                                                <td>${criteria.name}</td>
+                                                                <td>${criteria.weight}</td>
+
+                                                                <td>${criteria.phase.name}</td>
+                                                                <td>${criteria.description}</td>
+                                                                <td>
+                                                                   
+
+                                                                    <c:choose>
+                                                                        <c:when test="${criteria.status == true}">Active</c:when> 
+                                                                        <c:when test="${criteria.status == false}">Inactive</c:when>
+                                                                        <c:otherwise>Unknown</c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+                                                            </tr>
+                                                        </c:forEach>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -69,11 +155,10 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- core js file -->
-        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-        <!-- page js file -->
-        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+            <!-- core js file -->
+            <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+            <!-- page js file -->
+            <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
 
     </body>
 

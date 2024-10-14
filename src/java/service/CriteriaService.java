@@ -54,7 +54,6 @@ public class CriteriaService {
             cdao.flipStatusCriteriaOfPrj(id);
         } else {
             throw new IllegalAccessError("Illegal action!");
-
         }
     }
 
@@ -70,7 +69,6 @@ public class CriteriaService {
     public Criteria getCriteriaProject(int modalItemID, List<Criteria> list) throws SQLException {
         if (baseService.objectWithIdExists(modalItemID, list)) {
             return cdao.getCriteria(modalItemID);
-
         } else {
             throw new IllegalAccessError("Illegal action!");
         }
