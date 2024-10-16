@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import static java.util.Collections.list;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;

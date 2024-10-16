@@ -53,9 +53,9 @@
                                             <c:set var="baseUrl" value="${pageContext.request.contextPath}" />
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                                 <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link active" id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
+                                                    <a class="nav-link " id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
                                                 </li>
-                                                <li class="nav-item" role="presentation" style="width: 150px">
+                                                <li class="nav-item active" role="presentation" style="width: 150px">
                                                     <a class="nav-link" id="Evaluation-tab" href="${baseUrl}/domain/domaineval" role="tab">Evaluation Criteria</a>
                                                 </li>
                                                 <li class="nav-item" role="presentation" style="width: 150px">
