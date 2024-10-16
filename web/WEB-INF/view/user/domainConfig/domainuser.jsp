@@ -29,6 +29,7 @@
 
                     <!-- Sidebar menu -->
                 <jsp:include page="../../common/sidebar.jsp"></jsp:include>
+
                     <div id="main-content" class="profilepage_2 blog-page">
                         <div class="container-fluid">
 
@@ -36,7 +37,8 @@
                                 <div class="row g-3">
                                     <div class="col-md-6 col-sm-12">
                                         <h2 class="m-0 fs-5">
-                                            <a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> User Profile
+                                            <a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth">
+                                                <i class="fa fa-arrow-left"></i></a> User Profile
                                         </h2>
                                         <ul class="breadcrumb mb-0">
                                             <li class="breadcrumb-item"><a href="/dashboard">Lucid</a></li>
@@ -53,13 +55,13 @@
                                         <c:set var="baseUrl" value="${pageContext.request.contextPath}" />
                                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                                             <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link active" id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
+                                                <a class="nav-link " id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link" id="Evaluation-tab" href="${baseUrl}/eval" role="tab">Evaluation Criteria</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
+                                                <a class="nav-link active" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link" id="ProjectPhase-tab" href="${baseUrl}/domain/projectphasecriteria" role="tab">Project Phase</a>
@@ -80,9 +82,10 @@
                                                     <i class="fas fa-file-upload"></i> Import from Excel
                                                 </button>
                                                 <a href="assets/domain_user.xlsx" download>Template</a>
-                                            </div> 
+                                            </div>
                                         </div>
                                     </form>
+
                                     <div class="tab-pane fade active show" id="Tab1">
                                         <table class="table table-bordered table-striped">
                                             <thead>
@@ -114,15 +117,41 @@
                                                 </c:forEach>
                                             </tbody>
                                         </table>
+
+                                        <!-- Pagination Control -->
+                                        <nav aria-label="Page navigation example">
+                                            <ul class="pagination justify-content-center">
+                                                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                                                    <a class="page-link" href="${baseUrl}/domain/domainuser?page=${currentPage == 1 ? 1 : currentPage - 1}" aria-label="Previous">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                    </a>
+                                                </li>
+
+                                                <c:forEach var="i" begin="1" end="${numPages}">
+                                                    <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                                        <a class="page-link" href="${baseUrl}/domain/domainuser?page=${i}">${i}</a>
+                                                    </li>
+                                                </c:forEach>
+
+                                                <li class="page-item ${currentPage == numPages ? 'disabled' : ''}">
+                                                    <a class="page-link" href="${baseUrl}/domain/domainuser?page=${currentPage + 1}" aria-label="Next">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </nav>
+
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Core JS file -->
+
+        <!-- JS file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
         <!-- Page JS file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>

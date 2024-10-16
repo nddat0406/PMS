@@ -712,6 +712,50 @@ public class GroupDAO extends BaseDAO {
             System.out.println("Error: " + e);
         }
     }
+  public List<Group> getDomainUsersWithPagination(int page, int pageSize) {
+    List<Group> list = new ArrayList<>();
+    String sql = "SELECT * FROM pms.domain_user LIMIT ? OFFSET ?";
+    
+    try {
+        PreparedStatement pre = getConnection().prepareStatement(sql);
+        int offset = (page - 1) * pageSize;
+        
+        pre.setInt(1, pageSize);  // Limit the number of records per page
+        pre.setInt(2, offset);    // Skip records based on the page
+
+        ResultSet rs = pre.executeQuery();
+        UserDAO userDao = new UserDAO();
+        
+        while (rs.next()) {
+            Group domain = new Group();
+            domain.setId(rs.getInt("id"));
+            domain.setStatus(rs.getInt("status"));
+            domain.setUser(userDao.getActiveUserById(rs.getInt("userId")));
+            domain.setParent(new Group(getDeptNameById(rs.getInt("domainId"))));
+            list.add(domain);
+        }
+        
+    } catch (SQLException e) {
+        System.out.println("Error: " + e);
+    }
+    
+    return list;
+}
+
+public int getDomainUserCount() {
+    int count = 0;
+    try {
+        String query = "SELECT COUNT(*) FROM pms.domain_user";
+        PreparedStatement ps =  getConnection().prepareStatement(query);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            count = rs.getInt(1);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return count;
+}
 
   
     
