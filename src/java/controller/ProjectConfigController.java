@@ -317,10 +317,11 @@ public class ProjectConfigController extends HttpServlet {
         try {
             Integer pID;
             String pIdRaw = request.getParameter("projectId");
+//            String pIdRaw = "25";
             if (pIdRaw == null) {
                 pID = (Integer) session.getAttribute("selectedProject");
                 if (pID == null) {
-                    throw new ServletException("Some thing went wrong, cannot find the project id");
+                    throw new ServletException("Something went wrong, cannot find the project id");
                 }
             } else {
                 pID = Integer.valueOf(pIdRaw);
@@ -329,6 +330,7 @@ public class ProjectConfigController extends HttpServlet {
 
             List<Milestone> milestones = mService.getAllMilestone(pID);
             session.setAttribute("milestoneList", milestones);
+
             // Use the existing pagination method
             pagination(request, response, milestones, linkMile);
         } catch (SQLException ex) {
@@ -398,7 +400,7 @@ public class ProjectConfigController extends HttpServlet {
         String name = request.getParameter("milestoneName");
         int priority = Integer.parseInt(request.getParameter("milestonePriority"));
         String endDate = request.getParameter("milestoneEndDate");
-        boolean status = "1".equals(request.getParameter("milestoneStatus"));
+        int status = Integer.parseInt(request.getParameter("milestoneStatus"));
         String details = request.getParameter("milestoneDetails");
 
         // Tạo đối tượng Milestone và cập nhật dữ liệu

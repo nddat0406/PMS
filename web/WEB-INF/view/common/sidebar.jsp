@@ -43,6 +43,8 @@
                                 <li><a href="${pageContext.request.contextPath}/admin/domain">Domain Management</a></li>
                             </ul>
                         </li>
+                        <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-clipboard-list"></i><span>Project</span></a></li> 
+
                         <li><a href="${pageContext.request.contextPath}/settings"><i class="fa fa-server"></i><span>Setting Management</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/user/profile"><i class="fa fa-user"></i><span>Users profile</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/logout"><i class="fa fa-sign-out"></i><span>Logout</span></a></li>
@@ -63,12 +65,14 @@
                                 <li><a href="emp-leave.html">Requirement</a></li>
                                 <li><a href="emp-leave.html">Milestone</a></li>
                             </ul>
-                        </li>
+
+                        <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-clipboard-list"></i><span>Project</span></a></li> 
                         <li><a href="${pageContext.request.contextPath}/admin/domain"><i class="fa fa-building"></i><span>Domain List</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/user/profile"><i class="fa fa-user"></i><span>Users profile</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/logout"><i class="fa fa-sign-out"></i><span>Logout</span></a></li>
                     </ul>
                 </nav>
+
             </div>
         </c:if>
         <div class="tab-pane fade" id="setting_menu" role="tabpanel" >

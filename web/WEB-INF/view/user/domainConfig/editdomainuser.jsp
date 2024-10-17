@@ -64,64 +64,45 @@
                                 </div>
 
                                 <div class="tab-content p-0" id="myTabContent">
-                                    <form action="${baseUrl}/domain/domainsetting" method="get" class="mb-3">
-                                        <input type="hidden" name="action" value="domainUser" />
-                                        <div class="row g-3">
-                                            <div class="col-md-4">
-                                                <input type="text" name="search" class="form-control" 
-                                                       placeholder="Search by name" 
-                                                       value="${not empty searchName ? searchName : ''}">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <select name="status" class="form-select">
-                                                    <option value="">All Statuses</option>
-                                                    <option value="1" ${filterStatus == '1' ? 'selected' : ''}>Active</option> 
-                                                    <option value="0" ${filterStatus == '0' ? 'selected' : ''}>Inactive</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <button type="submit" class="btn btn-primary">Search</button>
-                                            </div>
-                                        </div>
-                                    </form>
                                     <div class="row g-3">
                                         <div class="col-md-12"  style="display: flex; justify-content: right">
-                                            <a href="${baseUrl}/domain/domainsetting?action=add" type="submit" class="btn btn-success">Add new</a>
+                                            <a href="add" type="submit" class="btn btn-success">Add new</a>
                                         </div>
                                         <div class="tab-pane fade active show" id="Tab1">
-                                            <h3 class="mt-4">Domain Settings List</h3>
-                                            <table id="domainSettingsTable" class="table table-bordered table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Setting</th>
-                                                        <th>Type</th>
-                                                        <th>Priority</th>
-                                                        <th>Status</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <c:forEach var="setting" items="${domainSettings}">
-                                                        <tr>
-                                                            <td>${setting.id}</td>
-                                                            <td>${setting.domain.name}</td>
-                                                            <td>${setting.type}</td>
-                                                            <td>${setting.priority}</td>
-                                                            <td>${setting.status == true ? "Active" : "Inactive"}</td>
-                                                            <td>
-                                                                <a href="${baseUrl}/domain/domainsetting?action=edit&id=${setting.id}" type="submit" class="btn btn-warning">Detail</a>
-                                                                |
-                                                                <a href="${baseUrl}/domain/domainsetting?action=delete&id=${setting.id}" type="submit" class="btn btn-warning">Delete</a>
-                                                                |
-                                                                <a href="${baseUrl}/domain/domainsetting?action=deactive&id=${setting.id}" type="submit" class="btn btn-danger">Deactive</a>
-                                                                |
-                                                                <a href="${baseUrl}/domain/domainsetting?action=active&id=${setting.id}" type="submit" class="btn btn-danger">Active</a>
-                                                            </td>
-                                                        </tr>
-                                                    </c:forEach>
-                                                </tbody>
-                                            </table>
+                                            <h3 class="mt-4">Add Domain Settings</h3>
+                                            <c:if test="${not empty errorMessage}">
+                                                <div class="alert alert-danger" role="alert">
+                                                    ${errorMessage}
+                                                </div>
+                                            </c:if>
+                                            <form action="${baseUrl}/domain/domainuser" method="post">
+                                                <input type="hidden" name="action" value="editdomainuser" />
+                                                <input type="hidden" name="id" value="${us.id}" />
+                                                <div class="mb-3">
+                                                    <label for="user" class="form-label">User</label>
+                                                    <select class="form-select" id="user" name="user">
+                                                        <c:forEach var="user" items="${users}">
+                                                            <option value="${user.id}" ${us.user.id == user.id ? "selected" : ""}>${user.fullname}</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="status" class="form-label">Status</label>
+                                                    <select class="form-select" id="status" name="status" required>
+                                                        <option value="true" ${us.status == 1 ? "selected" : ""}>Active</option>
+                                                        <option value="false" ${us.status == 0 ? "selected" : ""}>Inactive</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="domain" class="form-label">Group Domain</label>
+                                                    <select class="form-select" id="domain" name="domain">
+                                                        <c:forEach var="group" items="${groups}">
+                                                            <option value="${group.id}" ${us.parent.id == group.id ? "selected" : ""}>${group.name}</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -133,22 +114,6 @@
                     <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-
-                    <script>
-                        $(document).ready(function () {
-                            $('#domainSettingsTable').DataTable({
-                                "paging": true,
-                                "lengthChange": true,
-                                "searching": true,
-                                "ordering": true,
-                                "info": true,
-                                "autoWidth": false
-                            });
-                        });
-
-                    </script>
                 </div>
             </div>
     </body>

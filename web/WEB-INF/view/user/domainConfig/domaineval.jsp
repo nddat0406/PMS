@@ -62,14 +62,14 @@
                                                     <a class="nav-link" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                                 </li>
                                                 <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link" id="ProjectPhase-tab" href="${baseUrl}/domain/projectphasecriteria" role="tab">Project Phase</a>
+                                                    <a class="nav-link" id="ProjectPhase-tab" href="${baseUrl}/domain/domaineval" role="tab">Project Phase</a>
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
                                     <div class="card mb-3">
                                         <div class="card-body">
-                                            <form action="${baseUrl}/domain/projectphasecriteria" method="get" class="mb-3">
+                                            <form action="${baseUrl}/domain/domaineval" method="get" class="mb-3">
                                                 <input type="hidden" name="action" value="projectPhaseCriteria" />
                                                 <div class="row g-3">
                                                     <div class="col-md-4">
@@ -91,7 +91,7 @@
                                             </form>
 
 
-                                            <table class="table table-striped">
+                                            <table id="domainSettingsTable" class="table table-striped">
                                                 <thead>
                                                     <tr>
                                                         <th>ID</th>
@@ -132,6 +132,22 @@
 
             <!-- Core JS files -->
             <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+            <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script><script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+            <script>
+                $(document).ready(function () {
+                    $('#domainSettingsTable').DataTable({
+                        "paging": true,
+                        "lengthChange": true,
+                        "searching": true,
+                        "ordering": true,
+                        "info": true,
+                        "autoWidth": false
+                    });
+                });
+
+            </script>
+
     </body>
 </html>

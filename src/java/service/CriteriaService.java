@@ -99,4 +99,8 @@ public class CriteriaService {
         }
     }
 
+    public List<Criteria> getAllCriteria(String searchName, String filterStatus) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }

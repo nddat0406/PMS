@@ -214,7 +214,7 @@
                                                         <td>${p.startDate}</td>
                                                         <td>
                                                             <a href="project/milestone?projectId=${p.id}" class="btn" >
-                                                                <strong>Project Detail</strong>
+                                                                <strong>Project Configs</strong>
                                                             </a>
                                                         </td>
                                                     </tr>

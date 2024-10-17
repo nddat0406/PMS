@@ -108,8 +108,8 @@
                                                                 <label for="status" class="input-group-text">Status:</label>
                                                                 <select name="status" id="status" class="form-select" style="width: 10%;">
                                                                     <option value="">All Status</option>
-                                                                    <option value="1" <c:if test="${param.status == 'true'}">selected</c:if>>Active</option>
-                                                                    <option value="0" <c:if test="${param.status == 'false'}">selected</c:if>>Inactive</option>
+                                                                    <option value="1" <c:if test="${param.status == '1'}">selected</c:if>>Active</option>
+                                                                    <option value="0" <c:if test="${param.status == '0'}">selected</c:if>>Inactive</option>
                                                                     </select>
 
                                                                     <!-- Search Button -->
@@ -170,11 +170,11 @@
                                                                         <td>
                                                                             <div class="input-group mb-3" style="width: 25%">
                                                                                 <c:choose >
-                                                                                    <c:when test="${d.status == true}">
+                                                                                    <c:when test="${d.status == 1}">
                                                                                         <span class="badge bg-success">Active</span><br>
 
                                                                                     </c:when>
-                                                                                    <c:when test="${d.status == false}">
+                                                                                    <c:when test="${d.status == 0}">
                                                                                         <span class="badge bg-secondary">Inactive</span><br>
                                                                                     </c:when>
 
@@ -189,9 +189,9 @@
                                                                             </button>
                                                                             <form action="${pageContext.request.contextPath}/admin/userlist?action=changeStatus" method="POST">
                                                                                 <input type="hidden" name="id" value="${d.id}">
-                                                                                <input type="hidden" name="status" value="${d.status == true ? false : true}">
-                                                                                <button type="submit" class="btn btn-sm ${d.status == true ? 'btn-warning' : 'btn-success'}">
-                                                                                    ${d.status == true ? 'Deactivate' : 'Activate'}
+                                                                                <input type="hidden" name="status" value="${d.status == 1 ? 0 : 1}">
+                                                                                <button type="submit" class="btn btn-sm ${d.status == 1 ? 'btn-warning' : 'btn-success'}">
+                                                                                    ${d.status == 1 ? 'Deactivate' : 'Activate'}
                                                                                 </button>
                                                                             </form>
 

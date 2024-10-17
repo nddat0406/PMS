@@ -53,10 +53,11 @@
 
                         <div class="form-group">
                             <label for="status">Status:</label><br>
-                            <input type="checkbox" id="active" name="status" value="1" ${status == 1 ? 'checked' : ''}>
-                            <label for="active">Active</label><br>
-                            <input type="checkbox" id="inactive" name="status" value="0" ${status == 0 ? 'checked' : ''}>
-                            <label for="inactive">Deactive</label>
+                            <input type="checkbox" id="active" name="status" value="1" ${departmentDetail.status == 1 ? 'checked' : ''}>
+                            <label for="active">Activate</label><br>
+
+                            <input type="checkbox" id="inactive" name="status" value="0" ${departmentDetail.status == 0 ? 'checked' : ''}>
+                            <label for="inactive">Deactivate</label>
                         </div>
 
                         <div class="form-group">
@@ -84,17 +85,17 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
         <script>
-                    document.getElementById("active").addEventListener('change', function () {
-                        if (this.checked) {
-                            document.getElementById("inactive").checked = false;
-                        }
-                    });
+                        document.getElementById("active").addEventListener('change', function () {
+                            if (this.checked) {
+                                document.getElementById("inactive").checked = false;
+                            }
+                        });
 
-                    document.getElementById("inactive").addEventListener('change', function () {
-                        if (this.checked) {
-                            document.getElementById("active").checked = false;
-                        }
-                    });
+                        document.getElementById("inactive").addEventListener('change', function () {
+                            if (this.checked) {
+                                document.getElementById("active").checked = false;
+                            }
+                        });
         </script>
     </body>
 </html>

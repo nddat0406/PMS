@@ -31,7 +31,7 @@ public class MilestoneDAO extends BaseDAO {
             temp.setPriority(rs.getInt(3));
             temp.setDetails(rs.getString(4));
             temp.setEndDate(rs.getDate(5));
-            temp.setStatus(rs.getBoolean(6));
+            temp.setStatus(rs.getInt(6));
             temp.setDeliver(rs.getString(7));
             return temp;
         } catch (SQLException e) {
@@ -53,7 +53,7 @@ public class MilestoneDAO extends BaseDAO {
                 temp.setPriority(rs.getInt(3));
                 temp.setDetails(rs.getString(4));
                 temp.setEndDate(rs.getDate(5));
-                temp.setStatus(rs.getBoolean(6));
+                temp.setStatus(rs.getInt(6));
                 temp.setDeliver(rs.getString(7));
                 list.add(temp);
             }
@@ -70,7 +70,7 @@ public class MilestoneDAO extends BaseDAO {
             ps.setInt(2, milestone.getPriority());
             ps.setString(3, milestone.getDetails());
             ps.setDate(4, new java.sql.Date(milestone.getEndDate().getTime()));
-            ps.setBoolean(5, milestone.isStatus());
+            ps.setObject(5, milestone.getStatus());
 //            ps.setString(6, milestone.getDeliver());
             ps.setInt(6, milestone.getId());
             ps.executeUpdate();
@@ -87,7 +87,7 @@ public class MilestoneDAO extends BaseDAO {
             statement.setInt(2, milestone.getPriority());
             statement.setString(3, milestone.getDetails());
             statement.setDate(4, milestone.getEndDate());
-            statement.setBoolean(5, milestone.isStatus());
+            statement.setInt(5, milestone.getStatus());
             statement.setString(6, milestone.getDeliver());
             statement.setInt(7, milestone.getProject().getId());
             statement.setInt(8, milestone.getPhase().getId());
@@ -97,3 +97,4 @@ public class MilestoneDAO extends BaseDAO {
     }
 
 }
+
