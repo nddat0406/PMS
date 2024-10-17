@@ -759,7 +759,9 @@ public class GroupDAO extends BaseDAO {
     public void updateStatusDomain(String status, int id) throws SQLException {
         String sql = "UPDATE domain_user SET status = ? WHERE id = ?";
 
-        try (PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement pstmt = getConnection().prepareStatement(sql);
+              
             pstmt.setInt(1, status.equals("active") ? 1 : 0);
             pstmt.setInt(2, id);
             pstmt.executeUpdate();
@@ -771,7 +773,9 @@ public class GroupDAO extends BaseDAO {
     public void deleteDomainUser(int id) throws SQLException {
         String sql = "DELETE FROM domain_user WHERE id = ?";
 
-        try (PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement pstmt = getConnection().prepareStatement(sql);
+                
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         } catch (Exception e) {
@@ -806,7 +810,9 @@ public class GroupDAO extends BaseDAO {
         String sql = "SELECT MAX(id) FROM domain_user";
         int latestId = 0;
 
-        try (PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement pstmt = getConnection().prepareStatement(sql);
+              
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
@@ -822,7 +828,9 @@ public class GroupDAO extends BaseDAO {
      public void updateDomainUser(Group user) throws SQLException {
         String sql = "UPDATE domain_user SET userId = ?, domainId = ?, status = ? WHERE id = ?";
 
-        try (PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement pstmt = getConnection().prepareStatement(sql);
+                
             pstmt.setString(1, user.getUser().getId() + "");
             pstmt.setInt(2, user.getParent().getId());
             pstmt.setInt(3, user.getStatus());

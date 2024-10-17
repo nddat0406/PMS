@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Criteria;
 import model.Group;
+import model.Project;
 import model.Setting;
 import model.User;
 import org.apache.poi.ss.usermodel.Cell;
@@ -37,6 +38,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import service.CriteriaService;
 import service.GroupService;
+import service.ProjectService;
 import service.SettingService;
 import service.UserService;
 
@@ -254,6 +256,36 @@ public class DomainConfigController extends HttpServlet {
         }
     }
 
+    private void DoaminCriteria(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+        String action = request.getParameter("action");
+        action = action != null ? action : "";
+        CriteriaService cr = new CriteriaService();
+        switch (action) {
+            case "filter":
+                postEvalFilterDomain(request, response);
+            case "changeStatus":
+                postEvalFlipStatusDomain(request, response);
+            case "delete":
+                postEvalDeleteDomain(request, response);
+            case "add":
+                postEvalAddDomain(request, response);
+            case "update":
+                postEvalUpdateDomain(request, response);
+            case "sort":
+                postSortEvalDomain(request, response);
+            case "deactive":
+            case "active":
+                int idU = Integer.parseInt(request.getParameter("id"));
+                System.out.println(action);
+                cr.editStatusDomainEval(action, idU);
+                response.sendRedirect(request.getContextPath() + "/domain/domaineval");
+                break;
+            default: {
+                getDomainEval(request, response);
+            }
+        }
+    }
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         if ("export".equals(action)) {
@@ -373,6 +405,7 @@ public class DomainConfigController extends HttpServlet {
     }
 
     private void postEvalFilter(HttpServletRequest request, HttpServletResponse response) {
+
     }
 
     private void postEvalFlipStatus(HttpServletRequest request, HttpServletResponse response) {
@@ -395,9 +428,6 @@ public class DomainConfigController extends HttpServlet {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    private void getDomainEval(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 
     private void domainEval(HttpServletRequest request, HttpServletResponse response) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -528,6 +558,72 @@ public class DomainConfigController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/domain/domainsetting");
         } catch (Exception e) {
             System.out.println("Error: " + e);
+        }
+    }
+
+    private void postEvalFilterDomain(HttpServletRequest request, HttpServletResponse response) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private void postEvalFlipStatusDomain(HttpServletRequest request, HttpServletResponse response) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private void postEvalDeleteDomain(HttpServletRequest request, HttpServletResponse response) {
+        CriteriaService cr = new CriteriaService();
+        try {
+            int idUD = Integer.parseInt(request.getParameter("id"));
+            cr.deleteDomainEval(idUD);
+            response.sendRedirect(request.getContextPath() + "/domain/domainsetting");
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    private void postEvalAddDomain(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            ProjectService projectService = new ProjectService();
+            List<Project> projects = projectService.getAllProjectPharse();
+            request.setAttribute("projects", projects);
+            request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/adddomaineval.jsp").forward(request, response);
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+        }
+    }
+
+    private void postEvalUpdateDomain(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            CriteriaService crService = new CriteriaService();
+            Criteria criteria = crService.getDomainEvalById(id);
+            ProjectService projectService = new ProjectService();
+            List<Project> projects = projectService.getAllProjectPharse();
+            request.setAttribute("projects", projects);
+            request.setAttribute("domainEval", criteria);
+            request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/editdomaineval.jsp").forward(request, response);
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    private void postSortEvalDomain(HttpServletRequest request, HttpServletResponse response) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+     private void getDomainEval(HttpServletRequest request, HttpServletResponse response) {
+        CriteriaDAO dao = new CriteriaDAO();
+        try {
+            String searchName = request.getParameter("search");
+            String filterStatus = request.getParameter("status");
+            searchName = searchName != null ? searchName.trim() : null;
+            filterStatus = filterStatus != null ? filterStatus.trim() : null;
+            List<Criteria> criteriaList;
+            criteriaList = dao.getAllCriteriaPhase(searchName, filterStatus);
+            request.setAttribute("searchName", searchName);
+            request.setAttribute("filterStatus", filterStatus);
+            request.setAttribute("criteriaList", criteriaList);
+            request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domaineval.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -306,7 +306,9 @@ public class SettingDAO extends BaseDAO {
         String sql = "SELECT * FROM domain_setting WHERE id = ?";
         Setting setting = null;
 
-        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement stmt = getConnection().prepareStatement(sql);
+               
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 

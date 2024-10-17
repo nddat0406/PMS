@@ -53,16 +53,16 @@
                                             <c:set var="baseUrl" value="${pageContext.request.contextPath}" />
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                                 <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link active" id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
+                                                    <a class="nav-link " id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
                                                 </li>
                                                 <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link" id="Evaluation-tab" href="${baseUrl}/eval" role="tab">Evaluation Criteria</a>
+                                                    <a class="nav-link active" id="Evaluation-tab" href="${baseUrl}/domain/domaineval" role="tab">Evaluation Criteria</a>
                                                 </li>
                                                 <li class="nav-item" role="presentation" style="width: 150px">
                                                     <a class="nav-link" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                                 </li>
                                                 <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link" id="ProjectPhase-tab" href="${baseUrl}/domain/domaineval" role="tab">Project Phase</a>
+                                                    <a class="nav-link" id="ProjectPhase-tab" href="${baseUrl}/domain/projectphasecriteria" role="tab">Project Phase</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -90,7 +90,7 @@
                                                 </div>
                                             </form>
 
-
+                                                        <a href="${baseUrl}/domain/domaineval?action=add" type="submit" class="btn btn-warning">Add new</a>
                                             <table id="domainSettingsTable" class="table table-striped">
                                                 <thead>
                                                     <tr>
@@ -100,6 +100,7 @@
                                                         <th>Status</th>
                                                         <th>Phase</th>
                                                         <th>Description</th>
+                                                        <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -117,6 +118,15 @@
                                                             </td>
                                                             <td>${criteria.phase.name}</td>
                                                             <td>${criteria.description}</td>
+                                                            <td>
+                                                                <a href="${baseUrl}/domain/domaineval?action=edit&id=${criteria.id}" type="submit" class="btn btn-warning">Detail</a>
+                                                                |
+                                                                <a href="${baseUrl}/domain/domaineval?action=delete&id=${criteria.id}" type="submit" class="btn btn-warning">Delete</a>
+                                                                |
+                                                                <a href="${baseUrl}/domain/domaineval?action=deactive&id=${criteria.id}" type="submit" class="btn btn-danger">Deactive</a>
+                                                                |
+                                                                <a href="${baseUrl}/domain/domaineval?action=active&id=${criteria.id}" type="submit" class="btn btn-danger">Active</a>
+                                                            </td>
                                                         </tr>
                                                     </c:forEach>
                                                 </tbody>
@@ -133,21 +143,21 @@
             <!-- Core JS files -->
             <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
             <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script><script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+                    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
-            <script>
-                $(document).ready(function () {
-                    $('#domainSettingsTable').DataTable({
-                        "paging": true,
-                        "lengthChange": true,
-                        "searching": true,
-                        "ordering": true,
-                        "info": true,
-                        "autoWidth": false
-                    });
-                });
+                    <script>
+                        $(document).ready(function () {
+                            $('#domainSettingsTable').DataTable({
+                                "paging": true,
+                                "lengthChange": true,
+                                "searching": true,
+                                "ordering": true,
+                                "info": true,
+                                "autoWidth": false
+                            });
+                        });
 
-            </script>
-
+                    </script>
+            
     </body>
 </html>
