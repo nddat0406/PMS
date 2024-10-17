@@ -2,7 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-<<<<<<< HEAD
         <group name="PRO">
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/LoginController.java</file>
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/AddDepartment.jsp</file>
@@ -46,26 +45,8 @@
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/admin/SettingDetails.jsp</file>
         </group>
         <group name="test">
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/Dashboard.jsp</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projectteam.jsp</file>
-=======
-        <group>
-<<<<<<< HEAD
-            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/web/WEB-INF/view/admin/EditDepartment.jsp</file>
-            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/src/java/controller/DepartmentController.java</file>
-            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/src/java/service/GroupService.java</file>
-            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/web/WEB-INF/view/admin/Department.jsp</file>
-            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/web/WEB-INF/view/admin/EditDomain.jsp</file>
-            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/web/WEB-INF/view/admin/Domain.jsp</file>
-            <file>file:/C:/Users/ASUS%20TUF/Downloads/merge/web/WEB-INF/view/admin/AddDepartment.jsp</file>
-=======
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/dal/ProjectDAO.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/dal/MilestoneDAO.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/ProjectConfigController.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/model/Milestone.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/service/ProjectService.java</file>
->>>>>>> a69dbc56840c83df0bdd90537c4eb4d1d54a3811
->>>>>>> 28480dff706a643ba27f0e6b116e2f9205185b1a
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/ProjectService.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/GroupDAO.java</file>
         </group>
     </open-files>
 </project-private>

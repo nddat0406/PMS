@@ -6,7 +6,6 @@ package service;
 
 import dal.ProjectDAO;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,7 +16,6 @@ import model.Milestone;
 import model.Project;
 import model.ProjectPhase;
 import model.User;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
