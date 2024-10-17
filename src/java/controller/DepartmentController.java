@@ -25,7 +25,7 @@ public class DepartmentController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       String action = request.getParameter("action");
+        String action = request.getParameter("action");
         if (action == null) {
             action = "list";
         }
@@ -58,9 +58,6 @@ public class DepartmentController extends HttpServlet {
                 case "add":
                     handleAddDepartment(request, response);
                     break;
-                case "delete":
-                    handleDelete(request, response);
-                    break;
                 case "filter":
                     paginateListWithFilter(request, response);
                     break;
@@ -77,12 +74,6 @@ public class DepartmentController extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(DepartmentController.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    private void handleDelete(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        departmentService.deleteDepartment(id);
-        paginateList(request, response);
     }
 
     private void handleEdit(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
@@ -114,14 +105,39 @@ public class DepartmentController extends HttpServlet {
 
     private void handleUpdate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
         int updateId = Integer.parseInt(request.getParameter("id"));
+
+        // Các trường từ form (có thể null nếu không gửi từ form)
         String updateCode = request.getParameter("code");
         String updateName = request.getParameter("name");
         String updateDetails = request.getParameter("details");
+
+        // Lấy trạng thái từ form (phải luôn có)
         int updateStatus = Integer.parseInt(request.getParameter("status"));
+
+        // Lấy thông tin phòng ban cha (parent_department), có thể null
         Integer updateParentId = getParentId(request, "parent_department");
 
+        // Lấy thông tin cũ nếu một số trường không được gửi từ form
+        Group existingDepartment = departmentService.getDepartmentDetail(updateId);
+
+        // Nếu các trường `code`, `name`, hoặc `details` không được gửi từ form, giữ nguyên giá trị cũ
+        if (updateCode == null || updateCode.isEmpty()) {
+            updateCode = existingDepartment.getCode();
+        }
+
+        if (updateName == null || updateName.isEmpty()) {
+            updateName = existingDepartment.getName();
+        }
+
+        if (updateDetails == null || updateDetails.isEmpty()) {
+            updateDetails = existingDepartment.getDetails();
+        }
+
         try {
+            // Gọi phương thức cập nhật
             departmentService.updateDepartment(updateId, updateCode, updateName, updateDetails, updateParentId, updateStatus);
+
+            // Chuyển hướng đến danh sách department sau khi cập nhật thành công
             paginateList(request, response);
         } catch (IllegalArgumentException e) {
             handleUpdateError(request, response, updateId, e.getMessage());

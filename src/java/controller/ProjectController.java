@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,6 +19,7 @@ import model.Group;
 import model.Milestone;
 import model.Project;
 import model.Setting;
+import model.User;
 import service.AllocationService;
 import service.GroupService;
 import service.MilestoneService;
@@ -67,7 +69,7 @@ public class ProjectController extends HttpServlet {
                     request.setAttribute("departments", departments);
 
                     // Chuyển tiếp đến trang AddProject.jsp để thêm dự án
-                    request.getRequestDispatcher("AddProject.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/view/user/projectList/AddProject.jsp").forward(request, response);
                     break;
                 }
                 case "list": {
@@ -93,16 +95,26 @@ public class ProjectController extends HttpServlet {
         String action = request.getParameter("action");
         switch (action) {
             case "add": {
+                // Lấy dữ liệu từ request
+                String name = request.getParameter("name");
+                String code = request.getParameter("code");
+                String details = request.getParameter("details");
+                String bizTerm = request.getParameter("bizTerm");
+                int status = Integer.parseInt(request.getParameter("status"));
+                int departmentId = Integer.parseInt(request.getParameter("departmentId"));
+                int domainId = Integer.parseInt(request.getParameter("domainId"));
+                String startDateStr = request.getParameter("startDate");
+
+                HttpSession session = request.getSession();  // Sử dụng session
+
                 try {
-                    // Lấy dữ liệu từ request
-                    String name = request.getParameter("name");
-                    String code = request.getParameter("code");
-                    String details = request.getParameter("details");
-                    String bizTerm = request.getParameter("bizTerm"); // Lấy giá trị bizTerm
-                    int status = Integer.parseInt(request.getParameter("status"));
-                    int departmentId = Integer.parseInt(request.getParameter("departmentId"));
-                    int domainId = Integer.parseInt(request.getParameter("domainId"));
-                    String startDateStr = request.getParameter("startDate");
+                    // Lấy các danh sách cần thiết từ service
+                    List<Group> domains = groupService.getAllDomains();
+                    List<Group> departments = groupService.getAllDepartment();
+                    List<Setting> bizTerms = settingService.getAllBizTerms();
+                    session.setAttribute("bizTerms", bizTerms);
+                    session.setAttribute("domains", domains);
+                    session.setAttribute("departments", departments);
 
                     // Chuyển đổi ngày bắt đầu từ String sang java.sql.Date
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -111,8 +123,8 @@ public class ProjectController extends HttpServlet {
                         java.util.Date parsedDate = dateFormat.parse(startDateStr);
                         startDate = new java.sql.Date(parsedDate.getTime());
                     } catch (ParseException ex) {
-                        request.setAttribute("error", "Invalid date format. Please use yyyy-MM-dd.");
-                        request.getRequestDispatcher("AddProject.jsp").forward(request, response);
+                        forwardWithError(session, request, response, "Invalid date format. Please use yyyy-MM-dd.",
+                                name, code, details, bizTerm, status, departmentId, domainId, startDateStr);
                         return;
                     }
 
@@ -121,7 +133,7 @@ public class ProjectController extends HttpServlet {
                     project.setName(name);
                     project.setCode(code);
                     project.setDetails(details);
-                    project.setBizTerm(bizTerm); // Thiết lập giá trị bizTerm
+                    project.setBizTerm(bizTerm);
                     project.setStartDate(startDate);
                     project.setStatus(status);
 
@@ -135,26 +147,28 @@ public class ProjectController extends HttpServlet {
                     project.setDomain(domain);
 
                     // Gọi Service để thêm Project cùng với Milestones
-                    boolean result = projectService.addProjectWithMilestones(project);
+                    String result = projectService.addProjectWithMilestones(project);
 
                     // Xử lý kết quả
-                    if (result) {
-                        response.sendRedirect(request.getContextPath() + "/projectlist?action=list&success=true");
+                    if (result == null) {
+                        // Thành công, chuyển hướng đến danh sách dự án
+                        session.setAttribute("success", "true");
+                        response.sendRedirect(request.getContextPath() + "/projectlist?action=add&success=true");
                     } else {
-                        request.setAttribute("error", "Unable to add project and its milestones.");
-                        request.getRequestDispatcher("AddProject.jsp").forward(request, response);
+                        // Có lỗi, chuyển tiếp lại trang thêm với thông báo lỗi
+                        forwardWithError(session, request, response, result, name, code, details, bizTerm, status, departmentId, domainId, startDateStr);
                     }
                 } catch (NumberFormatException e) {
-                    request.setAttribute("error", "Invalid input for numerical values.");
-                    request.getRequestDispatcher("AddProject.jsp").forward(request, response);
+                    forwardWithError(session, request, response, "Invalid input for numerical values.",
+                            name, code, details, bizTerm, status, departmentId, domainId, startDateStr);
                 } catch (Exception e) {
-                    request.setAttribute("error", "An unexpected error occurred: " + e.getMessage());
-                    request.getRequestDispatcher("AddProject.jsp").forward(request, response);
+                    forwardWithError(session, request, response, "An unexpected error occurred: " + e.getMessage(),
+                            name, code, details, bizTerm, status, departmentId, domainId, startDateStr);
                     e.printStackTrace();
                 }
                 break;
-
             }
+
             case "update": {
                 try {
                     // Gọi phương thức updatestatus để xử lý cập nhật trạng thái dự án
@@ -203,14 +217,10 @@ public class ProjectController extends HttpServlet {
                 status = null;
             }
         }
-
+        HttpSession session = request.getSession();
         // LẤY USER ID
-//        Integer userId = (Integer) request.getSession().getAttribute("userId");
-        Integer userId = 4;//ĐANG FIX CỨNG DO LỖI ĐĂNG NHẬP :))
-        if (userId == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
+        User loginedUser = (User) session.getAttribute("loginedUser");
+        int userId = loginedUser.getId();
 
         // Lấy danh sách dự án của người dùng từ service
         List<Project> projects = projectService.getProjects(userId, page, pageSize, keyword, status);
@@ -225,19 +235,16 @@ public class ProjectController extends HttpServlet {
         request.setAttribute("status", status);
 
         // Chuyển tiếp đến trang Project.jsp
-        request.getRequestDispatcher("Project.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/view/user/projectList/Project.jsp").forward(request, response);
     }
 
     private void projectDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
         try {
+            HttpSession session = request.getSession();
             // LẤY USER ID
-//        Integer userId = (Integer) request.getSession().getAttribute("userId");
-            Integer userId = 4;//ĐANG FIX CỨNG DO LỖI ĐĂNG NHẬP :))
-            if (userId == null) {
-                response.sendRedirect("login.jsp");
-                return;
-            }
+            User loginedUser = (User) session.getAttribute("loginedUser");
+            int userId = loginedUser.getId();
 
             int id = Integer.parseInt(request.getParameter("id"));
             //lấy role
@@ -261,7 +268,7 @@ public class ProjectController extends HttpServlet {
                 request.setAttribute("project", project);
                 request.setAttribute("milestones", milestones);
                 request.setAttribute("allocations", allocations);
-                request.getRequestDispatcher("ProjectDetail.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/view/user/projectList/ProjectDetail.jsp").forward(request, response);
             } else {
                 response.sendRedirect(request.getContextPath() + "/projectlist?action=list");
             }
@@ -279,10 +286,10 @@ public class ProjectController extends HttpServlet {
 
             // Gọi phương thức trong Service để cập nhật trạng thái dự án
             projectService.updateProjectStatus(projectId, status);
-            
+
             // Lưu thông báo thành công vào session
             request.getSession().setAttribute("message", "Update successfully!");
-            
+
             response.sendRedirect(request.getContextPath() + "/projectlist?action=list");
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/projectlist?action=list");
@@ -292,4 +299,24 @@ public class ProjectController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/error.jsp");
         }
     }
+
+    private void forwardWithError(HttpSession session, HttpServletRequest request, HttpServletResponse response, String errorMessage, String name, String code, String details, String bizTerm, int status, int departmentId, int domainId, String startDateStr)
+            throws ServletException, IOException {
+        // Đặt thông báo lỗi vào session
+        session.setAttribute("error", errorMessage);
+
+        // Chuyển tiếp lại dữ liệu người dùng đã nhập vào session
+        session.setAttribute("name", name);
+        session.setAttribute("code", code);
+        session.setAttribute("details", details);
+        session.setAttribute("bizTerm", bizTerm);
+        session.setAttribute("status", status);
+        session.setAttribute("departmentId", departmentId);
+        session.setAttribute("domainId", domainId);
+        session.setAttribute("startDateStr", startDateStr);
+
+        // Chuyển hướng đến trang AddProject.jsp
+        response.sendRedirect(request.getContextPath() + "/projectlist?action=add");
+    }
+
 }
