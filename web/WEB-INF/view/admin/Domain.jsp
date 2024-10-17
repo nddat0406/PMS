@@ -115,6 +115,7 @@
                                                     <th>Code</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
+                                                    <th>Details</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -154,6 +155,11 @@
                                                                         ${d.status == 1 ? 'Inactive' : 'Active'}
                                                                     </button>
                                                                 </form>
+                                                                <td>
+                                                                    <a href="/domain/domaineval" class="btn" >
+                                                                        <strong>Domain Configs</strong>
+                                                                    </a>
+                                                                </td>
 
                                                             </div>
                                                         </td>
