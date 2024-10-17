@@ -96,5 +96,30 @@ public class MilestoneDAO extends BaseDAO {
         }
     }
 
+    public List<Milestone> searchMilestones(String searchKey) throws SQLException {
+        List<Milestone> result = new ArrayList<>();
+        String sql = "SELECT ml.*\n"
+                + "FROM \n"
+                + "	milestone as ml,\n"
+                + "    project as pj\n"
+                + "where pj.name = ?\n"
+                + "AND ml.projectId = pj.id";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setString(1, searchKey);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Milestone temp = new Milestone();
+                    temp.setId(rs.getInt(1));
+                    temp.setName(rs.getString(2));
+                    temp.setPriority(rs.getInt(3));
+                    temp.setDetails(rs.getString(4));
+                    temp.setEndDate(rs.getDate(5));
+                    temp.setStatus(rs.getInt(6));
+                    temp.setDeliver(rs.getString(7));
+                    result.add(temp);
+                }
+            }
+        }
+        return result;
+    }
 }
-

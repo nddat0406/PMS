@@ -35,25 +35,6 @@
                 height: 20px;
             }
         </style>
-        <script>
-            function changeSort(name, sortBy) {
-                $.ajax({
-                    url: "milestone",
-                    type: 'post',
-                    data: {
-                        sortBy: sortBy,
-                        fieldName: name,
-                        action: "sort"
-                    },
-                    success: function () {
-                        $('.tableBody').load("${pageContext.request.contextPath}/project/milestone?page=${page} .tableBody > *");
-                    }
-                });
-            }
-            ;
-
-            history.pushState(null, "", location.href.split("?")[0]);
-        </script>
     </head>
     <body>
         <div id="layout" class="theme-cyan">
@@ -85,6 +66,15 @@
                                                 <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="team" role="tab">Team</a></li>
                                             </ul>
                                         </div>
+                                        <div class="card-body">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="projectSearch" placeholder="Search project...">
+                                                <button class="btn btn-primary" type="button" onclick="searchProject()">
+                                                    <i class="fa fa-search"></i> Search
+                                                </button>
+                                                <!--<button class="btn btn-secondary ms-2" type="button" id="viewDetails">View Details</button>-->
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="tab-content p-0" id="myTabContent">
                                         <div class="tab-pane fade active show" id="Tab1">
@@ -93,39 +83,15 @@
                                                     <h6 class="card-title">Project Milestones</h6>
                                                 </div>
                                                 <div class="card-body">
-                                                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-<!--                                                        <div class="input-group" style="width: 30%">
-                                                            <span class="input-group-text">Priority</span>
-                                                            <select class="form-select" id="priorityFilter">
-                                                                <option value="0">All Priority</option>
-                                                                <option value="1">Low</option>
-                                                                <option value="2">Medium</option>
-                                                                <option value="3">High</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="input-group" style="width: 30%">
-                                                            <span class="input-group-text">Status</span>
-                                                            <select class="form-select" id="statusFilter">
-                                                                <option value="all">All Status</option>
-                                                                <option value="true">Active</option>
-                                                                <option value="false">Inactive</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="input-group" style="width: 30%">
-                                                            <input type="text" class="form-control" id="searchInput" placeholder="Search here...">
-                                                            <button class="btn btn-secondary" type="button" onclick="applyFilters()"><i class="fa fa-search"></i></button>
-                                                        </div>-->
-                                                    </div>
-
                                                     <table id="milestone_list" class="table table-hover mb-0">
                                                         <thead>
                                                             <tr>
-                                                                <th name="id" sortBy="desc" class="sortTableHead">ID <i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="name" sortBy="desc" class="sortTableHead">Name <i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="priority" sortBy="desc" class="sortTableHead">Priority <i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="endDate" sortBy="desc" class="sortTableHead">End Date <i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="id" sortBy="desc" class="sortTableHead" aria-sort="none">ID <i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="name" sortBy="desc" class="sortTableHead" aria-sort="none">Name <i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="priority" sortBy="desc" class="sortTableHead" aria-sort="none">Priority <i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="endDate" sortBy="desc" class="sortTableHead" aria-sort="none">End Date <i class="fa fa-sort sort-icon"></i></th>
                                                                 <th>Details</th>
-                                                                <th name="status" sortBy="desc" class="sortTableHead">Status <i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="status" sortBy="desc" class="sortTableHead" aria-sort="none">Status <i class="fa fa-sort sort-icon"></i></th>
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
@@ -161,8 +127,6 @@
                                                                     <button class="btn btn-sm btn-outline-secondary view-details">
                                                                         <i class="fa fa-eye"></i> View Details
                                                                     </button>
-                                                                    <!--<a href="javascript:void(0);" class="btn btn-sm btn-outline-success"><i class="fa fa-edit"></i></a>-->
-                                                                    <!--<a href="javascript:void(0);" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></a>-->
                                                                 </td>
                                                             </tr>
                                                         </c:forEach>
@@ -173,31 +137,21 @@
                                                         <h4>No result found!</h4>
                                                     </div>
                                                 </c:if>
-<!--                                                <nav aria-label="Page navigation">
-                                                    <ul class="pagination mt-3">
-                                                        <li class="page-item"><a class="page-link" href="milestone?page=${page==1?1:page-1}">Previous</a></li>
-                                                            <c:forEach begin="1" end="${num}" var="i">
-                                                            <li class="page-item ${i==page?'active':''}"><a class="page-link" href="milestone?page=${i}">${i}</a></li>
-                                                            </c:forEach>
-                                                        <li class="page-item"><a class="page-link" href="milestone?page=${page==num?num:page+1}">Next</a></li>
-                                                    </ul>
-                                                </nav>-->
                                                 <nav aria-label="Page navigation">
-    <ul class="pagination mt-3">
-        <li class="page-item ${page == 1 ? 'disabled' : ''}">
-            <a class="page-link" href="milestone?page=${page - 1}" ${page == 1 ? 'tabindex="-1" aria-disabled="true"' : ''}>Previous</a>
-        </li>
-        <c:forEach begin="1" end="${num}" var="i">
-            <li class="page-item ${i == page ? 'active' : ''}">
-                <a class="page-link" href="milestone?page=${i}" style="color: #000">${i}</a>
-            </li>
-        </c:forEach>
-        <li class="page-item ${page == num ? 'disabled' : ''}">
-            <a class="page-link" href="milestone?page=${page + 1}" ${page == num ? 'tabindex="-1" aria-disabled="true"' : ''}>Next</a>
-        </li>
-    </ul>
-</nav>
-
+                                                    <ul class="pagination mt-3">
+                                                        <li class="page-item ${page == 1 ? 'disabled' : ''}">
+                                                            <a class="page-link" href="milestone?page=${page - 1}" ${page == 1 ? 'tabindex="-1" aria-disabled="true"' : ''}>Previous</a>
+                                                        </li>
+                                                        <c:forEach begin="1" end="${num}" var="i">
+                                                            <li class="page-item ${i == page ? 'active' : ''}">
+                                                                <a class="page-link" href="milestone?page=${i}">${i}</a>
+                                                            </li>
+                                                        </c:forEach>
+                                                        <li class="page-item ${page == num ? 'disabled' : ''}">
+                                                            <a class="page-link" href="milestone?page=${page + 1}" ${page == num ? 'tabindex="-1" aria-disabled="true"' : ''}>Next</a>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
                                             </div>
                                         </div>
                                     </div>
@@ -257,53 +211,134 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-secondary" onclick="document.querySelector('#milestoneForm').submit();">Save changes</button> 
+                        <button type="button" class="btn btn-primary" onclick="document.querySelector('#milestoneForm').submit();">Save changes</button> 
                     </div>
-
                 </div>
             </div>
         </div>
 
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/pages/index2.js"></script>
         <script>
                             $(document).ready(function () {
-    $('.view-details').on('click', function () {
-        var row = $(this).closest('tr');
-        var id = row.find('td:eq(0)').text();
-        var name = row.find('td:eq(1)').text();
-        var priority = row.find('td:eq(2)').text();
-        var endDate = row.find('td:eq(3)').text();
-        // Thay đổi cách xác định status
-        var statusText = row.find('td:eq(5) .badge').text().trim();
-        var status;
-        switch(statusText) {
-            case 'Closed':
-                status = 0;
-                break;
-            case 'In Progress':
-                status = 1;
-                break;
-            case 'Pending':
-                status = 2;
-                break;
-            default:
-                status = 1; // Giá trị mặc định nếu không xác định được
-        }
-        var details = row.find('td:eq(4)').text() || 'No details available';
+                                $('.view-details').on('click', function () {
+                                    var row = $(this).closest('tr');
+                                    var id = row.find('td:eq(0)').text();
+                                    var name = row.find('td:eq(1)').text();
+                                    var priority = row.find('td:eq(2)').text();
+                                    var endDate = row.find('td:eq(3)').text();
+                                    var statusText = row.find('td:eq(5) .badge').text().trim();
+                                    var status;
+                                    switch (statusText) {
+                                        case 'Closed':
+                                            status = 0;
+                                            break;
+                                        case 'In Progress':
+                                            status = 1;
+                                            break;
+                                        case 'Pending':
+                                            status = 2;
+                                            break;
+                                        default:
+                                            status = 1;
+                                    }
+                                    var details = row.find('td:eq(4)').text() || 'No details available';
 
-        // Đổ dữ liệu vào modal
-        $('#modalMilestoneId').val(id);
-        $('#modalMilestoneName').val(name);
-        $('#modalMilestonePriority').val(priority);
-        $('#modalMilestoneEndDate').val(endDate);
-        $('#modalMilestoneStatus').val(status);
-        $('#modalMilestoneDetails').val(details.trim());
+                                    $('#modalMilestoneId').val(id);
+                                    $('#modalMilestoneName').val(name);
+                                    $('#modalMilestonePriority').val(priority);
+                                    $('#modalMilestoneEndDate').val(endDate);
+                                    $('#modalMilestoneStatus').val(status);
+                                    $('#modalMilestoneDetails').val(details.trim());
 
-        $('#milestoneDetailModal').modal('show');
-    });
-});
+                                    $('#milestoneDetailModal').modal('show');
+                                });
 
+                                var currentSortField = "${sortFieldName}";
+                                var currentSortOrder = "${sortOrder}";
+                                if (currentSortField && currentSortOrder) {
+                                    var $th = $('th[name="' + currentSortField + '"]');
+                                    $th.attr('sortBy', currentSortOrder);
+                                    $th.attr('aria-sort', currentSortOrder === 'asc' ? 'ascending' : 'descending');
+                                    $th.find('.sort-icon')
+                                            .removeClass('fa-sort')
+                                            .addClass(currentSortOrder === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
+                                }
+
+                                $('.sortTableHead').on('click', function () {
+                                    var $th = $(this);
+                                    var name = $th.attr('name');
+                                    var sortBy = $th.attr('sortBy');// Reset all icons to default
+                                    $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+                                    $('.sortTableHead').attr('aria-sort', 'none');
+
+                                    // Update only the clicked column's icon
+                                    if (sortBy === 'asc') {
+                                        sortBy = 'desc';
+                                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
+                                        $th.attr('aria-sort', 'descending');
+                                    } else {
+                                        sortBy = 'asc';
+                                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
+                                        $th.attr('aria-sort', 'ascending');
+                                    }
+
+                                    $th.attr('sortBy', sortBy);
+                                    changeSort(name, sortBy);
+                                });
+                            });
+
+                            function changeSort(name, sortBy) {
+                                $.ajax({
+                                    url: "milestone",
+                                    type: 'post',
+                                    data: {
+                                        sortBy: sortBy,
+                                        fieldName: name,
+                                        action: "sort",
+                                        page: ${page}
+                                    },
+                                    success: function (data) {
+                                        $('.tableBody').html($(data).find('.tableBody').html());
+                                        updatePagination(data);
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error("An error occurred: " + error);
+                                        alert("An error occurred while sorting. Please try again.");
+                                    }
+                                });
+                            }
+
+                            function updatePagination(data) {
+                                var $newPagination = $(data).find('.pagination');
+                                if ($newPagination.length) {
+                                    $('.pagination').replaceWith($newPagination);
+                                }
+                            }
+
+                            history.pushState(null, "", location.href.split("?")[0]);
+                            function searchProject() {
+                                var searchTerm = $('#projectSearch').val();
+                                $.ajax({
+                                    url: "milestone",
+                                    type: 'post',
+                                    data: {
+                                        action: "search",
+                                        searchKey: searchTerm,
+                                        page: 1  // Reset về trang đầu tiên khi tìm kiếm
+                                    },
+                                    success: function (data) {
+                                        $('.tableBody').html($(data).find('.tableBody').html());
+                                        updatePagination(data);
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error("An error occurred: " + error);
+                                        alert("An error occurred while searching. Please try again.");
+                                    }
+                                });
+                            }
         </script>
     </body>
 </html>

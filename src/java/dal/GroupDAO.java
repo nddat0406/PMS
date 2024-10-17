@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -10,7 +11,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Group;
-import model.User;
 
 /**
  *
@@ -697,6 +697,7 @@ public class GroupDAO extends BaseDAO {
     }
 
     public void addDomainUser(Group user) throws SQLException {
+
         String sql = "INSERT INTO domain_user (id, userId, domainId, status) VALUES (?, ?, ?, ?)";
 
         try {
@@ -761,7 +762,7 @@ public class GroupDAO extends BaseDAO {
 
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(sql);
-              
+
             pstmt.setInt(1, status.equals("active") ? 1 : 0);
             pstmt.setInt(2, id);
             pstmt.executeUpdate();
@@ -775,7 +776,7 @@ public class GroupDAO extends BaseDAO {
 
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(sql);
-                
+
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         } catch (Exception e) {
@@ -812,7 +813,7 @@ public class GroupDAO extends BaseDAO {
 
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(sql);
-              
+
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
@@ -825,12 +826,12 @@ public class GroupDAO extends BaseDAO {
         return latestId + 1;
     }
 
-     public void updateDomainUser(Group user) throws SQLException {
+    public void updateDomainUser(Group user) throws SQLException {
         String sql = "UPDATE domain_user SET userId = ?, domainId = ?, status = ? WHERE id = ?";
 
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(sql);
-                
+
             pstmt.setString(1, user.getUser().getId() + "");
             pstmt.setInt(2, user.getParent().getId());
             pstmt.setInt(3, user.getStatus());
