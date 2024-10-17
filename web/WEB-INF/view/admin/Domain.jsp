@@ -156,7 +156,7 @@
                                                                     </button>
                                                                 </form>
                                                                 <td>
-                                                                    <a href="" class="btn" >
+                                                                    <a href="/domain/domaineval" class="btn" >
                                                                         <strong>Domain Configs</strong>
                                                                     </a>
                                                                 </td>
