@@ -40,6 +40,8 @@ public class BaseService {
     public static final int MEMBER_ROLE = 2;
     public static final int PROJECT_QA_ROLE = 3;
     public static final int PROJECT_MANAGER_ROLE = 4;
+    public static final int DEPARTMENT_MANAGER = 5;
+    public static final int PMO_MANAGER = 6;
 
     public static String generateOTP() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody

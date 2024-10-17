@@ -43,6 +43,8 @@
                                 <li><a href="${pageContext.request.contextPath}/admin/domain">Domain Management</a></li>
                             </ul>
                         </li>
+                        <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-clipboard-list"></i><span>Project</span></a></li> 
+
                         <li><a href="${pageContext.request.contextPath}/settings"><i class="fa fa-server"></i><span>Setting Management</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/user/profile"><i class="fa fa-user"></i><span>Users profile</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/logout"><i class="fa fa-sign-out"></i><span>Logout</span></a></li>
@@ -59,7 +61,6 @@
                             <a href="#Employees" class="has-arrow"><i class="fa fa-users"></i><span>Project Tracking</span></a>
                             <ul class="list-unstyled">
                                 <li><a href="emp-all.html">Project issue</a></li>
-
                                 <li><a href="emp-leave.html">Timesheet</a></li>
                                 <li><a href="emp-leave.html">Requirement</a></li>
                                 <li><a href="emp-leave.html">Milestone</a></li>
