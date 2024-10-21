@@ -244,9 +244,9 @@ public class SettingDAO extends BaseDAO {
         }
 
         if (keyword != null && !keyword.isEmpty()) {
-            sql.append(" AND priority = ?");
+            sql.append(" AND name = ?");
         }
-
+        System.out.println(sql);
         try {
             PreparedStatement stmt = getConnection().prepareStatement(sql.toString());
             int index = 1;
@@ -260,7 +260,7 @@ public class SettingDAO extends BaseDAO {
             }
 
             if (keyword != null && !keyword.isEmpty()) {
-                stmt.setInt(index++, Integer.parseInt(keyword));
+                stmt.setString(index++, "%" + keyword + "%");
             }
 
             ResultSet rs = stmt.executeQuery();
@@ -271,7 +271,7 @@ public class SettingDAO extends BaseDAO {
                 setting.setType(rs.getInt("type"));
                 setting.setPriority(rs.getInt("priority"));
                 setting.setStatus(rs.getBoolean("status"));
-                setting.setDomain(new Group(gdao.getDeptNameById(rs.getInt("domainId"))));
+                setting.setDomain(new Group(gdao.getDomainName(rs.getInt("domainId"))));
                 settings.add(setting);
             }
         } catch (SQLException e) {

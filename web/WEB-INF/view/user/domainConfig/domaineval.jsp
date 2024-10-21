@@ -56,13 +56,13 @@
                                                     <a class="nav-link " id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
                                                 </li>
                                                 <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link active" id="Evaluation-tab" href="${baseUrl}/domain/domaineval" role="tab">Evaluation Criteria</a>
+                                                    <a class="nav-link active" id="Evaluation-tab" href="${baseUrl}/eval" role="tab">Evaluation Criteria</a>
                                                 </li>
                                                 <li class="nav-item" role="presentation" style="width: 150px">
                                                     <a class="nav-link" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                                 </li>
                                                 <li class="nav-item" role="presentation" style="width: 150px">
-                                                    <a class="nav-link" id="ProjectPhase-tab" href="${baseUrl}/domain/projectphasecriteria" role="tab">Project Phase</a>
+                                                    <a class="nav-link" id="ProjectPhase-tab" href="${baseUrl}/domain/domaineval" role="tab">Project Phase</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -90,7 +90,9 @@
                                                 </div>
                                             </form>
 
-                                                        <a href="${baseUrl}/domain/domaineval?action=add" type="submit" class="btn btn-warning">Add new</a>
+                                                         <div class="col-md-12"  style="display: flex; justify-content: right">
+                                            <a href="${baseUrl}/domain/domaineval?action=add" type="submit" class="btn btn-success">Add new</a>
+                                        </div>
                                             <table id="domainSettingsTable" class="table table-striped">
                                                 <thead>
                                                     <tr>

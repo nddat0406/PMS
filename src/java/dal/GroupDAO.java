@@ -268,7 +268,7 @@ public class GroupDAO extends BaseDAO {
         return groups;
     }
 
-    public List<Group> getAllDomain() throws SQLException {
+     public List<Group> getAllDomain() throws SQLException {
         List<Group> listD = new ArrayList<>();
         String sql = "SELECT * FROM pms.group  where type=1";
         try {
@@ -294,7 +294,7 @@ public class GroupDAO extends BaseDAO {
         return listD;
     }
 
-    public List<Group> getDomainUser() {
+   public List<Group> getDomainUser() {
         List<Group> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.domain_user";
 
