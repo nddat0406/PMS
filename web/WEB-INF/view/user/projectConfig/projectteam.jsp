@@ -413,19 +413,19 @@
                                                         <td style="width: 250px">
                                                             <p class="c_name">${u.fullname}
                                                                 <c:if test="${u.role==1}">
-                                                                        <span class="badge bg-danger hidden-sm-down">${u.getRoleString()}</span>
+                                                                    <span class="badge bg-danger hidden-sm-down">${u.getRoleString()}</span>
 
-                                                                    </c:if>
-                                                                    <c:if test="${u.role==2}">
-                                                                        <span class="badge bg-secondary hidden-sm-down">${u.getRoleString()}</span>
+                                                                </c:if>
+                                                                <c:if test="${u.role==2}">
+                                                                    <span class="badge bg-secondary hidden-sm-down">${u.getRoleString()}</span>
 
-                                                                    </c:if>
-                                                                    <c:if test="${u.role==3||u.role==4}">
-                                                                        <span class="badge bg-success hidden-sm-down">${u.getRoleString()}</span>
-                                                                    </c:if>
-                                                                    <c:if test="${u.role==5||u.role==6}">
-                                                                        <span class="badge bg-info hidden-sm-down">${u.getRoleString()}</span>
-                                                                    </c:if>
+                                                                </c:if>
+                                                                <c:if test="${u.role==3||u.role==4}">
+                                                                    <span class="badge bg-success hidden-sm-down">${u.getRoleString()}</span>
+                                                                </c:if>
+                                                                <c:if test="${u.role==5||u.role==6}">
+                                                                    <span class="badge bg-info hidden-sm-down">${u.getRoleString()}</span>
+                                                                </c:if>
                                                             </p>
                                                         </td>
                                                         <td style="width: 200px">

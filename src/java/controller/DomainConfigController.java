@@ -158,36 +158,35 @@ public class DomainConfigController extends HttpServlet {
         List<User> users = userService.getAll();
         List<Group> groups = groupService.getAllDomains();
         switch (action) {
-            case "add":
+            case "add" -> {
                 request.setAttribute("users", users);
                 request.setAttribute("groups", groups);
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/adddomainuser.jsp").forward(request, response);
-                break;
-            case "edit":
+            }
+            case "edit" -> {
                 request.setAttribute("users", users);
                 request.setAttribute("groups", groups);
                 int id = Integer.parseInt(request.getParameter("id"));
                 Group us = groupService.getDomainUserById(id);
                 request.setAttribute("us", us);
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/editdomainuser.jsp").forward(request, response);
-                break;
-            case "deactive":
-            case "active":
+            }
+            case "deactive", "active" -> {
                 int idU = Integer.parseInt(request.getParameter("id"));
                 groupService.UpdateStatusDomain(action, idU);
                 response.sendRedirect(request.getContextPath() + "/domain/domainuser");
-                break;
-            case "delete":
+            }
+            case "delete" -> {
                 int idUD = Integer.parseInt(request.getParameter("id"));
                 groupService.deleteDomainUser(idUD);
                 response.sendRedirect(request.getContextPath() + "/domain/domainuser");
-                break;
-            default:
-
+            }
+            default -> {
                 GroupService service = new GroupService();
                 List<Group> domainUsers = service.getDomainUser();
                 request.setAttribute("domainUsers", domainUsers);
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domainuser.jsp").forward(request, response);
+            }
         }
     }
 
@@ -622,7 +621,7 @@ public class DomainConfigController extends HttpServlet {
             request.setAttribute("filterStatus", filterStatus);
             request.setAttribute("criteriaList", criteriaList);
             request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domaineval.jsp").forward(request, response);
-        } catch (Exception e) {
+        } catch (ServletException | IOException | SQLException e) {
             e.printStackTrace();
         }
     }

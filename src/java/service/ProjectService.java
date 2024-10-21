@@ -123,13 +123,14 @@ public class ProjectService {
     }
 //  ------------------  project list vs project detail -----------------------------
 
-    public List<Project> getProjects(int userId, int page, int pageSize, String keyword, Integer status) {
+    public List<Project> getProjects(int userId, int page, int pageSize, String keyword, Integer status, int role) {
         // Kiểm tra tính hợp lệ của page và pageSize
-        if (page <= 0 || pageSize <= 0) {
-            throw new IllegalArgumentException("Page and pageSize must be greater than 0.");
-        }
+        if (role == 1) {
+            return pdao.listAllProjectsForAdmin(page, pageSize, keyword, status);
+        } else {
 
-        return pdao.listProjects(userId, page, pageSize, keyword, status);
+            return pdao.listProjects(userId, page, pageSize, keyword, status);
+        }
     }
 
     public int getTotalProjects(int userId, String keyword, Integer status) {
@@ -141,6 +142,7 @@ public class ProjectService {
         return pdao.getProjectById(id);
     }
 // hàm add project
+
     public String addProjectWithMilestones(Project project) {
         try {
             // Check Code length
@@ -243,7 +245,8 @@ public class ProjectService {
     public List<Project> getAllProjectPharse() throws SQLException {
         return pdao.getAllProjectPharse();
     }
-     public Project getAllProjectPharseBYId(int id) throws SQLException {
+
+    public Project getAllProjectPharseBYId(int id) throws SQLException {
         return pdao.getAllProjectPharseBYId(id);
     }
 
