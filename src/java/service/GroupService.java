@@ -158,4 +158,38 @@ public class GroupService {
         boolean isNameDuplicate = gdao.isNameExists(name);
         return isCodeDuplicate || isNameDuplicate; // Trả về true nếu code hoặc name bị trùng
     }
+
+    public List<Group> getDomainUsersWithPagination(int page, int pageSize) {
+        return gdao.getDomainUsersWithPagination(page, pageSize);
+    }
+
+    public int getDomainUserCount() {
+        return gdao.getDomainUserCount();
+    }
+     public List<Group> getDomainUser() {
+         return gdao.getDomainUser();
+     }
+     public void addDomainUser(Group user) throws SQLException {
+         gdao.addDomainUser(user);
+     }
+
+    public Group getDomainUserById(int id) throws SQLException {
+        
+        return gdao.getDomainUserById(id);
+    }
+
+    public void UpdateStatusDomain(String action, int idU) throws SQLException {
+        gdao.updateStatusDomain(action, idU);
+    }
+
+    public void deleteDomainUser(int idUD) throws SQLException {
+        gdao.deleteDomainUser(idUD);
+    }
+
+    public int getLatestId() throws SQLException {
+        return gdao.getLatestId();
+    }
+      public void updateDomainUser(Group user) throws SQLException {
+         gdao.updateDomainUser(user);
+    }
 }

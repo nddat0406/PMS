@@ -156,9 +156,9 @@
                                                                     </button>
                                                                 </form>
                                                                 <td>
-                                                                    <a href="/domain/domaineval" class="btn" >
-                                                                        <strong>Domain Configs</strong>
-                                                                    </a>
+                                                                   <a href="${pageContext.request.contextPath}/domain?domainId=${d.id}" class="btn" >
+                                                                <strong>Domain Configs</strong>
+                                                            </a>
                                                                 </td>
 
                                                             </div>

@@ -51,13 +51,13 @@
                                                 <a class="nav-link active" id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link" id="Evaluation-tab" href="${baseUrl}/eval" role="tab">Evaluation Criteria</a>
+                                                <a class="nav-link" id="Evaluation-tab" href="${baseUrl}/domain/domaineval" role="tab">Evaluation Criteria</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link" id="ProjectPhase-tab" href="${baseUrl}/domain/projectphasecriteria" role="tab">Project Phase</a>
+                                                <a class="nav-link" id="ProjectPhase-tab" href="${baseUrl}/domain/domaineval" role="tab">Project Phase</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -86,11 +86,11 @@
                                     </form>
                                     <div class="row g-3">
                                         <div class="col-md-12"  style="display: flex; justify-content: right">
-                                            <a href="add" type="submit" class="btn btn-success">Add new</a>
+                                            <a href="${baseUrl}/domain/domainsetting?action=add" type="submit" class="btn btn-success">Add new</a>
                                         </div>
                                         <div class="tab-pane fade active show" id="Tab1">
                                             <h3 class="mt-4">Domain Settings List</h3>
-                                            <table class="table table-bordered table-striped">
+                                            <table id="domainSettingsTable" class="table table-bordered table-striped">
                                                 <thead>
                                                     <tr>
                                                         <th>ID</th>
@@ -110,9 +110,13 @@
                                                             <td>${setting.priority}</td>
                                                             <td>${setting.status == true ? "Active" : "Inactive"}</td>
                                                             <td>
-                                                                <a href="Detail" type="submit" class="btn btn-warning">Detail</a>
+                                                                <a href="${baseUrl}/domain/domainsetting?action=edit&id=${setting.id}" type="submit" class="btn btn-warning">Detail</a>
                                                                 |
-                                                                <a href="Deactive" type="submit" class="btn btn-danger">Deactive</a>
+                                                                <a href="${baseUrl}/domain/domainsetting?action=delete&id=${setting.id}" type="submit" class="btn btn-warning">Delete</a>
+                                                                |
+                                                                <a href="${baseUrl}/domain/domainsetting?action=deactive&id=${setting.id}" type="submit" class="btn btn-danger">Deactive</a>
+                                                                |
+                                                                <a href="${baseUrl}/domain/domainsetting?action=active&id=${setting.id}" type="submit" class="btn btn-danger">Active</a>
                                                             </td>
                                                         </tr>
                                                     </c:forEach>
@@ -129,6 +133,22 @@
                     <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+                    <script>
+                        $(document).ready(function () {
+                            $('#domainSettingsTable').DataTable({
+                                "paging": true,
+                                "lengthChange": true,
+                                "searching": true,
+                                "ordering": true,
+                                "info": true,
+                                "autoWidth": false
+                            });
+                        });
+
+                    </script>
                 </div>
             </div>
     </body>

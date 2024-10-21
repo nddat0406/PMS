@@ -221,9 +221,9 @@ public class ProjectController extends HttpServlet {
         // LẤY USER ID
         User loginedUser = (User) session.getAttribute("loginedUser");
         int userId = loginedUser.getId();
-
+         int roleUser= loginedUser.getRole();
         // Lấy danh sách dự án của người dùng từ service
-        List<Project> projects = projectService.getProjects(userId, page, pageSize, keyword, status);
+        List<Project> projects = projectService.getProjects(userId, page, pageSize, keyword, status,roleUser);
         int totalProjects = projectService.getTotalProjects(userId, keyword, status);
         int totalPages = (int) Math.ceil((double) totalProjects / pageSize);
 

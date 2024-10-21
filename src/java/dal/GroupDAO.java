@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Group;
-import model.User;
 
 /**
  *
@@ -185,6 +184,7 @@ public class GroupDAO extends BaseDAO {
 
         return list;
     }
+
     public boolean isCodeExist(String code) {
         String query = "SELECT COUNT(*) FROM pms.group  where type=1 and code = ?";
         try {
@@ -214,6 +214,7 @@ public class GroupDAO extends BaseDAO {
         }
         return false;
     }
+
     public List<Group> filterGroups(int pageNumber, int pageSize, String name, String code, Integer status) {
         List<Group> groups = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM pms.group  where type=1 and 1=1");
@@ -267,9 +268,7 @@ public class GroupDAO extends BaseDAO {
         return groups;
     }
 
-
-
-    public List<Group> getAllDomain() throws SQLException {
+     public List<Group> getAllDomain() throws SQLException {
         List<Group> listD = new ArrayList<>();
         String sql = "SELECT * FROM pms.group  where type=1";
         try {
@@ -294,7 +293,8 @@ public class GroupDAO extends BaseDAO {
 
         return listD;
     }
-    public List<Group> getDomainUser() {
+
+   public List<Group> getDomainUser() {
         List<Group> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.domain_user";
 
@@ -311,7 +311,7 @@ public class GroupDAO extends BaseDAO {
                 list.add(domain);
             }
         } catch (SQLException e) {
-            System.out.println("Error:  " +e);
+            System.out.println("Error:  " + e);
         }
 
         return list;
@@ -696,18 +696,148 @@ public class GroupDAO extends BaseDAO {
         return list;
     }
 
+    public void addDomainUser(Group user) throws SQLException {
 
-   public void addDomainUser(Group user) throws SQLException {
         String sql = "INSERT INTO domain_user (id, userId, domainId, status) VALUES (?, ?, ?, ?)";
-        
-        try  {
-              PreparedStatement pstmt=getConnection().prepareStatement(sql);
+
+        try {
+            PreparedStatement pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, user.getId());
             pstmt.setString(2, user.getUser().getId() + "");
             pstmt.setInt(3, user.getParent().getId());
             pstmt.setInt(4, user.getStatus());
             pstmt.executeUpdate();
-        }catch(Exception e) {
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    public List<Group> getDomainUsersWithPagination(int page, int pageSize) {
+        List<Group> list = new ArrayList<>();
+        String sql = "SELECT * FROM pms.domain_user LIMIT ? OFFSET ?";
+
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            int offset = (page - 1) * pageSize;
+
+            pre.setInt(1, pageSize);  // Limit the number of records per page
+            pre.setInt(2, offset);    // Skip records based on the page
+
+            ResultSet rs = pre.executeQuery();
+            UserDAO userDao = new UserDAO();
+
+            while (rs.next()) {
+                Group domain = new Group();
+                domain.setId(rs.getInt("id"));
+                domain.setStatus(rs.getInt("status"));
+                domain.setUser(userDao.getActiveUserById(rs.getInt("userId")));
+                domain.setParent(new Group(getDeptNameById(rs.getInt("domainId"))));
+                list.add(domain);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error: " + e);
+        }
+
+        return list;
+    }
+
+    public int getDomainUserCount() {
+        int count = 0;
+        try {
+            String query = "SELECT COUNT(*) FROM pms.domain_user";
+            PreparedStatement ps = getConnection().prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    public void updateStatusDomain(String status, int id) throws SQLException {
+        String sql = "UPDATE domain_user SET status = ? WHERE id = ?";
+
+        try {
+            PreparedStatement pstmt = getConnection().prepareStatement(sql);
+
+            pstmt.setInt(1, status.equals("active") ? 1 : 0);
+            pstmt.setInt(2, id);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    public void deleteDomainUser(int id) throws SQLException {
+        String sql = "DELETE FROM domain_user WHERE id = ?";
+
+        try {
+            PreparedStatement pstmt = getConnection().prepareStatement(sql);
+
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    public Group getDomainUserById(int id) throws SQLException {
+        String sql = "SELECT * FROM domain_user WHERE id = ?";
+
+        try {
+            PreparedStatement pstmt = getConnection().prepareStatement(sql);
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            UserDAO userDao = new UserDAO();
+            if (rs.next()) {
+                Group domain = new Group();
+                domain.setId(rs.getInt("id"));
+                domain.setStatus(rs.getInt("status"));
+                domain.setUser(userDao.getUserById(rs.getInt("userId")));
+                domain.setParent(new Group(getDomainName(rs.getInt("domainId"))));
+                return domain;
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+
+        return null;
+    }
+
+    public int getLatestId() throws SQLException {
+        String sql = "SELECT MAX(id) FROM domain_user";
+        int latestId = 0;
+
+        try {
+            PreparedStatement pstmt = getConnection().prepareStatement(sql);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                latestId = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e);
+        }
+
+        return latestId + 1;
+    }
+
+    public void updateDomainUser(Group user) throws SQLException {
+        String sql = "UPDATE domain_user SET userId = ?, domainId = ?, status = ? WHERE id = ?";
+
+        try {
+            PreparedStatement pstmt = getConnection().prepareStatement(sql);
+
+            pstmt.setString(1, user.getUser().getId() + "");
+            pstmt.setInt(2, user.getParent().getId());
+            pstmt.setInt(3, user.getStatus());
+            pstmt.setInt(4, user.getId());
+            pstmt.executeUpdate();
+        } catch (Exception e) {
             System.out.println("Error: " + e);
         }
     }

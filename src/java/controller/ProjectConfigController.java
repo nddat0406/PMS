@@ -131,7 +131,6 @@ public class ProjectConfigController extends HttpServlet {
                         } catch (SQLException ex) {
                             throw new ServletException(ex);
                         }
-
                     }
                     if (modalItemIDRaw != null) {
                         try {
@@ -213,8 +212,8 @@ public class ProjectConfigController extends HttpServlet {
                     }
                     case "sort" ->
                         postSortMilestone(request, response);
-                    case "search" ->
-                        searchMilestone(request, response);
+//                    case "search" ->
+//                        searchMilestone(request, response);
                     default ->
                         getProjectMilestone(request, response);
                 }
@@ -815,20 +814,5 @@ public class ProjectConfigController extends HttpServlet {
         request.getSession().setAttribute("sortFieldName", fieldName);
         request.getSession().setAttribute("sortOrder", order);
         pagination(request, response, list, linkMile);
-    }
-
-    private void searchMilestone(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String searchKey = request.getParameter("searchKey");
-        HttpSession session = request.getSession();
-        Integer projectId = (Integer) session.getAttribute("selectedProject");
-
-        try {
-            List<Milestone> milestones = mService.searchMilestones(searchKey);
-            session.setAttribute("milestoneList", milestones);
-            pagination(request, response, milestones, linkMile);
-        } catch (SQLException ex) {
-            throw new ServletException("Error searching milestones", ex);
-        }
     }
 }

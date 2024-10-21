@@ -28,22 +28,25 @@ public class UserDAO extends BaseDAO {
             PreparedStatement pre = getConnection().prepareStatement(str);
             pre.setInt(1, userId);
             ResultSet rs = pre.executeQuery();
-            rs.next();
-            User user = new User();
-            user.setId(rs.getInt(1));
-            user.setEmail(rs.getString(2));
-            user.setFullname(rs.getString(3));
-            user.setMobile(rs.getString(4));
-            user.setRole(rs.getInt(7));
-            user.setDepartment(new Group(gdao.getDeptNameById(rs.getInt(9))));
-            user.setImage(rs.getString(10));
-            user.setAddress(rs.getString(11));
-            user.setGender(rs.getBoolean(12));
-            user.setBirthdate(rs.getDate(13));
-            return user;
+            if (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt(1));
+                user.setEmail(rs.getString(2));
+                user.setFullname(rs.getString(3));
+                user.setMobile(rs.getString(4));
+                user.setRole(rs.getInt(7));
+                user.setDepartment(new Group(gdao.getDeptNameById(rs.getInt(9))));
+                user.setImage(rs.getString(10));
+                user.setAddress(rs.getString(11));
+                user.setGender(rs.getBoolean(12));
+                user.setBirthdate(rs.getDate(13));
+                return user;
+            }
+
         } catch (SQLException e) {
             throw new SQLException("User not exis or not active");
         }
+        return null;
     }
     public User getActiveUserByIdNull(int userId) throws SQLException {
         String str = "SELECT * FROM pms.user where id=? and status = 1";
@@ -475,40 +478,6 @@ public class UserDAO extends BaseDAO {
         }
     }
 
-    public List<Group> getAllDept() throws SQLException {
-        List<Group> list = new ArrayList<>();
-        String sql = "SELECT * FROM pms.department;";
-        try {
-            Statement stmt = getConnection().createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                Group dept = new Group();
-                dept.setId(rs.getInt("id"));
-                dept.setName(rs.getString("name"));
-                list.add(dept);
-            }
-        } catch (SQLException e) {
-            throw new SQLException(e);
-
-        }
-        return list;
-    }
-
-    public Group getDeptId(int id) throws SQLException {
-        String sql = "SELECT * FROM pms.department where id=?;";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(sql);
-            pre.setInt(1, id);
-            ResultSet rs = pre.executeQuery();
-            rs.next();
-            Group group = new Group();
-            group.setId(rs.getInt(1));
-
-            return group;
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        }
-    }
 
     public boolean verifyLogin(String email, String pass) throws SQLException {
         String sql = "SELECT password FROM pms.user where email=? and status =1";

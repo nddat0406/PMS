@@ -99,4 +99,33 @@ public class CriteriaService {
         }
     }
 
+    public List<Criteria> getAllCriteria(String searchName, String filterStatus) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void editStatusDomainEval(String status, int id) {
+        cdao.editStatusDomainEval(status, id);
+    }
+    
+    public void deleteDomainEval(int id) {
+        cdao.deleteDomainEval(id);
+    }
+    
+    
+    public Criteria getDomainEvalById(int id) throws SQLException {
+        return cdao.getDomainEvalById(id);
+    }
+
+    public void addDomainEval(Criteria domain) {
+        cdao.addDomainEval(domain);
+    }
+    
+    public void editDomainEval(Criteria domain) {
+        cdao.editDomainEval(domain);
+    }
+    
+    public List<Criteria> getAllCriteriaPhase(String searchName, String filterStatus) throws SQLException {
+        return cdao.getAllCriteriaPhase(searchName, filterStatus);
+    }
+
 }

@@ -508,4 +508,119 @@ public class ProjectDAO extends BaseDAO {
             System.out.println("-------------------------------------");
         }
     }
+
+    public List<Project> getAllProjectPharse() throws SQLException {
+        String str = "select * from projectphase";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            ResultSet rs = pre.executeQuery();
+            List<Project> projectList = new ArrayList<>();
+            while (rs.next()) {
+                Project project = new Project();
+                project.setId(rs.getInt("id"));
+                project.setName(rs.getString("name"));
+                projectList.add(project);
+            }
+            return projectList;
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
+    
+    public Project getAllProjectPharseBYId(int id) throws SQLException {
+        String str = "select * from projectphase  where id = ?";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            pre.setInt(1, id);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Project project = new Project();
+                project.setId(rs.getInt("id"));
+                project.setName(rs.getString("name"));
+                return project;
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
+        // Hàm list all prj for admin 
+    public List<Project> listAllProjectsForAdmin(int page, int pageSize, String keyword, Integer status) {
+        List<Project> projects = new ArrayList<>();
+
+        // Xây dựng câu truy vấn SQL
+        StringBuilder query = new StringBuilder("SELECT p.id, p.bizTerm, p.code, p.name, p.details, p.startDate, p.status, "
+                + "g1.id AS domainId, g1.name AS domainName, "
+                + "g2.id AS departmentId, g2.name AS departmentName "
+                + "FROM project p "
+                + "JOIN `group` g1 ON p.domainId = g1.id AND g1.type = 1 " // Join để lấy thông tin domain (type = 1)
+                + "JOIN `group` g2 ON p.departmentId = g2.id AND g2.type = 0 "); // Join để lấy thông tin department (type = 0)
+
+        // Điều kiện tìm kiếm theo keyword nếu có
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            query.append("WHERE p.name LIKE ? OR p.code LIKE ? ");
+        }
+
+        // Điều kiện lọc theo trạng thái nếu có
+        if (status != null) {
+            query.append(keyword != null && !keyword.trim().isEmpty() ? "AND " : "WHERE ");
+            query.append("p.status = ? ");
+        }
+
+        // Thêm phân trang
+        query.append("LIMIT ? OFFSET ?");
+        int offset = (page - 1) * pageSize;
+
+        try (PreparedStatement pre = getConnection().prepareStatement(query.toString())) {
+            int index = 1;
+
+            // Thiết lập tham số tìm kiếm
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                pre.setString(index++, "%" + keyword.trim() + "%");
+                pre.setString(index++, "%" + keyword.trim() + "%");
+            }
+
+            // Thiết lập tham số lọc trạng thái
+            if (status != null) {
+                pre.setInt(index++, status);
+            }
+
+            // Thiết lập phân trang
+            pre.setInt(index++, pageSize);
+            pre.setInt(index, offset);
+
+            ResultSet resultSet = pre.executeQuery();
+
+            // Duyệt kết quả trả về và thêm vào danh sách dự án
+            while (resultSet.next()) {
+                Project project = new Project();
+                project.setId(resultSet.getInt("id"));
+                project.setBizTerm(resultSet.getString("bizTerm"));
+                project.setCode(resultSet.getString("code"));
+                project.setName(resultSet.getString("name"));
+                project.setDetails(resultSet.getString("details"));
+                project.setStartDate(resultSet.getDate("startDate"));
+                project.setStatus(resultSet.getInt("status"));
+
+                // Lấy thông tin domain
+                Group domain = new Group();
+                domain.setId(resultSet.getInt("domainId"));
+                domain.setName(resultSet.getString("domainName"));
+                project.setDomain(domain);
+
+                // Lấy thông tin department
+                Group department = new Group();
+                department.setId(resultSet.getInt("departmentId"));
+                department.setName(resultSet.getString("departmentName"));
+                project.setDepartment(department);
+
+                projects.add(project);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Thay thế bằng log lỗi nếu cần thiết
+        }
+
+        return projects;
+    }
 }

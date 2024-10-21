@@ -4,6 +4,7 @@
  */
 package service;
 
+import dal.GroupDAO;
 import dal.UserDAO;
 import jakarta.servlet.http.Part;
 import java.io.File;
@@ -26,6 +27,7 @@ import static service.BaseService.*;
 public class UserService {
 
     private UserDAO udao = new UserDAO();
+    private GroupDAO gdao =new GroupDAO();
     private BaseService baseService = new BaseService();
 
     public User getUserProfile(int userId) throws SQLException {
@@ -184,11 +186,11 @@ public class UserService {
     }
 
     public List<Group> getAllDepartments() throws SQLException {
-        return udao.getAllDept();
+        return gdao.getAllDepartment();
     }
 
     public Group getDepartmentById(int deptId) throws SQLException {
-        Group group = udao.getDeptId(deptId);
+        Group group = gdao.getDepartmentDetail(deptId);
         return group;
     }
 
