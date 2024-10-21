@@ -116,4 +116,16 @@ public class CriteriaService {
         return cdao.getDomainEvalById(id);
     }
 
+    public void addDomainEval(Criteria domain) {
+        cdao.addDomainEval(domain);
+    }
+    
+    public void editDomainEval(Criteria domain) {
+        cdao.editDomainEval(domain);
+    }
+    
+    public List<Criteria> getAllCriteriaPhase(String searchName, String filterStatus) throws SQLException {
+        return cdao.getAllCriteriaPhase(searchName, filterStatus);
+    }
+
 }

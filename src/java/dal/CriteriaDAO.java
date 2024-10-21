@@ -296,8 +296,7 @@ public class CriteriaDAO extends BaseDAO {
         String sql = "SELECT * FROM pms.projectphase_criteria WHERE id = ?";
         Criteria criteria = null;
 
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(sql);
+        try (PreparedStatement pre = getConnection().prepareStatement(sql)) {
             pre.setInt(1, id);
 
             ResultSet rs = pre.executeQuery();
@@ -316,5 +315,60 @@ public class CriteriaDAO extends BaseDAO {
         }
 
         return criteria;
+    }
+
+   public void addDomainEval(Criteria criteria) {
+        String query = "INSERT INTO `projectphase_criteria` (`name`, `weight`, `status`, `phaseId`, `description`,  `id`) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try {
+                PreparedStatement ps = getConnection().prepareStatement(query);
+
+            ps.setString(1, criteria.getName());
+            ps.setDouble(2, criteria.getWeight());
+            ps.setBoolean(3, criteria.isStatus());
+            ps.setInt(4, criteria.getPhase().getId());
+            ps.setString(5, criteria.getDescription());
+            ps.setInt(6, this.getLastId() + 1);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+   }
+    public void editDomainEval(Criteria criteria) {
+        String query = "UPDATE `projectphase_criteria` SET `name` = ?, `weight` = ?, `status` = ?, `phaseId` = ?, `description` = ? WHERE `id` = ?";
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(query);
+                
+
+            ps.setString(1, criteria.getName());
+            ps.setDouble(2, criteria.getWeight());
+            ps.setBoolean(3, criteria.isStatus());
+            ps.setInt(4, criteria.getPhase().getId());
+            ps.setString(5, criteria.getDescription());
+            ps.setInt(6, criteria.getId());
+
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+     public int getLastId() {
+        String query = "SELECT MAX(id) FROM `projectphase_criteria`";
+        int lastId = -1;
+
+        try (
+                PreparedStatement ps = getConnection().prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                lastId = rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return lastId;
     }
 }

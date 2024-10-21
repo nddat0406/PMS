@@ -64,7 +64,7 @@
                                                 <a class="nav-link active" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link " id="ProjectPhase-tab" href="${baseUrl}/domain/projectphasecriteria" role="tab">Project Phase</a>
+                                                <a class="nav-link " id="ProjectPhase-tab" href="${baseUrl}" role="tab">Project Phase</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -87,8 +87,8 @@
                                     </form>
 
                                     <div class="tab-pane fade active show" id="Tab1">
-                                        <div class="col-md-12"  style="display: flex; justify-content: right">
-                                        <a href="${baseUrl}/domain/domainuser?action=add" type="submit" class="btn btn-success">Add new</a>
+                                         <div class="col-md-12"  style="display: flex; justify-content: right">
+                                            <a href="${baseUrl}/domain/domainuser?action=add" type="submit" class="btn btn-success">Add new</a>
                                         </div>
                                         <table id="domainSettingsTable" class="table table-bordered table-striped">
                                             <thead>

@@ -2,22 +2,12 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-<<<<<<< HEAD
         <group name="PRO">
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/SettingDAO.java</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/domainConfig/domaineval.jsp</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/domainConfig/domainsetting.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/GroupDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/UserDAO.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/service/GroupService.java</file>
+            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/dal/CriteriaDAO.java</file>
             <file>file:/C:/Users/DELL/SWP391/project/New%20folder/src/java/controller/DomainConfigController.java</file>
-            <file>file:/C:/Users/DELL/SWP391/project/New%20folder/web/WEB-INF/view/user/domainConfig/domainuser.jsp</file>
-=======
-        <group>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/Dashboard.jsp</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/dal/MilestoneDAO.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/user/projectConfig/projectmilestone.jsp</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/model/User.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/service/MilestoneService.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/ProjectConfigController.java</file>
->>>>>>> e5e93eaf834dd6ccc9e4e0140e2087b350f7bd26
         </group>
     </open-files>
 </project-private>

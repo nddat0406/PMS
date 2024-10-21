@@ -10,7 +10,6 @@ import dal.SettingDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,12 +20,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Allocation;
 import model.Criteria;
 import model.Group;
 import model.Project;
+import model.ProjectPhase;
 import model.Setting;
 import model.User;
 import org.apache.poi.ss.usermodel.Cell;
@@ -63,10 +65,10 @@ public class DomainConfigController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getRequestURI();
+        String page = request.getRequestURI();
         String contextPath = request.getContextPath();
-        action = action.replace(contextPath, "").toLowerCase();
-        switch (action) {
+        page = page.replace(contextPath, "").toLowerCase();
+        switch (page) {
             case "/domain/domainsetting": {
                 try {
                     this.domainSetting(request, response);
@@ -85,9 +87,14 @@ public class DomainConfigController extends HttpServlet {
             }
             break;
 
-            case "/domain/domaineval":
-                this.domaineval(request, response);
-                break;
+            case "/domain/domaineval": {
+                try {
+                    this.DoaminCriteria(request, response);
+                } catch (SQLException ex) {
+                    Logger.getLogger(DomainConfigController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            break;
 
             default: {
                 try {
@@ -100,7 +107,7 @@ public class DomainConfigController extends HttpServlet {
         }
     }
 
-    private void domainSetting(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+    private void domainSetting(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
         String action = request.getParameter("action");
         action = action != null ? action : "";
         GroupService groupService = new GroupService();
@@ -136,6 +143,7 @@ public class DomainConfigController extends HttpServlet {
                 String type = request.getParameter("type");
                 SettingService se = new SettingService();
                 searchName = searchName != null ? searchName.trim() : null;
+                type = type != null ? type.trim() : null;
                 filterStatus = filterStatus != null ? filterStatus.trim() : null;
                 List<Setting> domainSettings;
                 domainSettings = se.getFilteredDomainSettings(type, filterStatus, searchName);
@@ -148,6 +156,7 @@ public class DomainConfigController extends HttpServlet {
                 e.printStackTrace();
             }
         }
+
     }
 
     private void domainUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
@@ -191,25 +200,33 @@ public class DomainConfigController extends HttpServlet {
         }
     }
 
-    private void ProjectPhaseCriteria(HttpServletRequest request, HttpServletResponse response) {
+    private void ProjectPhaseCriteria(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
         String path = request.getServletPath().substring("/domain/".length());
+        CriteriaService cr = new CriteriaService();
         switch (path) {
             case "eval" -> {
                 String action = request.getParameter("action");
                 switch (action) {
-                    case "filter" ->
+                    case "filter":
                         postEvalFilter(request, response);
-                    case "changeStatus" ->
+                    case "changeStatus":
                         postEvalFlipStatus(request, response);
-                    case "delete" ->
+                    case "delete":
                         postEvalDelete(request, response);
-                    case "add" ->
+                    case "add":
                         postEvalAdd(request, response);
-                    case "update" ->
+                    case "update":
                         postEvalUpdate(request, response);
-                    case "sort" ->
+                    case "sort":
                         postSortEval(request, response);
-                    default -> {
+                    case "deactive":
+                    case "active":
+                        int idU = Integer.parseInt(request.getParameter("id"));
+                        System.out.println(action);
+                        cr.editStatusDomainEval(action, idU);
+                        response.sendRedirect(request.getContextPath() + "/domain/domainsetting");
+                        break;
+                    default: {
                         getDomainEval(request, response);
                     }
                 }
@@ -229,9 +246,7 @@ public class DomainConfigController extends HttpServlet {
             request.setAttribute("searchName", searchName);
             request.setAttribute("filterStatus", filterStatus);
             request.setAttribute("criteriaList", criteriaList);
-
             request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domainprojectphase.jsp").forward(request, response);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -239,6 +254,7 @@ public class DomainConfigController extends HttpServlet {
 
     private void domaineval(HttpServletRequest request, HttpServletResponse response) {
         CriteriaService service = new CriteriaService();
+        CriteriaService cr = new CriteriaService();
         try {
             String searchName = request.getParameter("search");
             String filterStatus = request.getParameter("status");
@@ -250,7 +266,6 @@ public class DomainConfigController extends HttpServlet {
             request.setAttribute("filterStatus", filterStatus);
             request.setAttribute("criteriaList", criteriaList);
             request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domaineval.jsp").forward(request, response);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -262,17 +277,23 @@ public class DomainConfigController extends HttpServlet {
         CriteriaService cr = new CriteriaService();
         switch (action) {
             case "filter":
-                postEvalFilterDomain(request, response);
+                postEvalFilter(request, response);
+                break;
             case "changeStatus":
-                postEvalFlipStatusDomain(request, response);
+                postEvalFlipStatus(request, response);
+                break;
             case "delete":
-                postEvalDeleteDomain(request, response);
+                postEvalDelete(request, response);
+                break;
             case "add":
-                postEvalAddDomain(request, response);
-            case "update":
-                postEvalUpdateDomain(request, response);
+                postEvalAdd(request, response);
+                break;
+            case "edit":
+                postEvalUpdate(request, response);
+                break;
             case "sort":
-                postSortEvalDomain(request, response);
+                postSortEval(request, response);
+                break;
             case "deactive":
             case "active":
                 int idU = Integer.parseInt(request.getParameter("id"));
@@ -302,135 +323,145 @@ public class DomainConfigController extends HttpServlet {
             this.addDomainUser(request, response);
         } else if ("editdomainuser".equals(action)) {
             this.editDomainUser(request, response);
+        } else if ("adddomaineval".equals(action)) {
+            this.addDomainEval(request, response);
+        } else if ("editdomaineval".equals(action)) {
+            this.editDomainEval(request, response);
         }
     }
 
-    public void exportDomainUsersToExcel(HttpServletResponse response) throws IOException {
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=domain_users.xlsx");
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Domain Users");
+    private void editDomainEval(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            String name = request.getParameter("name");
+            String weightStr = request.getParameter("weight");
+            String statusStr = request.getParameter("status");
+            String description = request.getParameter("description");
+            String domainIdStr = request.getParameter("domain");
 
-        // Create header row
-        String[] headers = {"ID", "Username", "Email", "Phone", "Domain", "Status"};
-        Row headerRow = sheet.createRow(0);
-        CellStyle headerCellStyle = workbook.createCellStyle();
-        Font headerFont = workbook.createFont();
-        headerFont.setBold(true);
-        headerCellStyle.setFont(headerFont);
-        for (int i = 0; i < headers.length; i++) {
-            Cell cell = headerRow.createCell(i);
-            cell.setCellValue(headers[i]);
-            cell.setCellStyle(headerCellStyle);
-        }
+            List<String> errors = new ArrayList<>();
 
-        // Fetch domain users and write to Excel
-        GroupService service = new GroupService();
-        List<Group> domainUsers = service.getDomainUser();
-        int rowNum = 1;
-        for (Group user : domainUsers) {
-            Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(user.getId());
-            row.createCell(1).setCellValue(user.getUser().getFullname());
-            row.createCell(2).setCellValue(user.getUser().getEmail());
-            row.createCell(3).setCellValue(user.getUser().getMobile());
-            row.createCell(4).setCellValue(user.getParent().getName());
-            String status = user.getParent().getStatus() == 1 ? "Active" : "Inactive";
-            row.createCell(5).setCellValue(status);
-        }
-
-        // Autosize columns
-        for (int i = 0; i < headers.length; i++) {
-            sheet.autoSizeColumn(i);
-        }
-
-        // Write Excel file to response
-        try (ServletOutputStream out = response.getOutputStream()) {
-            workbook.write(out);
-            out.flush();
-        } catch (IOException e) {
-            throw new IOException("Error while writing Excel data to output stream", e);
-        } finally {
-            workbook.close();
-        }
-    }
-
-    private void importFromExcel(HttpServletRequest request) throws IOException, ServletException {
-        Part filePart = request.getPart("file");
-        try (Workbook workbook = new XSSFWorkbook(filePart.getInputStream())) {
-            Sheet sheet = workbook.getSheetAt(0);
-            GroupService service = new GroupService();
-
-            for (Row row : sheet) {
-                if (row.getRowNum() == 0) {
-                    continue; // Skip header row
-                }
-
-                Group group = new Group();
-                group.setUser(new User());
-                group.setParent(new Group());
-
-                // Reading and setting data from Excel to Group object
-                if (row.getCell(0) != null) {
-                    group.setId((int) row.getCell(0).getNumericCellValue());
-                }
-
-                if (row.getCell(1) != null) {
-                    group.getUser().setFullname(row.getCell(1).getStringCellValue());
-                }
-
-                if (row.getCell(2) != null) {
-                    group.getUser().setEmail(row.getCell(2).getStringCellValue());
-                }
-
-                if (row.getCell(3) != null) {
-                    group.getUser().setMobile(row.getCell(3).getStringCellValue());
-                }
-
-                if (row.getCell(4) != null) {
-                    group.getParent().setName(row.getCell(4).getStringCellValue());
-                }
-
-                if (row.getCell(5) != null) {
-                    group.getParent().setStatus((int) row.getCell(5).getNumericCellValue());
-                }
-
-                // Add group to the database using service
-                service.addDomainUser(group);
+            if (name == null || name.trim().isEmpty()) {
+                errors.add("Criteria name is required.");
             }
+
+            double weight = 0;
+            try {
+                weight = Double.parseDouble(weightStr);
+                if (weight <= 0) {
+                    errors.add("Weight must be greater than zero.");
+                }
+            } catch (NumberFormatException e) {
+                errors.add("Invalid weight.");
+            }
+
+            int status = 1;
+            try {
+                status = Integer.parseInt(statusStr);
+                if (status != 0 && status != 1) {
+                    errors.add("Invalid status.");
+                }
+            } catch (NumberFormatException e) {
+                errors.add("Invalid status.");
+            }
+
+            int domainId = 0;
+            try {
+                domainId = Integer.parseInt(domainIdStr);
+                if (domainId <= 0) {
+                    errors.add("Invalid domain.");
+                }
+            } catch (NumberFormatException e) {
+                errors.add("Invalid domain.");
+            }
+
+            if (!errors.isEmpty()) {
+                request.setAttribute("errors", errors);
+                this.postEvalUpdate(request, response);
+                return;
+            }
+
+            Criteria criteria = new Criteria();
+            criteria.setId(id);
+            criteria.setPhase(new ProjectPhase());
+            criteria.setName(name);
+            criteria.setWeight((int) weight);
+            criteria.setStatus(status == 1);
+            criteria.setDescription(description);
+            criteria.getPhase().setId(domainId);
+
+            CriteriaService service = new CriteriaService();
+            service.editDomainEval(criteria);
+            response.sendRedirect(request.getContextPath() + "/domain/domaineval");
         } catch (Exception e) {
-            throw new ServletException("Error importing data from Excel file", e);
+            System.out.println("Error: " + e);
         }
-
     }
 
-    private void postEvalFilter(HttpServletRequest request, HttpServletResponse response) {
+    private void addDomainEval(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            String name = request.getParameter("name");
+            String weightStr = request.getParameter("weight");
+            String statusStr = request.getParameter("status");
+            String description = request.getParameter("description");
+            String domainIdStr = request.getParameter("domain");
 
-    }
+            List<String> errors = new ArrayList<>();
 
-    private void postEvalFlipStatus(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+            if (name == null || name.trim().isEmpty()) {
+                errors.add("Criteria name is required.");
+            }
 
-    private void postEvalDelete(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+            double weight = 0;
+            try {
+                weight = Double.parseDouble(weightStr);
+                if (weight <= 0) {
+                    errors.add("Weight must be greater than zero.");
+                }
+            } catch (NumberFormatException e) {
+                errors.add("Invalid weight.");
+            }
 
-    private void postEvalAdd(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+            int status = 1;
+            try {
+                status = Integer.parseInt(statusStr);
+                if (status != 0 && status != 1) {
+                    errors.add("Invalid status.");
+                }
+            } catch (NumberFormatException e) {
+                errors.add("Invalid status.");
+            }
 
-    private void postEvalUpdate(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+            int domainId = 0;
+            try {
+                domainId = Integer.parseInt(domainIdStr);
+                if (domainId <= 0) {
+                    errors.add("Invalid domain.");
+                }
+            } catch (NumberFormatException e) {
+                errors.add("Invalid domain.");
+            }
 
-    private void postSortEval(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+            if (!errors.isEmpty()) {
+                request.setAttribute("errors", errors);
+                this.postEvalAdd(request, response);
+                return;
+            }
 
+            Criteria criteria = new Criteria();
+            criteria.setPhase(new ProjectPhase());
+            criteria.setName(name);
+            criteria.setWeight((int) weight);
+            criteria.setStatus(status == 1);
+            criteria.setDescription(description);
+            criteria.getPhase().setId(domainId);
 
-    private void domainEval(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            CriteriaService service = new CriteriaService();
+            service.addDomainEval(criteria);
+            response.sendRedirect(request.getContextPath() + "/domain/domaineval");
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
     }
 
     private void addDomainUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -561,15 +592,93 @@ public class DomainConfigController extends HttpServlet {
         }
     }
 
-    private void postEvalFilterDomain(HttpServletRequest request, HttpServletResponse response) {
+    public void exportDomainUsersToExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=domain_users.xlsx");
+        response.setCharacterEncoding("UTF-8");
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Domain Users");
+
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"ID", "Username", "Email", "Phone", "Domain", "Status"};
+
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerCellStyle.setFont(headerFont);
+
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerCellStyle);
+        }
+        GroupService service = new GroupService();
+        List<Group> domainUsers = service.getDomainUser();
+        int rowNum = 1;
+        for (Group user : domainUsers) {
+            Row row = sheet.createRow(rowNum++);
+
+            row.createCell(0).setCellValue(user.getId());
+            row.createCell(1).setCellValue(user.getUser().getFullname());
+            row.createCell(2).setCellValue(user.getUser().getEmail());
+            row.createCell(3).setCellValue(user.getUser().getMobile());
+            row.createCell(4).setCellValue(user.getParent().getName());
+
+            String status = "Unknown";
+            if (user.getParent().getStatus() == 1) {
+                status = "Active";
+            } else if (user.getParent().getStatus() == 0) {
+                status = "Inactive";
+            }
+            row.createCell(5).setCellValue(status);
+        }
+
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        try {
+            workbook.write(response.getOutputStream());
+            response.getOutputStream().flush();
+        } catch (IOException e) {
+            throw new IOException("Error while writing Excel data to output stream", e);
+        } finally {
+            workbook.close();
+        }
+    }
+
+    private void importFromExcel(HttpServletRequest request) throws IOException, ServletException {
+        Part filePart = request.getPart("file");
+        try (Workbook workbook = new XSSFWorkbook(filePart.getInputStream())) {
+            Sheet sheet = workbook.getSheetAt(0);
+            GroupService service = new GroupService();
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) {
+                    continue;
+                }
+                Group user = new Group();
+                user.setUser(new User());
+                user.setParent(new Group());
+                user.setId((int) row.getCell(0).getNumericCellValue());
+                user.getUser().setId((int) row.getCell(1).getNumericCellValue());
+                user.getParent().setId((int) row.getCell(2).getNumericCellValue());
+                user.getParent().setStatus((int) row.getCell(3).getNumericCellValue());
+                service.addDomainUser(user);
+            }
+        } catch (Exception e) {
+            throw new ServletException("Error importing data from Excel file", e);
+        }
+
+    }
+
+    private void postEvalFilter(HttpServletRequest request, HttpServletResponse response) {
+    }
+
+    private void postEvalFlipStatus(HttpServletRequest request, HttpServletResponse response) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    private void postEvalFlipStatusDomain(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    private void postEvalDeleteDomain(HttpServletRequest request, HttpServletResponse response) {
+    private void postEvalDelete(HttpServletRequest request, HttpServletResponse response) {
         CriteriaService cr = new CriteriaService();
         try {
             int idUD = Integer.parseInt(request.getParameter("id"));
@@ -580,7 +689,7 @@ public class DomainConfigController extends HttpServlet {
         }
     }
 
-    private void postEvalAddDomain(HttpServletRequest request, HttpServletResponse response) {
+    private void postEvalAdd(HttpServletRequest request, HttpServletResponse response) {
         try {
             ProjectService projectService = new ProjectService();
             List<Project> projects = projectService.getAllProjectPharse();
@@ -591,7 +700,7 @@ public class DomainConfigController extends HttpServlet {
         }
     }
 
-    private void postEvalUpdateDomain(HttpServletRequest request, HttpServletResponse response) {
+    private void postEvalUpdate(HttpServletRequest request, HttpServletResponse response) {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             CriteriaService crService = new CriteriaService();
@@ -606,11 +715,12 @@ public class DomainConfigController extends HttpServlet {
         }
     }
 
-    private void postSortEvalDomain(HttpServletRequest request, HttpServletResponse response) {
+    private void postSortEval(HttpServletRequest request, HttpServletResponse response) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-     private void getDomainEval(HttpServletRequest request, HttpServletResponse response) {
-        CriteriaDAO dao = new CriteriaDAO();
+
+    private void getDomainEval(HttpServletRequest request, HttpServletResponse response) {
+        CriteriaService dao = new CriteriaService();
         try {
             String searchName = request.getParameter("search");
             String filterStatus = request.getParameter("status");
@@ -625,6 +735,10 @@ public class DomainConfigController extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void domainEval(HttpServletRequest request, HttpServletResponse response) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

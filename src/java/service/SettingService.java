@@ -132,7 +132,7 @@ public class SettingService {
     }
 
     public List<Setting> getFilteredDomainSettings(String type, String filterStatus, String searchName) throws SQLException {
-        return settingDAO.getFilteredDomainSettings(filterStatus, filterStatus, type);
+        return settingDAO.getFilteredDomainSettings(type, filterStatus, searchName);
     }
 
     public Setting geDomaintById(int id) {
