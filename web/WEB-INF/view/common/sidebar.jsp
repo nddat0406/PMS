@@ -65,7 +65,7 @@
                                 <li><a href="emp-leave.html">Requirement</a></li>
                                 <li><a href="emp-leave.html">Milestone</a></li>
                             </ul>
-
+                        </li>
                         <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-clipboard-list"></i><span>Project</span></a></li> 
                         <li><a href="${pageContext.request.contextPath}/admin/domain"><i class="fa fa-building"></i><span>Domain List</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/user/profile"><i class="fa fa-user"></i><span>Users profile</span></a></li>

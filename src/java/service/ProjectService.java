@@ -240,4 +240,11 @@ public class ProjectService {
         pdao.updateProjectStatus(projectId, status);
     }
 
+    public List<Project> getAllProjectPharse() throws SQLException {
+        return pdao.getAllProjectPharse();
+    }
+     public Project getAllProjectPharseBYId(int id) throws SQLException {
+        return pdao.getAllProjectPharseBYId(id);
+    }
+
 }

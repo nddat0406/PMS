@@ -187,7 +187,9 @@ public class CriteriaDAO extends BaseDAO {
         }
 
         List<Criteria> list = new ArrayList<>();
-        try (PreparedStatement pre = getConnection().prepareStatement(sql.toString())) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql.toString());
+               
             for (int i = 0; i < params.size(); i++) {
                 if (params.get(i) instanceof String) {
                     pre.setString(i + 1, (String) params.get(i));
@@ -236,7 +238,7 @@ public class CriteriaDAO extends BaseDAO {
         }
 
         List<Criteria> list = new ArrayList<>();
-        try (PreparedStatement pre = getConnection().prepareStatement(sql.toString())) {
+        try {PreparedStatement pre = getConnection().prepareStatement(sql.toString());
             for (int i = 0; i < params.size(); i++) {
                 if (params.get(i) instanceof String) {
                     pre.setString(i + 1, (String) params.get(i));
@@ -263,5 +265,56 @@ public class CriteriaDAO extends BaseDAO {
         }
 
         return list;
+    }
+
+    public void editStatusDomainEval(String status, int id) {
+        String query = "UPDATE `projectphase_criteria` SET `status` = ? WHERE `id` = ?";
+
+        try {PreparedStatement ps = getConnection().prepareStatement(query);
+            ps.setBoolean(1, status.equals("active"));
+            ps.setInt(2, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    public void deleteDomainEval(int id) {
+        String query = "DELETE FROM `projectphase_criteria` WHERE `id` = ?";
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(query);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public Criteria getDomainEvalById(int id) throws SQLException {
+        String sql = "SELECT * FROM pms.projectphase_criteria WHERE id = ?";
+        Criteria criteria = null;
+
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            pre.setInt(1, id);
+
+            ResultSet rs = pre.executeQuery();
+
+            if (rs.next()) {
+                criteria = new Criteria();
+                criteria.setId(rs.getInt(1));
+                criteria.setName(rs.getString(2));
+                criteria.setWeight(rs.getInt(3));
+                criteria.setStatus(rs.getBoolean(4));
+                criteria.setPhase(phdao.getPhaseById(rs.getInt("phaseId")));
+                criteria.setDescription(rs.getString(6));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e);
+        }
+
+        return criteria;
     }
 }

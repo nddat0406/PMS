@@ -475,40 +475,6 @@ public class UserDAO extends BaseDAO {
         }
     }
 
-    public List<Group> getAllDept() throws SQLException {
-        List<Group> list = new ArrayList<>();
-        String sql = "SELECT * FROM pms.department;";
-        try {
-            Statement stmt = getConnection().createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                Group dept = new Group();
-                dept.setId(rs.getInt("id"));
-                dept.setName(rs.getString("name"));
-                list.add(dept);
-            }
-        } catch (SQLException e) {
-            throw new SQLException(e);
-
-        }
-        return list;
-    }
-
-    public Group getDeptId(int id) throws SQLException {
-        String sql = "SELECT * FROM pms.department where id=?;";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(sql);
-            pre.setInt(1, id);
-            ResultSet rs = pre.executeQuery();
-            rs.next();
-            Group group = new Group();
-            group.setId(rs.getInt(1));
-
-            return group;
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        }
-    }
 
     public boolean verifyLogin(String email, String pass) throws SQLException {
         String sql = "SELECT password FROM pms.user where email=? and status =1";

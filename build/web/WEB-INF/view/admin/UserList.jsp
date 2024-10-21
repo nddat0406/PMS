@@ -26,7 +26,6 @@
 
             <!-- Page Loader -->
             <jsp:include page="../common/pageLoader.jsp"></jsp:include>
-
                 <div id="wrapper">
 
                     <!-- top navbar -->
@@ -83,264 +82,258 @@
                                             </ul>
                                         </div>
                                         <div class="card-body">
-                                            <table id="app_user" class="table table-hover mb-0">
-                                                <thead>
+                                            <form action="${pageContext.request.contextPath}/admin/userlist" method="POST">
+                                            <input type="hidden" name="action" value="search">
+
+                                            <div class="input-group mb-3" style="width: 100%">
+                                                <!-- Keyword Search -->
+                                                <input value="${param.keyword}" class="form-control" name="keyword" placeholder="Search here..." type="text" style="width: 20%">
+
+                                                <!-- Department Filter -->
+                                                <label for="department" class="input-group-text">Department:</label>
+                                                <select name="departmentId" id="department" class="form-select" style="width: 15%;">
+                                                    <option value="">All Departments</option>
+                                                    <c:forEach items="${departments}" var="d">
+                                                        <option value="${d.id}" <c:if test="${param.departmentId == d.id}">selected</c:if>>${d.name}</option>
+                                                    </c:forEach>
+                                                </select>
+                                                <!-- Status Filter -->
+                                                <label for="status" class="input-group-text">Status:</label>
+                                                <select name="status" id="status" class="form-select" style="width: 10%;">
+                                                    <option value="">All Status</option>
+                                                    <option value="1" <c:if test="${param.status == '1'}">selected</c:if>>Active</option>
+                                                    <option value="0" <c:if test="${param.status == '0'}">selected</c:if>>Inactive</option>
+                                                    </select>
+
+                                                    <!-- Search Button -->
+                                                    <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
+                                                </div>
+                                            </form>
+                                        <c:if test="${not empty error}">
+                                            <div class="alert alert-danger">
+                                                ${error}
+                                            </div>
+                                        </c:if>
+                                        <!-- Table for displaying users -->
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>
+                                                        Name
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=asc'">
+                                                            <i class="fa fa-sort-down"></i> 
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=desc'">
+                                                            <i class="fa fa-sort-up"></i> 
+
+                                                        </button>
+                                                    </th>
+                                                    <th>Mobile</th>
+                                                    <th>Email
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=asc'">
+                                                            <i class="fa fa-sort-down"></i> 
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=desc'">
+                                                            <i class="fa fa-sort-up"></i> 
+                                                    </th>
+                                                    <th>Department ID
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=asc'">
+                                                            <i class="fa fa-sort-down"></i> 
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=desc'">
+                                                            <i class="fa fa-sort-up"></i> 
+                                                    </th>
+                                                    <th>Address</th>
+                                                    <th>Role</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table-hover" id="tableBody">
+                                                <c:forEach items="${requestScope.data}" var="d">
                                                     <tr>
+                                                        <td class="width45">${d.id}</td>
+                                                        <td>${d.fullname}</td>
+                                                        <td>${d.mobile}</td>
+                                                        <td>${d.email}</td>
+                                                        <td>${d.department.name}</td>
+                                                        <td>${d.address}</td>
+                                                        <td>${d.role}</td>
                                                         <td>
-                                                            <form action="${pageContext.request.contextPath}/admin/userlist" method="POST">
-                                                            <input type="hidden" name="action" value="search">
+                                                            <div class="input-group mb-3" style="width: 25%">
+                                                                <c:choose >
+                                                                    <c:when test="${d.status == 1}">
+                                                                        <span class="badge bg-success">Active</span><br>
 
-                                                            <div class="input-group mb-3" style="width: 100%">
-                                                                <!-- Keyword Search -->
-                                                                <input value="${param.keyword}" class="form-control" name="keyword" placeholder="Search here..." type="text" style="width: 20%">
+                                                                    </c:when>
+                                                                    <c:when test="${d.status == 0}">
+                                                                        <span class="badge bg-secondary">Inactive</span><br>
+                                                                    </c:when>
 
-                                                                <!-- Department Filter -->
-                                                                <label for="department" class="input-group-text">Department:</label>
-                                                                <select name="departmentId" id="department" class="form-select" style="width: 15%;">
-                                                                    <option value="">All Departments</option> 
-                                                                    
-                                                                    <c:forEach items="${departments}" var="department">
-                                                                        <option value="${department.id}" <c:if test="${param.departmentId == department.id}">selected</c:if>>${department.name}</option>
-                                                                    </c:forEach>
-                                                                </select>
+                                                                </c:choose>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                                                    onclick="window.location.href = '${pageContext.request.contextPath}/admin/userdetail?id=${d.id}'">
+                                                                <i class="fa fa-edit"></i>
 
-                                                                <!-- Status Filter -->
-                                                                <label for="status" class="input-group-text">Status:</label>
-                                                                <select name="status" id="status" class="form-select" style="width: 10%;">
-                                                                    <option value="">All Status</option>
-                                                                    <option value="1" <c:if test="${param.status == 'true'}">selected</c:if>>Active</option>
-                                                                    <option value="0" <c:if test="${param.status == 'false'}">selected</c:if>>Inactive</option>
-                                                                    </select>
-
-                                                                    <!-- Search Button -->
-                                                                    <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
-                                                                </div>
+                                                            </button>
+                                                            <form action="${pageContext.request.contextPath}/admin/userlist?action=changeStatus" method="POST">
+                                                                <input type="hidden" name="id" value="${d.id}">
+                                                                <input type="hidden" name="status" value="${d.status == 1 ? 0 : 1}">
+                                                                <button type="submit" class="btn btn-sm ${d.status == 1 ? 'btn-warning' : 'btn-success'}">
+                                                                    ${d.status == 1 ? 'Deactivate' : 'Activate'}
+                                                                </button>
                                                             </form>
-                                                        <c:if test="${not empty error}">
-                                                            <div class="alert alert-danger">
-                                                                ${error}
-                                                            </div>
-                                                        </c:if>
-                                                        <!-- Table for displaying users -->
-                                                        <table class="table">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>ID</th>
-                                                                    <th>
-                                                                        Name
-                                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=asc'">
-                                                                            <i class="fa fa-sort-down"></i> 
-                                                                        </button>
-                                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=desc'">
-                                                                            <i class="fa fa-sort-up"></i> 
-
-                                                                        </button>
-                                                                    </th>
-                                                                    <th>Mobile</th>
-                                                                    <th>Email
-                                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=asc'">
-                                                                            <i class="fa fa-sort-down"></i> 
-                                                                        </button>
-                                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=desc'">
-                                                                            <i class="fa fa-sort-up"></i> 
-                                                                    </th>
-                                                                    <th>Department ID
-                                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=asc'">
-                                                                            <i class="fa fa-sort-down"></i> 
-                                                                        </button>
-                                                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href = '${pageContext.request.contextPath}/admin/userlist?sort=desc'">
-                                                                            <i class="fa fa-sort-up"></i> 
-                                                                    </th>
-                                                                    <th>Address</th>
-                                                                    <th>Role</th>
-                                                                    <th>Status</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody class="table-hover" id="tableBody">
-                                                                <c:forEach items="${requestScope.data}" var="d">
-                                                                    <tr>
-                                                                        <td class="width45">${d.id}</td>
-                                                                        <td>${d.fullname}</td>
-                                                                        <td>${d.mobile}</td>
-                                                                        <td>${d.email}</td>
-                                                                        <td>${d.department.name}</td>
-                                                                        <td>${d.address}</td>
-                                                                        <td>${d.role}</td>
-                                                                        <td>
-                                                                            <div class="input-group mb-3" style="width: 25%">
-                                                                                <c:choose >
-                                                                                    <c:when test="${d.status == true}">
-                                                                                        <span class="badge bg-success">Active</span><br>
-
-                                                                                    </c:when>
-                                                                                    <c:when test="${d.status == false}">
-                                                                                        <span class="badge bg-secondary">Inactive</span><br>
-                                                                                    </c:when>
-
-                                                                                </c:choose>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <button type="button" class="btn btn-sm btn-outline-secondary" 
-                                                                                    onclick="window.location.href = '${pageContext.request.contextPath}/admin/userdetail?id=${d.id}'">
-                                                                                <i class="fa fa-edit"></i>
-
-                                                                            </button>
-                                                                            <form action="${pageContext.request.contextPath}/admin/userlist?action=changeStatus" method="POST">
-                                                                                <input type="hidden" name="id" value="${d.id}">
-                                                                                <input type="hidden" name="status" value="${d.status == true ? false : true}">
-                                                                                <button type="submit" class="btn btn-sm ${d.status == true ? 'btn-warning' : 'btn-success'}">
-                                                                                    ${d.status == true ? 'Deactivate' : 'Activate'}
-                                                                                </button>
-                                                                            </form>
 
 
 
-                                                                        </td>
-                                                                    </tr>
-                                                                </c:forEach>
-                                                            </tbody>
-                                                        </table>
-                                                        <nav aria-label="Page navigation example">
-                                                            <ul class="pagination">
+                                                        </td>
+                                                    </tr>
+                                                </c:forEach>
+                                            </tbody>
+                                        </table>
+                                        <nav aria-label="Page navigation example">
+                                            <ul class="pagination">
 
-                                                                <li class="page-item ${page == 1 ? 'disabled' : ''}">
-                                                                    <a class="page-link" href="${pageContext.request.contextPath}/admin/userlist?page=${page == 1 ? 1 : page - 1}">Previous</a>
-                                                                </li>
-
-
-                                                                <c:forEach begin="1" end="${num}" var="i">
-                                                                    <li class="page-item ${i == page ? 'active' : ''}">
-                                                                        <a class="page-link" href="${pageContext.request.contextPath}/admin/userlist?page=${i}">${i}</a>
-                                                                    </li>
-                                                                </c:forEach>
+                                                <li class="page-item ${page == 1 ? 'disabled' : ''}">
+                                                    <a class="page-link" href="${pageContext.request.contextPath}/admin/userlist?page=${page == 1 ? 1 : page - 1}">Previous</a>
+                                                </li>
 
 
-                                                                <li class="page-item ${page == num ? 'disabled' : ''}">
-                                                                    <a class="page-link" href="${pageContext.request.contextPath}/admin/userlist?page=${page + 1}">Next</a>
-                                                                </li>
-                                                            </ul>
-                                                        </nav>
-
-                                                        <!-- Modal for Adding User -->
-                                                        <div class="modal fade" id="AddUser" tabindex="-1" aria-labelledby="AddUser" aria-hidden="true">
-                                                            <div class="modal-dialog" role="document">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <% String errorMessage = (String) request.getAttribute("error"); %>
-                                                                        <% if (errorMessage != null) { %>
-                                                                        <div class="alert alert-danger">
-                                                                            <%= errorMessage %>
-                                                                        </div>
-                                                                        <% } else if (request.getAttribute("successMessage") != null) { %>
-                                                                        <div class="alert alert-success">
-                                                                            <%= request.getAttribute("successMessage") %>
-                                                                        </div>
-                                                                        <% } %>
-                                                                        <h6 class="title" id="defaultModalLabel">Add User</h6>
-                                                                    </div>
-
-                                                                    <div class="modal-body">
-                                                                        <form action="${pageContext.request.contextPath}/admin/userlist?action=add" method="POST" id="addUserForm">
-                                                                            <div class="row g-2">
-
-                                                                                <div class="col-md-4 col-sm-12">
-                                                                                    <input type="email" class="form-control" placeholder="Email" name="email" required>
-                                                                                </div>
-                                                                                <div class="col-md-4 col-sm-12">
-                                                                                    <input type="text" class="form-control" placeholder="Mobile" name="mobile" required>
-                                                                                </div>
+                                                <c:forEach begin="1" end="${num}" var="i">
+                                                    <li class="page-item ${i == page ? 'active' : ''}">
+                                                        <a class="page-link" href="${pageContext.request.contextPath}/admin/userlist?page=${i}">${i}</a>
+                                                    </li>
+                                                </c:forEach>
 
 
-                                                                                <div class="col-md-4 col-sm-12">
-                                                                                    <input type="text" class="form-control" placeholder="Name" name="fullname" required>
-                                                                                </div>
+                                                <li class="page-item ${page == num ? 'disabled' : ''}">
+                                                    <a class="page-link" href="${pageContext.request.contextPath}/admin/userlist?page=${page + 1}">Next</a>
+                                                </li>
+                                            </ul>
+                                        </nav>
+
+                                        <!-- Modal for Adding User -->
+                                        <div class="modal fade" id="AddUser" tabindex="-1" aria-labelledby="AddUser" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <% String errorMessage = (String) request.getAttribute("error"); %>
+                                                        <% if (errorMessage != null) { %>
+                                                        <div class="alert alert-danger">
+                                                            <%= errorMessage %>
+                                                        </div>
+                                                        <% } else if (request.getAttribute("successMessage") != null) { %>
+                                                        <div class="alert alert-success">
+                                                            <%= request.getAttribute("successMessage") %>
+                                                        </div>
+                                                        <% } %>
+                                                        <h6 class="title" id="defaultModalLabel">Add User</h6>
+                                                    </div>
+
+                                                    <div class="modal-body">
+                                                        <form action="${pageContext.request.contextPath}/admin/userlist?action=add" method="POST" id="addUserForm">
+                                                            <div class="row g-2">
+
+                                                                <div class="col-md-4 col-sm-12">
+                                                                    <input type="email" class="form-control" placeholder="Email" name="email" required>
+                                                                </div>
+                                                                <div class="col-md-4 col-sm-12">
+                                                                    <input type="text" class="form-control" placeholder="Mobile" name="mobile" required>
+                                                                </div>
 
 
-                                                                                <div class="col-md-4 col-sm-12">
-                                                                                    <input type="password" class="form-control" placeholder="Password" name="password" required>
-                                                                                </div>
+                                                                <div class="col-md-4 col-sm-12">
+                                                                    <input type="text" class="form-control" placeholder="Name" name="fullname" required>
+                                                                </div>
 
 
-                                                                                <div class="col-md-4 col-sm-12">
-                                                                                    <label for="role">Role:</label><br>
-                                                                                    <input type="radio" id="role1" name="role" value="1" required>
-                                                                                    <label for="role1">1</label><br>
-                                                                                    <input type="radio" id="role2" name="role" value="2" required>
-                                                                                    <label for="role2">2</label>
-                                                                                </div>
+                                                                <div class="col-md-4 col-sm-12">
+                                                                    <input type="password" class="form-control" placeholder="Password" name="password" required>
+                                                                </div>
+
+
+                                                                <div class="col-md-4 col-sm-12">
+                                                                    <label for="role">Role:</label><br>
+                                                                    <input type="radio" id="role1" name="role" value="1" required>
+                                                                    <label for="role1">1</label><br>
+                                                                    <input type="radio" id="role2" name="role" value="2" required>
+                                                                    <label for="role2">2</label>
+                                                                </div>
 
 
 
 
-                                                                                <div class="col-md-4 col-sm-12">
-                                                                                    <label for="status">Status:</label>
-                                                                                    <select class="form-control" id="status" name="status" required>
-                                                                                        <option value="">-- Select Status --</option>
-                                                                                        <option value="1">Active</option>
-                                                                                        <option value="0">Inactive</option>
+                                                                <div class="col-md-4 col-sm-12">
+                                                                    <label for="status">Status:</label>
+                                                                    <select class="form-control" id="status" name="status" required>
+                                                                        <option value="">-- Select Status --</option>
+                                                                        <option value="1">Active</option>
+                                                                        <option value="0">Inactive</option>
 
-                                                                                    </select>
-                                                                                </div>
-
-
-
-                                                                                <div class="col-md-4 col-sm-12">
-                                                                                    <input type="text" class="form-control" placeholder="Dept ID *" name="departmentId" required>
-                                                                                </div>
-
-
-                                                                                <div class="col-md-4 col-sm-12">
-                                                                                    <input type="text" class="form-control" placeholder="Address *" name="address" required>
-                                                                                </div>
-
-                                                                                <!-- Modal Footer with Add and Close Buttons -->
-                                                                                <div class="modal-footer">
-                                                                                    <button type="submit" class="btn btn-primary">Add</button>
-                                                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                                                                                </div>
-                                                                            </div>
-                                                                        </form>
-                                                                    </div>
+                                                                    </select>
+                                                                </div>
 
 
 
+                                                                <div class="col-md-4 col-sm-12">
+                                                                    <input type="text" class="form-control" placeholder="Dept ID *" name="departmentId" required>
+                                                                </div>
+
+
+                                                                <div class="col-md-4 col-sm-12">
+                                                                    <input type="text" class="form-control" placeholder="Address *" name="address" required>
+                                                                </div>
+
+                                                                <!-- Modal Footer with Add and Close Buttons -->
+                                                                <div class="modal-footer">
+                                                                    <button type="submit" class="btn btn-primary">Add</button>
+                                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </form>
+                                                    </div>
 
 
 
-                                                        </div>
-                                                        </div>
-
-                                                        </div>
-                                                        <!-- core js file -->
-                                                        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-                                                        <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
-
-                                                        <!-- page js file -->
-                                                        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-                                                        <script>
-                                                                                        $(document).ready(function () {
-                                                                                            var extensions = {
-                                                                                            "sFilter": "dataTables_filter custom_filter_class"
-
-                                                                                                    $.extend($.fn.dataTableExt.oStdClasses, extensions);
-                                                                                            $('#app_user').dataTable({
-                                                                                                responsive: true
-                                                                                            });
-                                                                                        });
-
-                                                                                        );
-                                                                                        document.getElementById("updateButton").onclick = function () {
-                                                                                            location.href = "${pageContext.request.contextPath}/admin/userdetail"; // Đường dẫn trang bạn muốn chuyển đến
-                                                                                        };
+                                                </div>
+                                            </div>
+                                        </div>
 
 
-                                                        </script>
-                                                        </body>
 
-                                                        <!-- Mirrored from wrraptheme.com/templates/lucid/hr/bs5/dist/app-users.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 13 Sep 2024 06:42:37 GMT -->
-                                                        </html>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- core js file -->
+                            <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+                            <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
+
+                            <!-- page js file -->
+                            <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+                            <script>
+                                                                        $(document).ready(function () {
+                                                                            var extensions = {
+                                                                            "sFilter": "dataTables_filter custom_filter_class"
+
+                                                                                    $.extend($.fn.dataTableExt.oStdClasses, extensions);
+                                                                            $('#app_user').dataTable({
+                                                                                responsive: true
+                                                                            });
+                                                                        });
+
+                                                                        );
+                                                                        document.getElementById("updateButton").onclick = function () {
+                                                                            location.href = "${pageContext.request.contextPath}/admin/userdetail"; // Đường dẫn trang bạn muốn chuyển đến
+                                                                        };
+
+
+                            </script>
+                            </body>
+
+                            <!-- Mirrored from wrraptheme.com/templates/lucid/hr/bs5/dist/app-users.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 13 Sep 2024 06:42:37 GMT -->
+                            </html>

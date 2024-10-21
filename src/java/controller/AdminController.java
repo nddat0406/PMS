@@ -124,7 +124,6 @@ public class AdminController extends HttpServlet {
 
 
             case "userdetail" -> {
-
                 try {
                     int id = Integer.parseInt(request.getParameter("id"));
                     User user = uService.getUserById(id); // Get user by ID

@@ -17,7 +17,8 @@ import java.util.logging.Logger;
 import model.Group;
 
 public class SettingDAO extends BaseDAO {
-     private GroupDAO gdao = new GroupDAO();
+
+    private GroupDAO gdao = new GroupDAO();
 
     public List<Setting> getAllSettings() throws SQLException {
         List<Setting> settingsList = new ArrayList<>();
@@ -230,8 +231,7 @@ public class SettingDAO extends BaseDAO {
         return settings;
     }
 
-
-     public List<Setting> getFilteredDomainSettings(String filterType, String filterStatus, String keyword) throws SQLException {
+    public List<Setting> getFilteredDomainSettings(String filterType, String filterStatus, String keyword) throws SQLException {
         List<Setting> settings = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM domain_setting WHERE 1=1");
 
@@ -278,10 +278,9 @@ public class SettingDAO extends BaseDAO {
             System.out.println("Error: " + e);
         }
         return settings;
-     }
+    }
 
     // lấy bizterm cho project list vs project detail
-
     public List<Setting> getAllBizTerms() throws SQLException {
         List<Setting> bizTerms = new ArrayList<>();
         String sql = "SELECT id, name FROM setting WHERE type = 1 AND status = 1";
@@ -301,5 +300,105 @@ public class SettingDAO extends BaseDAO {
         }
         return bizTerms;
 
+    }
+
+    public Setting geDomaintById(int id) {
+        String sql = "SELECT * FROM domain_setting WHERE id = ?";
+        Setting setting = null;
+
+        try {
+            PreparedStatement stmt = getConnection().prepareStatement(sql);
+               
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                setting = new Setting();
+                setting.setId(rs.getInt("id"));
+                setting.setName(rs.getString("name"));
+                setting.setType(rs.getInt("type"));
+                setting.setDescription(rs.getString("details"));
+                setting.setPriority(rs.getInt("priority"));
+                setting.setStatus(rs.getBoolean("status"));
+                setting.setDomain(new Group(gdao.getDeptNameById(rs.getInt("domainId"))));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e);
+        }
+
+        return setting;
+    }
+
+    public void updateStatusDomain(String domain, int domainId) {
+        String sql = "UPDATE domain_setting SET status = ? WHERE id = ?";
+        try {
+            PreparedStatement statement = getConnection().prepareStatement(sql);
+            statement.setBoolean(1, domain.equals("active"));
+            statement.setInt(2, domainId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+
+        }
+    }
+
+    public void deleteDomain(int id) {
+        String sql = "DELETE FROM domain_setting WHERE id = ?";
+        try {
+            PreparedStatement statement = getConnection().prepareStatement(sql);
+            statement.setInt(1, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+
+        }
+    }
+
+  public void addDomain(Setting domain) throws SQLException {
+        String sql = "INSERT INTO domain_setting (name, type, priority, status, details, domainId, id) VALUES (?,?, ?, ?, ?, ?, ?)";
+        int newId = getMaxId() + 1;
+        try {
+            PreparedStatement statement = getConnection().prepareStatement(sql);
+            statement.setString(1, domain.getName());
+            statement.setInt(2, domain.getType());
+            statement.setInt(3, domain.getPriority());
+            statement.setBoolean(4, domain.isStatus());
+            statement.setString(5, domain.getDescription());
+            statement.setInt(6, domain.getDomain().getId());
+            statement.setInt(7, newId);
+            statement.executeUpdate();
+        }catch(SQLException e){
+            
+        }
+    }
+
+    public void updateDomain(Setting domain) throws SQLException {
+        String sql = "UPDATE domain_setting SET name = ?, type = ?, priority = ?, status = ?, details = ?, domainId = ? WHERE id = ?";
+        try {
+            PreparedStatement statement = getConnection().prepareStatement(sql);
+            statement.setString(1, domain.getName());
+            statement.setInt(2, domain.getType());
+            statement.setInt(3, domain.getPriority());
+            statement.setBoolean(4, domain.isStatus());
+            statement.setString(5, domain.getDescription());
+            statement.setInt(6, domain.getDomain().getId());
+            statement.setInt(7, domain.getId());
+            statement.executeUpdate();
+        }catch(SQLException e){
+            
+        }
+    }
+
+     public int getMaxId() throws SQLException {
+        String sql = "SELECT MAX(id) FROM domain_setting";
+        try {
+            PreparedStatement statement = getConnection().prepareStatement(sql);
+               
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        }catch(SQLException e){
+            
+        }
+        return 0;
     }
 }

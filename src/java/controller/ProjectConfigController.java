@@ -131,7 +131,6 @@ public class ProjectConfigController extends HttpServlet {
                         } catch (SQLException ex) {
                             throw new ServletException(ex);
                         }
-
                     }
                     if (modalItemIDRaw != null) {
                         try {
@@ -203,12 +202,20 @@ public class ProjectConfigController extends HttpServlet {
             }
             case "milestone" -> {
                 String action = request.getParameter("action");
-                if ("update".equals(action)) {
-                    try {
-                        updateMilestone(request, response);
-                    } catch (SQLException ex) {
-                        response.getWriter().print("Update error: " + ex.getMessage());
+                switch (action) {
+                    case "update" -> {
+                        try {
+                            updateMilestone(request, response);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(ProjectConfigController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
+                    case "sort" ->
+                        postSortMilestone(request, response);
+//                    case "search" ->
+//                        searchMilestone(request, response);
+                    default ->
+                        getProjectMilestone(request, response);
                 }
             }
             case "team" -> {
@@ -796,5 +803,16 @@ public class ProjectConfigController extends HttpServlet {
         } catch (NumberFormatException | SQLException e) {
             throw new ServletException(e);
         }
+    }
+
+    private void postSortMilestone(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String fieldName = request.getParameter("fieldName");
+        String order = request.getParameter("sortBy");
+        List<Milestone> list = (List<Milestone>) request.getSession().getAttribute("milestoneList");
+        baseService.sortListByField(list, fieldName, order);
+        request.getSession().setAttribute("milestoneList", list);
+        request.getSession().setAttribute("sortFieldName", fieldName);
+        request.getSession().setAttribute("sortOrder", order);
+        pagination(request, response, list, linkMile);
     }
 }

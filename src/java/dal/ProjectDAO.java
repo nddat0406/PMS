@@ -508,4 +508,40 @@ public class ProjectDAO extends BaseDAO {
             System.out.println("-------------------------------------");
         }
     }
+
+    public List<Project> getAllProjectPharse() throws SQLException {
+        String str = "select * from projectphase";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            ResultSet rs = pre.executeQuery();
+            List<Project> projectList = new ArrayList<>();
+            while (rs.next()) {
+                Project project = new Project();
+                project.setId(rs.getInt("id"));
+                project.setName(rs.getString("name"));
+                projectList.add(project);
+            }
+            return projectList;
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
+    
+    public Project getAllProjectPharseBYId(int id) throws SQLException {
+        String str = "select * from projectphase  where id = ?";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            pre.setInt(1, id);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Project project = new Project();
+                project.setId(rs.getInt("id"));
+                project.setName(rs.getString("name"));
+                return project;
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
 }
