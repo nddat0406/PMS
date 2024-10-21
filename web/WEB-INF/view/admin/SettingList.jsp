@@ -45,63 +45,64 @@
                     <div class="row clearfix">
                         <div class="col-lg-12 col-md-12">
                             <div class="card mb-4">
-                                <!-- Add New Button -->
-                                <form action="settings" method="get">
-                                    <input type="hidden" name="action" value="add">
-                                    <button type="submit" class="btn btn-outline-secondary">Add New Setting</button>
-                                </form>
+    <!-- Add New Button -->
+    <div class="d-flex justify-content-end mb-2">
+        <form action="settings" method="get">
+            <input type="hidden" name="action" value="add">
+            <button type="submit" class="btn btn-outline-secondary">Add New Setting</button>
+        </form>
+    </div>
 
-                                <form method="post" action="settings" >
-                                    <input type="hidden" name="action" value="filter">
+    <form method="post" action="settings">
+        <input type="hidden" name="action" value="filter">
 
-                                    <div class="row">
-                                        <!-- Filter by Type -->
-                                        <div class="col-md-3">
-                                            <select name="filterType" class="form-control">
-                                                <option value="">Filter by Type</option>
-                                                <option value="1" ${filterType == 1 ? 'selected' : ''}>Type 1</option>
-                                                <option value="2" ${filterType == 2 ? 'selected' : ''}>Type 2</option>
-                                                <option value="3" ${filterType == 3 ? 'selected' : ''}>Type 3</option>
-                                            </select>
-                                        </div>
+        <div class="row g-3 align-items-center">
+            <!-- Filter by Type -->
+            <div class="col-md-3">
+                <select name="filterType" class="form-control">
+                    <option value="">Filter by Type</option>
+                    <option value="1" ${filterType == 1 ? 'selected' : ''}>Type 1</option>
+                    <option value="2" ${filterType == 2 ? 'selected' : ''}>Type 2</option>
+                    <option value="3" ${filterType == 3 ? 'selected' : ''}>Type 3</option>
+                </select>
+            </div>
 
-                                        <!-- Filter by Name -->
-                                        <div class="col-md-3">
-                                            <select name="keywordPri" class="form-control">
-                                                <option value="">Filter by Priority</option>
-                                                <option value="1" ${keyword == 1 ? 'selected' : ''}>Priority 1</option>
-                                                <option value="2" ${keyword == 2 ? 'selected' : ''}>Priority 2</option>
-                                                <option value="3" ${keyword == 3 ? 'selected' : ''}>Priority 3</option>
-                                            </select>
-                                            
-                                        </div>
+            <!-- Filter by Priority -->
+            <div class="col-md-3">
+                <select name="keywordPri" class="form-control">
+                    <option value="">Filter by Priority</option>
+                    <option value="1" ${keyword == 1 ? 'selected' : ''}>Priority 1</option>
+                    <option value="2" ${keyword == 2 ? 'selected' : ''}>Priority 2</option>
+                    <option value="3" ${keyword == 3 ? 'selected' : ''}>Priority 3</option>
+                </select>
+            </div>
 
-                                        <!-- Filter by Status -->
-                                        <div class="col-md-3">
-                                            <select name="filterStatus" class="form-control">
-    <option value="">Filter by Status</option>
-    <option value="1" ${filterStatus != null && filterStatus.equals("1") ? "selected" : ""}>Active</option>
-    <option value="0" ${filterStatus != null && filterStatus.equals("0") ? "selected" : ""}>Inactive</option>
-</select>
-                                        </div>
+            <!-- Filter by Status -->
+            <div class="col-md-2">
+                <select name="filterStatus" class="form-control">
+                    <option value="">Filter by Status</option>
+                    <option value="1" ${filterStatus != null && filterStatus.equals("1") ? "selected" : ""}>Active</option>
+                    <option value="0" ${filterStatus != null && filterStatus.equals("0") ? "selected" : ""}>Inactive</option>
+                </select>
+            </div>
 
-                                        <!-- Filter Button -->
-                                        <div class="col-md-3">
-                                            <button type="submit" class="btn btn-primary">Filter</button>
-                                        </div>
-                                    </div>
-                                </form>
-                                <!-- Search Bar -->
-                                <div class="card-body">
-                                    <form id="navbar-search" class="navbar-form search-form position-relative d-none d-md-block" method="post" action="settings">
-                                        <input type="hidden" name="action" value="search">
-                                        <input name="keyword" class="form-control" placeholder="Search by Name" type="text" required>
-                                        <button type="submit" class="btn btn-secondary">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
+            <!-- Search Bar -->
+            <div class="col-md-3">
+                <div class="input-group">
+                    <input name="keyword" class="form-control" placeholder="Search by Name" type="text" required>
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Button -->
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+        </div>
+    </form>
+</div>
 
                             <!-- Table for Settings -->
                             <div class="card-body">
@@ -139,7 +140,7 @@
                                                         <input type="hidden" name="action" value="edit">
                                                         <input type="hidden" name="id" value="${setting.id}">
                                                         <button type="submit" class="btn btn-sm btn-outline-success">
-                                                            <i class="fa fa-info-circle"></i> 
+                                                            <i class="fa fa-edit"></i> 
                                                         </button>
                                                     </form>
 

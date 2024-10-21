@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
+
 import java.sql.Date;
 
 /**
@@ -10,6 +11,7 @@ import java.sql.Date;
  * @author HP
  */
 public class Milestone {
+
     private int id;
     private String name;
     private int priority;
@@ -17,6 +19,7 @@ public class Milestone {
     private Date endDate;
     private int status;
     private String deliver;
+    private boolean isFinal;
     private Project project;
     private ProjectPhase phase;
 
@@ -27,6 +30,7 @@ public class Milestone {
     public void setId(int id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
@@ -45,6 +49,14 @@ public class Milestone {
 
     public String getDetails() {
         return details;
+    }
+
+    public boolean isIsFinal() {
+        return isFinal;
+    }
+
+    public void setIsFinal(boolean isFinal) {
+        this.isFinal = isFinal;
     }
 
     public void setDetails(String details) {
@@ -90,6 +102,5 @@ public class Milestone {
     public void setPhase(ProjectPhase phase) {
         this.phase = phase;
     }
-    
-    
+
 }

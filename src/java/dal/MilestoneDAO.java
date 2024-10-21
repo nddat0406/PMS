@@ -33,6 +33,7 @@ public class MilestoneDAO extends BaseDAO {
             temp.setEndDate(rs.getDate(5));
             temp.setStatus(rs.getInt(6));
             temp.setDeliver(rs.getString(7));
+            temp.setIsFinal(rs.getBoolean("isFinal"));
             return temp;
         } catch (SQLException e) {
             throw new SQLException(e);
@@ -55,6 +56,7 @@ public class MilestoneDAO extends BaseDAO {
                 temp.setEndDate(rs.getDate(5));
                 temp.setStatus(rs.getInt(6));
                 temp.setDeliver(rs.getString(7));
+                temp.setIsFinal(rs.getBoolean("isFinal"));
                 list.add(temp);
             }
             return list;
@@ -116,6 +118,7 @@ public class MilestoneDAO extends BaseDAO {
                     temp.setEndDate(rs.getDate(5));
                     temp.setStatus(rs.getInt(6));
                     temp.setDeliver(rs.getString(7));
+                    temp.setIsFinal(rs.getBoolean("isFinal"));
                     result.add(temp);
                 }
             }

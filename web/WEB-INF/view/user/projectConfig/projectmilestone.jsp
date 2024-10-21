@@ -91,11 +91,14 @@
                                                                 <th name="priority" sortBy="desc" class="sortTableHead" aria-sort="none">Priority <i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="endDate" sortBy="desc" class="sortTableHead" aria-sort="none">End Date <i class="fa fa-sort sort-icon"></i></th>
                                                                 <th>Details</th>
+                                                                <th>Final</th>
                                                                 <th name="status" sortBy="desc" class="sortTableHead" aria-sort="none">Status <i class="fa fa-sort sort-icon"></i></th>
+                                                                <c:if test="${loginedUser.role == 1 || loginedUser.role == 4}">
                                                                 <th>Actions</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="tableBody">
+                                                                </c:if>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="tableBody">
                                                         <c:forEach items="${tableData}" var="milestone">
                                                             <tr>
                                                                 <td>${milestone.id}</td>
@@ -107,6 +110,17 @@
                                                                         <p>${milestone.details}</p>
                                                                     </div>
                                                                 </td>
+                                                                <td>
+                                                                    <c:choose>
+                                                                        <c:when test="${milestone.isFinal == true}">
+                                                                            <span style="color: green;">✔</span>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <span style="color: red;">✘</span>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+
                                                                 <td>
                                                                     <c:choose>
                                                                         <c:when test="${milestone.status == '0'}">
@@ -123,11 +137,13 @@
                                                                         </c:otherwise>
                                                                     </c:choose>
                                                                 </td>
-                                                                <td>
-                                                                    <button class="btn btn-sm btn-outline-secondary view-details">
-                                                                        <i class="fa fa-eye"></i> View Details
-                                                                    </button>
-                                                                </td>
+                                                                <c:if test="${loginedUser.role == 1 || loginedUser.role == 4}">
+                                                                    <td>
+                                                                        <button class="btn btn-sm btn-outline-secondary view-details">
+                                                                            <i class="fa fa-eye"></i> View Details
+                                                                        </button>
+                                                                    </td>
+                                                                </c:if>
                                                             </tr>
                                                         </c:forEach>
                                                     </tbody>
@@ -137,19 +153,13 @@
                                                         <h4>No result found!</h4>
                                                     </div>
                                                 </c:if>
-                                                <nav aria-label="Page navigation">
-                                                    <ul class="pagination mt-3">
-                                                        <li class="page-item ${page == 1 ? 'disabled' : ''}">
-                                                            <a class="page-link" href="milestone?page=${page - 1}" ${page == 1 ? 'tabindex="-1" aria-disabled="true"' : ''}>Previous</a>
-                                                        </li>
-                                                        <c:forEach begin="1" end="${num}" var="i">
-                                                            <li class="page-item ${i == page ? 'active' : ''}">
-                                                                <a class="page-link" href="milestone?page=${i}">${i}</a>
-                                                            </li>
-                                                        </c:forEach>
-                                                        <li class="page-item ${page == num ? 'disabled' : ''}">
-                                                            <a class="page-link" href="milestone?page=${page + 1}" ${page == num ? 'tabindex="-1" aria-disabled="true"' : ''}>Next</a>
-                                                        </li>
+                                                <nav aria-label="Page navigation example">
+                                                    <ul class="pagination">
+                                                        <li class="page-item"><a class="page-link" href="milestone?page=${page==1?1:page-1}">Previous</a></li>
+                                                            <c:forEach begin="${1}" end="${num}" var="i">
+                                                            <li class="page-item ${i==page?'active':''}"><a class="page-link" href="milestone?page=${i}">${i}</a></li>
+                                                            </c:forEach>
+                                                        <li class="page-item"><a class="page-link" href="milestone?page=${page!=num?page+1:page}">Next</a></li>
                                                     </ul>
                                                 </nav>
                                             </div>
@@ -211,7 +221,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="document.querySelector('#milestoneForm').submit();">Save changes</button> 
+                        <button type="button" class="btn btn-primary text-success" onclick="document.querySelector('#milestoneForm').submit();">Save changes</button> 
                     </div>
                 </div>
             </div>
