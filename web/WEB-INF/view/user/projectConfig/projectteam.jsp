@@ -46,6 +46,9 @@
             .accordion-item{
                 margin: 10px;
             }
+            .accordion-button{
+                padding: 25px
+            }
             #accordionExample{
                 margin-top: 10px;
             }
@@ -701,7 +704,6 @@
                 ;
                 function getAddMemberList(id) {
                     $(' #teamAddMember').val(id);
-                    console.log(id);
                     $(' #tableAddBody').load("${pageContext.request.contextPath}/project/team?page=${page}&teamAddId=" + id + " #tableAddBody > *");
                 }
                 ;

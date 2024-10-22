@@ -213,18 +213,20 @@ public class TeamDAO extends BaseDAO {
         }
     }
 
-    public List<User> getAddMembers(int teamId, int pID) throws SQLException {
+    public List<User> getAddMembers(int pID) throws SQLException {
         String str = """
                      SELECT DISTINCT a.userId
-                     FROM allocation AS a
-                     WHERE a.userId NOT IN (
-                         SELECT userId
-                         FROM team_member
-                         WHERE teamId = ?
-                     )
-                     AND a.projectId = ? and status = 1""";
+                     FROM allocation a
+                     WHERE a.projectId = ?
+                       AND a.userId NOT IN (
+                           SELECT tm.userId
+                           FROM team_member tm
+                           JOIN team t ON tm.teamId = t.id
+                           WHERE t.projectId = ?
+                       )
+                       AND a.status = 1""";
         PreparedStatement pre = getConnection().prepareStatement(str);
-        pre.setInt(1, teamId);
+        pre.setInt(1, pID);
         pre.setInt(2, pID);
         ResultSet rs = pre.executeQuery();
         List<User> temp = new ArrayList<>();

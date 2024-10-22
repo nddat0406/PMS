@@ -5,11 +5,8 @@
         <group name="test">
             <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/TeamDAO.java</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/TeamService.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projectmember.jsp</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/MilestoneDAO.java</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/ProjectConfigController.java</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projectteam.jsp</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/common/sidebar.jsp</file>
         </group>
     </open-files>
 </project-private>

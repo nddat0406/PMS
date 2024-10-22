@@ -33,6 +33,7 @@ public class MilestoneDAO extends BaseDAO {
             temp.setEndDate(rs.getDate(5));
             temp.setStatus(rs.getInt(6));
             temp.setDeliver(rs.getString(7));
+            temp.setIsFinal(rs.getBoolean("isFinal"));
             return temp;
         } catch (SQLException e) {
             throw new SQLException(e);
@@ -55,6 +56,7 @@ public class MilestoneDAO extends BaseDAO {
                 temp.setEndDate(rs.getDate(5));
                 temp.setStatus(rs.getInt(6));
                 temp.setDeliver(rs.getString(7));
+                temp.setIsFinal(rs.getBoolean("isFinal"));
                 list.add(temp);
             }
             return list;
@@ -71,7 +73,7 @@ public class MilestoneDAO extends BaseDAO {
             ps.setString(3, milestone.getDetails());
             ps.setDate(4, new java.sql.Date(milestone.getEndDate().getTime()));
             ps.setObject(5, milestone.getStatus());
-//            ps.setString(6, milestone.getDeliver());
+            ps.setString(6, milestone.getDeliver());
             ps.setInt(6, milestone.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -98,12 +100,13 @@ public class MilestoneDAO extends BaseDAO {
 
     public List<Milestone> searchMilestones(String searchKey) throws SQLException {
         List<Milestone> result = new ArrayList<>();
-        String sql = "SELECT ml.*\n"
-                + "FROM \n"
-                + "	milestone as ml,\n"
-                + "    project as pj\n"
-                + "where pj.name = ?\n"
-                + "AND ml.projectId = pj.id";
+        String sql = """
+                     SELECT ml.*
+                     FROM 
+                     milestone as ml,
+                         project as pj
+                     where pj.name = ?
+                     AND ml.projectId = pj.id""";
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
             stmt.setString(1, searchKey);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -116,6 +119,7 @@ public class MilestoneDAO extends BaseDAO {
                     temp.setEndDate(rs.getDate(5));
                     temp.setStatus(rs.getInt(6));
                     temp.setDeliver(rs.getString(7));
+                    temp.setIsFinal(rs.getBoolean("isFinal"));
                     result.add(temp);
                 }
             }

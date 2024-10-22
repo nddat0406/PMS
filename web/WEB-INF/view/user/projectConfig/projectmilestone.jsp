@@ -59,95 +59,105 @@
                             </div>
                         <jsp:include page="../../common/projectSearch.jsp"></jsp:include>
 
-                        <div class="row g-3">
-                            <div class="col-lg-12 col-md-12">
-                                <div class="card mb-3">
-                                    <div class="card-body">
-                                        <ul class="nav nav-tabs" id="myTab" role="tablist" style="width: 50%">
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link active" id="Overview-tab" href="milestone" role="tab">Milestone</a></li>
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="eval" role="tab">Evaluation criteria</a></li>
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="member" role="tab">Member</a></li>
-                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="team" role="tab">Team</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
+                            <div class="row g-3">
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <ul class="nav nav-tabs" id="myTab" role="tablist" style="width: 50%">
+                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link active" id="Overview-tab" href="milestone" role="tab">Milestone</a></li>
+                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="eval" role="tab">Evaluation criteria</a></li>
+                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="member" role="tab">Member</a></li>
+                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="team" role="tab">Team</a></li>
+                                            </ul>
+                                        </div>
 
-                                <div class="tab-content p-0" id="myTabContent">
-                                    <div class="tab-pane fade active show" id="Tab1">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h6 class="card-title">Project Milestones</h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <table id="milestone_list" class="table table-hover mb-0">
-                                                    <thead>
-                                                        <tr>
-                                                            <th name="id" sortBy="desc" class="sortTableHead" aria-sort="none">ID <i class="fa fa-sort sort-icon"></i></th>
-                                                            <th name="name" sortBy="desc" class="sortTableHead" aria-sort="none">Name <i class="fa fa-sort sort-icon"></i></th>
-                                                            <th name="priority" sortBy="desc" class="sortTableHead" aria-sort="none">Priority <i class="fa fa-sort sort-icon"></i></th>
-                                                            <th name="endDate" sortBy="desc" class="sortTableHead" aria-sort="none">End Date <i class="fa fa-sort sort-icon"></i></th>
-                                                            <th>Details</th>
-                                                            <th name="status" sortBy="desc" class="sortTableHead" aria-sort="none">Status <i class="fa fa-sort sort-icon"></i></th>
-                                                            <th>Actions</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody class="tableBody">
-                                                        <c:forEach items="${tableData}" var="milestone">
-                                                            <tr>
-                                                                <td>${milestone.id}</td>
-                                                                <td>${milestone.name}</td>
-                                                                <td>${milestone.priority}</td>
-                                                                <td>${milestone.endDate}</td>
-                                                                <td>
-                                                                    <div class="content-wrapper">
-                                                                        <p>${milestone.details}</p>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <c:choose>
-                                                                        <c:when test="${milestone.status == '0'}">
-                                                                            <span class="badge bg-secondary">Closed</span>
-                                                                        </c:when>
-                                                                        <c:when test="${milestone.status == '1'}">
-                                                                            <span class="badge bg-primary">In Progress</span>
-                                                                        </c:when>
-                                                                        <c:when test="${milestone.status == '2'}">
-                                                                            <span class="badge bg-warning">Pending</span>
-                                                                        </c:when>
-                                                                        <c:otherwise>
-                                                                            <span class="badge bg-info">${milestone.status}</span>
-                                                                        </c:otherwise>
-                                                                    </c:choose>
-                                                                </td>
-                                                                <td>
-                                                                    <button class="btn btn-sm btn-outline-secondary view-details">
-                                                                        <i class="fa fa-eye"></i> View Details
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                        </c:forEach>
-                                                    </tbody>
-                                                </table>
-                                                <c:if test="${empty tableData}">
-                                                    <div class="card-body text-center">
-                                                        <h4>No result found!</h4>
+                                        <div class="tab-content p-0" id="myTabContent">
+                                            <div class="tab-pane fade active show" id="Tab1">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <h6 class="card-title">Project Milestones</h6>
                                                     </div>
-                                                </c:if>
-                                                <nav aria-label="Page navigation">
-                                                    <ul class="pagination mt-3">
-                                                        <li class="page-item ${page == 1 ? 'disabled' : ''}">
-                                                            <a class="page-link" href="milestone?page=${page - 1}" ${page == 1 ? 'tabindex="-1" aria-disabled="true"' : ''}>Previous</a>
-                                                        </li>
-                                                        <c:forEach begin="1" end="${num}" var="i">
-                                                            <li class="page-item ${i == page ? 'active' : ''}">
-                                                                <a class="page-link" href="milestone?page=${i}">${i}</a>
-                                                            </li>
-                                                        </c:forEach>
-                                                        <li class="page-item ${page == num ? 'disabled' : ''}">
-                                                            <a class="page-link" href="milestone?page=${page + 1}" ${page == num ? 'tabindex="-1" aria-disabled="true"' : ''}>Next</a>
-                                                        </li>
-                                                    </ul>
-                                                </nav>
+                                                    <div class="card-body">
+                                                        <table id="milestone_list" class="table table-hover mb-0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th name="id" sortBy="desc" class="sortTableHead" aria-sort="none">ID <i class="fa fa-sort sort-icon"></i></th>
+                                                                    <th name="name" sortBy="desc" class="sortTableHead" aria-sort="none">Name <i class="fa fa-sort sort-icon"></i></th>
+                                                                    <th name="priority" sortBy="desc" class="sortTableHead" aria-sort="none">Priority <i class="fa fa-sort sort-icon"></i></th>
+                                                                    <th name="endDate" sortBy="desc" class="sortTableHead" aria-sort="none">End Date <i class="fa fa-sort sort-icon"></i></th>
+                                                                    <th>Details</th>
+                                                                    <th>Final</th>
+                                                                    <th name="status" sortBy="desc" class="sortTableHead" aria-sort="none">Status <i class="fa fa-sort sort-icon"></i></th>
+                                                                    <c:if test="${loginedUser.role == 1 || loginedUser.role == 4}">
+                                                                    <th>Actions</th>
+                                                                    </c:if>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="tableBody">
+                                                            <c:forEach items="${tableData}" var="milestone">
+                                                                <tr>
+                                                                    <td>${milestone.id}</td>
+                                                                    <td>${milestone.name}</td>
+                                                                    <td>${milestone.priority}</td>
+                                                                    <td>${milestone.endDate}</td>
+                                                                    <td>
+                                                                        <div class="content-wrapper">
+                                                                            <p>${milestone.details}</p>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <c:choose>
+                                                                            <c:when test="${milestone.isFinal == true}">
+                                                                                <span style="color: green;">✔</span>
+                                                                            </c:when>
+                                                                            <c:otherwise>
+                                                                                <span style="color: red;">✘</span>
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+                                                                    </td>
+
+                                                                    <td>
+                                                                        <c:choose>
+                                                                            <c:when test="${milestone.status == '0'}">
+                                                                                <span class="badge bg-secondary">Closed</span>
+                                                                            </c:when>
+                                                                            <c:when test="${milestone.status == '1'}">
+                                                                                <span class="badge bg-primary">In Progress</span>
+                                                                            </c:when>
+                                                                            <c:when test="${milestone.status == '2'}">
+                                                                                <span class="badge bg-warning">Pending</span>
+                                                                            </c:when>
+                                                                            <c:otherwise>
+                                                                                <span class="badge bg-info">${milestone.status}</span>
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+                                                                    </td>
+                                                                    <c:if test="${loginedUser.role == 1 || loginedUser.role == 4}">
+                                                                        <td>
+                                                                            <button class="btn btn-sm btn-outline-secondary view-details">
+                                                                                <i class="fa fa-eye"></i> View Details
+                                                                            </button>
+                                                                        </td>
+                                                                    </c:if>
+                                                                </tr>
+                                                            </c:forEach>
+                                                        </tbody>
+                                                    </table>
+                                                    <c:if test="${empty tableData}">
+                                                        <div class="card-body text-center">
+                                                            <h4>No result found!</h4>
+                                                        </div>
+                                                    </c:if>
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul class="pagination">
+                                                            <li class="page-item"><a class="page-link" href="milestone?page=${page==1?1:page-1}">Previous</a></li>
+                                                                <c:forEach begin="${1}" end="${num}" var="i">
+                                                                <li class="page-item ${i==page?'active':''}"><a class="page-link" href="milestone?page=${i}">${i}</a></li>
+                                                                </c:forEach>
+                                                            <li class="page-item"><a class="page-link" href="milestone?page=${page!=num?page+1:page}">Next</a></li>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -157,188 +167,187 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="modal fade" id="milestoneDetailModal" tabindex="-1" aria-labelledby="milestoneDetailModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="milestoneDetailModalLabel">Milestone Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="milestoneForm" action="${pageContext.request.contextPath}/project/milestone" method="post">
-                            <input type="hidden" name="action" value="update">
-                            <input type="hidden" name="mileStoneId" value="" id="modalMilestoneId">
-                            <div class="mb-3">
-                                <label for="milestoneName" class="form-label">Name</label>
-                                <input type="text" class="form-control" name="milestoneName" id="modalMilestoneName" required>
-                            </div>
+            <div class="modal fade" id="milestoneDetailModal" tabindex="-1" aria-labelledby="milestoneDetailModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="milestoneDetailModalLabel">Milestone Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="milestoneForm" action="${pageContext.request.contextPath}/project/milestone" method="post">
+                                <input type="hidden" name="action" value="update">
+                                <input type="hidden" name="mileStoneId" value="" id="modalMilestoneId">
+                                <div class="mb-3">
+                                    <label for="milestoneName" class="form-label">Name</label>
+                                    <input type="text" class="form-control" name="milestoneName" id="modalMilestoneName" required>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="milestonePriority" class="form-label">Priority</label>
-                                <select class="form-select" name="milestonePriority" id="modalMilestonePriority">
-                                    <option value="1">1 - Low</option>
-                                    <option value="2">2 - Medium</option>
-                                    <option value="3">3 - High</option>
-                                    <option value="4">4 - Critical</option>
-                                </select>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="milestonePriority" class="form-label">Priority</label>
+                                    <select class="form-select" name="milestonePriority" id="modalMilestonePriority">
+                                        <option value="1">1 - Low</option>
+                                        <option value="2">2 - Medium</option>
+                                        <option value="3">3 - High</option>
+                                        <option value="4">4 - Critical</option>
+                                    </select>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="milestoneEndDate" class="form-label">End Date</label>
-                                <input type="date" name="milestoneEndDate" class="form-control" id="modalMilestoneEndDate" required>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="milestoneEndDate" class="form-label">End Date</label>
+                                    <input type="date" name="milestoneEndDate" class="form-control" id="modalMilestoneEndDate" required>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="milestoneStatus" class="form-label">Status</label>
-                                <select class="form-select" id="modalMilestoneStatus" name="milestoneStatus">
-                                    <option value="0">Closed</option>
-                                    <option value="1">In Progress</option>
-                                    <option value="2">Pending</option>
-                                </select>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="milestoneStatus" class="form-label">Status</label>
+                                    <select class="form-select" id="modalMilestoneStatus" name="milestoneStatus">
+                                        <option value="0">Closed</option>
+                                        <option value="1">In Progress</option>
+                                        <option value="2">Pending</option>
+                                    </select>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="milestoneDetails" class="form-label">Details</label>
-                                <textarea name="milestoneDetails" class="form-control" id="modalMilestoneDetails" rows="3"></textarea>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="document.querySelector('#milestoneForm').submit();">Save changes</button> 
+                                <div class="mb-3">
+                                    <label for="milestoneDetails" class="form-label">Details</label>
+                                    <textarea name="milestoneDetails" class="form-control" id="modalMilestoneDetails" rows="3"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary text-success" onclick="document.querySelector('#milestoneForm').submit();">Save changes</button> 
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/bundles/select2.bundle.js"></script>
+            <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+            <script src="${pageContext.request.contextPath}/assets/bundles/select2.bundle.js"></script>
 
-        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/js/pages/index2.js"></script>
+            <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+            <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
+            <script src="${pageContext.request.contextPath}/assets/js/pages/index2.js"></script>
 
-        <script>
-                            $(document).ready(function () {
-                                $('.view-details').on('click', function () {
-                                    var row = $(this).closest('tr');
-                                    var id = row.find('td:eq(0)').text();
-                                    var name = row.find('td:eq(1)').text();
-                                    var priority = row.find('td:eq(2)').text();
-                                    var endDate = row.find('td:eq(3)').text();
-                                    var statusText = row.find('td:eq(5) .badge').text().trim();
-                                    var status;
-                                    switch (statusText) {
-                                        case 'Closed':
-                                            status = 0;
-                                            break;
-                                        case 'In Progress':
-                                            status = 1;
-                                            break;
-                                        case 'Pending':
-                                            status = 2;
-                                            break;
-                                        default:
-                                            status = 1;
+            <script>
+                                $(document).ready(function () {
+                                    $('.view-details').on('click', function () {
+                                        var row = $(this).closest('tr');
+                                        var id = row.find('td:eq(0)').text();
+                                        var name = row.find('td:eq(1)').text();
+                                        var priority = row.find('td:eq(2)').text();
+                                        var endDate = row.find('td:eq(3)').text();
+                                        var statusText = row.find('td:eq(5) .badge').text().trim();
+                                        var status;
+                                        switch (statusText) {
+                                            case 'Closed':
+                                                status = 0;
+                                                break;
+                                            case 'In Progress':
+                                                status = 1;
+                                                break;
+                                            case 'Pending':
+                                                status = 2;
+                                                break;
+                                            default:
+                                                status = 1;
+                                        }
+                                        var details = row.find('td:eq(4)').text() || 'No details available';
+
+                                        $('#modalMilestoneId').val(id);
+                                        $('#modalMilestoneName').val(name);
+                                        $('#modalMilestonePriority').val(priority);
+                                        $('#modalMilestoneEndDate').val(endDate);
+                                        $('#modalMilestoneStatus').val(status);
+                                        $('#modalMilestoneDetails').val(details.trim());
+
+                                        $('#milestoneDetailModal').modal('show');
+                                    });
+
+                                    var currentSortField = "${sortFieldName}";
+                                    var currentSortOrder = "${sortOrder}";
+                                    if (currentSortField && currentSortOrder) {
+                                        var $th = $('th[name="' + currentSortField + '"]');
+                                        $th.attr('sortBy', currentSortOrder);
+                                        $th.attr('aria-sort', currentSortOrder === 'asc' ? 'ascending' : 'descending');
+                                        $th.find('.sort-icon')
+                                                .removeClass('fa-sort')
+                                                .addClass(currentSortOrder === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
                                     }
-                                    var details = row.find('td:eq(4)').text() || 'No details available';
 
-                                    $('#modalMilestoneId').val(id);
-                                    $('#modalMilestoneName').val(name);
-                                    $('#modalMilestonePriority').val(priority);
-                                    $('#modalMilestoneEndDate').val(endDate);
-                                    $('#modalMilestoneStatus').val(status);
-                                    $('#modalMilestoneDetails').val(details.trim());
+                                    $('.sortTableHead').on('click', function () {
+                                        var $th = $(this);
+                                        var name = $th.attr('name');
+                                        var sortBy = $th.attr('sortBy');// Reset all icons to default
+                                        $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+                                        $('.sortTableHead').attr('aria-sort', 'none');
 
-                                    $('#milestoneDetailModal').modal('show');
+                                        // Update only the clicked column's icon
+                                        if (sortBy === 'asc') {
+                                            sortBy = 'desc';
+                                            $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
+                                            $th.attr('aria-sort', 'descending');
+                                        } else {
+                                            sortBy = 'asc';
+                                            $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
+                                            $th.attr('aria-sort', 'ascending');
+                                        }
+
+                                        $th.attr('sortBy', sortBy);
+                                        changeSort(name, sortBy);
+                                    });
+                                    $('.select2Project').select2();
                                 });
 
-                                var currentSortField = "${sortFieldName}";
-                                var currentSortOrder = "${sortOrder}";
-                                if (currentSortField && currentSortOrder) {
-                                    var $th = $('th[name="' + currentSortField + '"]');
-                                    $th.attr('sortBy', currentSortOrder);
-                                    $th.attr('aria-sort', currentSortOrder === 'asc' ? 'ascending' : 'descending');
-                                    $th.find('.sort-icon')
-                                            .removeClass('fa-sort')
-                                            .addClass(currentSortOrder === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
+                                function changeSort(name, sortBy) {
+                                    $.ajax({
+                                        url: "milestone",
+                                        type: 'post',
+                                        data: {
+                                            sortBy: sortBy,
+                                            fieldName: name,
+                                            action: "sort",
+                                            page: ${page}
+                                        },
+                                        success: function (data) {
+                                            $('.tableBody').html($(data).find('.tableBody').html());
+                                            updatePagination(data);
+                                        },
+                                        error: function (xhr, status, error) {
+                                            console.error("An error occurred: " + error);
+                                            alert("An error occurred while sorting. Please try again.");
+                                        }
+                                    });
                                 }
 
-                                $('.sortTableHead').on('click', function () {
-                                    var $th = $(this);
-                                    var name = $th.attr('name');
-                                    var sortBy = $th.attr('sortBy');// Reset all icons to default
-                                    $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
-                                    $('.sortTableHead').attr('aria-sort', 'none');
-
-                                    // Update only the clicked column's icon
-                                    if (sortBy === 'asc') {
-                                        sortBy = 'desc';
-                                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
-                                        $th.attr('aria-sort', 'descending');
-                                    } else {
-                                        sortBy = 'asc';
-                                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
-                                        $th.attr('aria-sort', 'ascending');
+                                function updatePagination(data) {
+                                    var $newPagination = $(data).find('.pagination');
+                                    if ($newPagination.length) {
+                                        $('.pagination').replaceWith($newPagination);
                                     }
-
-                                    $th.attr('sortBy', sortBy);
-                                    changeSort(name, sortBy);
-                                });
-                                $('.select2Project').select2();
-                            });
-
-                            function changeSort(name, sortBy) {
-                                $.ajax({
-                                    url: "milestone",
-                                    type: 'post',
-                                    data: {
-                                        sortBy: sortBy,
-                                        fieldName: name,
-                                        action: "sort",
-                                        page: ${page}
-                                    },
-                                    success: function (data) {
-                                        $('.tableBody').html($(data).find('.tableBody').html());
-                                        updatePagination(data);
-                                    },
-                                    error: function (xhr, status, error) {
-                                        console.error("An error occurred: " + error);
-                                        alert("An error occurred while sorting. Please try again.");
-                                    }
-                                });
-                            }
-
-                            function updatePagination(data) {
-                                var $newPagination = $(data).find('.pagination');
-                                if ($newPagination.length) {
-                                    $('.pagination').replaceWith($newPagination);
                                 }
-                            }
 
-                            history.pushState(null, "", location.href.split("?")[0]);
-                            function searchProject() {
-                                var searchTerm = $('#projectSearch').val();
-                                $.ajax({
-                                    url: "milestone",
-                                    type: 'post',
-                                    data: {
-                                        action: "search",
-                                        searchKey: searchTerm,
-                                        page: 1  // Reset về trang đầu tiên khi tìm kiếm
-                                    },
-                                    success: function (data) {
-                                        $('.tableBody').html($(data).find('.tableBody').html());
-                                        updatePagination(data);
-                                    },
-                                    error: function (xhr, status, error) {
-                                        console.error("An error occurred: " + error);
-                                        alert("An error occurred while searching. Please try again.");
-                                    }
-                                });
-                            }
-        </script>
+                                history.pushState(null, "", location.href.split("?")[0]);
+                                function searchProject() {
+                                    var searchTerm = $('#projectSearch').val();
+                                    $.ajax({
+                                        url: "milestone",
+                                        type: 'post',
+                                        data: {
+                                            action: "search",
+                                            searchKey: searchTerm,
+                                            page: 1  // Reset về trang đầu tiên khi tìm kiếm
+                                        },
+                                        success: function (data) {
+                                            $('.tableBody').html($(data).find('.tableBody').html());
+                                            updatePagination(data);
+                                        },
+                                        error: function (xhr, status, error) {
+                                            console.error("An error occurred: " + error);
+                                            alert("An error occurred while searching. Please try again.");
+                                        }
+                                    });
+                                }
+            </script>
     </body>
 </html>

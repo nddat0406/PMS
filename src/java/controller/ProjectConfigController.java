@@ -129,9 +129,8 @@ public class ProjectConfigController extends HttpServlet {
                     String teamAddId = request.getParameter("teamAddId");
                     if (teamAddId != null) {
                         try {
-                            int teamId = Integer.parseInt(teamAddId);
                             Integer pID = (Integer) request.getSession().getAttribute("selectedProject");
-                            request.setAttribute("addMemberList", tService.getAddMemberList(teamId, pID));
+                            request.setAttribute("addMemberList", tService.getAddMemberList( pID));
                         } catch (SQLException ex) {
                             throw new ServletException(ex);
                         }
@@ -677,11 +676,13 @@ public class ProjectConfigController extends HttpServlet {
             Team t = new Team();
             t.setName(name);
             t.setTopic(topic);
-
-            int[] mile = Arrays.stream(mileRaw).mapToInt(Integer::valueOf).toArray();
+            int[] mile;
             List<Milestone> m = new ArrayList<>();
-            for (Integer integer : mile) {
-                m.add(new Milestone(integer));
+            if (mileRaw!=null && mileRaw.length != 0) {
+                mile = Arrays.stream(mileRaw).mapToInt(Integer::valueOf).toArray();
+                for (Integer integer : mile) {
+                    m.add(new Milestone(integer));
+                }
             }
             t.setMilestone(m);
             t.setDetails(des);
@@ -715,10 +716,13 @@ public class ProjectConfigController extends HttpServlet {
             t.setId(uID);
             t.setName(uName);
             t.setTopic(uTopic);
-            int[] mile = Arrays.stream(mileRaw).mapToInt(Integer::valueOf).toArray();
+            int[] mile;
             List<Milestone> m = new ArrayList<>();
-            for (Integer integer : mile) {
-                m.add(new Milestone(integer));
+            if (mileRaw!=null && mileRaw.length != 0) {
+                mile = Arrays.stream(mileRaw).mapToInt(Integer::valueOf).toArray();
+                for (Integer integer : mile) {
+                    m.add(new Milestone(integer));
+                }
             }
             t.setMilestone(m);
             t.setDetails(uDescription);

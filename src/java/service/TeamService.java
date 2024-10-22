@@ -28,7 +28,7 @@ public class TeamService {
         if (!tdao.isDuplicated(t)) {
             tdao.addTeam(t);
         } else {
-            throw new SQLException("There was a team with name = " + t.getName() + " in that milestone ! ");
+            throw new SQLException("There was a team with name = " + t.getName() + " in this project ! ");
         }
     }
 
@@ -102,8 +102,8 @@ public class TeamService {
         }
     }
 
-    public List<User> getAddMemberList(int teamId, int pID) throws SQLException {
-        return tdao.getAddMembers(teamId, pID);
+    public List<User> getAddMemberList( int pID) throws SQLException {
+        return tdao.getAddMembers( pID);
     }
 
     public void changeStatus(int id, List<Team> list) throws SQLException {
