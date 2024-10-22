@@ -24,6 +24,13 @@ public class Project {
     private Group domain;
     private List<User> manager;
 
+    public Project() {
+    }
+
+    public Project(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

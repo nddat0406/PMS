@@ -7,8 +7,10 @@
         <title>Project Milestone</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/select2.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
         <style>
             .content-wrapper {
                 max-height: 50px;
@@ -55,47 +57,41 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row g-3">
-                                <div class="col-lg-12 col-md-12">
-                                    <div class="card mb-3">
-                                        <div class="card-body">
-                                            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link active" id="Overview-tab" href="milestone" role="tab">Milestone</a></li>
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="eval" role="tab">Evaluation criteria</a></li>
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="member" role="tab">Member</a></li>
-                                                <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="team" role="tab">Team</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" id="projectSearch" placeholder="Search project...">
-                                                <button class="btn btn-primary" type="button" onclick="searchProject()">
-                                                    <i class="fa fa-search"></i> Search
-                                                </button>
-                                                <!--<button class="btn btn-secondary ms-2" type="button" id="viewDetails">View Details</button>-->
-                                            </div>
-                                        </div>
+                        <jsp:include page="../../common/projectSearch.jsp"></jsp:include>
+
+                        <div class="row g-3">
+                            <div class="col-lg-12 col-md-12">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <ul class="nav nav-tabs" id="myTab" role="tablist" style="width: 50%">
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link active" id="Overview-tab" href="milestone" role="tab">Milestone</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="eval" role="tab">Evaluation criteria</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="member" role="tab">Member</a></li>
+                                            <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="team" role="tab">Team</a></li>
+                                        </ul>
                                     </div>
-                                    <div class="tab-content p-0" id="myTabContent">
-                                        <div class="tab-pane fade active show" id="Tab1">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <h6 class="card-title">Project Milestones</h6>
-                                                </div>
-                                                <div class="card-body">
-                                                    <table id="milestone_list" class="table table-hover mb-0">
-                                                        <thead>
-                                                            <tr>
-                                                                <th name="id" sortBy="desc" class="sortTableHead" aria-sort="none">ID <i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="name" sortBy="desc" class="sortTableHead" aria-sort="none">Name <i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="priority" sortBy="desc" class="sortTableHead" aria-sort="none">Priority <i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="endDate" sortBy="desc" class="sortTableHead" aria-sort="none">End Date <i class="fa fa-sort sort-icon"></i></th>
-                                                                <th>Details</th>
-                                                                <th name="status" sortBy="desc" class="sortTableHead" aria-sort="none">Status <i class="fa fa-sort sort-icon"></i></th>
-                                                                <th>Actions</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="tableBody">
+                                </div>
+
+                                <div class="tab-content p-0" id="myTabContent">
+                                    <div class="tab-pane fade active show" id="Tab1">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6 class="card-title">Project Milestones</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <table id="milestone_list" class="table table-hover mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th name="id" sortBy="desc" class="sortTableHead" aria-sort="none">ID <i class="fa fa-sort sort-icon"></i></th>
+                                                            <th name="name" sortBy="desc" class="sortTableHead" aria-sort="none">Name <i class="fa fa-sort sort-icon"></i></th>
+                                                            <th name="priority" sortBy="desc" class="sortTableHead" aria-sort="none">Priority <i class="fa fa-sort sort-icon"></i></th>
+                                                            <th name="endDate" sortBy="desc" class="sortTableHead" aria-sort="none">End Date <i class="fa fa-sort sort-icon"></i></th>
+                                                            <th>Details</th>
+                                                            <th name="status" sortBy="desc" class="sortTableHead" aria-sort="none">Status <i class="fa fa-sort sort-icon"></i></th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="tableBody">
                                                         <c:forEach items="${tableData}" var="milestone">
                                                             <tr>
                                                                 <td>${milestone.id}</td>
@@ -218,9 +214,12 @@
         </div>
 
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/select2.bundle.js"></script>
+
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/pages/index2.js"></script>
+
         <script>
                             $(document).ready(function () {
                                 $('.view-details').on('click', function () {
@@ -288,6 +287,7 @@
                                     $th.attr('sortBy', sortBy);
                                     changeSort(name, sortBy);
                                 });
+                                $('.select2Project').select2();
                             });
 
                             function changeSort(name, sortBy) {

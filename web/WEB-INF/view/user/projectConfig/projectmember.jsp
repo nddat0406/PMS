@@ -15,9 +15,11 @@
         <link rel="icon" href="favicon.ico" type="image/x-icon">
         <!-- VENDOR CSS -->
         <!-- MAIN CSS -->
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/select2.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/sweetalert2.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 
         <style>
@@ -116,6 +118,8 @@
                                     </div>
                                 </div>
                             </div>
+                        <jsp:include page="../../common/projectSearch.jsp"></jsp:include>
+
                             <div class="row g-3">
                                 <div class="col-lg-12 col-md-12">
                                     <div class="card mb-3">
@@ -205,10 +209,10 @@
                                                                     </c:if>
                                                                     <c:if test="${i.role==3||i.role==4}">
                                                                         <td><span class="badge bg-success">${i.getRoleString()}</span></td>
-                                                                    </c:if>
-                                                                    <c:if test="${i.role==5||i.role==6}">
+                                                                        </c:if>
+                                                                        <c:if test="${i.role==5||i.role==6}">
                                                                         <td><span class="badge bg-info">${i.getRoleString()}</span></td>
-                                                                    </c:if>
+                                                                        </c:if>
                                                                     <td><span class="datetime">${t.startDate}</span></td>
                                                                     <td><span class="datetime">${t.endDate}</span></td>
                                                                     <td>
@@ -266,7 +270,9 @@
 
         <!-- core js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/bundles/sweetalert2.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/sweetalert2.bundle.js"></script>        
+        <script src="${pageContext.request.contextPath}/assets/bundles/select2.bundle.js"></script>
+
 
         <!-- page js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
@@ -293,6 +299,8 @@
                                                                                     // Set the updated sortBy attribute
                                                                                     $th.attr('sortBy', sortBy);
                                                                                 });
+                                                                                $('.select2Project').select2();
+
                                                                             });
                                                                             $readMoreBtn = $(' .read-more-btn');
                                                                             $readMoreBtn.on('click', function () {

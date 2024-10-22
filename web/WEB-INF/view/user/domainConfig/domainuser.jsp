@@ -64,76 +64,80 @@
                                                 <a class="nav-link active" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link " id="ProjectPhase-tab" href="${baseUrl}" role="tab">Project Phase</a>
+                                                <a class="nav-link " id="ProjectPhase-tab" href="domain/projectphase" role="tab">Project Phase</a>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="tab-content p-0" id="myTabContent">
+                                            <form action="${baseUrl}/domain" method="post" enctype="multipart/form-data" class="mb-3">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <button type="submit" name="action" value="export" class="btn btn-primary">
+                                                        <i class="fas fa-file-excel"></i> Export to Excel
+                                                    </button>
+                                                    <div>
+                                                        <input type="file" name="file" accept=".xlsx" class="form-control d-inline-block" style="width: auto;"/>
+                                                        <button type="submit" name="action" value="import" class="btn btn-success">
+                                                            <i class="fas fa-file-upload"></i> Import from Excel
+                                                        </button>
+                                                        <a href="assets/domain_user.xlsx" download>Template</a>
+                                                    </div>
+                                                </div>
+                                            </form>
 
-                                <div class="tab-content p-0" id="myTabContent">
-                                    <form action="${baseUrl}/domain" method="post" enctype="multipart/form-data" class="mb-3">
-                                        <div class="d-flex justify-content-between mb-2">
-                                            <button type="submit" name="action" value="export" class="btn btn-primary">
-                                                <i class="fas fa-file-excel"></i> Export to Excel
-                                            </button>
-                                            <div>
-                                                <input type="file" name="file" accept=".xlsx" class="form-control d-inline-block" style="width: auto;"/>
-                                                <button type="submit" name="action" value="import" class="btn btn-success">
-                                                    <i class="fas fa-file-upload"></i> Import from Excel
-                                                </button>
-                                                <a href="assets/domain_user.xlsx" download>Template</a>
+                                            <div class="tab-pane fade active show" id="Tab1">
+                                                <div class="col-md-12"  style="display: flex; justify-content: right">
+                                                    <a href="${baseUrl}/domain/domainuser?action=add" type="submit" class="btn btn-success">Add new</a>
+                                                </div>
+                                                <table id="domainSettingsTable" class="table table-bordered table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Username</th>
+                                                            <th>Email</th>
+                                                            <th>Phone</th>
+                                                            <th>Domain</th>
+                                                            <th>Status</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <c:forEach var="user" items="${domainUsers}">
+                                                            <tr>
+                                                                <td>${user.id}</td>
+                                                                <td>${user.user.fullname}</td>
+                                                                <td>${user.user.email}</td>
+                                                                <td>${user.user.mobile}</td>
+                                                                <td>${user.parent.name}</td>
+                                                                <td>
+                                                                    <c:choose>
+                                                                        <c:when test="${user.status == 1}">Active</c:when>
+                                                                        <c:when test="${user.status == 0}">Inactive</c:when>
+                                                                        <c:otherwise>Unknown</c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
+                                                                <td>
+                                                                    <a href="${baseUrl}/domain/domainuser?action=edit&id=${user.id}" type="submit" class="btn btn-warning">Detail</a>
+                                                                    |
+                                                                    <a href="${baseUrl}/domain/domainuser?action=delete&id=${user.id}" type="submit" class="btn btn-warning">Delete</a>
+                                                                    |
+                                                                    <a href="${baseUrl}/domain/domainuser?action=deactive&id=${user.id}" type="submit" class="btn btn-danger">Deactive</a>
+                                                                    |
+                                                                    <a href="${baseUrl}/domain/domainuser?action=active&id=${user.id}" type="submit" class="btn btn-danger">Active</a>
+                                                                </td>
+                                                            </tr>
+                                                        </c:forEach>
+                                                    </tbody>
+                                                </table>
+
                                             </div>
                                         </div>
-                                    </form>
-
-                                    <div class="tab-pane fade active show" id="Tab1">
-                                         <div class="col-md-12"  style="display: flex; justify-content: right">
-                                            <a href="${baseUrl}/domain/domainuser?action=add" type="submit" class="btn btn-success">Add new</a>
-                                        </div>
-                                        <table id="domainSettingsTable" class="table table-bordered table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Username</th>
-                                                    <th>Email</th>
-                                                    <th>Phone</th>
-                                                    <th>Domain</th>
-                                                    <th>Status</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <c:forEach var="user" items="${domainUsers}">
-                                                    <tr>
-                                                        <td>${user.id}</td>
-                                                        <td>${user.user.fullname}</td>
-                                                        <td>${user.user.email}</td>
-                                                        <td>${user.user.mobile}</td>
-                                                        <td>${user.parent.name}</td>
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${user.status == 1}">Active</c:when>
-                                                                <c:when test="${user.status == 0}">Inactive</c:when>
-                                                                <c:otherwise>Unknown</c:otherwise>
-                                                            </c:choose>
-                                                        </td>
-                                                        <td>
-                                                                <a href="${baseUrl}/domain/domainuser?action=edit&id=${user.id}" type="submit" class="btn btn-warning">Detail</a>
-                                                                |
-                                                                <a href="${baseUrl}/domain/domainuser?action=delete&id=${user.id}" type="submit" class="btn btn-warning">Delete</a>
-                                                                |
-                                                                <a href="${baseUrl}/domain/domainuser?action=deactive&id=${user.id}" type="submit" class="btn btn-danger">Deactive</a>
-                                                                |
-                                                                <a href="${baseUrl}/domain/domainuser?action=active&id=${user.id}" type="submit" class="btn btn-danger">Active</a>
-                                                            </td>
-                                                    </tr>
-                                                </c:forEach>
-                                            </tbody>
-                                        </table>
-
-                                    </div>
+                                    </div>                            
                                 </div>
                             </div>
+
 
                         </div>
                     </div>
@@ -145,22 +149,20 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
         <!-- Page JS file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-<script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script><script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
-                    <script>
-                        $(document).ready(function () {
-                            $('#domainSettingsTable').DataTable({
-                                "paging": true,
-                                "lengthChange": true,
-                                "searching": true,
-                                "ordering": true,
-                                "info": true,
-                                "autoWidth": false
-                            });
-                        });
+        <script>
+            $(document).ready(function () {
+                $('#domainSettingsTable').DataTable({
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": false
+                });
+            });
 
-                    </script>
+        </script>
     </body>
 </html>

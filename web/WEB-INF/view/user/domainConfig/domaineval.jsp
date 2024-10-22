@@ -12,8 +12,6 @@
         <meta name="author" content="WrapTheme, design by: ThemeMakker.com">
         <link rel="icon" href="favicon.ico" type="image/x-icon">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
     </head>
     <body>
         <div id="layout" class="theme-cyan">
@@ -90,9 +88,9 @@
                                                 </div>
                                             </form>
 
-                                                         <div class="col-md-12"  style="display: flex; justify-content: right">
-                                            <a href="${baseUrl}/domain/domaineval?action=add" type="submit" class="btn btn-success">Add new</a>
-                                        </div>
+                                            <div class="col-md-12"  style="display: flex; justify-content: right">
+                                                <a href="${baseUrl}/domain/domaineval?action=add" type="submit" class="btn btn-success">Add new</a>
+                                            </div>
                                             <table id="domainSettingsTable" class="table table-striped">
                                                 <thead>
                                                     <tr>
@@ -144,22 +142,22 @@
 
             <!-- Core JS files -->
             <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script><script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+            <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+            <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
-                    <script>
-                        $(document).ready(function () {
-                            $('#domainSettingsTable').DataTable({
-                                "paging": true,
-                                "lengthChange": true,
-                                "searching": true,
-                                "ordering": true,
-                                "info": true,
-                                "autoWidth": false
-                            });
-                        });
+            <script>
+                $(document).ready(function () {
+                    $('#domainSettingsTable').DataTable({
+                        "paging": true,
+                        "lengthChange": true,
+                        "searching": true,
+                        "ordering": true,
+                        "info": true,
+                        "autoWidth": false
+                    });
+                });
 
-                    </script>
-            
+            </script>
+
     </body>
 </html>

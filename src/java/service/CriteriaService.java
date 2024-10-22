@@ -4,17 +4,12 @@
  */
 package service;
 
-import com.mysql.cj.jdbc.exceptions.NotUpdatable;
 import dal.CriteriaDAO;
-import dal.MilestoneDAO;
-import dal.ProjectDAO;
-import dal.UserDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Criteria;
+import model.Project;
 
 /**
  *
@@ -25,12 +20,9 @@ public class CriteriaService {
     private CriteriaDAO cdao = new CriteriaDAO();
     private BaseService baseService = new BaseService();
 
-    public List<Criteria> listCriteriaOfProject(int id) throws SQLException {
-        try {
+    public List<Criteria> listCriteriaOfProject(Integer id) throws SQLException {
             return cdao.getCriteriaByProject(id);
-        } catch (SQLException ex) {
-            throw new SQLException(ex);
-        }
+        
     }
 
     public List<Criteria> searchFilter(List<Criteria> list, Integer mileFilter, Integer statusFilter, String searchKey) {
@@ -77,7 +69,7 @@ public class CriteriaService {
     public void updateEvalProject(Criteria c, List<Criteria> list) throws SQLException {
         if (baseService.objectWithIdExists(c.getId(), list)) {
             Criteria oldC = cdao.getCriteria(c.getId());
-            if (!c.getName().equals(oldC.getName()) || c.getMilestone().getId()!= oldC.getMilestone().getId()) {
+            if (!c.getName().equals(oldC.getName()) || c.getMilestone().getId() != oldC.getMilestone().getId()) {
                 if (!cdao.isDuplicateInProject(c)) {
                     cdao.updateCriteriaProject(c);
                 } else {
@@ -106,12 +98,11 @@ public class CriteriaService {
     public void editStatusDomainEval(String status, int id) {
         cdao.editStatusDomainEval(status, id);
     }
-    
+
     public void deleteDomainEval(int id) {
         cdao.deleteDomainEval(id);
     }
-    
-    
+
     public Criteria getDomainEvalById(int id) throws SQLException {
         return cdao.getDomainEvalById(id);
     }
@@ -119,11 +110,11 @@ public class CriteriaService {
     public void addDomainEval(Criteria domain) {
         cdao.addDomainEval(domain);
     }
-    
+
     public void editDomainEval(Criteria domain) {
         cdao.editDomainEval(domain);
     }
-    
+
     public List<Criteria> getAllCriteriaPhase(String searchName, String filterStatus) throws SQLException {
         return cdao.getAllCriteriaPhase(searchName, filterStatus);
     }

@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.List;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,6 +53,8 @@ public class ProjectConfigController extends HttpServlet {
     private String linkMile = "/WEB-INF/view/user/projectConfig/projectmilestone.jsp";
     private String linkMember = "/WEB-INF/view/user/projectConfig/projectmember.jsp";
     private String linkTeam = "/WEB-INF/view/user/projectConfig/projectteam.jsp";
+
+    List<Project> myProjects;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -92,6 +95,7 @@ public class ProjectConfigController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getServletPath().substring("/project/".length());
+        myProjects = (List<Project>) request.getSession().getAttribute("myProjectList");
         switch (action) {
             case "eval" -> {
                 if (request.getParameter("page") != null) {
@@ -212,8 +216,6 @@ public class ProjectConfigController extends HttpServlet {
                     }
                     case "sort" ->
                         postSortMilestone(request, response);
-//                    case "search" ->
-//                        searchMilestone(request, response);
                     default ->
                         getProjectMilestone(request, response);
                 }
@@ -242,6 +244,9 @@ public class ProjectConfigController extends HttpServlet {
                         }
                         case "changeRole" -> {
                             postChangeRoleTeam(request, response);
+                        }
+                        case "changeStatus" -> {
+                            postChangeStatusTeam(request, response);
                         }
                         default ->
                             getProjectTeam(request, response);
@@ -280,7 +285,9 @@ public class ProjectConfigController extends HttpServlet {
                 }
             } else {
                 pID = Integer.valueOf(pIdRaw);
-                session.setAttribute("selectedProject", pID);
+                if (pService.havePermission(pID, myProjects)) {
+                    session.setAttribute("selectedProject", pID);
+                }
             }
             List<Criteria> list = cService.listCriteriaOfProject(pID);
             session.setAttribute("criteriaList", list);
@@ -308,7 +315,9 @@ public class ProjectConfigController extends HttpServlet {
                 }
             } else {
                 pID = Integer.valueOf(pIdRaw);
-                session.setAttribute("selectedProject", pID);
+                if (pService.havePermission(pID, myProjects)) {
+                    session.setAttribute("selectedProject", pID);
+                }
             }
             List<Allocation> list = pService.getProjectMembers(pID);
             session.setAttribute("memberList", list);
@@ -332,11 +341,15 @@ public class ProjectConfigController extends HttpServlet {
                 }
             } else {
                 pID = Integer.valueOf(pIdRaw);
-                session.setAttribute("selectedProject", pID);
+                if (pService.havePermission(pID, myProjects)) {
+                    session.setAttribute("selectedProject", pID);
+                }
             }
 
             List<Milestone> milestones = mService.getAllMilestone(pID);
-            session.setAttribute("milestoneList", milestones);
+            if (pService.havePermission(pID, myProjects)) {
+                session.setAttribute("selectedProject", pID);
+            }
 
             // Use the existing pagination method
             pagination(request, response, milestones, linkMile);
@@ -364,7 +377,9 @@ public class ProjectConfigController extends HttpServlet {
                 }
             } else {
                 pID = Integer.valueOf(pIdRaw);
-                session.setAttribute("selectedProject", pID);
+                if (pService.havePermission(pID, myProjects)) {
+                    session.setAttribute("selectedProject", pID);
+                }
             }
             List<Team> list = tService.getTeamsByProject(pID);
             session.setAttribute("teamList", list);
@@ -655,15 +670,19 @@ public class ProjectConfigController extends HttpServlet {
     private void postTeamAdd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             String name = request.getParameter("Name");
-            Integer mile = Integer.valueOf(request.getParameter("Milestone"));
+            String[] mileRaw = request.getParameterValues("Milestone");
             String topic = request.getParameter("Topic");
             String des = request.getParameter("Description");
             int projectId = (int) request.getSession().getAttribute("selectedProject");
             Team t = new Team();
             t.setName(name);
             t.setTopic(topic);
-            Milestone m = new Milestone();
-            m.setId(mile);
+
+            int[] mile = Arrays.stream(mileRaw).mapToInt(Integer::valueOf).toArray();
+            List<Milestone> m = new ArrayList<>();
+            for (Integer integer : mile) {
+                m.add(new Milestone(integer));
+            }
             t.setMilestone(m);
             t.setDetails(des);
             Project p = new Project();
@@ -671,7 +690,7 @@ public class ProjectConfigController extends HttpServlet {
             t.setProject(p);
             request.setAttribute("oldAddItem", t);
             List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
-            tService.addTeam(t, list);
+            tService.addTeam(t);
             list = refreshTeamChanges(request);
             request.setAttribute("successMess", "Add successfull");
             request.removeAttribute("oldAddItem");
@@ -689,15 +708,18 @@ public class ProjectConfigController extends HttpServlet {
             int uID = Integer.parseInt(request.getParameter("uID"));
             String uName = request.getParameter("uName");
             String uTopic = request.getParameter("uTopic");
-            int uMilestone = Integer.parseInt(request.getParameter("uMilestone"));
+            String[] mileRaw = request.getParameterValues("uMilestone");
             String uDescription = request.getParameter("uDescription");
             int projectId = (int) request.getSession().getAttribute("selectedProject");
             Team t = new Team();
             t.setId(uID);
             t.setName(uName);
             t.setTopic(uTopic);
-            Milestone m = new Milestone();
-            m.setId(uMilestone);
+            int[] mile = Arrays.stream(mileRaw).mapToInt(Integer::valueOf).toArray();
+            List<Milestone> m = new ArrayList<>();
+            for (Integer integer : mile) {
+                m.add(new Milestone(integer));
+            }
             t.setMilestone(m);
             t.setDetails(uDescription);
             Project p = new Project();
@@ -814,5 +836,17 @@ public class ProjectConfigController extends HttpServlet {
         request.getSession().setAttribute("sortFieldName", fieldName);
         request.getSession().setAttribute("sortOrder", order);
         pagination(request, response, list, linkMile);
+    }
+
+    private void postChangeStatusTeam(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            int id = Integer.parseInt(request.getParameter("teamId"));
+            List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
+            tService.changeStatus(id, list);
+            list = refreshTeamChanges(request);
+            pagination(request, response, list, linkTeam);
+        } catch (NumberFormatException | SQLException e) {
+            throw new ServletException(e);
+        }
     }
 }
