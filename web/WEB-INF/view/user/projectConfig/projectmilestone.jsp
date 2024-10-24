@@ -7,8 +7,10 @@
         <title>Project Milestone</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/select2.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
         <style>
             .content-wrapper {
                 max-height: 50px;
@@ -64,6 +66,8 @@
                                     </div>
                                 </div>
                             </div>
+                        <jsp:include page="../../common/projectSearch.jsp"></jsp:include>
+
                             <div class="row g-3">
                                 <div class="col-lg-12 col-md-12">
                                     <div class="card mb-3">
@@ -75,15 +79,7 @@
                                                 <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="team" role="tab">Team</a></li>
                                             </ul>
                                         </div>
-                                        <div class="card-body">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" id="projectSearch" placeholder="Search project...">
-                                                <button class="btn btn-primary" type="button" onclick="searchProject()">
-                                                    <i class="fa fa-search"></i> Search
-                                                </button>
-                                                <!--<button class="btn btn-secondary ms-2" type="button" id="viewDetails">View Details</button>-->
-                                            </div>
-                                        </div>
+
                                     </div>
                                     <div class="tab-content p-0" id="myTabContent">
                                         <div class="tab-pane fade active show" id="Tab1">
@@ -152,14 +148,14 @@
                                                     </div>
                                                 </c:if>
                                                 <nav aria-label="Page navigation example">
-                                                    <ul class="pagination">
-                                                        <li class="page-item"><a class="page-link" href="milestone?page=${page==1?1:page-1}">Previous</a></li>
-                                                            <c:forEach begin="${1}" end="${num}" var="i">
-                                                            <li class="page-item ${i==page?'active':''}"><a class="page-link" href="milestone?page=${i}">${i}</a></li>
-                                                            </c:forEach>
-                                                        <li class="page-item"><a class="page-link" href="milestone?page=${page!=num?page+1:page}">Next</a></li>
-                                                    </ul>
-                                                </nav>
+                                                        <ul class="pagination">
+                                                            <li class="page-item"><a class="page-link" href="milestone?page=${page==1?1:page-1}">Previous</a></li>
+                                                                <c:forEach begin="${1}" end="${num}" var="i">
+                                                                <li class="page-item ${i==page?'active':''}"><a class="page-link" href="milestone?page=${i}">${i}</a></li>
+                                                                </c:forEach>
+                                                            <li class="page-item"><a class="page-link" href="milestone?page=${page!=num?page+1:page}">Next</a></li>
+                                                        </ul>
+                                                    </nav>
                                             </div>
                                         </div>
                                     </div>
@@ -169,77 +165,76 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="modal fade" id="milestoneDetailModal" tabindex="-1" aria-labelledby="milestoneDetailModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="milestoneDetailModalLabel">Milestone Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="milestoneForm" action="${pageContext.request.contextPath}/project/milestone" method="post">
-                            <input type="hidden" name="action" value="update">
-                            <input type="hidden" name="mileStoneId" value="" id="modalMilestoneId">
-                            <div class="mb-3">
-                                <label for="milestoneName" class="form-label">Name</label>
-                                <input type="text" 
-                                       class="form-control" 
-                                       name="milestoneName" 
-                                       id="modalMilestoneName" 
-                                       maxlength="30" 
-                                       required>
-                            </div>
+            <div class="modal fade" id="milestoneDetailModal" tabindex="-1" aria-labelledby="milestoneDetailModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="milestoneDetailModalLabel">Milestone Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="milestoneForm" action="${pageContext.request.contextPath}/project/milestone" method="post">
+                                <input type="hidden" name="action" value="update">
+                                <input type="hidden" name="mileStoneId" value="" id="modalMilestoneId">
+                                <div class="mb-3">
+                                    <label for="milestoneName" class="form-label">Name</label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="milestoneName" 
+                                           id="modalMilestoneName" 
+                                           maxlength="30" 
+                                           required>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="milestonePriority" class="form-label">Priority</label>
-                                <select class="form-select" name="milestonePriority" id="modalMilestonePriority">
-                                    <option value="1">1 - Low</option>
-                                    <option value="2">2 - Medium</option>
-                                    <option value="3">3 - High</option>
-                                    <option value="4">4 - Critical</option>
-                                </select>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="milestonePriority" class="form-label">Priority</label>
+                                    <select class="form-select" name="milestonePriority" id="modalMilestonePriority">
+                                        <option value="1">1 - Low</option>
+                                        <option value="2">2 - Medium</option>
+                                        <option value="3">3 - High</option>
+                                        <option value="4">4 - Critical</option>
+                                    </select>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="milestoneEndDate" class="form-label">End Date</label>
-                                <input type="date" name="milestoneEndDate" class="form-control" id="modalMilestoneEndDate" required>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="milestoneEndDate" class="form-label">End Date</label>
+                                    <input type="date" name="milestoneEndDate" class="form-control" id="modalMilestoneEndDate" required>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="milestoneStatus" class="form-label">Status</label>
-                                <select class="form-select" id="modalMilestoneStatus" name="milestoneStatus">
-                                    <option value="0">Closed</option>
-                                    <option value="1">In Progress</option>
-                                    <option value="2">Pending</option>
-                                </select>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="milestoneStatus" class="form-label">Status</label>
+                                    <select class="form-select" id="modalMilestoneStatus" name="milestoneStatus">
+                                        <option value="0">Closed</option>
+                                        <option value="1">In Progress</option>
+                                        <option value="2">Pending</option>
+                                    </select>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="milestoneDetails" class="form-label">Details</label>
-                                <textarea name="milestoneDetails" 
-                                          class="form-control" 
-                                          id="modalMilestoneDetails" 
-                                          rows="3" 
-                                          maxlength="500" 
-                                          required></textarea>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" id="button-modal-submit" class="btn btn-primary text-success">Save changes</button> 
+                                <div class="mb-3">
+                                    <label for="milestoneDetails" class="form-label">Details</label>
+                                    <textarea name="milestoneDetails" 
+                                              class="form-control" 
+                                              id="modalMilestoneDetails" 
+                                              rows="3" 
+                                              maxlength="500" 
+                                              required></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" id="button-modal-submit" class="btn btn-primary text-success">Save changes</button> 
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/js/pages/index2.js"></script>
-        <script>
+                <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+                <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+                <script src="${pageContext.request.contextPath}/assets/bundles/select2.bundle.js"></script>
+                <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
+                <script src="${pageContext.request.contextPath}/assets/js/pages/index2.js"></script>
+                <script>
                                                     $(document).ready(function () {
                                                         $('.view-details').on('click', function () {
                                                             var row = $(this).closest('tr');
@@ -306,6 +301,9 @@
                                                             $th.attr('sortBy', sortBy);
                                                             changeSort(name, sortBy);
                                                         });
+
+                                                        $('.select2Project').select2();
+
                                                     });
 
                                                     function changeSort(name, sortBy) {
@@ -357,7 +355,7 @@
                                                             }
                                                         });
                                                     }
-// Add form validation before submit
+                                                    // Add form validation before submit
                                                     document.querySelector('#button-modal-submit').addEventListener('click', function (e) {
                                                         e.preventDefault(); // Prevent default form submission
                                                         console.log("dang submit");
@@ -367,7 +365,7 @@
                                                         }
                                                     });
 
-// Add real-time validation
+                                                    // Add real-time validation
                                                     $('#modalMilestoneName').on('input', function () {
                                                         validateInput(this, 30, 'Name');
                                                     });
@@ -457,12 +455,12 @@
                                                         alertDiv.id = 'formAlert';
                                                         alertDiv.className = 'alert alert-danger alert-dismissible fade show mb-3';
                                                         alertDiv.innerHTML = `
-            ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `;
+                    ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
 
                                                         document.querySelector('#milestoneForm').insertBefore(alertDiv, document.querySelector('#milestoneForm').firstChild);
                                                     }
-        </script>
-    </body>
-</html>
+                </script>
+                </body>
+                </html>

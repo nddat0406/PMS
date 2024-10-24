@@ -5,16 +5,18 @@
 package model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
  * @author HP
  */
 public class Team {
+
     private int id;
     private String name;
     private String topic;
-    private Milestone milestone;
+    private List<Milestone> milestone;
     private Project project;
     private String details;
     private List<User> members;
@@ -45,11 +47,11 @@ public class Team {
         this.topic = topic;
     }
 
-    public Milestone getMilestone() {
+    public List<Milestone> getMilestone() {
         return milestone;
     }
 
-    public void setMilestone(Milestone milestone) {
+    public void setMilestone(List<Milestone> milestone) {
         this.milestone = milestone;
     }
 
@@ -67,7 +69,7 @@ public class Team {
 
     public void setMembers(List<User> members) {
         this.members = members;
-    } 
+    }
 
     public User getTeamLeader() {
         return teamLeader;
@@ -76,9 +78,9 @@ public class Team {
     public void setTeamLeader(User teamLeader) {
         this.teamLeader = teamLeader;
     }
-    
-    public int getTeamSize(){
-        return this.members.size()+(teamLeader==null?0:1);
+
+    public int getTeamSize() {
+        return this.members.size() + (teamLeader == null ? 0 : 1);
     }
 
     public Project getProject() {
@@ -96,5 +98,10 @@ public class Team {
     public void setStatus(boolean status) {
         this.status = status;
     }
-    
+
+    public boolean hasMile(final int id){
+        final List<Milestone> list = this.milestone;
+        return list.stream().anyMatch((t) -> t.getId()==id);
+    }
+
 }

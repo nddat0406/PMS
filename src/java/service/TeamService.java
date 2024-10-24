@@ -8,7 +8,6 @@ import dal.TeamDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import model.Criteria;
 import model.Team;
 import model.User;
 
@@ -25,11 +24,11 @@ public class TeamService {
         return tdao.getTeamsByProject(pID);
     }
 
-    public void addTeam(Team t, List<Team> list) throws SQLException {
+    public void addTeam(Team t) throws SQLException {
         if (!tdao.isDuplicated(t)) {
             tdao.addTeam(t);
         } else {
-            throw new SQLException("There was a team with name = " + t.getName() + " in that milestone ! ");
+            throw new SQLException("There was a team with name = " + t.getName() + " in this project ! ");
         }
     }
 
@@ -37,7 +36,7 @@ public class TeamService {
         mileFilter = baseService.TryParseInteger(mileFilter);
         List<Team> temp = new ArrayList<>();
         for (Team c : list) {
-            if ((c.getMilestone().getId() == mileFilter || mileFilter == 0)) {
+            if (baseService.objectWithIdExists(mileFilter, c.getMilestone()) || mileFilter == 0) {
                 if (searchKey == null || searchKey.isBlank() || c.getName().toLowerCase().contains(searchKey.toLowerCase())) {
                     temp.add(c);
                 }
@@ -49,7 +48,7 @@ public class TeamService {
     public void updateTeam(Team t, List<Team> list) throws SQLException {
         if (baseService.objectWithIdExists(t.getId(), list)) {
             Team oldT = tdao.getTeamById(t.getId());
-            if (!t.getName().equals(oldT.getName()) || t.getMilestone().getId() != oldT.getMilestone().getId()) {
+            if (!t.getName().equals(oldT.getName()) || t.getProject().getId() != oldT.getProject().getId()) {
                 if (!tdao.isDuplicated(t)) {
                     tdao.updateTeam(t);
                 } else {
@@ -63,7 +62,7 @@ public class TeamService {
         }
     }
 
-    public Object getTeamById(int modalItemID, List<Team> list) throws SQLException {
+    public Team getTeamById(int modalItemID, List<Team> list) throws SQLException {
         if (baseService.objectWithIdExists(modalItemID, list)) {
             return tdao.getTeamById(modalItemID);
         } else {
@@ -98,14 +97,21 @@ public class TeamService {
     public void addMembers(int[] numbers, int teamId, List<Team> list) throws SQLException {
         if (baseService.objectWithIdExists(teamId, list)) {
             tdao.addMembers(numbers, teamId);
-
         } else {
             throw new IllegalAccessError("Illegal action!");
         }
     }
 
-    public List<User> getAddMemberList(int teamId,int pID) throws SQLException {
-        return tdao.getAddMembers(teamId,pID);
+    public List<User> getAddMemberList( int pID) throws SQLException {
+        return tdao.getAddMembers( pID);
+    }
+
+    public void changeStatus(int id, List<Team> list) throws SQLException {
+        if (baseService.objectWithIdExists(id, list)) {
+            tdao.changeStatusTeam(id);
+        } else {
+            throw new IllegalAccessError("Illegal action!");
+        }
     }
 
 }

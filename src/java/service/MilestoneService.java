@@ -4,15 +4,11 @@
  */
 package service;
 
-import dal.CriteriaDAO;
 import dal.MilestoneDAO;
-import dal.ProjectDAO;
-import dal.UserDAO;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Milestone;
+import model.Project;
 
 /**
  *
@@ -21,15 +17,7 @@ import model.Milestone;
 public class MilestoneService {
 
     private MilestoneDAO mdao = new MilestoneDAO();
-
-    public List<Milestone> getAllMilestone(int id) throws SQLException {
-        try {
-            return mdao.getAllByProjectId(id);
-        } catch (SQLException ex) {
-            throw new SQLException(ex);
-        }
-    }
-
+    private BaseService baseService = new BaseService();
     public void updateMilestone(Milestone milestone) throws SQLException {
         try {
             mdao.updateMilestone(milestone);
@@ -46,11 +34,15 @@ public class MilestoneService {
         }
     }
 
+
     public Milestone getMilestoneById(int id) throws SQLException {
         try {
             return mdao.getMilestoneById(id);
         } catch (Exception e) {
             throw new SQLException(e);
         }
+    }
+    public List<Milestone> getAllMilestone(int id) throws SQLException {
+        return mdao.getAllByProjectId(id);
     }
 }

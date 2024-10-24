@@ -58,7 +58,7 @@ public class ProjectService {
         return pList;
     }
 
-    public List<Allocation> getProjectMembers(int pID) throws SQLException {
+    public List<Allocation> getProjectMembers(Integer pID) throws SQLException {
         return pdao.getAllMember(pID);
     }
 
@@ -248,6 +248,23 @@ public class ProjectService {
 
     public Project getAllProjectPharseBYId(int id) throws SQLException {
         return pdao.getAllProjectPharseBYId(id);
+    }
+
+    public List<Project> getProjectsInAllocation(List<Allocation> list) {
+        List<Project> temp = new ArrayList<>();
+        for (Allocation allocation : list) {
+            temp.add(allocation.getProject());
+        }
+        return temp;
+    }
+
+    public boolean havePermission(Integer pID, List<Project> myProjects) {
+        if (baseService.objectWithIdExists(pID, myProjects)) {
+            return true;
+        } else {
+            throw new IllegalAccessError("Illegal action!");
+
+        }
     }
 
 }

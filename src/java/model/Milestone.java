@@ -23,6 +23,14 @@ public class Milestone {
     private Project project;
     private ProjectPhase phase;
 
+    public Milestone() {
+    }
+
+    
+    public Milestone(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

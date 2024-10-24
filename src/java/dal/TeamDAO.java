@@ -36,9 +36,10 @@ public class TeamDAO extends BaseDAO {
             temp.setName(rs.getString(2));
             temp.setTopic(rs.getString(3));
             temp.setDetails(rs.getString(4));
-            temp.setMilestone(mdao.getMilestoneById(rs.getInt(5)));
+            temp.setMilestone(this.getMilestoneByTeam(rs.getInt(1)));
             temp.setMembers(getTeamMembers(temp.getId()));
             temp.setTeamLeader(getTeamLeader(temp.getId()));
+            temp.setStatus(rs.getBoolean(6));
             teamList.add(temp);
         }
         return teamList;
@@ -55,7 +56,8 @@ public class TeamDAO extends BaseDAO {
         temp.setName(rs.getString(2));
         temp.setTopic(rs.getString(3));
         temp.setDetails(rs.getString(4));
-        temp.setMilestone(mdao.getMilestoneById(rs.getInt(5)));
+        temp.setProject(new Project(rs.getInt(5)));
+        temp.setMilestone(this.getMilestoneByTeam(rs.getInt(1)));
         temp.setMembers(getTeamMembers(id));
         temp.setTeamLeader(getTeamLeader(id));
         return temp;
@@ -89,11 +91,10 @@ public class TeamDAO extends BaseDAO {
     }
 
     public boolean isDuplicated(Team t) throws SQLException {
-        String str = "select count(*) as num  FROM pms.team where projectId=? and milestoneId=? and name = ?;";
+        String str = "select count(*) as num  FROM pms.team where projectId=? and name = ?;";
         PreparedStatement pre = getConnection().prepareStatement(str);
         pre.setInt(1, t.getProject().getId());
-        pre.setInt(2, t.getMilestone().getId());
-        pre.setString(3, t.getName());
+        pre.setString(2, t.getName());
         ResultSet rs = pre.executeQuery();
         rs.next();
         return rs.getInt(1) >= 1;
@@ -106,11 +107,9 @@ public class TeamDAO extends BaseDAO {
                      `name`,
                      `topic`,
                      `details`,
-                     `milestoneId`,
                      `projectId`)
                      VALUES
                      (
-                     ?,
                      ?,
                      ?,
                      ?,
@@ -120,9 +119,9 @@ public class TeamDAO extends BaseDAO {
         pre.setString(1, t.getName());
         pre.setString(2, t.getTopic());
         pre.setString(3, t.getDetails());
-        pre.setInt(4, t.getMilestone().getId());
-        pre.setInt(5, t.getProject().getId());
+        pre.setInt(4, t.getProject().getId());
         pre.executeUpdate();
+        this.addTeamMilestone(t.getMilestone());
     }
 
     public void updateTeam(Team t) throws SQLException {
@@ -132,17 +131,16 @@ public class TeamDAO extends BaseDAO {
                      `name` =?,
                      `topic` = ?,
                      `details` = ?,
-                     `milestoneId` = ?,
                      `projectId` = ?
                      WHERE `id` = ?""";
         PreparedStatement pre = getConnection().prepareStatement(str);
         pre.setString(1, t.getName());
         pre.setString(2, t.getTopic());
         pre.setString(3, t.getDetails());
-        pre.setInt(4, t.getMilestone().getId());
-        pre.setInt(5, t.getProject().getId());
-        pre.setInt(6, t.getId());
+        pre.setInt(4, t.getProject().getId());
+        pre.setInt(5, t.getId());
         pre.executeUpdate();
+        this.updateTeamMilestone(t.getMilestone(), t.getId());
     }
 
     public void deleteTeam(int id) throws SQLException {
@@ -156,7 +154,7 @@ public class TeamDAO extends BaseDAO {
 
     public static void main(String[] args) throws SQLException {
 
-        System.out.println(new TeamDAO().getAddMembers(1, 21));
+        new TeamDAO().changeStatusTeam(1);
     }
 
     public void deleteTeamMember(int memberId, int teamId) throws SQLException {
@@ -215,24 +213,99 @@ public class TeamDAO extends BaseDAO {
         }
     }
 
-    public List<User> getAddMembers(int teamId, int pID) throws SQLException {
+    public List<User> getAddMembers(int pID) throws SQLException {
         String str = """
                      SELECT DISTINCT a.userId
-                     FROM allocation AS a
-                     WHERE a.userId NOT IN (
-                         SELECT userId
-                         FROM team_member
-                         WHERE teamId = ?
-                     )
-                     AND a.projectId = ? and status = 1""";
-            PreparedStatement pre = getConnection().prepareStatement(str);
-            pre.setInt(1, teamId);
-            pre.setInt(2, pID);
-            ResultSet rs = pre.executeQuery();
-            List<User> temp = new ArrayList<>();
-            while (rs.next()) {
-                temp.add(udao.getActiveUserByIdNull(rs.getInt(1)));
-            }
-            return temp;
+                     FROM allocation a
+                     WHERE a.projectId = ?
+                       AND a.userId NOT IN (
+                           SELECT tm.userId
+                           FROM team_member tm
+                           JOIN team t ON tm.teamId = t.id
+                           WHERE t.projectId = ?
+                       )
+                       AND a.status = 1""";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setInt(1, pID);
+        pre.setInt(2, pID);
+        ResultSet rs = pre.executeQuery();
+        List<User> temp = new ArrayList<>();
+        while (rs.next()) {
+            temp.add(udao.getActiveUserByIdNull(rs.getInt(1)));
+        }
+        return temp;
     }
+
+    private List<Milestone> getMilestoneByTeam(int aInt) throws SQLException {
+        String str = "SELECT milestoneId FROM pms.team_milestone where teamId=?";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setInt(1, aInt);
+        ResultSet rs = pre.executeQuery();
+        List<Milestone> temp = new ArrayList<>();
+        while (rs.next()) {
+            temp.add(mdao.getMilestoneById(rs.getInt(1)));
+        }
+        return temp;
+    }
+
+    private void updateTeamMilestone(List<Milestone> milestone, int id) throws SQLException {
+        String sql1 = "delete FROM pms.team_milestone where teamId = ?";
+        PreparedStatement pre = getConnection().prepareStatement(sql1);
+        pre.setInt(1, id);
+        pre.executeUpdate();
+        String sql2 = """
+                      INSERT INTO `pms`.`team_milestone`
+                      (
+                      `teamId`,
+                      `milestoneId`)
+                      VALUES
+                      (?,?)""";
+        pre = getConnection().prepareStatement(sql2);
+        for (Milestone i : milestone) {
+            pre.setInt(1, id);
+            pre.setInt(2, i.getId());
+            pre.addBatch();
+        }
+        try {
+            getConnection().setAutoCommit(false);
+            pre.executeBatch();
+            getConnection().commit();
+        } finally {
+            getConnection().setAutoCommit(true);
+        }
+    }
+
+    private void addTeamMilestone(List<Milestone> milestone) throws SQLException {
+        String sql = """
+                      INSERT INTO `pms`.`team_milestone`
+                      (
+                      `teamId`,
+                      `milestoneId`)
+                      VALUES
+                      ((select max(id) from team),?)""";
+        PreparedStatement pre = getConnection().prepareStatement(sql);
+        for (Milestone i : milestone) {
+            pre.setInt(1, i.getId());
+            pre.addBatch();
+        }
+        try {
+            getConnection().setAutoCommit(false);
+            pre.executeBatch();
+            getConnection().commit();
+        } finally {
+            getConnection().setAutoCommit(true);
+        }
+    }
+
+    public void changeStatusTeam(int id) throws SQLException {
+        String sql = """
+                   UPDATE `pms`.`team`
+                   SET
+                   `status` = status ^ 1
+                   WHERE `id` = ?""";
+        PreparedStatement pre = getConnection().prepareStatement(sql);
+        pre.setInt(1, id);
+        pre.executeUpdate();
+    }
+
 }

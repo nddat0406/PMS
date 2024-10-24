@@ -15,9 +15,12 @@
         <link rel="icon" href="favicon.ico" type="image/x-icon">
         <!-- VENDOR CSS -->
         <!-- MAIN CSS -->
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/select2.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/sweetalert2.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 
         <style>
@@ -42,6 +45,9 @@
             }
             .accordion-item{
                 margin: 10px;
+            }
+            .accordion-button{
+                padding: 25px
             }
             #accordionExample{
                 margin-top: 10px;
@@ -71,6 +77,9 @@
             }
             td div img{
                 margin-right: 25px
+            }
+            .card-header h5{
+                margin: 10px 60px
             }
         </style>
     </head>
@@ -102,6 +111,8 @@
                                     </div>
                                 </div>
                             </div>
+                        <jsp:include page="../../common/projectSearch.jsp"></jsp:include>
+
                             <div class="row g-3">
                                 <div class="col-lg-12 col-md-12">
                                     <div class="card mb-3">
@@ -150,7 +161,7 @@
                                                     </form>
                                                     <div class="accordion" id="accordionExample">
                                                         <c:forEach items="${tableData}" var="i">
-                                                            <div class="justify-content-center" style=" display: flex;justify-content: center" id="accordionCont${i.id}">
+                                                            <div class="justify-content-center" style=" display: flex" id="accordionCont${i.id}">
                                                                 <div class="accordion-item col-lg-10 col-md-10">
                                                                     <h2 class="accordion-header" id="heading${i.id}">
                                                                         <div class="accordion-button align-content-around collapsed" data-bs-toggle="collapse" data-bs-target="#collapse${i.id}" aria-expanded="true" aria-controls="collapse${i.id}">
@@ -165,24 +176,38 @@
                                                                                     <td style="width: 300px">
                                                                                         <span><h6>Topic: ${i.topic}</h6></span>
                                                                                     </td>
-                                                                                    <td style="width: 300px">
-                                                                                        <span><h6>Milestone: ${i.milestone.name}</h6></span>
+                                                                                    <td style="width: 300px" id="statusSection${i.id}">
+                                                                                        <span>
+                                                                                            <h6>Status: &nbsp;
+                                                                                                <c:if test="${i.status}">
+                                                                                                    <span class="badge bg-success">Active</span>
+                                                                                                </c:if>
+                                                                                                <c:if test="${!i.status}">
+                                                                                                    <span class="badge bg-secondary">Inactive</span>
+                                                                                                </c:if>
+                                                                                            </h6>
+                                                                                        </span>
                                                                                     </td>
                                                                                     <c:if test="${loginedUser.role!=2}">
                                                                                         <td  style="width: 200px">
-                                                                                            <a class="btn btn-sm btn-outline-success stop-toggle" data-bs-toggle="modal" data-bs-target="#updateTeam" 
-                                                                                               onclick="getModal(${i.id})"><i class="fa fa-pencil" ></i></a>
-                                                                                            <a class="btn btn-sm btn-outline-danger stop-toggle" 
-                                                                                               onclick="deleteTeam(${i.id}, '${i.name}')"><i class="fa fa-trash"></i></a>
+                                                                                            <div>
+                                                                                                <a class="btn btn-sm btn-outline-info btn-action"
+                                                                                                   onclick="changeStateTeam(${i.id})"><i class="fa fa-power-off" ></i></a>
+                                                                                                <a class="btn btn-sm btn-outline-success btn-action" data-bs-toggle="modal" data-bs-target="#updateTeam" 
+                                                                                                   onclick="getModal(${i.id})"><i class="fa fa-pencil" ></i></a>
+                                                                                                <a class="btn btn-sm btn-outline-danger btn-action" 
+                                                                                                   onclick="deleteTeam(${i.id}, '${i.name}')"><i class="fa fa-trash"></i></a>
+                                                                                            </div>
                                                                                         </td>
                                                                                     </c:if>
                                                                                 </tr>
                                                                             </table>
                                                                         </div>
                                                                     </h2>
+
                                                                     <div id="collapse${i.id}" class="accordion-collapse collapse" aria-labelledby="heading${i.id}" data-bs-parent="#accordionExample">
                                                                         <div  class="card-header" style="padding: 10px 10px 0px 15px">
-                                                                            <h6 >Team members:</h6>
+                                                                            <h5>Team members:</h5>
                                                                             <c:if test="${loginedUser.role!=2}">
                                                                                 <ul class="header-dropdown list-unstyled">
                                                                                     <li>
@@ -223,7 +248,8 @@
                                                                                                         <span>
                                                                                                             <h5 class="mb-0">${m.getStatus()==0?"Deactivated User":m.fullname}&nbsp;
                                                                                                             </h5>
-                                                                                                            <span>${m.email}</span></span>
+                                                                                                            <span>${m.email}</span>
+                                                                                                        </span>
                                                                                                     </div>
                                                                                                 </td>
                                                                                                 <c:if test="${loginedUser.role!=2}">
@@ -239,19 +265,30 @@
                                                                                     </tbody>
                                                                                 </table>
                                                                             </div>
-
-                                                                            <div>
-                                                                                <P>
-                                                                                    <button class="btn btn-primary collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDes${i.id}" aria-expanded="false" aria-controls="collapseDes${i.id}">
-                                                                                        Description
-                                                                                    </button>
-                                                                                </P>
-                                                                                <div class="collapse" id="collapseDes${i.id}" style="width: 800px">
-                                                                                    <div class="card card-body">
-                                                                                        ${i.details}
+                                                                            <div class="row g-3">
+                                                                                <div class="col-lg-5">
+                                                                                    <h5>
+                                                                                        Milestone Involve:
+                                                                                    </h5>
+                                                                                    <div>
+                                                                                        <ul class="link-info">
+                                                                                            <c:forEach items="${i.milestone}" var="m">
+                                                                                                <li><h6>${m.name}</h6></li>
+                                                                                                    </c:forEach>
+                                                                                        </ul>
                                                                                     </div>
                                                                                 </div>
+                                                                                <div class="col-lg-5">
+                                                                                    <h5>
+                                                                                        Description:
+                                                                                    </h5>
+                                                                                    <p class="card card-body">
+                                                                                        ${i.details}
+                                                                                    </p>
+                                                                                </div>
+
                                                                             </div>
+
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -282,7 +319,10 @@
                     </div>
                 </div>
             </div>
+
+            <%--modal section--%>
             <c:if test="${loginedUser.role!=2}">
+                <!-- Update Team modal -->
                 <div class="modal fade" id="updateTeam" tabindex="-1" aria-labelledby="updateTeam" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -300,9 +340,9 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label>Milestone</label>
-                                            <select name="uMilestone" class="form-select">
+                                            <select name="uMilestone" class="select2updatemultiple form-select" multiple="multiple">
                                                 <c:forEach items="${msList}" var="m">
-                                                    <option value="${m.id}" ${modalItem.milestone.id==m.id?'selected':''}>${m.name}</option>
+                                                    <option value="${m.id}" ${modalItem.hasMile(m.id)?'selected':''}>${m.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
@@ -329,6 +369,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Add Team modal -->
                 <div class="modal fade" id="addTeam" tabindex="-1" aria-labelledby="addTeam" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -345,9 +387,9 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label>Milestone</label>
-                                            <select name="Milestone" class="form-select">
+                                            <select name="Milestone" class="select2addmultiple form-select" multiple="nultiple">
                                                 <c:forEach items="${msList}" var="m">
-                                                    <option value="${m.id}" ${oldAddItem.milestone.id==m.id?'selected':''}>${m.name}</option>
+                                                    <option value="${m.id}" ${oldAddItem.hasMile(m.id)?'selected':''}>${m.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
@@ -375,6 +417,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- Add Team members modal -->
                 <div class="modal fade" id="addMember" tabindex="-1" aria-labelledby="addMember" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -433,7 +476,6 @@
                                                         </td>
                                                     </tr>
                                                 </c:if>
-
                                             </c:forEach>
                                         </tbody>
                                     </table>
@@ -452,6 +494,7 @@
         <!-- core js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/sweetalert2.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/select2.bundle.js"></script>
 
         <!-- page js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
@@ -465,7 +508,6 @@
                                         showConfirmButton: false,
                                         timer: 1500
                                     });
-
             </script>
         </c:if>
 
@@ -475,6 +517,7 @@
         <c:if test="${isUpdate!=null}">
             <script>$('#showUpdateMess')[0].click();</script>
         </c:if>
+
         <script>
             $(document).ready(function () {
                 // Event handler for clicking on the table headers
@@ -497,128 +540,17 @@
                     // Set the updated sortBy attribute
                     $th.attr('sortBy', sortBy);
                 });
+                $('.select2Project').select2();
+                $(' .select2addmultiple').select2({
+                    dropdownParent: $('#addTeam .modal-content')
+                });
+                $(' .btn-action').on('mouseenter', function () {
+                    $(this).closest(' .accordion-button').attr("data-bs-toggle", "");
+                });
+                $(' .btn-action').on('mouseleave', function () {
+                    $(this).closest(' .accordion-button').attr("data-bs-toggle", "collapse");
+                });
             });
-
-            <c:if test="${loginedUser.role!=2}">
-            function addMembers() {
-                // Get all selected checkbox values
-                var selectedOptions = [];
-                $('input[name="addMembers"]:checked').each(function () {
-                    selectedOptions.push(this.value);
-                });
-                var tId = $('#teamAddMember').val();
-                var json = JSON.stringify(selectedOptions);
-                $('#closeModalBtn').click();
-                $.ajax({
-                    url: "team",
-                    type: 'post',
-                    data: {
-                        json: json,
-                        teamId: tId,
-                        action: "addMember"
-                    },
-                    success: function () {
-                        Swal.fire("Added!", "", "success");
-                        $(' #memberTable' + tId).load("${pageContext.request.contextPath}/project/team?page=${page} #memberTable" + tId + " > *");
-                    }
-                });
-            }
-            ;
-            function ChangeRole(tId, mId, name, tname) {
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "Do you want to make " + name + " to be leader of " + tname + " team ?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Confirm",
-                    confirmButtonColor: "#04AA6D"
-                }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "team",
-                            type: 'post',
-                            data: {
-                                memberId: mId,
-                                teamId: tId,
-                                action: "changeRole"
-                            },
-                            success: function () {
-                                Swal.fire("Changed!", "", "success");
-                                $(' #memberTable' + tId).load("${pageContext.request.contextPath}/project/team?page=${page} #memberTable" + tId + " > *");
-                            }
-                        });
-                    }
-                });
-            }
-            ;
-            function deleteMember(tId, mId, name, tname) {
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "Do you want to delete " + name + " from " + tname + " team ?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Delete",
-                    confirmButtonColor: "#FC5A69"
-                }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "team",
-                            type: 'post',
-                            data: {
-                                memberId: mId,
-                                teamId: tId,
-                                action: "deleteMember"
-                            },
-                            success: function () {
-                                Swal.fire("Deleted!", "", "success");
-                                $(' #memberTable' + tId).load("${pageContext.request.contextPath}/project/team?page=${page} #memberTable" + tId + " > *");
-                            }
-                        });
-                    }
-                });
-            }
-            ;
-            function deleteTeam(id, name) {
-                event.stopPropagation();
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "Do you want to delete the " + name + " team ?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Delete",
-                    confirmButtonColor: "#FC5A69"
-                }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "team",
-                            type: 'post',
-                            data: {
-                                teamId: id,
-                                action: "delete"
-                            },
-                            success: function () {
-                                Swal.fire("Deleted!", "", "success");
-                                $(' #accordionExample').load("${pageContext.request.contextPath}/project/team?page=${page} #accordionExample > *");
-                            }
-                        });
-                    }
-                });
-            }
-            ;
-            function getModal(id) {
-                $(' #updateTeam').load("${pageContext.request.contextPath}/project/team?page=${page}&modalItemID=" + id + " #updateTeam > *");
-            }
-            ;
-            function getAddMemberList(id) {
-                $(' #teamAddMember').val(id);
-                console.log(id);
-                $(' #tableAddBody').load("${pageContext.request.contextPath}/project/team?page=${page}&teamAddId=" + id + " #tableAddBody > *");
-            }
-            ;
-            </c:if>
             function changeSort(name, sortBy) {
                 $.ajax({
                     url: "team",
@@ -636,5 +568,147 @@
             ;
             history.pushState(null, "", location.href.split("?")[0]);
         </script>
+
+        <c:if test="${loginedUser.role!=2}">
+            <script>
+                function addMembers() {
+                    // Get all selected checkbox values
+                    var selectedOptions = [];
+                    $('input[name="addMembers"]:checked').each(function () {
+                        selectedOptions.push(this.value);
+                    });
+                    var tId = $('#teamAddMember').val();
+                    var json = JSON.stringify(selectedOptions);
+                    $('#closeModalBtn').click();
+                    $.ajax({
+                        url: "team",
+                        type: 'post',
+                        data: {
+                            json: json,
+                            teamId: tId,
+                            action: "addMember"
+                        },
+                        success: function () {
+                            Swal.fire("Added!", "", "success");
+                            $(' #memberTable' + tId).load("${pageContext.request.contextPath}/project/team?page=${page} #memberTable" + tId + " > *");
+                        }
+                    });
+                }
+                ;
+                function changeStateTeam(id) {
+                    $.ajax({
+                        url: "team",
+                        type: 'post',
+                        data: {
+                            teamId: id,
+                            action: "changeStatus"
+                        },
+                        success: function () {
+                            $(' #statusSection' + id).load("${pageContext.request.contextPath}/project/team?page=${page} #statusSection" + id + " > *");
+                        }
+                    });
+                }
+                ;
+                function ChangeRole(tId, mId, name, tname) {
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "Do you want to make " + name + " to be leader of " + tname + " team ?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Confirm",
+                        confirmButtonColor: "#04AA6D"
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "team",
+                                type: 'post',
+                                data: {
+                                    memberId: mId,
+                                    teamId: tId,
+                                    action: "changeRole"
+                                },
+                                success: function () {
+                                    Swal.fire("Changed!", "", "success");
+                                    $(' #memberTable' + tId).load("${pageContext.request.contextPath}/project/team?page=${page} #memberTable" + tId + " > *");
+                                }
+                            });
+                        }
+                    });
+                }
+                ;
+                function deleteMember(tId, mId, name, tname) {
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "Do you want to delete " + name + " from " + tname + " team ?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Delete",
+                        confirmButtonColor: "#FC5A69"
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "team",
+                                type: 'post',
+                                data: {
+                                    memberId: mId,
+                                    teamId: tId,
+                                    action: "deleteMember"
+                                },
+                                success: function () {
+                                    Swal.fire("Deleted!", "", "success");
+                                    $(' #memberTable' + tId).load("${pageContext.request.contextPath}/project/team?page=${page} #memberTable" + tId + " > *");
+                                }
+                            });
+                        }
+                    });
+                }
+                ;
+                function deleteTeam(id, name) {
+                    event.stopPropagation();
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "Do you want to delete the " + name + " team ?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Delete",
+                        confirmButtonColor: "#FC5A69"
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "team",
+                                type: 'post',
+                                data: {
+                                    teamId: id,
+                                    action: "delete"
+                                },
+                                success: function () {
+                                    Swal.fire("Deleted!", "", "success");
+                                    $(' #accordionExample').load("${pageContext.request.contextPath}/project/team?page=${page} #accordionExample > *");
+                                }
+                            });
+                        }
+                    });
+                }
+                ;
+                function getModal(id) {
+                    $(' #updateTeam').load("${pageContext.request.contextPath}/project/team?page=${page}&modalItemID=" + id + " #updateTeam > *", function () {
+                        $(".select2updatemultiple").select2({
+                            dropdownParent: $('#updateTeam .modal-content')
+                        });
+                    });
+
+                }
+                ;
+                function getAddMemberList(id) {
+                    $(' #teamAddMember').val(id);
+                    $(' #tableAddBody').load("${pageContext.request.contextPath}/project/team?page=${page}&teamAddId=" + id + " #tableAddBody > *");
+                }
+                ;
+            </script>
+        </c:if>
+
     </body>
 </html>
