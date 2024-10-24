@@ -37,12 +37,20 @@ public class MilestoneService {
             throw new SQLException(ex);
         }
     }
-    
+
     public List<Milestone> searchMilestones(String searchKey) throws SQLException {
         try {
             return mdao.searchMilestones(searchKey);
         } catch (SQLException ex) {
             throw new SQLException(ex);
+        }
+    }
+
+    public Milestone getMilestoneById(int id) throws SQLException {
+        try {
+            return mdao.getMilestoneById(id);
+        } catch (Exception e) {
+            throw new SQLException(e);
         }
     }
 }

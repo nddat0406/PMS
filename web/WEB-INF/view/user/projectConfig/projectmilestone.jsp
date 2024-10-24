@@ -34,6 +34,15 @@
                 width: 10px;
                 height: 20px;
             }
+
+
+            .error-message {
+                font-size: 0.875rem;
+                margin-top: 0.25rem;
+            }
+            .is-invalid {
+                border-color: #dc3545;
+            }
         </style>
     </head>
     <body>
@@ -81,18 +90,18 @@
                                             <div class="card">
                                                 <div class="card-header">
                                                     <h6 class="card-title">Project Milestones</h6>
-                                                </div>
-                                                <div class="card-body">
-                                                    <table id="milestone_list" class="table table-hover mb-0">
-                                                        <thead>
-                                                            <tr>
-                                                                <th name="id" sortBy="desc" class="sortTableHead" aria-sort="none">ID <i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="name" sortBy="desc" class="sortTableHead" aria-sort="none">Name <i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="priority" sortBy="desc" class="sortTableHead" aria-sort="none">Priority <i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="endDate" sortBy="desc" class="sortTableHead" aria-sort="none">End Date <i class="fa fa-sort sort-icon"></i></th>
-                                                                <th>Details</th>
-                                                                <th>Final</th>
-                                                                <th name="status" sortBy="desc" class="sortTableHead" aria-sort="none">Status <i class="fa fa-sort sort-icon"></i></th>
+                                                    <span style="color: red">${errorMessage}</span>
+                                            </div>
+                                            <div class="card-body">
+                                                <table id="milestone_list" class="table table-hover mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th name="id" sortBy="desc" class="sortTableHead" aria-sort="none">ID <i class="fa fa-sort sort-icon"></i></th>
+                                                            <th name="name" sortBy="desc" class="sortTableHead" aria-sort="none">Name <i class="fa fa-sort sort-icon"></i></th>
+                                                            <th name="priority" sortBy="desc" class="sortTableHead" aria-sort="none">Priority <i class="fa fa-sort sort-icon"></i></th>
+                                                            <th name="endDate" sortBy="desc" class="sortTableHead" aria-sort="none">End Date <i class="fa fa-sort sort-icon"></i></th>
+                                                            <th>Details</th>
+                                                            <th name="status" sortBy="desc" class="sortTableHead" aria-sort="none">Status <i class="fa fa-sort sort-icon"></i></th>
                                                                 <c:if test="${loginedUser.role == 1 || loginedUser.role == 4}">
                                                                 <th>Actions</th>
                                                                 </c:if>
@@ -110,17 +119,6 @@
                                                                         <p>${milestone.details}</p>
                                                                     </div>
                                                                 </td>
-                                                                <td>
-                                                                    <c:choose>
-                                                                        <c:when test="${milestone.isFinal == true}">
-                                                                            <span style="color: green;">✔</span>
-                                                                        </c:when>
-                                                                        <c:otherwise>
-                                                                            <span style="color: red;">✘</span>
-                                                                        </c:otherwise>
-                                                                    </c:choose>
-                                                                </td>
-
                                                                 <td>
                                                                     <c:choose>
                                                                         <c:when test="${milestone.status == '0'}">
@@ -186,7 +184,12 @@
                             <input type="hidden" name="mileStoneId" value="" id="modalMilestoneId">
                             <div class="mb-3">
                                 <label for="milestoneName" class="form-label">Name</label>
-                                <input type="text" class="form-control" name="milestoneName" id="modalMilestoneName" required>
+                                <input type="text" 
+                                       class="form-control" 
+                                       name="milestoneName" 
+                                       id="modalMilestoneName" 
+                                       maxlength="30" 
+                                       required>
                             </div>
 
                             <div class="mb-3">
@@ -215,13 +218,18 @@
 
                             <div class="mb-3">
                                 <label for="milestoneDetails" class="form-label">Details</label>
-                                <textarea name="milestoneDetails" class="form-control" id="modalMilestoneDetails" rows="3"></textarea>
+                                <textarea name="milestoneDetails" 
+                                          class="form-control" 
+                                          id="modalMilestoneDetails" 
+                                          rows="3" 
+                                          maxlength="500" 
+                                          required></textarea>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary text-success" onclick="document.querySelector('#milestoneForm').submit();">Save changes</button> 
+                        <button type="button" id="button-modal-submit" class="btn btn-primary text-success">Save changes</button> 
                     </div>
                 </div>
             </div>
@@ -232,123 +240,229 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/pages/index2.js"></script>
         <script>
-                            $(document).ready(function () {
-                                $('.view-details').on('click', function () {
-                                    var row = $(this).closest('tr');
-                                    var id = row.find('td:eq(0)').text();
-                                    var name = row.find('td:eq(1)').text();
-                                    var priority = row.find('td:eq(2)').text();
-                                    var endDate = row.find('td:eq(3)').text();
-                                    var statusText = row.find('td:eq(5) .badge').text().trim();
-                                    var status;
-                                    switch (statusText) {
-                                        case 'Closed':
-                                            status = 0;
-                                            break;
-                                        case 'In Progress':
-                                            status = 1;
-                                            break;
-                                        case 'Pending':
-                                            status = 2;
-                                            break;
-                                        default:
-                                            status = 1;
-                                    }
-                                    var details = row.find('td:eq(4)').text() || 'No details available';
+                                                    $(document).ready(function () {
+                                                        $('.view-details').on('click', function () {
+                                                            var row = $(this).closest('tr');
+                                                            var id = row.find('td:eq(0)').text();
+                                                            var name = row.find('td:eq(1)').text();
+                                                            var priority = row.find('td:eq(2)').text();
+                                                            var endDate = row.find('td:eq(3)').text();
+                                                            var statusText = row.find('td:eq(5) .badge').text().trim();
+                                                            var status;
+                                                            switch (statusText) {
+                                                                case 'Closed':
+                                                                    status = 0;
+                                                                    break;
+                                                                case 'In Progress':
+                                                                    status = 1;
+                                                                    break;
+                                                                case 'Pending':
+                                                                    status = 2;
+                                                                    break;
+                                                                default:
+                                                                    status = 1;
+                                                            }
+                                                            var details = row.find('td:eq(4)').text() || 'No details available';
 
-                                    $('#modalMilestoneId').val(id);
-                                    $('#modalMilestoneName').val(name);
-                                    $('#modalMilestonePriority').val(priority);
-                                    $('#modalMilestoneEndDate').val(endDate);
-                                    $('#modalMilestoneStatus').val(status);
-                                    $('#modalMilestoneDetails').val(details.trim());
+                                                            $('#modalMilestoneId').val(id);
+                                                            $('#modalMilestoneName').val(name);
+                                                            $('#modalMilestonePriority').val(priority);
+                                                            $('#modalMilestoneEndDate').val(endDate);
+                                                            $('#modalMilestoneStatus').val(status);
+                                                            $('#modalMilestoneDetails').val(details.trim());
 
-                                    $('#milestoneDetailModal').modal('show');
-                                });
+                                                            $('#milestoneDetailModal').modal('show');
+                                                        });
 
-                                var currentSortField = "${sortFieldName}";
-                                var currentSortOrder = "${sortOrder}";
-                                if (currentSortField && currentSortOrder) {
-                                    var $th = $('th[name="' + currentSortField + '"]');
-                                    $th.attr('sortBy', currentSortOrder);
-                                    $th.attr('aria-sort', currentSortOrder === 'asc' ? 'ascending' : 'descending');
-                                    $th.find('.sort-icon')
-                                            .removeClass('fa-sort')
-                                            .addClass(currentSortOrder === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
-                                }
+                                                        var currentSortField = "${sortFieldName}";
+                                                        var currentSortOrder = "${sortOrder}";
+                                                        if (currentSortField && currentSortOrder) {
+                                                            var $th = $('th[name="' + currentSortField + '"]');
+                                                            $th.attr('sortBy', currentSortOrder);
+                                                            $th.attr('aria-sort', currentSortOrder === 'asc' ? 'ascending' : 'descending');
+                                                            $th.find('.sort-icon')
+                                                                    .removeClass('fa-sort')
+                                                                    .addClass(currentSortOrder === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
+                                                        }
 
-                                $('.sortTableHead').on('click', function () {
-                                    var $th = $(this);
-                                    var name = $th.attr('name');
-                                    var sortBy = $th.attr('sortBy');// Reset all icons to default
-                                    $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
-                                    $('.sortTableHead').attr('aria-sort', 'none');
+                                                        $('.sortTableHead').on('click', function () {
+                                                            var $th = $(this);
+                                                            var name = $th.attr('name');
+                                                            var sortBy = $th.attr('sortBy');// Reset all icons to default
+                                                            $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+                                                            $('.sortTableHead').attr('aria-sort', 'none');
 
-                                    // Update only the clicked column's icon
-                                    if (sortBy === 'asc') {
-                                        sortBy = 'desc';
-                                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
-                                        $th.attr('aria-sort', 'descending');
-                                    } else {
-                                        sortBy = 'asc';
-                                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
-                                        $th.attr('aria-sort', 'ascending');
-                                    }
+                                                            // Update only the clicked column's icon
+                                                            if (sortBy === 'asc') {
+                                                                sortBy = 'desc';
+                                                                $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
+                                                                $th.attr('aria-sort', 'descending');
+                                                            } else {
+                                                                sortBy = 'asc';
+                                                                $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
+                                                                $th.attr('aria-sort', 'ascending');
+                                                            }
 
-                                    $th.attr('sortBy', sortBy);
-                                    changeSort(name, sortBy);
-                                });
-                            });
+                                                            $th.attr('sortBy', sortBy);
+                                                            changeSort(name, sortBy);
+                                                        });
+                                                    });
 
-                            function changeSort(name, sortBy) {
-                                $.ajax({
-                                    url: "milestone",
-                                    type: 'post',
-                                    data: {
-                                        sortBy: sortBy,
-                                        fieldName: name,
-                                        action: "sort",
-                                        page: ${page}
-                                    },
-                                    success: function (data) {
-                                        $('.tableBody').html($(data).find('.tableBody').html());
-                                        updatePagination(data);
-                                    },
-                                    error: function (xhr, status, error) {
-                                        console.error("An error occurred: " + error);
-                                        alert("An error occurred while sorting. Please try again.");
-                                    }
-                                });
-                            }
+                                                    function changeSort(name, sortBy) {
+                                                        $.ajax({
+                                                            url: "milestone",
+                                                            type: 'post',
+                                                            data: {
+                                                                sortBy: sortBy,
+                                                                fieldName: name,
+                                                                action: "sort",
+                                                                page: ${page}
+                                                            },
+                                                            success: function (data) {
+                                                                $('.tableBody').html($(data).find('.tableBody').html());
+                                                                updatePagination(data);
+                                                            },
+                                                            error: function (xhr, status, error) {
+                                                                console.error("An error occurred: " + error);
+                                                                alert("An error occurred while sorting. Please try again.");
+                                                            }
+                                                        });
+                                                    }
 
-                            function updatePagination(data) {
-                                var $newPagination = $(data).find('.pagination');
-                                if ($newPagination.length) {
-                                    $('.pagination').replaceWith($newPagination);
-                                }
-                            }
+                                                    function updatePagination(data) {
+                                                        var $newPagination = $(data).find('.pagination');
+                                                        if ($newPagination.length) {
+                                                            $('.pagination').replaceWith($newPagination);
+                                                        }
+                                                    }
 
-                            history.pushState(null, "", location.href.split("?")[0]);
-                            function searchProject() {
-                                var searchTerm = $('#projectSearch').val();
-                                $.ajax({
-                                    url: "milestone",
-                                    type: 'post',
-                                    data: {
-                                        action: "search",
-                                        searchKey: searchTerm,
-                                        page: 1  // Reset về trang đầu tiên khi tìm kiếm
-                                    },
-                                    success: function (data) {
-                                        $('.tableBody').html($(data).find('.tableBody').html());
-                                        updatePagination(data);
-                                    },
-                                    error: function (xhr, status, error) {
-                                        console.error("An error occurred: " + error);
-                                        alert("An error occurred while searching. Please try again.");
-                                    }
-                                });
-                            }
+                                                    history.pushState(null, "", location.href.split("?")[0]);
+                                                    function searchProject() {
+                                                        var searchTerm = $('#projectSearch').val();
+                                                        $.ajax({
+                                                            url: "milestone",
+                                                            type: 'post',
+                                                            data: {
+                                                                action: "search",
+                                                                searchKey: searchTerm,
+                                                                page: 1  // Reset về trang đầu tiên khi tìm kiếm
+                                                            },
+                                                            success: function (data) {
+                                                                $('.tableBody').html($(data).find('.tableBody').html());
+                                                                updatePagination(data);
+                                                            },
+                                                            error: function (xhr, status, error) {
+                                                                console.error("An error occurred: " + error);
+                                                                alert("An error occurred while searching. Please try again.");
+                                                            }
+                                                        });
+                                                    }
+// Add form validation before submit
+                                                    document.querySelector('#button-modal-submit').addEventListener('click', function (e) {
+                                                        e.preventDefault(); // Prevent default form submission
+                                                        console.log("dang submit");
+                                                        if (validateForm()) {
+                                                            console.log("validate dung")
+                                                            document.querySelector('#milestoneForm').submit(); // Submit the form if validation passes
+                                                        }
+                                                    });
+
+// Add real-time validation
+                                                    $('#modalMilestoneName').on('input', function () {
+                                                        validateInput(this, 30, 'Name');
+                                                    });
+
+                                                    $('#modalMilestoneDetails').on('input', function () {
+                                                        validateInput(this, 500, 'Details');
+                                                    });
+
+                                                    function validateForm() {
+                                                        // Clear previous errors
+                                                        clearErrors();
+
+                                                        const name = $('#modalMilestoneName').val().trim();
+                                                        const details = $('#modalMilestoneDetails').val().trim();
+                                                        let isValid = true;
+
+                                                        // Validate name
+                                                        if (!name) {
+                                                            showError('modalMilestoneName', 'Name is required');
+                                                            isValid = false;
+                                                        } else if (name.length > 30) {
+                                                            showError('modalMilestoneName', 'Name must be less than 30 characters');
+                                                            isValid = false;
+                                                        }
+
+                                                        // Validate details
+                                                        if (!details) {
+                                                            showError('modalMilestoneDetails', 'Details is required');
+                                                            isValid = false;
+                                                        } else if (details.length > 500) {
+                                                            showError('modalMilestoneDetails', 'Details must be less than 500 characters');
+                                                            isValid = false;
+                                                        }
+
+                                                        return isValid;
+                                                    }
+
+                                                    function validateInput(element, maxLength, fieldName) {
+                                                        const value = element.value.trim();
+                                                        clearError(element.id);
+
+                                                        if (!value) {
+                                                            showError(element.id, `${fieldName} is required`);
+                                                            return false;
+                                                        } else if (value.length > maxLength) {
+                                                            showError(element.id, `${fieldName} must be less than ${maxLength} characters`);
+                                                            return false;
+                                                        }
+                                                        return true;
+                                                    }
+
+                                                    function showError(elementId, message) {
+                                                        const element = document.getElementById(elementId);
+                                                        // Remove any existing error for this element
+                                                        clearError(elementId);
+
+                                                        const errorDiv = document.createElement('div');
+                                                        errorDiv.className = 'error-message text-danger mt-1';
+                                                        errorDiv.textContent = message;
+                                                        element.parentNode.appendChild(errorDiv);
+                                                        element.classList.add('is-invalid');
+                                                    }
+
+                                                    function clearError(elementId) {
+                                                        const element = document.getElementById(elementId);
+                                                        element.classList.remove('is-invalid');
+                                                        const existingError = element.parentNode.querySelector('.error-message');
+                                                        if (existingError) {
+                                                            existingError.remove();
+                                                        }
+                                                    }
+
+                                                    function clearErrors() {
+                                                        document.querySelectorAll('.error-message').forEach(el => el.remove());
+                                                        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                                                        const formAlert = document.getElementById('formAlert');
+                                                        if (formAlert)
+                                                            formAlert.remove();
+                                                    }
+
+                                                    function showAlert(message) {
+                                                        const existingAlert = document.getElementById('formAlert');
+                                                        if (existingAlert)
+                                                            existingAlert.remove();
+
+                                                        const alertDiv = document.createElement('div');
+                                                        alertDiv.id = 'formAlert';
+                                                        alertDiv.className = 'alert alert-danger alert-dismissible fade show mb-3';
+                                                        alertDiv.innerHTML = `
+            ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+
+                                                        document.querySelector('#milestoneForm').insertBefore(alertDiv, document.querySelector('#milestoneForm').firstChild);
+                                                    }
         </script>
     </body>
 </html>
