@@ -280,7 +280,7 @@ public class ProjectConfigController extends HttpServlet {
             if (pIdRaw == null) {
                 pID = (Integer) session.getAttribute("selectedProject");
                 if (pID == null) {
-                    throw new ServletException("Some thing went wrong, cannot find the criteria id");
+                    throw new ServletException("Some thing went wrong, cannot find the project id");
                 }
             } else {
                 pID = Integer.valueOf(pIdRaw);
@@ -332,7 +332,6 @@ public class ProjectConfigController extends HttpServlet {
         try {
             Integer pID;
             String pIdRaw = request.getParameter("projectId");
-//            String pIdRaw = "25";
             if (pIdRaw == null) {
                 pID = (Integer) session.getAttribute("selectedProject");
                 if (pID == null) {

@@ -110,7 +110,7 @@
                                                         <td><fmt:formatDate value="${milestone.endDate}" pattern="dd/MM/yyyy" /></td>
                                                         <td>
                                                             <c:choose>
-                                                                <c:when test="${milestone.status}">
+                                                                <c:when test="${milestone.status==1}">
                                                                     In Progress
                                                                 </c:when>
                                                                 <c:otherwise>

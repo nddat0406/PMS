@@ -143,7 +143,7 @@
                                                 <div class="card-body" id="cardbody">
                                                     <form action="team" method="post">
                                                         <input hidden type="text" value="filter" name="action">
-                                                        <div style="display: flex; justify-content: space-evenly">
+                                                        <div style="display: flex; justify-content: space-around">
                                                             <div class="input-group mb-3" style="width: 25%">
                                                                 <span class="input-group-text" id="basic-addon11">Milestone</span>
                                                                 <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="milestoneFilter">
@@ -699,7 +699,6 @@
                             dropdownParent: $('#updateTeam .modal-content')
                         });
                     });
-
                 }
                 ;
                 function getAddMemberList(id) {

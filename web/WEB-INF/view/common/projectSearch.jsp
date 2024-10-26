@@ -36,7 +36,7 @@
                                         <option value="${d.id}">${d.code} - ${d.name}</option>
                                     </c:forEach>
                                 </select>
-                                <input type="button" id="sendbtn" class="btn btn-outline-info" value="View Details">
+                                <input type="submit" id="sendbtn" class="btn btn-outline-info" value="View Details">
                             </div>
                         </div>
                     </form>
