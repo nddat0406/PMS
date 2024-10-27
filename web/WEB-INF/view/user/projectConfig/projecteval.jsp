@@ -100,7 +100,7 @@
                             <div class="block-header py-lg-4 py-3">
                                 <div class="row g-3">
                                     <div class="col-md-6 col-sm-12">
-                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> User Profile</h2>
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Project Evaluation</h2>
                                         <ul class="breadcrumb mb-0">
                                             <li class="breadcrumb-item"><a href="/dashboard">Lucid</a></li>
                                             <li class="breadcrumb-item active">Project Configs</li>
@@ -146,21 +146,21 @@
                                                                     <span class="input-group-text" id="basic-addon11">Milestone</span>
                                                                     <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter">
                                                                         <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
-                                                                    <c:forEach items="${msList}" var="m">
-                                                                        <option value="${m.id}" ${milestoneFilter==m.id?'selected':''}>${m.name}</option>
-                                                                    </c:forEach>
-                                                                </select>
+                                                                        <c:forEach items="${msList}" var="m">
+                                                                            <option value="${m.id}" ${milestoneFilter==m.id?'selected':''}>${m.name}</option>
+                                                                        </c:forEach>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="input-group mb-3" style="width: 45%">
+                                                                    <span class="input-group-text" id="basic-addon11">Status</span>
+                                                                    <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter">
+                                                                        <option value="0" ${sessionScope.statusFilter==0?'selected':''}>All Status</option>
+                                                                        <option value="1" ${sessionScope.statusFilter==1?'selected':''}>Active</option>
+                                                                        <option value="2" ${sessionScope.statusFilter==2?'selected':''}>InActive</option>
+                                                                    </select>
+                                                                </div>
                                                             </div>
-                                                            <div class="input-group mb-3" style="width: 45%">
-                                                                <span class="input-group-text" id="basic-addon11">Status</span>
-                                                                <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter">
-                                                                    <option value="0" ${sessionScope.statusFilter==0?'selected':''}>All Status</option>
-                                                                    <option value="1" ${sessionScope.statusFilter==1?'selected':''}>Active</option>
-                                                                    <option value="2" ${sessionScope.statusFilter==2?'selected':''}>InActive</option>
-                                                                </select>
-                                                            </div>
-                                                            </div>
-                                                            
+
                                                             <div class="input-group mb-3" style="width: 15%">
                                                                 <input value="${searchKey.trim()}" class="form-control" name="searchKey" placeholder="Search here..." type="text">
                                                                 <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
@@ -220,7 +220,7 @@
                                                                         <td style="width: 200px">
                                                                             <a href="javascript:void(0);" class="btn btn-sm btn-outline-info" onclick="changeStatus(${i.id})"><i class="fa fa-power-off"></i></a>
                                                                             <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#updateCriteria" onclick="getModal(${i.id})"><i class="fa fa-pencil" ></i></a>
-                                                                            <a href="javascript:void(0);" class="btn btn-sm btn-outline-danger" onclick="deleteStatus(${i.id})"><i class="fa fa-trash"></i></a>
+
                                                                         </td>
                                                                     </c:if>
 
@@ -264,20 +264,22 @@
                                     <div class="row g-2">
                                         <input type="text" name="action" hidden value="update">
                                         <input type="text" name="uID" hidden value="${modalItem.id}">
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             <label>Name*:</label>
 
                                             <input type="text" class="form-control" placeholder="Name" name="uName" value="${modalItem.name}">
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <label>Weight:</label>
                                             <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="uWeight" value="${modalItem.weight}">
+                                            <label class="total-weight" style="font-size: 12px">(Current total weight: ${modalItem.milestone.totalEvalWeight} )</label>
+
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             <label>Milestone</label>
-                                            <select name="uMilestone" class="form-select">
+                                            <select name="uMilestone" class="form-select milestoneSelect" onchange="ChangeTotalWeight(this)">
                                                 <c:forEach items="${msList}" var="m">
-                                                    <option value="${m.id}" ${modalItem.milestone.id==m.id?'selected':''}>${m.name}</option>
+                                                    <option value="${m.id}" totalWeight="${m.totalEvalWeight}" ${modalItem.milestone.id==m.id?'selected':''}>${m.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
@@ -310,19 +312,20 @@
                                 <div class="modal-body">
                                     <div class="row g-2">
                                         <input type="text" name="action" hidden value="add">
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             <label>Name*:</label>
                                             <input type="text" class="form-control" placeholder="Name" name="Name" value="${oldAddItem.name}">
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <label>Weight:</label>
                                             <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="Weight" value="${oldAddItem.weight}">
+                                            <label class="total-weight" style="font-size: 12px"></label>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             <label>Milestone</label>
-                                            <select name="Milestone" class="form-select">
+                                            <select name="Milestone" class="form-select milestoneSelect" onchange="ChangeTotalWeight(this)" id="addMileList">
                                                 <c:forEach items="${msList}" var="m">
-                                                    <option value="${m.id}" ${oldAddItem.milestone.id==m.id?'selected':''}>${m.name}</option>
+                                                    <option value="${m.id}" totalWeight="${m.totalEvalWeight}" ${oldAddItem.milestone.id==m.id?'selected':''}>${m.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
@@ -359,13 +362,13 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
         <c:if test="${requestScope.successMess!=null}">
             <script>
-                                                                                Swal.fire({
-                                                                                    position: 'top-end',
-                                                                                    icon: 'success',
-                                                                                    title: '${successMess}',
-                                                                                    showConfirmButton: false,
-                                                                                    timer: 1500
-                                                                                });
+                                                Swal.fire({
+                                                    position: 'top-end',
+                                                    icon: 'success',
+                                                    title: '${successMess}',
+                                                    showConfirmButton: false,
+                                                    timer: 1500
+                                                });
 
             </script>
         </c:if>
@@ -400,7 +403,8 @@
                     $th.attr('sortBy', sortBy);
                 });
                 $('.select2Project').select2();
-
+                $("#addMileList option:first").attr('selected', 'selected');
+                ChangeTotalWeight();
             });
             $readMoreBtn = $(' .read-more-btn');
             $readMoreBtn.on('click', function () {
@@ -429,33 +433,13 @@
                 });
             }
             ;
-            function deleteStatus(id) {
-                Swal.fire({
-                    title: "Do you want to delete criteria with id=" + id + " ?",
-                    showCancelButton: true,
-                    confirmButtonText: "Delete",
-                    confirmButtonColor: "#FC5A69"
-                }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "eval",
-                            type: 'post',
-                            data: {
-                                criteriaId: id,
-                                action: "delete"
-                            },
-                            success: function () {
-                                Swal.fire("Deleted!", "", "success");
-                                $(' .tableBody').load("${pageContext.request.contextPath}/project/eval?page=${page} .tableBody > *");
-                            }
-                        });
-                    }
-                });
+            function getModal(id) {
+                $(' #updateCriteria').load("${pageContext.request.contextPath}/project/eval?page=${page}&modalItemID=" + id + " #updateCriteria > *",ChangeTotalWeight());
             }
             ;
-            function getModal(id) {
-                $(' #updateCriteria').load("${pageContext.request.contextPath}/project/eval?page=${page}&modalItemID=" + id + " #updateCriteria > *");
+            function ChangeTotalWeight() {
+                var total = $(' .milestoneSelect').find(":selected").attr('totalWeight');
+                $(" .total-weight").text("(Curent total weight: " + total + ")");
             }
             ;
             </c:if>

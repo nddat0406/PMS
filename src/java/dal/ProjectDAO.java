@@ -23,24 +23,8 @@ public class ProjectDAO extends BaseDAO {
 
     private GroupDAO gdao = new GroupDAO();
     private UserDAO udao = new UserDAO();
-    private MilestoneDAO mdao = new MilestoneDAO();
 
-    public List<Allocation> getAllInAllocation() throws SQLException {
-        String str = "select * from project";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(str);
-            ResultSet rs = pre.executeQuery();
-            List<Allocation> projectList = new ArrayList<>();
-            while (rs.next()) {
-                Allocation temp = new Allocation();
-                temp.setProject(setProjectInfor(rs));
-                projectList.add(temp);
-            }
-            return projectList;
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        }
-    }
+
 
     public List<Project> getAllByUser(int id) throws SQLException {
         String str = "select p.* from allocation a join project p on p.id = a.projectId where userId = ?";
@@ -59,23 +43,9 @@ public class ProjectDAO extends BaseDAO {
         }
     }
 
-    public List<Allocation> getAllocation(int id) throws SQLException {
-        String str = "select * from allocation where userId = ? and status = 1";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(str);
-            pre.setInt(1, id);
-            ResultSet rs = pre.executeQuery();
-            List<Allocation> AllocateList = new ArrayList<>();
-            while (rs.next()) {
-                AllocateList.add(setAllocationInfor(rs));
-            }
-            return AllocateList;
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        }
-    }
 
-    private Project setProjectInfor(ResultSet rs) throws SQLException {
+
+    public Project setProjectInfor(ResultSet rs) throws SQLException {
         try {
             Project temp = new Project();
             temp.setId(rs.getInt(1));
@@ -99,22 +69,7 @@ public class ProjectDAO extends BaseDAO {
         }
     }
 
-    private Allocation setAllocationInfor(ResultSet rs) throws SQLException {
-        try {
-            Allocation temp = new Allocation();
-            temp.setId(rs.getInt(8));
-            temp.setUser(udao.getActiveUserByIdNull(rs.getInt(1)));
-            temp.setProject(getById(rs.getInt(2)));
-            temp.setStartDate(rs.getDate(3));
-            temp.setEndDate(rs.getDate(4));
-            temp.setProjectRole(rs.getString(5));
-            temp.setEffortRate(rs.getInt(6));
-            temp.setStatus(rs.getBoolean(7));
-            return temp;
-        } catch (SQLException ex) {
-            throw new SQLException(ex);
-        }
-    }
+
 
     private String getBizTerm(int id) throws SQLException {
         String str = "select name from setting where id=? and type=1 and status = 1";
@@ -142,22 +97,7 @@ public class ProjectDAO extends BaseDAO {
         }
     }
 
-    public List<Allocation> getAllMember(int id) throws SQLException {
-        String str = "select a.* from allocation a join user u on u.id = a.userId where a.projectId = ?";
-        PreparedStatement pre = getConnection().prepareStatement(str);
-        pre.setInt(1, id);
-        ResultSet rs = pre.executeQuery();
 
-        List<Allocation> userList = new ArrayList<>();
-        while (rs.next()) {
-            Allocation user = setAllocationInfor(rs);
-            if (user.getUser() != null) {
-                userList.add(user);
-            }
-        }
-        return userList;
-
-    }
 
     public void flipStatusMemberOfPrj(int id) throws SQLException {
         String sql = """

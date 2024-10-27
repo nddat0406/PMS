@@ -103,7 +103,7 @@
                             <div class="block-header py-lg-4 py-3">
                                 <div class="row g-3">
                                     <div class="col-md-6 col-sm-12">
-                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> User Profile</h2>
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Project Teams</h2>
                                         <ul class="breadcrumb mb-0">
                                             <li class="breadcrumb-item"><a href="/dashboard">Lucid</a></li>
                                             <li class="breadcrumb-item active">Project Configs</li>
@@ -147,7 +147,6 @@
                                                             <div class="input-group mb-3" style="width: 25%">
                                                                 <span class="input-group-text" id="basic-addon11">Milestone</span>
                                                                 <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="milestoneFilter">
-                                                                    <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
                                                                     <c:forEach items="${msList}" var="ms">
                                                                         <option value="${ms.id}" ${milestoneFilter==ms.id?'selected':''}>${ms.name}</option>
                                                                     </c:forEach>
@@ -204,7 +203,6 @@
                                                                             </table>
                                                                         </div>
                                                                     </h2>
-
                                                                     <div id="collapse${i.id}" class="accordion-collapse collapse" aria-labelledby="heading${i.id}" data-bs-parent="#accordionExample">
                                                                         <div  class="card-header" style="padding: 10px 10px 0px 15px">
                                                                             <h5>Team members:</h5>
@@ -432,8 +430,8 @@
                                             <tr>
                                                 <th>
                                                     <label class="fancy-checkbox">
-                                                        <input class="select-all" type="checkbox" name="checkbox">
-                                                        <span></span>
+                                                        <span><input class="select-all" type="checkbox" name="checkbox" id="select-all">
+                                                        </span>
                                                     </label>
                                                 </th>
                                                 <th></th>
@@ -549,6 +547,16 @@
                 });
                 $(' .btn-action').on('mouseleave', function () {
                     $(this).closest(' .accordion-button').attr("data-bs-toggle", "collapse");
+                });
+                $('#select-all').on('click', function () {
+                    // Check or uncheck all checkboxes with the name "addMembers" based on the state of the "Select All" checkbox
+                    $('input[name="addMembers"]').prop('checked', this.checked);
+                });
+
+                // When any individual checkbox is clicked
+                $('input[name="addMembers"]').on('click', function () {
+                    // If all checkboxes with the name "addMembers" are checked, check the "Select All" checkbox; otherwise, uncheck it
+                    $('#select-all').prop('checked', $('input[name="addMembers"]:checked').length === $('input[name="addMembers"]').length);
                 });
             });
             function changeSort(name, sortBy) {

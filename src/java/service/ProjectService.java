@@ -4,6 +4,7 @@
  */
 package service;
 
+import dal.AllocationDAO;
 import dal.ProjectDAO;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -30,13 +31,14 @@ public class ProjectService {
 
     private ProjectDAO pdao = new ProjectDAO();
     private BaseService baseService = new BaseService();
+    private AllocationDAO adao = new AllocationDAO();
 
     public List<Allocation> getByUser(int id, int role) throws SQLException {
         try {
             if (ADMIN_ROLE == role) {
-                return pdao.getAllInAllocation();
+                return adao.getAllInAllocation();
             } else {
-                return pdao.getAllocation(id);
+                return adao.getAllocation(id);
             }
         } catch (SQLException e) {
             throw new SQLException(e);
@@ -59,7 +61,7 @@ public class ProjectService {
     }
 
     public List<Allocation> getProjectMembers(Integer pID) throws SQLException {
-        return pdao.getAllMember(pID);
+        return adao.getAllMember(pID);
     }
 
     public void flipStatusMember(int id, List<Allocation> list) throws SQLException {
@@ -73,11 +75,11 @@ public class ProjectService {
     public List<Allocation> searchFilterMember(List<Allocation> list, Integer deptFilter, Integer statusFilter, String searchKey) {
         List<Allocation> pList = new ArrayList<>();
         deptFilter = baseService.TryParseInteger(deptFilter);
-        statusFilter = baseService.TryParseInteger(statusFilter);
+        boolean status = baseService.TryParseInteger(statusFilter)==1;
         for (Allocation allocation : list) {
             User temp = allocation.getUser();
             if ((temp.getDepartment().getId() == deptFilter || deptFilter == 0)
-                    && (temp.getStatus() == statusFilter || statusFilter == 0)) {
+                    && (allocation.isStatus()== status || statusFilter == 0)) {
                 if (searchKey == null || searchKey.isBlank() || temp.getFullname().toLowerCase().contains(searchKey.toLowerCase())) {
                     pList.add(allocation);
                 }
@@ -105,7 +107,7 @@ public class ProjectService {
             row.createCell(0).setCellValue(u.getId());
             row.createCell(1).setCellValue(u.getFullname());
             row.createCell(2).setCellValue(u.getEmail());
-            row.createCell(3).setCellValue(u.getRoleString());
+            row.createCell(3).setCellValue(a.getRoleString());
             row.createCell(4).setCellValue(a.getEffortRate());
             row.createCell(5).setCellValue(u.getDepartment().getName());
             row.createCell(6).setCellValue(a.getStatusString());
@@ -114,7 +116,7 @@ public class ProjectService {
     }
 
     public List<User> getProjectUsers(Integer pID) throws SQLException {
-        List<Allocation> list = pdao.getAllMember(pID);
+        List<Allocation> list = adao.getAllMember(pID);
         List<User> temp = new ArrayList<>();
         for (Allocation allocation : list) {
             temp.add(allocation.getUser());
@@ -228,7 +230,6 @@ public class ProjectService {
             }
         } catch (SQLException e) {
             System.err.println("Error while adding project or retrieving phases: " + e.getMessage());
-            e.printStackTrace();
             return "An error occurred while adding the project: " + e.getMessage();  // Trả về thông báo lỗi
         }
     }

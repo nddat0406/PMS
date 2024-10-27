@@ -18,6 +18,9 @@ import model.User;
  */
 public class AllocationDAO extends BaseDAO {
 
+    private UserDAO udao = new UserDAO();
+    private ProjectDAO pdao = new ProjectDAO();
+
     public List<Allocation> getAllocationsByProjectId(int projectId) {
         List<Allocation> allocations = new ArrayList<>();
         String query = "SELECT a.*, u.fullname AS userFullname, u.email AS userEmail "
@@ -56,8 +59,88 @@ public class AllocationDAO extends BaseDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return allocations;
     }
 
+    public List<Allocation> getAllInAllocation() throws SQLException {
+        String str = "select * from project";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            ResultSet rs = pre.executeQuery();
+            List<Allocation> projectList = new ArrayList<>();
+            while (rs.next()) {
+                Allocation temp = new Allocation();
+                temp.setProject(pdao.setProjectInfor(rs));
+                projectList.add(temp);
+            }
+            return projectList;
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
+
+    private Allocation setAllocationInfor(ResultSet rs) throws SQLException {
+        try {
+            Allocation temp = new Allocation();
+            temp.setId(rs.getInt(7));
+            temp.setUser(udao.getActiveUserByIdNull(rs.getInt(1)));
+            temp.setProject(pdao.getById(rs.getInt(2)));
+            temp.setStartDate(rs.getDate(3));
+            temp.setEndDate(rs.getDate(4));
+            temp.setEffortRate(rs.getInt(5));
+            temp.setStatus(rs.getBoolean(6));
+            temp.setRoleId(rs.getInt(8));
+            return temp;
+        } catch (SQLException ex) {
+            throw new SQLException(ex);
+        }
+    }
+
+    public List<Allocation> getAllocation(int id) throws SQLException {
+        String str = "select * from allocation where userId = ? and status = 1";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            pre.setInt(1, id);
+            ResultSet rs = pre.executeQuery();
+            List<Allocation> AllocateList = new ArrayList<>();
+            while (rs.next()) {
+                AllocateList.add(setAllocationInfor(rs));
+            }
+            return AllocateList;
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
+
+    public List<Allocation> getAllMember(int id) throws SQLException {
+        String str = "select a.* from allocation a join user u on u.id = a.userId where a.projectId = ?";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setInt(1, id);
+        ResultSet rs = pre.executeQuery();
+
+        List<Allocation> userList = new ArrayList<>();
+        
+        while (rs.next()) {
+            Allocation user = setAllocationInfor(rs);
+            user.setRoleString(getRoleNameOfAllocation(user.getId()));
+            if (user.getUser() != null) {
+                userList.add(user);
+            }
+        }
+        return userList;
+    }
+
+    private String getRoleNameOfAllocation(int aID) throws SQLException {
+        String sql = """
+                     select ds.name from domain_setting ds, 
+                     (select p.domainId, a.role from allocation a join project p on a.projectId = p.id where a.id = ?) as t1 
+                     where ds.domainId = t1.domainId and type = 2 and t1.role = ds.id""";
+        PreparedStatement pre = getConnection().prepareStatement(sql);
+        pre.setInt(1, aID);
+        ResultSet rs = pre.executeQuery();
+        if(rs.next()){
+            return rs.getString(1);
+        }
+        return null;
+    }
 }

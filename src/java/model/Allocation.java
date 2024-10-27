@@ -20,6 +20,8 @@ public class Allocation {
     private String projectRole;
     private int effortRate;
     private boolean status;
+    private Integer roleId;
+    private String roleString;
 
     public int getId() {
         return id;
@@ -92,5 +94,23 @@ public class Allocation {
     public void setStatus(boolean status) {
         this.status = status;
     }
+
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getRoleString() {
+        return roleString;
+    }
+
+    public void setRoleString(String roleString) {
+        this.roleString = roleString;
+    }
+    
+    
 
 }

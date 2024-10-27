@@ -22,6 +22,7 @@ public class Milestone {
     private boolean isFinal;
     private Project project;
     private ProjectPhase phase;
+    private int totalEvalWeight;
 
     public Milestone() {
     }
@@ -110,5 +111,14 @@ public class Milestone {
     public void setPhase(ProjectPhase phase) {
         this.phase = phase;
     }
+
+    public int getTotalEvalWeight() {
+        return totalEvalWeight;
+    }
+
+    public void setTotalEvalWeight(int totalEvalWeight) {
+        this.totalEvalWeight = totalEvalWeight;
+    }
+    
 
 }

@@ -110,7 +110,7 @@
                             <div class="block-header py-lg-4 py-3">
                                 <div class="row g-3">
                                     <div class="col-md-6 col-sm-12">
-                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> User Profile</h2>
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Project Members</h2>
                                         <ul class="breadcrumb mb-0">
                                             <li class="breadcrumb-item"><a href="/dashboard">Lucid</a></li>
                                             <li class="breadcrumb-item active">Project Configs</li>
@@ -202,20 +202,20 @@
                                                                     </td>
                                                                     <td>${i.department.name}</td>
 
-                                                                    <c:if test="${i.role==1}">
-                                                                        <td><span class="badge bg-danger">${i.getRoleString()}</span></td>
+                                                                    <c:if test="${t.roleId==1}">
+                                                                        <td><span class="badge bg-danger">${t.roleString}</span></td>
 
                                                                     </c:if>
-                                                                    <c:if test="${i.role==2}">
-                                                                        <td><span class="badge bg-secondary">${i.getRoleString()}</span></td>
+                                                                    <c:if test="${t.roleId==2}">
+                                                                        <td><span class="badge bg-secondary">${t.roleString}</span></td>
 
                                                                     </c:if>
-                                                                    <c:if test="${i.role==3||i.role==4}">
-                                                                        <td><span class="badge bg-success">${i.getRoleString()}</span></td>
+                                                                    <c:if test="${t.roleId==3||t.roleId==4}">
+                                                                        <td><span class="badge bg-success">${t.roleString}</span></td>
                                                                         </c:if>
-                                                                        <c:if test="${i.role==5||i.role==6}">
-                                                                        <td><span class="badge bg-info">${i.getRoleString()}</span></td>
-                                                                        </c:if>
+                                                                    <c:if test="${t.roleId==5||t.roleId==6}">
+                                                                        <td><span class="badge bg-info">${t.roleString}</span></td>
+                                                                    </c:if>
                                                                     <td>
                                                                         <div class="progress" style="height: 5px;">
                                                                             <div class="progress-bar" role="progressbar" aria-valuenow="${t.effortRate}" aria-valuemin="0" aria-valuemax="100" style="width: ${t.effortRate}%;">
