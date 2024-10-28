@@ -130,7 +130,7 @@ public class MilestoneDAO extends BaseDAO {
     }
 
     private int getTotalWeight(int id) throws SQLException {
-        String sql = "SELECT sum(weight) FROM pms.project_criteria where milestoneId=?";
+        String sql = "SELECT sum(weight) FROM pms.project_criteria where milestoneId=? and status=1";
         PreparedStatement pre = getConnection().prepareStatement(sql);
         pre.setInt(1, id);
         ResultSet rs = pre.executeQuery();

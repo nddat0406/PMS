@@ -271,9 +271,8 @@
                                         </div>
                                         <div class="col-md-4">
                                             <label>Weight:</label>
-                                            <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="uWeight" value="${modalItem.weight}">
+                                            <input type="number" min="1" max="${100 - modalItem.milestone.totalEvalWeight}" class="form-control weightInput" placeholder="Weight" name="uWeight" value="${modalItem.weight}">
                                             <label class="total-weight" style="font-size: 12px">(Current total weight: ${modalItem.milestone.totalEvalWeight} )</label>
-
                                         </div>
                                         <div class="col-md-8">
                                             <label>Milestone</label>
@@ -314,16 +313,16 @@
                                         <input type="text" name="action" hidden value="add">
                                         <div class="col-md-8">
                                             <label>Name*:</label>
-                                            <input type="text" class="form-control" placeholder="Name" name="Name" value="${oldAddItem.name}">
+                                            <input type="text" class="form-control" placeholder="Name" name="Name" required value="${oldAddItem.name}">
                                         </div>
                                         <div class="col-md-4">
                                             <label>Weight:</label>
-                                            <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="Weight" value="${oldAddItem.weight}">
+                                            <input type="number" min="1" max="100" class="form-control weightInput" placeholder="Weight" name="Weight" value="${oldAddItem.weight}">
                                             <label class="total-weight" style="font-size: 12px"></label>
                                         </div>
                                         <div class="col-md-8">
                                             <label>Milestone</label>
-                                            <select name="Milestone" class="form-select milestoneSelect" onchange="ChangeTotalWeight(this)" id="addMileList">
+                                            <select name="Milestone" class="form-select milestoneSelect" id="addMileList"  onchange="ChangeTotalWeight(this)">
                                                 <c:forEach items="${msList}" var="m">
                                                     <option value="${m.id}" totalWeight="${m.totalEvalWeight}" ${oldAddItem.milestone.id==m.id?'selected':''}>${m.name}</option>
                                                 </c:forEach>
@@ -342,7 +341,7 @@
                                     </c:if>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Add</button>
+                                    <button type="submit" class="btn btn-primary submitBtn" >Add</button>
                                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </form>
@@ -404,7 +403,7 @@
                 });
                 $('.select2Project').select2();
                 $("#addMileList option:first").attr('selected', 'selected');
-                ChangeTotalWeight();
+                ChangeTotalWeight($("#addMileList"));
             });
             $readMoreBtn = $(' .read-more-btn');
             $readMoreBtn.on('click', function () {
@@ -433,15 +432,38 @@
                 });
             }
             ;
-            function getModal(id) {
-                $(' #updateCriteria').load("${pageContext.request.contextPath}/project/eval?page=${page}&modalItemID=" + id + " #updateCriteria > *",ChangeTotalWeight());
+            function getModal(id,thisbutton) {
+                $(' #updateCriteria').load("${pageContext.request.contextPath}/project/eval?page=${page}&modalItemID=" + id + " #updateCriteria > *", function () {
+                    ChangeTotalWeight($("#updateCriteria").find(".milestoneSelect"));
+                });
             }
             ;
-            function ChangeTotalWeight() {
-                var total = $(' .milestoneSelect').find(":selected").attr('totalWeight');
-                $(" .total-weight").text("(Curent total weight: " + total + ")");
+
+            function ChangeTotalWeight(selectElement) {
+                var totalWeight = $(selectElement).find('option:selected').attr('totalWeight'); // Get the totalWeight attribute of the selected option
+                // Update UI or perform actions based on totalWeight
+                $(".total-weight").text("Current total weight: " + totalWeight + ")");
+                var weightInput = $(selectElement).closest('form').find('.weightInput');
+                var submitbtn = $(selectElement).closest('form').find('.submitBtn');
+                var curInput= $(weightInput).val();
+                var used = totalWeight-curInput;
+                var maxVal = 100 - used;
+                console.log(curInput);
+                console.log(maxVal);
+
+                if (maxVal> 0) {
+                    $(".weightInput").prop('max', maxVal);
+                    $(submitbtn).prop("disabled", false);
+
+                } else {
+                    $(".weightInput").prop('max', 0);
+                    $(".weightInput").prop('min', 0);
+                    $(submitbtn).prop("disabled", true);
+                }
+                if ($(weightInput).val() > (maxVal)) {
+                    $(weightInput).val($(weightInput).prop('max'));
+                }
             }
-            ;
             </c:if>
             function changeSort(name, sortBy) {
                 $.ajax({

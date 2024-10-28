@@ -26,7 +26,6 @@ import model.Project;
 import service.BaseService;
 import model.Milestone;
 import model.Team;
-import model.User;
 import org.apache.poi.ss.usermodel.Workbook;
 import service.CriteriaService;
 import service.GroupService;
@@ -565,7 +564,9 @@ public class ProjectConfigController extends HttpServlet {
         String fieldName = request.getParameter("fieldName");
         String order = request.getParameter("sortBy");
         try {
-            List<Criteria> list = cService.listCriteriaOfProject((int) session.getAttribute("selectedProject"));
+            int pID = (int) session.getAttribute("selectedProject");
+            List<Criteria> list = cService.listCriteriaOfProject(pID);
+            session.setAttribute("msList", mService.getAllMilestone(pID));
             list = cService.searchFilter(list, mileFilter, statusFilter, searchKey);
             if (fieldName != null && order != null) {
                 baseService.sortListByField(list, fieldName, order);
@@ -805,7 +806,7 @@ public class ProjectConfigController extends HttpServlet {
             int memberId = Integer.parseInt(request.getParameter("memberId"));
             List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
             int mID = (int) request.getSession().getAttribute("milestoneFilter");
-            tService.deleteMember(teamId, memberId, list,mID);
+            tService.deleteMember(teamId, memberId, list, mID);
             list = refreshTeamChanges(request);
             pagination(request, response, list, linkTeam);
         } catch (NumberFormatException | SQLException e) {
@@ -819,7 +820,7 @@ public class ProjectConfigController extends HttpServlet {
             int memberId = Integer.parseInt(request.getParameter("memberId"));
             List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
             int mID = (int) request.getSession().getAttribute("milestoneFilter");
-            tService.changeRole(teamId, memberId, list,mID);
+            tService.changeRole(teamId, memberId, list, mID);
             list = refreshTeamChanges(request);
             pagination(request, response, list, linkTeam);
         } catch (NumberFormatException | SQLException e) {

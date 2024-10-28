@@ -18,6 +18,7 @@
         <!-- MAIN CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
 
+
     </head>
 
     <body>
@@ -54,19 +55,19 @@
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                                <li class="nav-item" role="presentation"><a class="nav-link ${isSetting==null?'active':''}" id="Overview-tab" data-bs-toggle="tab" href="#Overview" role="tab">Overview</a></li>
-                                            <li class="nav-item" role="presentation"><a class="nav-link ${isSetting==null?'':'active'}" id="Settings-tab" data-bs-toggle="tab" href="#Settings" role="tab">Settings</a></li>
-                                        </ul>
+                                                <li class="nav-item" role="presentation"><a class="nav-link " id="Overview-tab" data-bs-toggle="tab" href="#Overview" role="tab">Overview</a></li>
+                                                <li class="nav-item" role="presentation"><a class="nav-link active" id="Settings-tab" data-bs-toggle="tab" href="#Settings" role="tab">Settings</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="tab-content p-0" id="myTabContent">
-                                    <div class="tab-pane fade  ${isSetting==null?'show active':''}" id="Overview">
-                                        <div class="card mb-3 profile-header">
-                                            <div class="card-body text-center">
-                                                <div class="profile-image mb-3"><img src="${profile.image}" class="rounded-circle" alt="" style="height: 150px;width: 150px"> </div>
+                                    <div class="tab-content p-0" id="myTabContent">
+                                        <div class="tab-pane fade" id="Overview">
+                                            <div class="card mb-3 profile-header">
+                                                <div class="card-body text-center">
+                                                    <div class="profile-image mb-3"><img src="${profile.image}" class="rounded-circle" alt="" style="height: 150px;width: 150px"> </div>
                                                 <div>
                                                     <h4 class=""><strong>${profile.fullname}</strong></h4>
-                                                    <span>${sessionScope.loginedUser.role==1?'Admin':'Member'}</span>
+                                                    <span>${sessionScope.loginedUser.getRoleString()}</span>
                                                 </div>
 
                                             </div>
@@ -97,23 +98,20 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="tab-pane fade ${isSetting==null?'':'show active'}" id="Settings">
+                                    <div class="tab-pane fade show active" id="Settings">
                                         <div class="row justify-content-center">
                                             <div class="card mb-3 col-7 ">
                                                 <div class="card-body">
                                                     <form action="profile" method="post" enctype="multipart/form-data">
                                                         <h6 class="card-title">Basic Information</h6>
                                                         <c:set value="${oldInfor==null?profile:oldInfor}" var="p"></c:set>
-                                                        <div class="row" style="margin-top: 10px">
-                                                            <div class="col-lg-12 col-md-12">
-                                                                <div class="mb-3">
-                                                                    <label>Fullname*: </label>
-                                                                    <input type="text" class="form-control" required name="fullname" placeholder="Full Name" value="${p.fullname}">
+                                                            <div class="row" style="margin-top: 10px">
+                                                                <div class="col-lg-12 col-md-12">
+                                                                    <div class="mb-3">
+                                                                        <label>Fullname*: </label>
+                                                                        <input type="text" class="form-control" required name="fullname" placeholder="Full Name" value="${p.fullname}">
                                                                 </div>
-                                                                <div class="mb-3">
-                                                                    <label>Email*: </label>
-                                                                    <input type="email" class="form-control" required name="email" placeholder="Email" value="${p.email}">
-                                                                </div>
+
                                                                 <div class="mb-3">
                                                                     <label>Gender*: </label>
                                                                     <div>
@@ -136,6 +134,12 @@
                                                                     <label>Phone Number: </label>
                                                                     <input type="text" class="form-control" name="mobile"
                                                                            placeholder="Phone Number" value="${p.mobile}">
+                                                                    <c:if test="${error.mobile != null}">
+                                                                        <div class="alert alert-danger alert-dismissible fade show"  role="alert">
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="alert"  aria-label="Close"></button>
+                                                                            <i class="fa fa-times-circle"></i> ${error.mobile} <br>
+                                                                        </div>
+                                                                    </c:if>
                                                                 </div>
                                                                 <div class="mb-3">
                                                                     <label class="form-label">Birth Date:</label>
@@ -145,72 +149,143 @@
                                                                             <button class="btn btn-outline-secondary" type="button"><i class="fa fa-calendar"></i></button>
                                                                         </div>
                                                                     </div>
+
                                                                 </div>
                                                                 <div class="mb-3">
                                                                     <div class="card">
                                                                         <div class="card-header">
                                                                             <h6 class="card-title">Profile Image</h6>
-                                                                            <small class="d-block">try to upload png, jpeg and jpg only</small>
+                                                                            <small class="d-block">Try to upload png, jpeg and jpg under 10MB only</small>
                                                                         </div>
                                                                         <div class="card-body">
-                                                                            <input type="file" class="dropify" name="image"  data-allowed-file-extensions="png jpeg jpg"/>
+                                                                            <input type="file" class="dropify" name="image" data-allowed-file-extensions="png jpeg jpg"/>
                                                                         </div>
                                                                     </div>
+                                                                    <c:if test="${error.image != null}">
+                                                                        <div class="alert alert-danger alert-dismissible fade show"  role="alert">
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="alert"  aria-label="Close"></button>
+                                                                            <i class="fa fa-times-circle"></i> ${error.image} <br>
+                                                                        </div>
+                                                                    </c:if>
                                                                 </div>
                                                             </div>
-                                                            <c:if test="${error != null}">
-                                                                <div class="alert alert-danger alert-dismissible fade show"  role="alert">
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"  aria-label="Close"></button>
-                                                                    <c:forEach items="${error}" var="e">
-                                                                        <i class="fa fa-times-circle"></i> ${e} <br>
-                                                                    </c:forEach>
-                                                                </div>
-                                                            </c:if>
                                                         </div>
                                                         <button type="submit" class="btn btn-primary">Update</button> &nbsp;&nbsp;
-                                                        <button type="reset" class="btn btn-secondary">Cancel</button>
+                                                        <c:if test="${oldInfor!=null}">
+                                                            <a href="${pageContext.request.contextPath}/user/profile" class="btn btn-secondary">Cancel</a>
+                                                        </c:if>
+                                                        <c:if test="${oldInfor==null}">
+                                                            <button type="reset" class="btn btn-secondary">Cancel</button>
+                                                        </c:if>
                                                     </form>
                                                 </div>
                                             </div>
-                                            <!-- account control -->
-                                            <div class="card mb-3 col-4" style="margin-left: 20px; height: 280px">
-                                                <form action="changePass" method="post">
-                                                    <div class="card-body">
-                                                        <div class="row">
-                                                            <div class="col-lg-12 col-md-12">
-                                                                <h6 class="card-title">Change Password</h6><br>
-                                                                <div class="mb-3">
-                                                                    <input type="password" required class="form-control" name="oldPass" placeholder="Current Password*" value="${oldPass}">
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <input type="password" required class="form-control" name="newPass" placeholder="New Password*" value="${newPass}">
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <input type="password" required class="form-control" name="reNewPass" placeholder="Confirm New Password*" value="${newRePass}">
+                                            <div class="col-4">
+                                                <div class="card mb-3 col-12" style="margin-left: 20px;">
+                                                    <form action="changeEmail" method="post">
+                                                        <input type="hidden" name="action" value="sendOTP">
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-md-12">
+                                                                    <h6 class="card-title">Change Email</h6><br>
+                                                                    <div class="mb-3">
+                                                                        <label>Email&nbsp;*: </label>
+                                                                        <input type="email" class="form-control" required name="email" placeholder="Email" value="${oldFilledEmail==null?p.email:oldFilledEmail}" id="EmailInput">
+                                                                        <c:if test="${emailError != null}">
+                                                                            <div class="alert alert-danger alert-dismissible fade show"  role="alert">
+                                                                                <button type="button" class="btn-close" data-bs-dismiss="alert"  aria-label="Close"></button>
+                                                                                <i class="fa fa-times-circle"></i> ${emailError} <br>
+                                                                            </div>
+                                                                        </c:if>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            <c:if test="${errorPass != null}">
-                                                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                                                        <i class="fa fa-times-circle"></i> ${errorPass} <br>
-                                                                </div>
+                                                            <button type="submit" class="btn btn-primary sa-position" id="emailupdateButton">Update</button> &nbsp;&nbsp;
+                                                            <c:if test="${oldFilledEmail!=null}">
+                                                                <a href="${pageContext.request.contextPath}/user/profile" class="btn btn-secondary">Cancel</a>
+                                                            </c:if>
+                                                            <c:if test="${oldFilledEmail==null}">
+                                                                <button type="reset" class="btn btn-secondary">Cancel</button>
                                                             </c:if>
                                                         </div>
-                                                        <button type="submit" class="btn btn-primary sa-position">Update</button> &nbsp;&nbsp;
-                                                        <button type="reset" class="btn btn-secondary">Cancel</button>
-                                                    </div>
-                                                </form>
+                                                    </form>
+                                                </div>
+                                                <!-- account control -->
+                                                <div class="card mb-3 col-12" style="margin-left: 20px; height: 280px">
+                                                    <form action="changePass" method="post">
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-md-12">
+                                                                    <h6 class="card-title">Change Password</h6><br>
+                                                                    <div class="mb-3">
+                                                                        <input type="password" required class="form-control" name="oldPass" placeholder="Current Password*" value="${oldPass}">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <input type="password" required class="form-control" name="newPass" placeholder="New Password*" value="${newPass}">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <input type="password" required class="form-control" name="reNewPass" placeholder="Confirm New Password*" value="${newRePass}">
+                                                                    </div>
+                                                                </div>
+                                                                <c:if test="${errorPass != null}">
+                                                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                                        <i class="fa fa-times-circle"></i> ${errorPass} <br>
+                                                                    </div>
+                                                                </c:if>
+                                                            </div>
+                                                            <button type="submit" class="btn btn-primary sa-position">Update</button> &nbsp;&nbsp;
+                                                            <button type="reset" class="btn btn-secondary">Cancel</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
+            <c:if test="${showOTPModal!=null}">
+                <div class="modal fade" id="OTPModal" tabindex="-1" aria-labelledby="largeModal" aria-hidden="false">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <form action="changeEmail" method="post">
+                            <input type="hidden" name="action" value="verify">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Modal title</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label>Enter OTP sended to email: ${oldFilledEmail}</label><br/><br/>
+                                    <div class="input-group mb-3">
+                                        <input type="hidden" name="oldFilledEmail" value="${oldFilledEmail}">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">OTP</span>
+                                        <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" name="otp">
+                                    </div>
+                                    <c:if test="${otpModalError != null}">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            <i class="fa fa-times-circle"></i> ${otpModalError} <br>
+                                        </div>
+                                    </c:if>
+                                </div>
+                                <div class="modal-footer justify-content-center" >
+                                    <button type="submit" class="btn btn-primary" style="width: 100px">Verify</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <button class="btn" data-bs-toggle="modal" data-bs-target="#OTPModal" id="toggleOTPModal"></button>>
+                <script>
+                    $("#toggleOTPModal").click();
+                </script>
+            </c:if>
         </div>
+
         <!-- core js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/dropify.bundle.js"></script>
@@ -222,17 +297,29 @@
         <script src="${pageContext.request.contextPath}/assets/js/pages/forms/dropify.js"></script>
         <c:if test="${successMess!=null}">
             <script>
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: '${successMess}',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                history.pushState(null, "", location.href.split("?")[0]);
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: '${successMess}',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    history.pushState(null, "", location.href.split("?")[0]);
             </script>
         </c:if>
+        <c:if test="${showOTPModal!=null}">
+            <script>
+                $("#toggleOTPModal")[0].click();
+            </script>
+        </c:if>
+        <script>
+            $('.dropify').dropify({
+                messages: {
+                    'error': 'Ooops, something wrong happended. Your file will not be saved!'
+                }
+            });
 
+        </script>
     </body>
 
 </html>

@@ -18,10 +18,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/select2.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/sweetalert2.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
-
-
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
 
         <style>
             .statusCell{

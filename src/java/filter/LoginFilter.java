@@ -110,10 +110,15 @@ public class LoginFilter implements Filter {
         Throwable problem = null;
 
         HttpServletRequest req = (HttpServletRequest) request;
+        String path = req.getServletPath();
         HttpSession session = req.getSession();
         User acc = (User) session.getAttribute("loginedUser");
-        if (acc == null) {
-            req.setAttribute("errorMess", "Please login first !");
+        if (acc == null && (!path.contains("login") 
+                && !path.contains("logout") 
+                && !path.contains("register") 
+                && !path.contains("GoogleLogin")
+                && !path.contains("forgot-password"))) {
+            req.setAttribute("errorMess", "Please login first!");
             req.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
             return;
         }

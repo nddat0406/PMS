@@ -53,7 +53,7 @@ public class BaseService {
         return String.format("%06d", number);
     }
 
-    public static boolean sendEmail(String email, String OTP) {
+    public static boolean sendEmail(String email, String title,String body) throws MessagingException {
         boolean result = false;
 
         String toEmail = email;
@@ -80,12 +80,12 @@ public class BaseService {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
-            message.setSubject("Forgot password OTP");
-            message.setText("Here is OTP to reset your password: " + OTP);
+            message.setSubject(title);
+            message.setText(body);
             Transport.send(message);
             result = true;
         } catch (MessagingException e) {
-            e.printStackTrace();
+            throw new MessagingException(e.toString());
         }
         return result;
     }
