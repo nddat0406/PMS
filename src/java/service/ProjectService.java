@@ -36,9 +36,9 @@ public class ProjectService {
     public List<Allocation> getByUser(int id, int role) throws SQLException {
         try {
             if (ADMIN_ROLE == role) {
-                return adao.getAllInAllocation();
+                return adao.getAllProject();
             } else {
-                return adao.getAllocation(id);
+                return adao.getActiveAllocationByUser(id);
             }
         } catch (SQLException e) {
             throw new SQLException(e);
@@ -107,7 +107,7 @@ public class ProjectService {
             row.createCell(0).setCellValue(u.getId());
             row.createCell(1).setCellValue(u.getFullname());
             row.createCell(2).setCellValue(u.getEmail());
-            row.createCell(3).setCellValue(a.getRoleString());
+            row.createCell(3).setCellValue(a.getRole().getName());
             row.createCell(4).setCellValue(a.getEffortRate());
             row.createCell(5).setCellValue(u.getDepartment().getName());
             row.createCell(6).setCellValue(a.getStatusString());

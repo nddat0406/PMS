@@ -181,7 +181,7 @@
                                                                 <th name="user.id" sortBy="desc" class="sortTableHead">id&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="user.fullname" sortBy="desc" class="sortTableHead" style="width: 25%;">Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="user.department.name" sortBy="desc" class="sortTableHead" >department&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                                <th name="user.role" sortBy="desc" class="sortTableHead" style="width: 10%;">Role&nbsp;<i class="fa fa-sort sort-icon" ></i></th>
+                                                                <th name="role.priority" sortBy="desc" class="sortTableHead" style="width: 10%;">Role&nbsp;<i class="fa fa-sort sort-icon" ></i></th>
                                                                 <th name="effortRate" sortBy="desc" class="sortTableHead">Effort Rate&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="startDate" sortBy="desc" class="sortTableHead">Start Date&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="endDate" sortBy="desc" class="sortTableHead">End Date&nbsp;<i class="fa fa-sort sort-icon"></i></th>
@@ -202,20 +202,7 @@
                                                                     </td>
                                                                     <td>${i.department.name}</td>
 
-                                                                    <c:if test="${t.roleId==1}">
-                                                                        <td><span class="badge bg-danger">${t.roleString}</span></td>
-
-                                                                    </c:if>
-                                                                    <c:if test="${t.roleId==2}">
-                                                                        <td><span class="badge bg-secondary">${t.roleString}</span></td>
-
-                                                                    </c:if>
-                                                                    <c:if test="${t.roleId==3||t.roleId==4}">
-                                                                        <td><span class="badge bg-success">${t.roleString}</span></td>
-                                                                        </c:if>
-                                                                    <c:if test="${t.roleId==5||t.roleId==6}">
-                                                                        <td><span class="badge bg-info">${t.roleString}</span></td>
-                                                                    </c:if>
+                                                                    <td>${t.getRoleBadge()}</td>
                                                                     <td>
                                                                         <div class="progress" style="height: 5px;">
                                                                             <div class="progress-bar" role="progressbar" aria-valuenow="${t.effortRate}" aria-valuemin="0" aria-valuemax="100" style="width: ${t.effortRate}%;">

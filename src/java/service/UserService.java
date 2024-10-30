@@ -15,10 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.User;
-import java.util.zip.DataFormatException;
 import model.Group;
 import static service.BaseService.*;
 
@@ -34,8 +31,7 @@ public class UserService {
 
     public User getUserProfile(int userId) throws SQLException {
         try {
-            User user = udao.getActiveUserById(userId);
-            return user;
+            return udao.getActiveUserById(userId);
         } catch (SQLException ex) {
             throw new SQLException(ex);
         }
@@ -110,7 +106,7 @@ public class UserService {
                 throw new SQLException("New password is duplicated with old password");
             }
         } else {
-            throw new SQLException("Password not right");
+            throw new SQLException("Current password not right");
 
         }
 
@@ -273,8 +269,8 @@ public class UserService {
 
         if (udao.isOTP_Expired(id)) {
             error = "OTP is expired! Try send another request.";
-        }else{
-            if(!udao.validateOTP(otp,id)){
+        } else {
+            if (!udao.validateOTP(otp, id)) {
                 error = "OTP is not correct!";
             }
         }

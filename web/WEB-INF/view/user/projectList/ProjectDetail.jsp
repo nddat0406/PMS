@@ -128,7 +128,7 @@
                                                 <c:forEach var="allocation" items="${allocations}">
                                                     <tr>
                                                         <td>${allocation.user.fullname}</td>
-                                                        <td>${allocation.projectRole}</td>
+                                                        <td>${allocation.getRoleBadge()}</td>
                                                         <td>${allocation.effortRate}%</td>
                                                         <td><fmt:formatDate value="${allocation.startDate}" pattern="dd/MM/yyyy" /></td>
                                                         <td><fmt:formatDate value="${allocation.endDate}" pattern="dd/MM/yyyy" /></td>

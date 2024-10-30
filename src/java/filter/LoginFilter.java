@@ -117,7 +117,8 @@ public class LoginFilter implements Filter {
                 && !path.contains("logout") 
                 && !path.contains("register") 
                 && !path.contains("GoogleLogin")
-                && !path.contains("forgot-password"))) {
+                && !path.contains("forgot-password")
+                && !path.contains("assets"))) {
             req.setAttribute("errorMess", "Please login first!");
             req.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
             return;

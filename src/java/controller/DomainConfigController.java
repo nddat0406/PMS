@@ -5,10 +5,7 @@
 package controller;
 
 import dal.CriteriaDAO;
-import dal.GroupDAO;
-import dal.SettingDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,15 +13,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Allocation;
 import model.Criteria;
 import model.Group;
 import model.Project;
@@ -152,8 +145,8 @@ public class DomainConfigController extends HttpServlet {
                 request.setAttribute("type", type);
                 request.setAttribute("domainSettings", domainSettings);
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domainsetting.jsp").forward(request, response);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (SQLException e) {
+                throw new ServletException(e);
             }
         }
 

@@ -6,13 +6,14 @@ package model;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
  *
  * @author HP
  */
 public class User {
-    
+
     private int id;
     private String email;
     private String fullname;
@@ -92,31 +93,37 @@ public class User {
     public void setRole(int role) {
         this.role = role;
     }
-    
-    public String getRoleString(){
+
+    public String getRoleString() {
         switch (this.role) {
-            case 1:
+            case 1 -> {
                 return "Admin";
-            case 2:
+            }
+            case 2 -> {
                 return "Member";
-            case 3:
+            }
+            case 3 -> {
                 return "Project QA";
-            case 4:
+            }
+            case 4 -> {
                 return "Project Manager";
-            case 5:
+            }
+            case 5 -> {
                 return "Department Manager ";
-            case 6:
+            }
+            case 6 -> {
                 return "PMO Manager";
-            default:
-                throw new AssertionError();
+            }
+            default -> throw new AssertionError();
         }
     }
 
     public int getStatus() {
         return this.status;
     }
+
     public boolean getStatusBoolean() {
-        return status==1;
+        return status == 1;
     }
 
     public void setStatus(int status) {
@@ -155,7 +162,7 @@ public class User {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         if (birthdate != null) {
             return formatter.format(birthdate);
-        }else{
+        } else {
             return null;
         }
     }

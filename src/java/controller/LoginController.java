@@ -127,7 +127,6 @@ public class LoginController extends HttpServlet {
                 request.getSession().setAttribute("loginedUser", uService.getUserByEmail(email));
                 response.sendRedirect(request.getContextPath() + "/dashboard");
             } else {
-
                 request.getSession().setAttribute("email", email);
                 request.getSession().setAttribute("pass", pass);
                 request.getSession().setAttribute("errorMess", "Sai tài khoản hoặc mật khẩu");

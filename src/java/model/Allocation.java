@@ -17,11 +17,9 @@ public class Allocation {
     private Project project;
     private Date startDate;
     private Date endDate;
-    private String projectRole;
     private int effortRate;
     private boolean status;
-    private Integer roleId;
-    private String roleString;
+    private Setting role;
 
     public int getId() {
         return id;
@@ -63,14 +61,6 @@ public class Allocation {
         this.endDate = endDate;
     }
 
-    public String getProjectRole() {
-        return projectRole;
-    }
-
-    public void setProjectRole(String projectRole) {
-        this.projectRole = projectRole;
-    }
-
     public int getEffortRate() {
         return effortRate;
     }
@@ -82,11 +72,11 @@ public class Allocation {
     public boolean isStatus() {
         return status;
     }
-    
-    public String getStatusString(){
-        if(this.status){
+
+    public String getStatusString() {
+        if (this.status) {
             return "Active";
-        }else{
+        } else {
             return "Inactive";
         }
     }
@@ -95,22 +85,28 @@ public class Allocation {
         this.status = status;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public Setting getRole() {
+        return role;
     }
 
-    public void setRoleId(Integer roleId) {
-        this.roleId = roleId;
+    public void setRole(Setting role) {
+        this.role = role;
     }
 
-    public String getRoleString() {
-        return roleString;
+    public String getRoleBadge() {
+        if(this.role==null){
+            return "<span class=\"badge bg-danger\">Cannot find role</span>";
+        }
+        if (role.getId() == 1) {
+            return "<span class=\"badge bg-info\">" + role.getName() + "</span>";
+        } else if (role.getId() == 2) {
+            return "<span class=\"badge bg-secondary\">" + role.getName() + "</span>";
+        } else if (role.getId() == 3 || role.getId() == 4) {
+            return "<span class=\"badge bg-success\">" + role.getName() + "</span>";
+        } else if (role.getId() >= 5) {
+            return "<span class=\"badge bg-primary\">" + role.getName() + "</span>";
+        } else {
+            return "<span class=\"badge bg-danger\">" + role.getName() + "</span>";
+        }
     }
-
-    public void setRoleString(String roleString) {
-        this.roleString = roleString;
-    }
-    
-    
-
 }

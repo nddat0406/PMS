@@ -16,7 +16,7 @@
                         <div class="input-group mb-3 ">
                             <label>Search Project</label>
                             <div class="input-group" style="    flex-wrap: nowrap;">
-                                <select class="select2Project form-select" name="projectId" hidden>
+                                <select class="select2Project form-select" name="projectId" style="width: 100%">
                                     <c:forEach var="item" items="${sessionScope.myProjectList}">
                                         <option value="${item.id}" ${sessionScope.selectedProject==item.id?'selected':''}>${item.code} - ${item.name}</option>
                                     </c:forEach>
@@ -31,7 +31,7 @@
                         <div class="input-group mb-3 ">
                             <label>Search Domain</label>
                             <div class="input-group" style="flex-wrap: nowrap;">
-                                <select class="select2Project form-select" name="domainId" id="kagawad">
+                                <select class="select2Project form-select" name="domainId" id="kagawad" style="width: 100%">
                                     <c:forEach var="d" items="${sessionScope.domainList}">
                                         <option value="${d.id}">${d.code} - ${d.name}</option>
                                     </c:forEach>

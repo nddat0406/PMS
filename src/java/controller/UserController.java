@@ -215,7 +215,8 @@ public class UserController extends HttpServlet {
                 request.setAttribute("successMess", "Profile Changed!");
             }
             if (passChanged != null) {
-                request.setAttribute("successMess", "Password Changed!");
+                request.setAttribute("passSuccessMess", "Password Changed!");
+                request.setAttribute("passSuccessMesstext", " You will be redirect to login!");
             }
             request.setAttribute("profile", uService.getUserProfile(id));
             request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);

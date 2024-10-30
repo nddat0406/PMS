@@ -131,7 +131,7 @@
                                                     <c:if test="${loginedUser.role!=2}">
                                                         <ul class="header-dropdown">
                                                             <li>
-                                                                <button type="button" id="addTeamButton" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addTeam">Add New Team</button>
+                                                                <button type="button" id="addTeamButton" class="btn btn-outline-secondary"  data-bs-toggle="modal" data-bs-target="#addTeam">Add New Team</button>
                                                             </li>
                                                             <a class="btn btn-sm btn-outline-success" id="showUpdateMess" hidden data-bs-toggle="modal" data-bs-target="#updateTeam"><i class="fa fa-pencil" ></i></a>
                                                         </ul>
@@ -151,7 +151,7 @@
                                                             </div>
                                                             <div class="input-group mb-3" style="width: 15%">
                                                                 <input value="${searchKey.trim()}" class="form-control" name="searchKey" placeholder="Search here..." type="text">
-                                                                <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
+                                                                <button type="submit" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Filter"><i class="fa fa-search"></i></button>
                                                             </div>
                                                         </div>
                                                     </form>
@@ -188,11 +188,11 @@
                                                                                         <td  style="width: 200px">
                                                                                             <div>
                                                                                                 <a class="btn btn-sm btn-outline-info btn-action"
-                                                                                                   onclick="changeStateTeam(${i.id})"><i class="fa fa-power-off" ></i></a>
+                                                                                                   onclick="changeStateTeam(${i.id})" data-bs-toggle="tooltip" data-bs-placement="top" title="Activate/Deactive"><i class="fa fa-power-off" ></i></a>
                                                                                                 <a class="btn btn-sm btn-outline-success btn-action" data-bs-toggle="modal" data-bs-target="#updateTeam" 
-                                                                                                   onclick="getModal(${i.id})"><i class="fa fa-pencil" ></i></a>
-                                                                                                <a class="btn btn-sm btn-outline-danger btn-action" 
-                                                                                                   onclick="deleteTeam(${i.id}, '${i.name}')"><i class="fa fa-trash"></i></a>
+                                                                                                   onclick="getModal(${i.id})"><i class="fa fa-pencil" data-bs-toggle="tooltip" data-bs-placement="top" title="Update Team" ></i></a>
+                                                                                                <a class="btn btn-sm btn-outline-danger btn-action" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Team"
+                                                                                                   onclick="deleteTeam(${i.id}, '${i.name}')"><i class="fa fa-trash" ></i></a>
                                                                                             </div>
                                                                                         </td>
                                                                                     </c:if>
@@ -230,7 +230,8 @@
                                                                                                 </td>
                                                                                                 <c:if test="${loginedUser.role!=2}">
                                                                                                     <td style="width: 200px">
-                                                                                                        <a class="btn btn-sm btn-outline-danger" onclick="deleteMember(${i.id},${i.teamLeader.id}, '${i.teamLeader.getStatus()==0?"Deactivated User":i.teamLeader.fullname}', '${i.name}')"><i class="fa fa-trash"></i></a>
+                                                                                                        <a class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete From Team"
+                                                                                                           onclick="deleteMember(${i.id},${i.teamLeader.id}, '${i.teamLeader.getStatus()==0?"Deactivated User":i.teamLeader.fullname}', '${i.name}')"><i class="fa fa-trash"></i></a>
                                                                                                     </td>
                                                                                                 </c:if>
                                                                                             </tr>
@@ -249,10 +250,11 @@
                                                                                                 </td>
                                                                                                 <c:if test="${loginedUser.role!=2}">
                                                                                                     <td style="width: 200px">
-                                                                                                        <a class="btn btn-sm btn-outline-success" 
+                                                                                                        <a class="btn btn-sm btn-outline-success"  data-bs-toggle="tooltip" data-bs-placement="top" title="Make Team Lead"
                                                                                                            onclick="ChangeRole(${i.id},${m.id}, '${m.getStatus()==0?"Deactivated User":m.fullname}', '${i.name}')"><i class="fa fa-pencil" ></i></a>
                                                                                                         <a class="btn btn-sm btn-outline-danger" 
-                                                                                                           onclick="deleteMember(${i.id},${m.id}, '${m.getStatus()==0?"Deactivated User":m.fullname}', '${i.name}')"><i class="fa fa-trash"></i></a>
+                                                                                                           onclick="deleteMember(${i.id},${m.id}, '${m.getStatus()==0?"Deactivated User":m.fullname}', '${i.name}')" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete From Team"
+                                                                                                           ><i class="fa fa-trash"></i></a>
                                                                                                     </td>
                                                                                                 </c:if>
                                                                                             </tr>

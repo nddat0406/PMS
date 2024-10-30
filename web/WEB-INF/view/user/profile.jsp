@@ -307,6 +307,20 @@
                     history.pushState(null, "", location.href.split("?")[0]);
             </script>
         </c:if>
+        <c:if test="${passSuccessMess!=null}">
+            <script>
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '${passSuccessMess}',
+                    text: "${passSuccessMesstext}",
+                    showConfirmButton: false,
+                    timer: 3000
+                }).then(() => {
+                    window.location.href = "${pageContext.request.contextPath}/logout";
+                });
+            </script>
+        </c:if>
         <c:if test="${showOTPModal!=null}">
             <script>
                 $("#toggleOTPModal")[0].click();

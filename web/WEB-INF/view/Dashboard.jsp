@@ -168,9 +168,9 @@
                                                 <tr>
                                                     <th name="project.name" sortBy="desc" class="sortTableHead">Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                     <th name="project.bizTerm" sortBy="desc" class="sortTableHead">Biz Term&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                        <c:if test="${loginedUser.role==2}" >
+                                                        <c:if test="${loginedUser.role!=1}" >
                                                         <th name="effortRate" sortBy="desc" class="sortTableHead">Effort Rate&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                        <th name="projectRole" sortBy="desc" class="sortTableHead">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                        <th name="role.priority" sortBy="desc" class="sortTableHead">Role&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                         </c:if>
                                                     <th name="project.status" sortBy="desc" class="sortTableHead">Status&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                     <th name="project.startDate" sortBy="desc" class="sortTableHead">Start Date&nbsp;<i class="fa fa-sort sort-icon"></i></th>
@@ -188,7 +188,7 @@
                                                         <td>
                                                             ${p.bizTerm}
                                                         </td>
-                                                        <c:if test="${loginedUser.role==2}" >
+                                                        <c:if test="${loginedUser.role!=1}" >
                                                             <td>
                                                                 <div class="progress" style="height: 5px;">
                                                                     <div class="progress-bar" role="progressbar" aria-valuenow="${l.effortRate}" aria-valuemin="0" aria-valuemax="100" style="width: ${l.effortRate}%;">
@@ -196,7 +196,7 @@
                                                                 </div>
                                                                 <small>Effort Rate: ${l.effortRate}%</small>
                                                             </td>
-                                                            <td>${l.projectRole}</td>
+                                                            <td>${l.getRoleBadge()}</td>
                                                         </c:if>
                                                         <td>
                                                             <c:choose >
