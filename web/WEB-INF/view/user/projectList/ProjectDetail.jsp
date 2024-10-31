@@ -10,17 +10,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/dataTables.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <style>
-            body {
-                background-color: #f8f9fa;
-            }
-            .container-fluid {
-                padding: 20px;
-            }
-            .block-header {
-                margin-bottom: 20px;
-            }
             .card {
                 border-radius: 10px;
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -45,26 +35,28 @@
 
                     <div id="main-content">
                         <div class="container-fluid">
-                            <div class="block-header py-4">
-                                <h2 class="m-0 fs-5">
-                                    <a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth">
-                                        <i class="fa fa-arrow-left"></i>
-                                    </a>
-                                    Project Detail
-                                </h2>
+                            <div class="block-header py-lg-4 py-3">
+                                <div class="row g-3">
+                                    <div class="col-md-6 col-sm-12">
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Project Details</h2>
+                                        <ul class="breadcrumb mb-0"></ul>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="row clearfix">
                                 <div class="col-lg-12 col-md-12">
                                     <div class="card mb-4">
                                         <div class="card-body">
-                                            <h3 class="m-0">Project Detail: ${project.name}</h3>
+                                            <h3 class="m-0">Name: ${project.name}</h3>
                                         <p class="status-label">Code: ${project.code}</p>
+                                        <p class="status-label">Domain: ${project.domain.name}</p>
+                                        <p class="status-label">Department: ${project.department.name}</p>
                                         <p class="status-label">Start Date: <fmt:formatDate value="${project.startDate}" pattern="dd/MM/yyyy" /></p>
                                         <p class="status-label">Detail: ${project.details}</p>
 
                                         <!-- Phần này chỉ hiển thị nếu role là Project Manager -->
-                                        <c:if test="${role == 'Project Manager'}">
+                                        <c:if test="${role == 1}">
                                             <form action="${pageContext.request.contextPath}/projectlist?action=update" method="post">
                                                 <label for="status">Update Project Status:</label>
                                                 <div class="form-check">
@@ -81,7 +73,7 @@
                                         </c:if>
 
                                         <!-- Nếu không phải Project Manager, chỉ hiển thị trạng thái -->
-                                        <c:if test="${role != 'Project Manager'}">
+                                        <c:if test="${role != 1}">
                                             <p class="status-label">Current Project Status: 
                                                 <c:choose>
                                                     <c:when test="${project.status == 1}">
@@ -110,7 +102,7 @@
                                                         <td><fmt:formatDate value="${milestone.endDate}" pattern="dd/MM/yyyy" /></td>
                                                         <td>
                                                             <c:choose>
-                                                                <c:when test="${milestone.status}">
+                                                                <c:when test="${milestone.status==1}">
                                                                     In Progress
                                                                 </c:when>
                                                                 <c:otherwise>
@@ -122,31 +114,6 @@
                                                 </c:forEach>
                                             </tbody>
                                         </table>
-
-                                        <h3>Project Members</h3>
-                                        <table id="ProjectMembers" class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>Full Name</th>
-                                                    <th>Role</th>
-                                                    <th>Effort Rate</th>
-                                                    <th>Start Date</th>
-                                                    <th>End Date</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <c:forEach var="allocation" items="${allocations}">
-                                                    <tr>
-                                                        <td>${allocation.user.fullname}</td>
-                                                        <td>${allocation.projectRole}</td>
-                                                        <td>${allocation.effortRate}%</td>
-                                                        <td><fmt:formatDate value="${allocation.startDate}" pattern="dd/MM/yyyy" /></td>
-                                                        <td><fmt:formatDate value="${allocation.endDate}" pattern="dd/MM/yyyy" /></td>
-                                                    </tr>
-                                                </c:forEach>
-                                            </tbody>
-                                        </table>
-
                                         <a href="${pageContext.request.contextPath}/projectlist?action=list" class="btn btn-secondary">Back</a>
                                     </div>
                                 </div>
@@ -154,10 +121,12 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>            
+        </div>
 
-            <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+
+        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
     </body>
 </html>

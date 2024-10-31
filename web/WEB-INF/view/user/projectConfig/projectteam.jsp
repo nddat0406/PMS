@@ -18,10 +18,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/select2.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/sweetalert2.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
-
-
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
 
         <style>
             .statusCell{
@@ -103,7 +100,7 @@
                             <div class="block-header py-lg-4 py-3">
                                 <div class="row g-3">
                                     <div class="col-md-6 col-sm-12">
-                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> User Profile</h2>
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Project Teams</h2>
                                         <ul class="breadcrumb mb-0">
                                             <li class="breadcrumb-item"><a href="/dashboard">Lucid</a></li>
                                             <li class="breadcrumb-item active">Project Configs</li>
@@ -134,7 +131,7 @@
                                                     <c:if test="${loginedUser.role!=2}">
                                                         <ul class="header-dropdown">
                                                             <li>
-                                                                <button type="button" id="addTeamButton" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addTeam">Add New Team</button>
+                                                                <button type="button" id="addTeamButton" class="btn btn-outline-secondary"  data-bs-toggle="modal" data-bs-target="#addTeam">Add New Team</button>
                                                             </li>
                                                             <a class="btn btn-sm btn-outline-success" id="showUpdateMess" hidden data-bs-toggle="modal" data-bs-target="#updateTeam"><i class="fa fa-pencil" ></i></a>
                                                         </ul>
@@ -143,11 +140,10 @@
                                                 <div class="card-body" id="cardbody">
                                                     <form action="team" method="post">
                                                         <input hidden type="text" value="filter" name="action">
-                                                        <div style="display: flex; justify-content: space-evenly">
+                                                        <div style="display: flex; justify-content: space-around">
                                                             <div class="input-group mb-3" style="width: 25%">
                                                                 <span class="input-group-text" id="basic-addon11">Milestone</span>
                                                                 <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="milestoneFilter">
-                                                                    <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
                                                                     <c:forEach items="${msList}" var="ms">
                                                                         <option value="${ms.id}" ${milestoneFilter==ms.id?'selected':''}>${ms.name}</option>
                                                                     </c:forEach>
@@ -155,7 +151,7 @@
                                                             </div>
                                                             <div class="input-group mb-3" style="width: 15%">
                                                                 <input value="${searchKey.trim()}" class="form-control" name="searchKey" placeholder="Search here..." type="text">
-                                                                <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
+                                                                <button type="submit" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Apply Filter"><i class="fa fa-search"></i></button>
                                                             </div>
                                                         </div>
                                                     </form>
@@ -192,11 +188,11 @@
                                                                                         <td  style="width: 200px">
                                                                                             <div>
                                                                                                 <a class="btn btn-sm btn-outline-info btn-action"
-                                                                                                   onclick="changeStateTeam(${i.id})"><i class="fa fa-power-off" ></i></a>
+                                                                                                   onclick="changeStateTeam(${i.id})" data-bs-toggle="tooltip" data-bs-placement="top" title="Activate/Deactive"><i class="fa fa-power-off" ></i></a>
                                                                                                 <a class="btn btn-sm btn-outline-success btn-action" data-bs-toggle="modal" data-bs-target="#updateTeam" 
-                                                                                                   onclick="getModal(${i.id})"><i class="fa fa-pencil" ></i></a>
-                                                                                                <a class="btn btn-sm btn-outline-danger btn-action" 
-                                                                                                   onclick="deleteTeam(${i.id}, '${i.name}')"><i class="fa fa-trash"></i></a>
+                                                                                                   onclick="getModal(${i.id})"><i class="fa fa-pencil" data-bs-toggle="tooltip" data-bs-placement="top" title="Update Team" ></i></a>
+                                                                                                <a class="btn btn-sm btn-outline-danger btn-action" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Team"
+                                                                                                   onclick="deleteTeam(${i.id}, '${i.name}')"><i class="fa fa-trash" ></i></a>
                                                                                             </div>
                                                                                         </td>
                                                                                     </c:if>
@@ -204,7 +200,6 @@
                                                                             </table>
                                                                         </div>
                                                                     </h2>
-
                                                                     <div id="collapse${i.id}" class="accordion-collapse collapse" aria-labelledby="heading${i.id}" data-bs-parent="#accordionExample">
                                                                         <div  class="card-header" style="padding: 10px 10px 0px 15px">
                                                                             <h5>Team members:</h5>
@@ -235,7 +230,8 @@
                                                                                                 </td>
                                                                                                 <c:if test="${loginedUser.role!=2}">
                                                                                                     <td style="width: 200px">
-                                                                                                        <a class="btn btn-sm btn-outline-danger" onclick="deleteMember(${i.id},${i.teamLeader.id}, '${i.teamLeader.getStatus()==0?"Deactivated User":i.teamLeader.fullname}', '${i.name}')"><i class="fa fa-trash"></i></a>
+                                                                                                        <a class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete From Team"
+                                                                                                           onclick="deleteMember(${i.id},${i.teamLeader.id}, '${i.teamLeader.getStatus()==0?"Deactivated User":i.teamLeader.fullname}', '${i.name}')"><i class="fa fa-trash"></i></a>
                                                                                                     </td>
                                                                                                 </c:if>
                                                                                             </tr>
@@ -254,10 +250,11 @@
                                                                                                 </td>
                                                                                                 <c:if test="${loginedUser.role!=2}">
                                                                                                     <td style="width: 200px">
-                                                                                                        <a class="btn btn-sm btn-outline-success" 
+                                                                                                        <a class="btn btn-sm btn-outline-success"  data-bs-toggle="tooltip" data-bs-placement="top" title="Make Team Lead"
                                                                                                            onclick="ChangeRole(${i.id},${m.id}, '${m.getStatus()==0?"Deactivated User":m.fullname}', '${i.name}')"><i class="fa fa-pencil" ></i></a>
                                                                                                         <a class="btn btn-sm btn-outline-danger" 
-                                                                                                           onclick="deleteMember(${i.id},${m.id}, '${m.getStatus()==0?"Deactivated User":m.fullname}', '${i.name}')"><i class="fa fa-trash"></i></a>
+                                                                                                           onclick="deleteMember(${i.id},${m.id}, '${m.getStatus()==0?"Deactivated User":m.fullname}', '${i.name}')" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete From Team"
+                                                                                                           ><i class="fa fa-trash"></i></a>
                                                                                                     </td>
                                                                                                 </c:if>
                                                                                             </tr>
@@ -432,8 +429,8 @@
                                             <tr>
                                                 <th>
                                                     <label class="fancy-checkbox">
-                                                        <input class="select-all" type="checkbox" name="checkbox">
-                                                        <span></span>
+                                                        <span><input class="select-all" type="checkbox" name="checkbox" id="select-all">
+                                                        </span>
                                                     </label>
                                                 </th>
                                                 <th></th>
@@ -549,6 +546,16 @@
                 });
                 $(' .btn-action').on('mouseleave', function () {
                     $(this).closest(' .accordion-button').attr("data-bs-toggle", "collapse");
+                });
+                $('#select-all').on('click', function () {
+                    // Check or uncheck all checkboxes with the name "addMembers" based on the state of the "Select All" checkbox
+                    $('input[name="addMembers"]').prop('checked', this.checked);
+                });
+
+                // When any individual checkbox is clicked
+                $('input[name="addMembers"]').on('click', function () {
+                    // If all checkboxes with the name "addMembers" are checked, check the "Select All" checkbox; otherwise, uncheck it
+                    $('#select-all').prop('checked', $('input[name="addMembers"]:checked').length === $('input[name="addMembers"]').length);
                 });
             });
             function changeSort(name, sortBy) {
@@ -699,7 +706,6 @@
                             dropdownParent: $('#updateTeam .modal-content')
                         });
                     });
-
                 }
                 ;
                 function getAddMemberList(id) {

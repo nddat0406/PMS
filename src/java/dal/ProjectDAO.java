@@ -23,24 +23,6 @@ public class ProjectDAO extends BaseDAO {
 
     private GroupDAO gdao = new GroupDAO();
     private UserDAO udao = new UserDAO();
-    private MilestoneDAO mdao = new MilestoneDAO();
-
-    public List<Allocation> getAllInAllocation() throws SQLException {
-        String str = "select * from project";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(str);
-            ResultSet rs = pre.executeQuery();
-            List<Allocation> projectList = new ArrayList<>();
-            while (rs.next()) {
-                Allocation temp = new Allocation();
-                temp.setProject(setProjectInfor(rs));
-                projectList.add(temp);
-            }
-            return projectList;
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        }
-    }
 
     public List<Project> getAllByUser(int id) throws SQLException {
         String str = "select p.* from allocation a join project p on p.id = a.projectId where userId = ?";
@@ -59,23 +41,7 @@ public class ProjectDAO extends BaseDAO {
         }
     }
 
-    public List<Allocation> getAllocation(int id) throws SQLException {
-        String str = "select * from allocation where userId = ? and status = 1";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(str);
-            pre.setInt(1, id);
-            ResultSet rs = pre.executeQuery();
-            List<Allocation> AllocateList = new ArrayList<>();
-            while (rs.next()) {
-                AllocateList.add(setAllocationInfor(rs));
-            }
-            return AllocateList;
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        }
-    }
-
-    private Project setProjectInfor(ResultSet rs) throws SQLException {
+    public Project setProjectInfor(ResultSet rs) throws SQLException {
         try {
             Project temp = new Project();
             temp.setId(rs.getInt(1));
@@ -93,23 +59,6 @@ public class ProjectDAO extends BaseDAO {
             gr2.setId(rs.getInt(9));
             gr2.setName(gdao.getDomainName(rs.getInt(9)));
             temp.setDomain(gr2);
-            return temp;
-        } catch (SQLException ex) {
-            throw new SQLException(ex);
-        }
-    }
-
-    private Allocation setAllocationInfor(ResultSet rs) throws SQLException {
-        try {
-            Allocation temp = new Allocation();
-            temp.setId(rs.getInt(8));
-            temp.setUser(udao.getActiveUserByIdNull(rs.getInt(1)));
-            temp.setProject(getById(rs.getInt(2)));
-            temp.setStartDate(rs.getDate(3));
-            temp.setEndDate(rs.getDate(4));
-            temp.setProjectRole(rs.getString(5));
-            temp.setEffortRate(rs.getInt(6));
-            temp.setStatus(rs.getBoolean(7));
             return temp;
         } catch (SQLException ex) {
             throw new SQLException(ex);
@@ -142,23 +91,6 @@ public class ProjectDAO extends BaseDAO {
         }
     }
 
-    public List<Allocation> getAllMember(int id) throws SQLException {
-        String str = "select a.* from allocation a join user u on u.id = a.userId where a.projectId = ?";
-        PreparedStatement pre = getConnection().prepareStatement(str);
-        pre.setInt(1, id);
-        ResultSet rs = pre.executeQuery();
-
-        List<Allocation> userList = new ArrayList<>();
-        while (rs.next()) {
-            Allocation user = setAllocationInfor(rs);
-            if (user.getUser() != null) {
-                userList.add(user);
-            }
-        }
-        return userList;
-
-    }
-
     public void flipStatusMemberOfPrj(int id) throws SQLException {
         String sql = """
                      UPDATE `pms`.`allocation`
@@ -172,7 +104,7 @@ public class ProjectDAO extends BaseDAO {
 
     //  ------------------  project list vs project detail -----------------------------
     //list prj
-    public List<Project> listProjects(int userId, int page, int pageSize, String keyword, Integer status) {
+    public List<Project> listProjects(int userId, int page, int pageSize, String keyword, Integer status, Integer domainId, Integer departmentId) {
         List<Project> projects = new ArrayList<>();
         StringBuilder query = new StringBuilder("SELECT p.id, p.bizTerm, p.code, p.name, p.details, p.startDate, p.status, "
                 + "g1.id AS domainId, g1.name AS domainName, "
@@ -193,6 +125,16 @@ public class ProjectDAO extends BaseDAO {
             query.append("AND p.status = ? ");
         }
 
+        // Thêm điều kiện lọc theo domain nếu có
+        if (domainId != null) {
+            query.append("AND g1.id = ? ");
+        }
+
+        // Thêm điều kiện lọc theo department nếu có
+        if (departmentId != null) {
+            query.append("AND g2.id = ? ");
+        }
+
         query.append("LIMIT ? OFFSET ?");
         int offset = (page - 1) * pageSize;
 
@@ -211,6 +153,16 @@ public class ProjectDAO extends BaseDAO {
             // Thiết lập tham số lọc theo trạng thái
             if (status != null) {
                 pre.setInt(index++, status);
+            }
+
+            // Thiết lập tham số lọc theo domain
+            if (domainId != null) {
+                pre.setInt(index++, domainId);
+            }
+
+            // Thiết lập tham số lọc theo department
+            if (departmentId != null) {
+                pre.setInt(index++, departmentId);
             }
 
             // Thiết lập tham số phân trang
@@ -368,10 +320,11 @@ public class ProjectDAO extends BaseDAO {
         }
         return 0; // Trả về 0 nếu không thành công
     }
+
     // Hàm kiểm tra nếu code đã tồn tại
     public boolean isCodeExists(String code) throws SQLException {
         String query = "SELECT COUNT(*) FROM project WHERE code = ?";
-        
+
         try (PreparedStatement statement = getConnection().prepareStatement(query)) {
             statement.setString(1, code);
             ResultSet resultSet = statement.executeQuery();
@@ -388,12 +341,12 @@ public class ProjectDAO extends BaseDAO {
     // Hàm kiểm tra nếu name đã tồn tại
     public boolean isNameExists(String name) throws SQLException {
         String query = "SELECT COUNT(*) FROM project WHERE name = ?";
-        
+
         try (PreparedStatement statement = getConnection().prepareStatement(query)) {
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return resultSet.getInt(1) > 0;  
+                return resultSet.getInt(1) > 0;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -402,6 +355,7 @@ public class ProjectDAO extends BaseDAO {
         return false;
     }
 // Lấy danh sách các giai đoạn dựa trên domainId từ bảng 'projectphase'
+
     public List<ProjectPhase> getPhasesByDomainId(int domainId) throws SQLException {
         List<ProjectPhase> phases = new ArrayList<>();
         String sql = "SELECT id, name, priority FROM projectphase WHERE domainId = ?";
@@ -484,30 +438,6 @@ public class ProjectDAO extends BaseDAO {
             throw new SQLException("Không thể cập nhật trạng thái dự án");
         }
     }
-    // Hàm main để chạy thử
-
-    public static void main(String[] args) {
-        ProjectDAO manager = new ProjectDAO();
-
-        // Test với userId = 1, page = 1, pageSize = 10, keyword là "Test", và status là 1
-        int userId = 4;
-        int page = 1;
-        int pageSize = 10;
-        String keyword = null;
-        Integer status = 1;
-
-        List<Project> projects = manager.listProjects(userId, page, pageSize, keyword, status);
-
-        // In ra kết quả
-        for (Project project : projects) {
-            System.out.println("Project ID: " + project.getId());
-            System.out.println("Project Name: " + project.getName());
-            System.out.println("Project Code: " + project.getCode());
-            System.out.println("Project Domain: " + project.getDomain().getName());
-            System.out.println("Project Department: " + project.getDepartment().getName());
-            System.out.println("-------------------------------------");
-        }
-    }
 
     public List<Project> getAllProjectPharse() throws SQLException {
         String str = "select * from projectphase";
@@ -526,7 +456,7 @@ public class ProjectDAO extends BaseDAO {
             throw new SQLException(e);
         }
     }
-    
+
     public Project getAllProjectPharseBYId(int id) throws SQLException {
         String str = "select * from projectphase  where id = ?";
         try {
@@ -544,8 +474,9 @@ public class ProjectDAO extends BaseDAO {
             throw new SQLException(e);
         }
     }
-        // Hàm list all prj for admin 
-    public List<Project> listAllProjectsForAdmin(int page, int pageSize, String keyword, Integer status) {
+    // Hàm list all prj for admin 
+
+    public List<Project> listAllProjectsForAdmin(int page, int pageSize, String keyword, Integer status, Integer domainId, Integer departmentId) {
         List<Project> projects = new ArrayList<>();
 
         // Xây dựng câu truy vấn SQL
@@ -556,15 +487,32 @@ public class ProjectDAO extends BaseDAO {
                 + "JOIN `group` g1 ON p.domainId = g1.id AND g1.type = 1 " // Join để lấy thông tin domain (type = 1)
                 + "JOIN `group` g2 ON p.departmentId = g2.id AND g2.type = 0 "); // Join để lấy thông tin department (type = 0)
 
+        boolean hasCondition = false;
+
         // Điều kiện tìm kiếm theo keyword nếu có
         if (keyword != null && !keyword.trim().isEmpty()) {
-            query.append("WHERE p.name LIKE ? OR p.code LIKE ? ");
+            query.append("WHERE (p.name LIKE ? OR p.code LIKE ?) ");
+            hasCondition = true;
         }
 
         // Điều kiện lọc theo trạng thái nếu có
         if (status != null) {
-            query.append(keyword != null && !keyword.trim().isEmpty() ? "AND " : "WHERE ");
+            query.append(hasCondition ? "AND " : "WHERE ");
             query.append("p.status = ? ");
+            hasCondition = true;
+        }
+
+        // Điều kiện lọc theo domain nếu có
+        if (domainId != null) {
+            query.append(hasCondition ? "AND " : "WHERE ");
+            query.append("g1.id = ? ");
+            hasCondition = true;
+        }
+
+        // Điều kiện lọc theo department nếu có
+        if (departmentId != null) {
+            query.append(hasCondition ? "AND " : "WHERE ");
+            query.append("g2.id = ? ");
         }
 
         // Thêm phân trang
@@ -583,6 +531,16 @@ public class ProjectDAO extends BaseDAO {
             // Thiết lập tham số lọc trạng thái
             if (status != null) {
                 pre.setInt(index++, status);
+            }
+
+            // Thiết lập tham số lọc theo domain
+            if (domainId != null) {
+                pre.setInt(index++, domainId);
+            }
+
+            // Thiết lập tham số lọc theo department
+            if (departmentId != null) {
+                pre.setInt(index++, departmentId);
             }
 
             // Thiết lập phân trang
@@ -623,4 +581,5 @@ public class ProjectDAO extends BaseDAO {
 
         return projects;
     }
+
 }

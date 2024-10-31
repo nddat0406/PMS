@@ -11,6 +11,7 @@ import java.util.List;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.MessagingException;
 import model.Group;
 import model.User;
 
@@ -48,6 +49,7 @@ public class UserDAO extends BaseDAO {
         }
         return null;
     }
+
     public User getActiveUserByIdNull(int userId) throws SQLException {
         String str = "SELECT * FROM pms.user where id=? and status = 1";
         try {
@@ -61,7 +63,7 @@ public class UserDAO extends BaseDAO {
             user.setFullname(rs.getString(3));
             user.setMobile(rs.getString(4));
             user.setRole(rs.getInt(7));
-            user.setDepartment(new Group(rs.getInt(9),gdao.getDeptNameById(rs.getInt(9))));
+            user.setDepartment(new Group(rs.getInt(9), gdao.getDeptNameById(rs.getInt(9))));
             user.setImage(rs.getString(10));
             user.setAddress(rs.getString(11));
             user.setGender(rs.getBoolean(12));
@@ -71,6 +73,7 @@ public class UserDAO extends BaseDAO {
             return null;
         }
     }
+
     public User getUserFullById(int userId) throws SQLException {
         String str = "SELECT * FROM pms.user where id=?";
         try {
@@ -139,7 +142,7 @@ public class UserDAO extends BaseDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new Exception("Lỗi khi đăng nhập: " + e.getMessage(), e);
+            throw new SQLException("Lỗi khi đăng nhập: " + e.getMessage(), e);
         }
 
         return null; // Trả về null nếu không tìm thấy người dùng hoặc mật khẩu sai
@@ -161,7 +164,7 @@ public class UserDAO extends BaseDAO {
 
             // Tạo và gửi mã OTP
             String otp = BaseService.generateOTP(); // Tạo mã OTP
-            BaseService.sendEmail(email, otp);
+            boolean result = BaseService.sendEmail(email, "Forgot password OTP", "Here is OTP to reset your password: " + otp);
 
             // Lưu mã OTP vào cơ sở dữ liệu
             String updateOtpSql = "UPDATE pms.user SET otp = ?, otp_expiry = ? WHERE email = ?";
@@ -174,8 +177,10 @@ public class UserDAO extends BaseDAO {
             return email; // Trả về email để sử dụng trong xác thực OTP
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
+        } catch (MessagingException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return null;
     }
 
     public boolean checkOldPassword(String email, String oldPassword) {
@@ -198,7 +203,6 @@ public class UserDAO extends BaseDAO {
         String str = """
                              UPDATE `pms`.`user`
                              SET
-                             `email` = ?,
                              `fullname` = ?,
                              `mobile` = ?,
                              `image` = ?,
@@ -209,15 +213,14 @@ public class UserDAO extends BaseDAO {
                              WHERE `id` = ?;""";
         try {
             PreparedStatement pre = getConnection().prepareStatement(str);
-            pre.setString(1, user.getEmail());
-            pre.setString(2, user.getFullname());
-            pre.setString(3, user.getMobile());
-            pre.setString(4, user.getImage());
-            pre.setString(5, user.getAddress());
-            pre.setBoolean(6, user.isGender());
-            pre.setDate(7, user.getBirthdate());
-            pre.setString(8, user.getImage());
-            pre.setInt(9, user.getId());
+            pre.setString(1, user.getFullname());
+            pre.setString(2, user.getMobile());
+            pre.setString(3, user.getImage());
+            pre.setString(4, user.getAddress());
+            pre.setBoolean(5, user.isGender());
+            pre.setDate(6, user.getBirthdate());
+            pre.setString(7, user.getImage());
+            pre.setInt(8, user.getId());
             pre.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException(e);
@@ -243,24 +246,24 @@ public class UserDAO extends BaseDAO {
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, email);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    return rs.getInt(1) > 0; // Kiểm tra số lượng bản ghi trả về
-                }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Kiểm tra số lượng bản ghi trả về
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false; // Trả về false nếu không tìm thấy email
     }
 
-    public boolean checkEmailChanged(String email, int id) throws Exception {
+    public boolean checkEmailChanged(String email, int id) {
         String sql = "SELECT email FROM pms.user WHERE id = ?";
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, id);
-                ResultSet rs = ps.executeQuery();
-                rs.next();
-                return !rs.getString(1).equals(email);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return !rs.getString(1).equals(email);
         } catch (SQLException e) {
             return true;
         }
@@ -428,10 +431,6 @@ public class UserDAO extends BaseDAO {
         }
     }
 
-    public static void main(String[] args) throws SQLException {
-        System.out.println( new UserDAO().getAll());
-    }
-
     public boolean emailExists(String email) throws SQLException {
         String sql = "SELECT COUNT(*) FROM pms.user WHERE email = ?";
         PreparedStatement statement = getConnection().prepareStatement(sql);
@@ -468,16 +467,21 @@ public class UserDAO extends BaseDAO {
             User user = new User();
             user.setId(rs.getInt(1));
             user.setEmail(rs.getString(2));
-            user.setNote(rs.getString(6));
+            user.setFullname(rs.getString(3));
+            user.setMobile(rs.getString(4));
             user.setRole(rs.getInt(7));
             user.setDepartment(new Group(gdao.getDeptNameById(rs.getInt(9))));
+            user.setImage(rs.getString(10));
+            user.setAddress(rs.getString(11));
+            user.setGender(rs.getBoolean(12));
+            user.setBirthdate(rs.getDate(13));
+            user.setOtp(rs.getString(14));
 
             return user;
         } catch (SQLException e) {
             throw new SQLException(e);
         }
     }
-
 
     public boolean verifyLogin(String email, String pass) throws SQLException {
         String sql = "SELECT password FROM pms.user where email=? and status =1";
@@ -534,7 +538,6 @@ public class UserDAO extends BaseDAO {
 
     public boolean saveOTP(String email, String otp) {
         String sql = "UPDATE pms.user SET otp = ? WHERE email = ?";
-
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement(sql);
             preparedStatement.setString(1, otp);
@@ -627,5 +630,60 @@ public class UserDAO extends BaseDAO {
         }
 
         return filteredList;
+    }
+
+    public void saveOTPId(int id, String otp) throws SQLException {
+        String sql = "UPDATE pms.user SET otp = ? WHERE id = ?";
+        PreparedStatement preparedStatement = getConnection().prepareStatement(sql);
+        preparedStatement.setString(1, otp);
+        preparedStatement.setInt(2, id);
+        preparedStatement.executeUpdate();
+
+    }
+
+    public void updateEmail(String email, int id) throws SQLException {
+        String sql = "UPDATE pms.user SET email = ? WHERE id = ?";
+        PreparedStatement preparedStatement = getConnection().prepareStatement(sql);
+        preparedStatement.setString(1, email);
+        preparedStatement.setInt(2, id);
+        preparedStatement.executeUpdate();
+
+    }
+
+    public boolean isOTP_Expired(int id) throws SQLException {
+        String sql = """
+                     SELECT
+                         CASE 
+                             WHEN otp_expiry < NOW() THEN 'Expired'
+                             ELSE 'Valid'
+                         END AS otp_status
+                     FROM 
+                         user where id=?""";
+        PreparedStatement pstmt = getConnection().prepareStatement(sql);
+        pstmt.setInt(1, id);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            if (rs.getString(1).equals("Expired")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean validateOTP(String otp, int id) throws SQLException {
+        String sql = "SELECT otp FROM pms.user where id=?";
+        PreparedStatement pstmt = getConnection().prepareStatement(sql);
+        pstmt.setInt(1, id);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            if (rs.getString(1).equals(otp)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void main(String[] args) throws SQLException {
+        System.out.println(new UserDAO().isOTP_Expired(3));
     }
 }

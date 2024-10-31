@@ -11,12 +11,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.User;
-import java.util.zip.DataFormatException;
 import model.Group;
 import static service.BaseService.*;
 
@@ -27,82 +26,87 @@ import static service.BaseService.*;
 public class UserService {
 
     private UserDAO udao = new UserDAO();
-    private GroupDAO gdao =new GroupDAO();
+    private GroupDAO gdao = new GroupDAO();
     private BaseService baseService = new BaseService();
 
     public User getUserProfile(int userId) throws SQLException {
         try {
-            User user = udao.getActiveUserById(userId);
-            return user;
+            return udao.getActiveUserById(userId);
         } catch (SQLException ex) {
             throw new SQLException(ex);
         }
     }
 
-    public void updateProfile(User user, Part part) throws Exception {
+    public Map<String, String> validateUpdateProfile(User user, Part part) throws Exception {
+        Map<String, String> errorMessages = new HashMap<>();
         boolean isValid = true;
+        // Validate Mobile
+        if (!user.getMobile().matches(MOBILE_PATTERN)) {
+            errorMessages.put("mobile", "Mobile phone is not correct!");
+            isValid = false;
+        }
 
-        String errorMess = "";
+        // Validate Image
+        if (part != null && part.getSize() != 0) {
+            if (part.getSize() > 10485760) { // 10MB limit
+                errorMessages.put("image", "Image size exceeds 10MB!");
+                isValid = false;
+            }
+            if (!part.getContentType().equals("image/jpeg")
+                    && !part.getContentType().equals("image/png")
+                    && !part.getContentType().equals("image/jpg")) {
+                errorMessages.put("image", "Image type not right! Please use .jpg, .png, or .jpeg only");
+                isValid = false;
+            }
+        }
+
+        // If there are validation errors, return them to the servlet
+        if (!isValid) {
+            return errorMessages;
+        }
+        // Return empty map if no errors
+        return errorMessages;
+    }
+
+    public void updateProfile(User user, Part part) throws Exception {
         try {
-            if (!user.getEmail().matches(EMAIL_PATTERN)) {
-                errorMess += "Email pattern is not correct!";
-                isValid = false;
-            } else if (udao.checkEmailChanged(user.getEmail(), user.getId())) {
-                if (udao.checkEmailExists(user.getEmail())) {
-                    errorMess += "Email is already taken!";
-                    isValid = false;
-                }
-            }
-            if (!user.getMobile().matches(MOBILE_PATTERN)) {
-                errorMess += "/Mobile phone is not correct!";
-                isValid = false;
-            }
-            if (part != null && part.getSize() != 0) {
-                if (part.getSize() > 10485760) {
-                    errorMess += "/Image size exceed 10MB!";
-                    isValid = false;
-                }
-                if (!part.getContentType().equals("image/jpeg")
-                        && !part.getContentType().equals("image/png")
-                        && !part.getContentType().equals("image/jpg")) {
-                    errorMess += "/Image type not right! Please use .jpg, .png and .jpg only";
-                    isValid = false;
-                }
-            }
-            if (!isValid) {
-                throw new DataFormatException(errorMess);
-            }
-
+            // Handle image upload if no errors
             if (part != null && part.getSize() > 0) {
                 Properties props = new Properties();
                 ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
                 InputStream inputStream = classLoader.getResourceAsStream("app.properties");
                 props.load(inputStream);
-                String path = props.getProperty("image.user.path") + File.separator +user.getId()+"_"+part.getSubmittedFileName();
+
+                // Define new and old image paths
+                String path = props.getProperty("image.user.path") + File.separator + user.getId() + "_" + part.getSubmittedFileName();
                 String[] temp = udao.getActiveUserById(user.getId()).getImage().split("/");
                 String oldImageName = temp[temp.length - 1];
                 String oldPath = props.getProperty("image.user.path") + File.separator + oldImageName;
+
+                // Delete the old file and upload the new one
                 baseService.deleteFile(oldPath);
                 InputStream is = part.getInputStream();
                 baseService.uploadFile(is, path);
             } else {
                 user.setImage(udao.getActiveUserById(user.getId()).getImage());
             }
+
+            // Update user profile in database
             udao.updateUserProfile(user);
-        } catch (SQLException | DataFormatException e) {
-            throw new Exception(e.getMessage());
+        } catch (SQLException e) {
+            throw new SQLException("Database error occurred while updating profile: " + e.getMessage());
         }
     }
 
-   public void updatePassword(String oldPass, String newPass, int id) throws SQLException {
+    public void updatePassword(String oldPass, String newPass, int id) throws SQLException {
         if (BaseService.checkPassword(oldPass, udao.getUserPassword(id))) {
             if (!BaseService.checkPassword(newPass, udao.getUserPassword(id))) {
                 udao.updateUserPassword(BaseService.hashPassword(newPass), id);
             } else {
                 throw new SQLException("New password is duplicated with old password");
             }
-        }else{
-            throw new SQLException("Password not right");
+        } else {
+            throw new SQLException("Current password not right");
 
         }
 
@@ -230,7 +234,50 @@ public class UserService {
     }
 
     public List<User> findUsersByFilters(String keyword, Integer departmentId, Integer status) throws SQLException {
-    List<User> allUsers = udao.getAll(); // Get all users from the database
-    return udao.searchFilter(allUsers, departmentId, status, keyword); // Filter users
-}
+        List<User> allUsers = udao.getAll(); // Get all users from the database
+        return udao.searchFilter(allUsers, departmentId, status, keyword); // Filter users
+    }
+
+    public boolean isChangedEmail(String email, int id) {
+        return udao.checkEmailChanged(email, id);
+    }
+
+    public boolean validateEmail(String email, int id) throws SQLException {
+
+        // Validate Email
+        if (!email.matches(EMAIL_PATTERN)) {
+            throw new SQLException("Email pattern is not correct!");
+        } else {
+            if (udao.checkEmailChanged(email, id)) {
+                if (udao.checkEmailExists(email)) {
+                    throw new SQLException("Email is already taken!");
+                }
+            } else {
+                throw new SQLException("Email not changed!");
+            }
+        }
+        return true;
+
+    }
+
+    public void saveOtpId(int id, String otp) throws SQLException {
+        udao.saveOTPId(id, otp);
+    }
+
+    public String verifyOTP(String otp, int id) throws SQLException {
+        String error = null;
+
+        if (udao.isOTP_Expired(id)) {
+            error = "OTP is expired! Try send another request.";
+        } else {
+            if (!udao.validateOTP(otp, id)) {
+                error = "OTP is not correct!";
+            }
+        }
+        return error;
+    }
+
+    public void updateEmail(String email, int id) throws SQLException {
+        udao.updateEmail(email, id);
+    }
 }

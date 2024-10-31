@@ -14,11 +14,11 @@
         <meta name="author" content="WrapTheme, design by: ThemeMakker.com">
 
         <link rel="icon" href="favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/sweetalert2.min.css">
 
         <!-- MAIN CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
 
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/sweetalert2.min.css">
     </head>
     <body>
         <div id="layout" class="theme-cyan">
@@ -45,10 +45,10 @@
                                 <p class="fs-5 mb-0">Login to your account</p>
                             </div>
                             <c:if test="${not empty errorMess}">
-                                        <div style="color: red; margin-top: 10px;">
-                                        ${errorMess}
-                                        </div>
-                                    </c:if>
+                                <div style="color: red; margin-top: 10px;">
+                                    ${errorMess}
+                                </div>
+                            </c:if>
                             <c:if test="${not empty requestScope.success}">
                                 <div style="color: green; margin-top: 10px;">
                                     ${requestScope.success}
@@ -63,7 +63,7 @@
                                     </div>
                                     <div class="form-floating">
                                         <input type="password" name="password" class="form-control" placeholder="Password"
-                                           value="${pass}"/>
+                                               value="${pass}"/>
                                         <label>Password</label>
                                     </div>
                                     <div class="form-check my-3">

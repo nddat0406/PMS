@@ -14,19 +14,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
-import java.io.File;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.MessagingException;
 import model.Allocation;
-import model.Criteria;
-import model.Group;
 import model.User;
-import static service.BaseService.*;
 import service.ProjectService;
 import service.UserService;
 import service.BaseService;
@@ -38,8 +35,7 @@ import service.GroupService;
  */
 @WebServlet(
         name = "UserController",
-        urlPatterns = {"/user", "/user/profile", "/dashboard", "/user/changePass"}
-)
+        urlPatterns = {"/user", "/user/profile", "/dashboard", "/user/changePass", "/user/changeEmail"})
 @MultipartConfig
 public class UserController extends HttpServlet {
 
@@ -136,6 +132,9 @@ public class UserController extends HttpServlet {
                 case "profile" -> {
                     postProfile(request, response);
                 }
+                case "changeEmail" -> {
+                    postChangeEmail(request, response);
+                }
                 case "changePass" -> {
                     postChangePass(request, response);
                 }
@@ -216,7 +215,8 @@ public class UserController extends HttpServlet {
                 request.setAttribute("successMess", "Profile Changed!");
             }
             if (passChanged != null) {
-                request.setAttribute("successMess", "Password Changed!");
+                request.setAttribute("passSuccessMess", "Password Changed!");
+                request.setAttribute("passSuccessMesstext", " You will be redirect to login!");
             }
             request.setAttribute("profile", uService.getUserProfile(id));
             request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
@@ -277,7 +277,6 @@ public class UserController extends HttpServlet {
         User loginedUser = (User) session.getAttribute("loginedUser");
         int id = loginedUser.getId();
         String fullname = request.getParameter("fullname");
-        String email = request.getParameter("email");
         String genderRaw = request.getParameter("gender");
         String address = request.getParameter("address");
         String mobile = request.getParameter("mobile");
@@ -286,7 +285,6 @@ public class UserController extends HttpServlet {
         user.setId(id);
         user.setAddress(address);
         user.setFullname(fullname);
-        user.setEmail(email);
         user.setMobile(mobile);
         user.setGender(genderRaw.equals("male"));
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
@@ -294,24 +292,23 @@ public class UserController extends HttpServlet {
             user.setBirthdate(new Date(formatter.parse(birthdate).getTime()));
             Part part = request.getPart("image");
             user.setImage(request.getContextPath() + "/images/" + user.getId() + "_" + part.getSubmittedFileName());
-            //update profile
-            uService.updateProfile(user, part);
-            session.setAttribute("loginedUser", uService.getUserByEmail(user.getEmail()));
-            response.sendRedirect(request.getContextPath() + "/user/profile?profileChanged=success");
-        } catch (Exception ex) {
-            request.setAttribute("oldInfor", user);
-            request.setAttribute("isSetting", "true");
-            //get message error
-            String[] error = Arrays.stream(ex.getMessage().split("/"))
-                    .filter(s -> !s.isEmpty())
-                    .toArray(String[]::new);
-            request.setAttribute("error", error);
-            try {
+            Map<String, String> errorMessages = uService.validateUpdateProfile(user, part);
+            // Check if there are any validation errors
+            if (!errorMessages.isEmpty()) {
+                // Send error messages back to JSP
+                request.setAttribute("oldInfor", user);
+                request.setAttribute("error", errorMessages);
                 request.setAttribute("profile", uService.getUserProfile(user.getId()));
-            } catch (SQLException ex1) {
-                response.getWriter().print(ex1);
+                request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
+            } else {
+                uService.updateProfile(user, part);
+                // Redirect to a profile page if everything is valid
+                session.setAttribute("loginedUser", uService.getUserProfile(user.getId()));
+                response.sendRedirect(request.getContextPath() + "/user/profile?profileChanged=success");
             }
-            request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            throw new ServletException(e);
         }
     }
 
@@ -358,5 +355,54 @@ public class UserController extends HttpServlet {
 
         }
 
+    }
+
+    private void postChangeEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        User user = (User) request.getSession().getAttribute("loginedUser");
+        if (action.equals("sendOTP")) {
+            String email = request.getParameter("email");
+            try {
+                if (uService.validateEmail(email, user.getId())) {
+                    String otp = BaseService.getRandom();
+                    uService.saveOtpId(user.getId(), otp);
+                    BaseService.sendEmail(email,"Change Email Verify OTP","Here is OTP to verify your email: " + otp);
+                    request.setAttribute("profile", uService.getUserProfile(user.getId()));
+                    request.setAttribute("oldFilledEmail", email);
+                    request.setAttribute("showOTPModal", "true");
+                    request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
+                }
+
+            } catch (SQLException | MessagingException e) {
+                try {
+                    request.setAttribute("profile", uService.getUserProfile(user.getId()));
+                } catch (SQLException ex) {
+                    throw new ServletException(ex);
+                }
+                request.setAttribute("emailError", e.getMessage());
+                request.setAttribute("oldFilledEmail", email);
+                request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
+            }
+        } else if (action.equals("verify")) {
+            try {
+                String otp = request.getParameter("otp");
+                String email = request.getParameter("oldFilledEmail");
+                String error = uService.verifyOTP(otp, user.getId());
+                if (error == null) {
+                    uService.updateEmail(email, user.getId());
+                    // Redirect to a profile page if everything is valid
+                    request.getSession().setAttribute("loginedUser", uService.getUserProfile(user.getId()));
+
+                    response.sendRedirect(request.getContextPath() + "/user/profile?profileChanged=success");
+                } else {
+                    request.setAttribute("otpModalError", error);
+                    request.setAttribute("oldFilledEmail", email);
+                    request.setAttribute("showOTPModal", "true");
+                    request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
+                }
+            } catch (SQLException ex) {
+                throw new ServletException(ex);
+            }
+        }
     }
 }

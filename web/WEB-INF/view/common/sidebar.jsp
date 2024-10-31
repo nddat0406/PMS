@@ -7,7 +7,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<div id="left-sidebar" class="sidebar">
+<div id="left-sidebar" class="sidebar" style="background: white">
     <div class="user-account p-3 mb-3">
         <div class="d-flex mb-3 pb-3 border-bottom align-items-center">
             <img src="${sessionScope.loginedUser.image}" class="avatar lg rounded me-3" alt="User Profile Picture">
@@ -29,7 +29,7 @@
     </ul>
 
     <!-- nav tab: content -->
-    <div class="tab-content  px-0">
+    <div class="tab-content  px-0"> 
         <c:if test="${sessionScope.loginedUser.role ==1}">
             <div class="tab-pane active" id="hr_menu">
                 <nav class="sidebar-nav">

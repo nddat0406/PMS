@@ -45,7 +45,6 @@ public class ProjectController extends HttpServlet {
             switch (action) {
                 case "view": {
                     try {
-                        // Xem chi tiết dự án
                         projectDetail(request, response);
                     } catch (SQLException ex) {
                         Logger.getLogger(ProjectController.class.getName()).log(Level.SEVERE, null, ex);
@@ -54,31 +53,11 @@ public class ProjectController extends HttpServlet {
                     }
                     break;
                 }
-                case "add": {
-                    // Lấy danh sách các domain và department từ service
-                    List<Group> domains = groupService.getAllDomains();
-                    List<Group> departments = groupService.getAllDepartment();
-
-                    // Lấy danh sách các bizTerm từ SettingService
-                    List<Setting> bizTerms = settingService.getAllBizTerms();
-
-                    // Đưa danh sách này vào request để truyền đến JSP
-                    request.setAttribute("bizTerms", bizTerms);
-                    request.setAttribute("domains", domains);
-                    request.setAttribute("departments", departments);
-
-                    // Chuyển tiếp đến trang AddProject.jsp để thêm dự án
-                    request.getRequestDispatcher("/WEB-INF/view/user/projectList/AddProject.jsp").forward(request, response);
-                    break;
-                }
                 case "list": {
-
-                    // Gọi phương thức listProjects để lấy danh sách dự án và chuyển tiếp đến Projectlist.jsp
                     listProjects(request, response);
                     break;
                 }
                 default:
-                    // Trường hợp không xác định, gọi phương thức listProjects như là mặc định
                     listProjects(request, response);
                     break;
             }
@@ -94,87 +73,14 @@ public class ProjectController extends HttpServlet {
         String action = request.getParameter("action");
         switch (action) {
             case "add": {
-                // Lấy dữ liệu từ request
-                String name = request.getParameter("name");
-                String code = request.getParameter("code");
-                String details = request.getParameter("details");
-                String bizTerm = request.getParameter("bizTerm");
-                int status = Integer.parseInt(request.getParameter("status"));
-                int departmentId = Integer.parseInt(request.getParameter("departmentId"));
-                int domainId = Integer.parseInt(request.getParameter("domainId"));
-                String startDateStr = request.getParameter("startDate");
-
-                HttpSession session = request.getSession();  // Sử dụng session
-
-                try {
-                    // Lấy các danh sách cần thiết từ service
-                    List<Group> domains = groupService.getAllDomains();
-                    List<Group> departments = groupService.getAllDepartment();
-                    List<Setting> bizTerms = settingService.getAllBizTerms();
-                    session.setAttribute("bizTerms", bizTerms);
-                    session.setAttribute("domains", domains);
-                    session.setAttribute("departments", departments);
-
-                    // Chuyển đổi ngày bắt đầu từ String sang java.sql.Date
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    java.sql.Date startDate = null;
-                    try {
-                        java.util.Date parsedDate = dateFormat.parse(startDateStr);
-                        startDate = new java.sql.Date(parsedDate.getTime());
-                    } catch (ParseException ex) {
-                        forwardWithError(session, request, response, "Invalid date format. Please use yyyy-MM-dd.",
-                                name, code, details, bizTerm, status, departmentId, domainId, startDateStr);
-                        return;
-                    }
-
-                    // Tạo đối tượng Project
-                    Project project = new Project();
-                    project.setName(name);
-                    project.setCode(code);
-                    project.setDetails(details);
-                    project.setBizTerm(bizTerm);
-                    project.setStartDate(startDate);
-                    project.setStatus(status);
-
-                    // Tạo các đối tượng Group cho department và domain
-                    Group department = new Group();
-                    department.setId(departmentId);
-                    project.setDepartment(department);
-
-                    Group domain = new Group();
-                    domain.setId(domainId);
-                    project.setDomain(domain);
-
-                    // Gọi Service để thêm Project cùng với Milestones
-                    String result = projectService.addProjectWithMilestones(project);
-
-                    // Xử lý kết quả
-                    if (result == null) {
-                        // Thành công, chuyển hướng đến danh sách dự án
-                        session.setAttribute("success", "true");
-                        response.sendRedirect(request.getContextPath() + "/projectlist?action=add&success=true");
-                    } else {
-                        // Có lỗi, chuyển tiếp lại trang thêm với thông báo lỗi
-                        forwardWithError(session, request, response, result, name, code, details, bizTerm, status, departmentId, domainId, startDateStr);
-                    }
-                } catch (NumberFormatException e) {
-                    forwardWithError(session, request, response, "Invalid input for numerical values.",
-                            name, code, details, bizTerm, status, departmentId, domainId, startDateStr);
-                } catch (Exception e) {
-                    forwardWithError(session, request, response, "An unexpected error occurred: " + e.getMessage(),
-                            name, code, details, bizTerm, status, departmentId, domainId, startDateStr);
-                    e.printStackTrace();
-                }
+                addProject(request, response);
                 break;
             }
-
             case "update": {
                 try {
-                    // Gọi phương thức updatestatus để xử lý cập nhật trạng thái dự án
                     updatestatus(request, response);
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    // Xử lý lỗi và điều hướng về trang lỗi
                     response.sendRedirect(request.getContextPath() + "/error.jsp");
                 }
                 break;
@@ -185,7 +91,7 @@ public class ProjectController extends HttpServlet {
         }
     }
 
-    private void listProjects(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void listProjects(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
         // Lấy danh sách các bizTerm từ SettingService
         List<Setting> bizTerms = settingService.getAllBizTerms();
 
@@ -216,13 +122,35 @@ public class ProjectController extends HttpServlet {
                 status = null;
             }
         }
+        // Lấy thông tin lọc theo domain (nếu có)
+        Integer domainId = null;
+        if (request.getParameter("domainId") != null) {
+            try {
+                domainId = Integer.parseInt(request.getParameter("domainId"));
+            } catch (NumberFormatException e) {
+                domainId = null;
+            }
+        }
+
+        // Lấy thông tin lọc theo department (nếu có)
+        Integer departmentId = null;
+        if (request.getParameter("departmentId") != null) {
+            try {
+                departmentId = Integer.parseInt(request.getParameter("departmentId"));
+            } catch (NumberFormatException e) {
+                departmentId = null;
+            }
+        }
+        List<Group> domains = groupService.getAllDomains();
+        List<Group> departments = groupService.getAllDepartment();
+
         HttpSession session = request.getSession();
         // LẤY USER ID
         User loginedUser = (User) session.getAttribute("loginedUser");
         int userId = loginedUser.getId();
-         int roleUser= loginedUser.getRole();
+        int roleUser = loginedUser.getRole();
         // Lấy danh sách dự án của người dùng từ service
-        List<Project> projects = projectService.getProjects(userId, page, pageSize, keyword, status,roleUser);
+        List<Project> projects = projectService.getProjects(userId, page, pageSize, keyword, status, domainId, departmentId, roleUser);
         int totalProjects = projectService.getTotalProjects(userId, keyword, status);
         int totalPages = (int) Math.ceil((double) totalProjects / pageSize);
 
@@ -232,6 +160,8 @@ public class ProjectController extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("keyword", keyword);
         request.setAttribute("status", status);
+        request.setAttribute("domains", domains);
+        request.setAttribute("departments", departments);
 
         // Chuyển tiếp đến trang Project.jsp
         request.getRequestDispatcher("/WEB-INF/view/user/projectList/Project.jsp").forward(request, response);
@@ -241,13 +171,10 @@ public class ProjectController extends HttpServlet {
             throws ServletException, IOException, SQLException {
         try {
             HttpSession session = request.getSession();
-            // LẤY USER ID
             User loginedUser = (User) session.getAttribute("loginedUser");
-            int userId = loginedUser.getId();
-
             int id = Integer.parseInt(request.getParameter("id"));
             //lấy role
-            String role = projectService.getRoleByUserAndProject(userId, id);
+            int roleUser = loginedUser.getRole();;
             // Lấy thông tin chi tiết của dự án
             Project project = projectService.getProjectById(id);
 
@@ -261,7 +188,7 @@ public class ProjectController extends HttpServlet {
             List<Allocation> allocations = allocationService.getAllocationsByProjectId(id);
 
             if (project != null) {
-                request.setAttribute("role", role);
+                request.setAttribute("role", roleUser);
                 request.setAttribute("domains", domains);
                 request.setAttribute("departments", departments);
                 request.setAttribute("project", project);
@@ -299,6 +226,81 @@ public class ProjectController extends HttpServlet {
         }
     }
 
+    private void addProject(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name = request.getParameter("name");
+        String code = request.getParameter("code");
+        String details = request.getParameter("details");
+        String bizTerm = request.getParameter("bizTerm");
+        int status = Integer.parseInt(request.getParameter("status"));
+        int departmentId = Integer.parseInt(request.getParameter("departmentId"));
+        int domainId = Integer.parseInt(request.getParameter("domainId"));
+        String startDateStr = request.getParameter("startDate");
+
+        HttpSession session = request.getSession();  // Sử dụng session
+
+        try {
+            // Lấy các danh sách cần thiết từ service
+            List<Group> domains = groupService.getAllDomains();
+            List<Group> departments = groupService.getAllDepartment();
+            List<Setting> bizTerms = settingService.getAllBizTerms();
+            session.setAttribute("bizTerms", bizTerms);
+            session.setAttribute("domains", domains);
+            session.setAttribute("departments", departments);
+
+            // Chuyển đổi ngày bắt đầu từ String sang java.sql.Date
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.sql.Date startDate = null;
+            try {
+                java.util.Date parsedDate = dateFormat.parse(startDateStr);
+                startDate = new java.sql.Date(parsedDate.getTime());
+            } catch (ParseException ex) {
+                forwardWithError(session, request, response, "Invalid date format. Please use yyyy-MM-dd.",
+                        name, code, details, bizTerm, status, departmentId, domainId, startDateStr);
+                return;
+            }
+
+            // Tạo đối tượng Project
+            Project project = new Project();
+            project.setName(name);
+            project.setCode(code);
+            project.setDetails(details);
+            project.setBizTerm(bizTerm);
+            project.setStartDate(startDate);
+            project.setStatus(status);
+
+            // Tạo các đối tượng Group cho department và domain
+            Group department = new Group();
+            department.setId(departmentId);
+            project.setDepartment(department);
+
+            Group domain = new Group();
+            domain.setId(domainId);
+            project.setDomain(domain);
+
+            // Gọi Service để thêm Project cùng với Milestones
+            String result = projectService.addProjectWithMilestones(project);
+
+            // Xử lý kết quả
+            if (result == null) {
+                // Thành công, thêm thông báo vào session
+                session.setAttribute("message", "Add project successfully!");
+
+                // Chuyển hướng đến danh sách dự án
+                response.sendRedirect(request.getContextPath() + "/projectlist?action=list&success=true");
+            } else {
+                // Có lỗi, chuyển tiếp lại trang thêm với thông báo lỗi
+                forwardWithError(session, request, response, result, name, code, details, bizTerm, status, departmentId, domainId, startDateStr);
+            }
+        } catch (NumberFormatException e) {
+            forwardWithError(session, request, response, "Invalid input for numerical values.",
+                    name, code, details, bizTerm, status, departmentId, domainId, startDateStr);
+        } catch (Exception e) {
+            forwardWithError(session, request, response, "An unexpected error occurred: " + e.getMessage(),
+                    name, code, details, bizTerm, status, departmentId, domainId, startDateStr);
+            e.printStackTrace();
+        }
+    }
+
     private void forwardWithError(HttpSession session, HttpServletRequest request, HttpServletResponse response, String errorMessage, String name, String code, String details, String bizTerm, int status, int departmentId, int domainId, String startDateStr)
             throws ServletException, IOException {
         // Đặt thông báo lỗi vào session
@@ -315,7 +317,7 @@ public class ProjectController extends HttpServlet {
         session.setAttribute("startDateStr", startDateStr);
 
         // Chuyển hướng đến trang AddProject.jsp
-        response.sendRedirect(request.getContextPath() + "/projectlist?action=add");
+        response.sendRedirect(request.getContextPath() + "/projectlist?action=list&showAddPopup=true");
     }
 
 }

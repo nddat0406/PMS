@@ -20,8 +20,8 @@ public class TeamService {
     private BaseService baseService = new BaseService();
     private TeamDAO tdao = new TeamDAO();
 
-    public List<Team> getTeamsByProject(Integer pID) throws SQLException {
-        return tdao.getTeamsByProject(pID);
+    public List<Team> getTeamsByProject(Integer pID,int mID) throws SQLException {
+        return tdao.getTeamsByProject(pID,mID);
     }
 
     public void addTeam(Team t) throws SQLException {
@@ -62,9 +62,9 @@ public class TeamService {
         }
     }
 
-    public Team getTeamById(int modalItemID, List<Team> list) throws SQLException {
+    public Team getTeamById(int modalItemID, List<Team> list,int mID) throws SQLException {
         if (baseService.objectWithIdExists(modalItemID, list)) {
-            return tdao.getTeamById(modalItemID);
+            return tdao.getTeamById(modalItemID,mID);
         } else {
             throw new IllegalAccessError("Illegal action!");
         }
@@ -78,32 +78,32 @@ public class TeamService {
         }
     }
 
-    public void deleteMember(int teamId, int memberId, List<Team> list) throws SQLException {
+    public void deleteMember(int teamId, int memberId, List<Team> list, int mID) throws SQLException {
         if (baseService.objectWithIdExists(teamId, list)) {
-            tdao.deleteTeamMember(memberId, teamId);
+            tdao.deleteTeamMember(memberId, teamId,mID);
         } else {
             throw new IllegalAccessError("Illegal action!");
         }
     }
 
-    public void changeRole(int teamId, int memberId, List<Team> list) throws SQLException {
+    public void changeRole(int teamId, int memberId, List<Team> list, int mID) throws SQLException {
         if (baseService.objectWithIdExists(teamId, list)) {
-            tdao.changeRoleMember(memberId, teamId);
+            tdao.changeRoleMember(memberId, teamId,mID);
         } else {
             throw new IllegalAccessError("Illegal action!");
         }
     }
 
-    public void addMembers(int[] numbers, int teamId, List<Team> list) throws SQLException {
+    public void addMembers(int[] numbers, int teamId, int mID, List<Team> list) throws SQLException {
         if (baseService.objectWithIdExists(teamId, list)) {
-            tdao.addMembers(numbers, teamId);
+            tdao.addMembers(numbers, teamId,mID);
         } else {
             throw new IllegalAccessError("Illegal action!");
         }
     }
 
-    public List<User> getAddMemberList( int pID) throws SQLException {
-        return tdao.getAddMembers( pID);
+    public List<User> getAddMemberList( int pID,int mID) throws SQLException {
+        return tdao.getAddMembers( pID,mID);
     }
 
     public void changeStatus(int id, List<Team> list) throws SQLException {

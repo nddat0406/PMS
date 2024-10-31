@@ -23,10 +23,10 @@ public class TeamDAO extends BaseDAO {
     private MilestoneDAO mdao = new MilestoneDAO();
     private UserDAO udao = new UserDAO();
 
-    public List<Team> getTeamsByProject(int id) throws SQLException {
+    public List<Team> getTeamsByProject(int pID, int mID) throws SQLException {
         String str = "select * from team where projectId=?";
         PreparedStatement pre = getConnection().prepareStatement(str);
-        pre.setInt(1, id);
+        pre.setInt(1, pID);
 
         ResultSet rs = pre.executeQuery();
         List<Team> teamList = new ArrayList<>();
@@ -37,15 +37,15 @@ public class TeamDAO extends BaseDAO {
             temp.setTopic(rs.getString(3));
             temp.setDetails(rs.getString(4));
             temp.setMilestone(this.getMilestoneByTeam(rs.getInt(1)));
-            temp.setMembers(getTeamMembers(temp.getId()));
-            temp.setTeamLeader(getTeamLeader(temp.getId()));
+            temp.setMembers(getTeamMembers(temp.getId(), mID));
+            temp.setTeamLeader(getTeamLeader(temp.getId(), mID));
             temp.setStatus(rs.getBoolean(6));
             teamList.add(temp);
         }
         return teamList;
     }
 
-    public Team getTeamById(int id) throws SQLException {
+    public Team getTeamById(int id, int mID) throws SQLException {
         String str = "select * from team where id=?";
         PreparedStatement pre = getConnection().prepareStatement(str);
         pre.setInt(1, id);
@@ -58,15 +58,16 @@ public class TeamDAO extends BaseDAO {
         temp.setDetails(rs.getString(4));
         temp.setProject(new Project(rs.getInt(5)));
         temp.setMilestone(this.getMilestoneByTeam(rs.getInt(1)));
-        temp.setMembers(getTeamMembers(id));
-        temp.setTeamLeader(getTeamLeader(id));
+        temp.setMembers(getTeamMembers(id, mID));
+        temp.setTeamLeader(getTeamLeader(id, mID));
         return temp;
     }
 
-    private List<User> getTeamMembers(int id) throws SQLException {
-        String str = "select * from team_member where teamId=? and isLeader=0";
+    private List<User> getTeamMembers(int tID, int mID) throws SQLException {
+        String str = "select * from team_member where teamId=? and isLeader=0 and milestoneId = ?";
         PreparedStatement pre = getConnection().prepareStatement(str);
-        pre.setInt(1, id);
+        pre.setInt(1, tID);
+        pre.setInt(2, mID);
         ResultSet rs = pre.executeQuery();
         List<User> teamList = new ArrayList<>();
         while (rs.next()) {
@@ -76,11 +77,12 @@ public class TeamDAO extends BaseDAO {
         return teamList;
     }
 
-    private User getTeamLeader(int id) {
+    private User getTeamLeader(int tID, int mID) {
         try {
-            String str = "select * from team_member where teamId=? and isLeader=1";
+            String str = "select * from team_member where teamId=? and isLeader=1 and milestoneId = ?";
             PreparedStatement pre = getConnection().prepareStatement(str);
-            pre.setInt(1, id);
+            pre.setInt(1, tID);
+            pre.setInt(2, mID);
             ResultSet rs = pre.executeQuery();
             rs.next();
             User temp = udao.getUserFullById(rs.getInt("userId"));
@@ -157,51 +159,56 @@ public class TeamDAO extends BaseDAO {
         new TeamDAO().changeStatusTeam(1);
     }
 
-    public void deleteTeamMember(int memberId, int teamId) throws SQLException {
+    public void deleteTeamMember(int memberId, int teamId, int mID) throws SQLException {
         String str = """
                      DELETE FROM `pms`.`team_member`
-                     WHERE teamId=? and userId=?""";
+                     WHERE teamId=? and userId=? and milestoneId=?""";
         PreparedStatement pre = getConnection().prepareStatement(str);
         pre.setInt(1, teamId);
         pre.setInt(2, memberId);
+        pre.setInt(3, mID);
         pre.executeUpdate();
     }
 
-    public void changeRoleMember(int memberId, int teamId) throws SQLException {
+    public void changeRoleMember(int memberId, int teamId, int mID) throws SQLException {
         String str1 = """
                      UPDATE `pms`.`team_member`
                      SET
                      `isLeader` = FALSE
-                     WHERE teamId = ?
+                     WHERE teamId = ? and milestoneId=?
                      """;
         String str2 = """
                         UPDATE `pms`.`team_member`
                         SET
                         `isLeader` = True
-                        WHERE teamId = ? and userId = ?
+                        WHERE teamId = ? and userId = ? and milestoneId=?
                      """;
         PreparedStatement pre1 = getConnection().prepareStatement(str1);
         pre1.setInt(1, teamId);
+        pre1.setInt(2, mID);
         pre1.executeUpdate();
         PreparedStatement pre2 = getConnection().prepareStatement(str2);
 
         pre2.setInt(1, teamId);
         pre2.setInt(2, memberId);
+        pre2.setInt(3, mID);
         pre2.executeUpdate();
     }
 
-    public void addMembers(int[] membersId, int teamId) throws SQLException {
+    public void addMembers(int[] membersId, int teamId, int mID) throws SQLException {
         String str = """
                      INSERT INTO `pms`.`team_member`
                      (
                      `teamId`,
-                     `userId`)
+                     `userId`,
+                     milestoneId)
                      VALUES
-                     (?,?)""";
+                     (?,?,?)""";
         PreparedStatement pre = getConnection().prepareStatement(str);
         for (int i : membersId) {
             pre.setInt(1, teamId);
             pre.setInt(2, i);
+            pre.setInt(3, mID);
             pre.addBatch();
         }
         try {
@@ -213,7 +220,7 @@ public class TeamDAO extends BaseDAO {
         }
     }
 
-    public List<User> getAddMembers(int pID) throws SQLException {
+    public List<User> getAddMembers(int pID, int mID) throws SQLException {
         String str = """
                      SELECT DISTINCT a.userId
                      FROM allocation a
@@ -222,12 +229,13 @@ public class TeamDAO extends BaseDAO {
                            SELECT tm.userId
                            FROM team_member tm
                            JOIN team t ON tm.teamId = t.id
-                           WHERE t.projectId = ?
+                           WHERE t.projectId = ?  and tm.milestoneId =?
                        )
                        AND a.status = 1""";
         PreparedStatement pre = getConnection().prepareStatement(str);
         pre.setInt(1, pID);
         pre.setInt(2, pID);
+        pre.setInt(3, mID);
         ResultSet rs = pre.executeQuery();
         List<User> temp = new ArrayList<>();
         while (rs.next()) {
@@ -306,6 +314,22 @@ public class TeamDAO extends BaseDAO {
         PreparedStatement pre = getConnection().prepareStatement(sql);
         pre.setInt(1, id);
         pre.executeUpdate();
+    }
+
+    public Team getTeamById(int id) throws SQLException {
+        String str = "select * from team where id=?";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setInt(1, id);
+        ResultSet rs = pre.executeQuery();
+        rs.next();
+        Team temp = new Team();
+        temp.setId(rs.getInt(1));
+        temp.setName(rs.getString(2));
+        temp.setTopic(rs.getString(3));
+        temp.setDetails(rs.getString(4));
+        temp.setProject(new Project(rs.getInt(5)));
+        temp.setMilestone(this.getMilestoneByTeam(rs.getInt(1)));
+        return temp;
     }
 
 }

@@ -68,9 +68,6 @@
                 color: #008ce6;
                 cursor: pointer;
             }
-            .statusCell{
-                cursor: pointer;
-            }
             th {
                 cursor: pointer;
                 position: relative;
@@ -103,7 +100,7 @@
                             <div class="block-header py-lg-4 py-3">
                                 <div class="row g-3">
                                     <div class="col-md-6 col-sm-12">
-                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> User Profile</h2>
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Project Evaluation</h2>
                                         <ul class="breadcrumb mb-0">
                                             <li class="breadcrumb-item"><a href="/dashboard">Lucid</a></li>
                                             <li class="breadcrumb-item active">Project Configs</li>
@@ -143,24 +140,27 @@
                                                 <div class="card-body" id="cardbody">
                                                     <form action="eval" method="post">
                                                         <input hidden type="text" value="filter" name="action">
-                                                        <div style="display: flex; justify-content: space-evenly">
-                                                            <div class="input-group mb-3" style="width: 25%">
-                                                                <span class="input-group-text" id="basic-addon11">Milestone</span>
-                                                                <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter">
-                                                                    <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
-                                                                    <c:forEach items="${msList}" var="m">
-                                                                        <option value="${m.id}" ${milestoneFilter==m.id?'selected':''}>${m.name}</option>
-                                                                    </c:forEach>
-                                                                </select>
+                                                        <div style="display: flex; justify-content: space-between">
+                                                            <div style="display: flex;width: 50%; justify-content: space-between">
+                                                                <div class="input-group mb-3" style="width: 45%">
+                                                                    <span class="input-group-text" id="basic-addon11">Milestone</span>
+                                                                    <select class="form-select" aria-label="Default select example" name="milestoneFilter" id="domainFilter">
+                                                                        <option value="0" ${milestoneFilter==0?'selected':''}>All Milestone</option>
+                                                                        <c:forEach items="${msList}" var="m">
+                                                                            <option value="${m.id}" ${milestoneFilter==m.id?'selected':''}>${m.name}</option>
+                                                                        </c:forEach>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="input-group mb-3" style="width: 45%">
+                                                                    <span class="input-group-text" id="basic-addon11">Status</span>
+                                                                    <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter">
+                                                                        <option value="0" ${sessionScope.statusFilter==0?'selected':''}>All Status</option>
+                                                                        <option value="1" ${sessionScope.statusFilter==1?'selected':''}>Active</option>
+                                                                        <option value="2" ${sessionScope.statusFilter==2?'selected':''}>InActive</option>
+                                                                    </select>
+                                                                </div>
                                                             </div>
-                                                            <div class="input-group mb-3" style="width: 25%">
-                                                                <span class="input-group-text" id="basic-addon11">Status</span>
-                                                                <select class="form-select" aria-label="Default select example" name="statusFilter" id="statusFilter">
-                                                                    <option value="0" ${sessionScope.statusFilter==0?'selected':''}>All Status</option>
-                                                                    <option value="1" ${sessionScope.statusFilter==1?'selected':''}>Active</option>
-                                                                    <option value="2" ${sessionScope.statusFilter==2?'selected':''}>InActive</option>
-                                                                </select>
-                                                            </div>
+
                                                             <div class="input-group mb-3" style="width: 15%">
                                                                 <input value="${searchKey.trim()}" class="form-control" name="searchKey" placeholder="Search here..." type="text">
                                                                 <button type="submit" class="btn btn-secondary"><i class="fa fa-search"></i></button>
@@ -171,15 +171,16 @@
                                                     <table id="pro_list" class="table table-hover mb-0 justify-content-end">
                                                         <thead id="tableHead">
                                                             <tr>
-                                                                <th name="id" sortBy="desc" class="sortTableHead">id&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                                <th name="id" sortBy="desc" class="sortTableHead">Id&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="name" sortBy="desc" class="sortTableHead">Name&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="weight" sortBy="desc" class="sortTableHead">weight&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th name="milestone.name" sortBy="desc" class="sortTableHead">milestone&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                                 <th>description</th>
-                                                                    <c:if test="${loginedUser.role!=2}">
+                                                                <th>status</th>
+
+                                                                <c:if test="${loginedUser.role!=2}">
                                                                     <th>action</th>
                                                                     </c:if>
-                                                                <th>status</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody class="table-hover tableBody" >
@@ -205,18 +206,7 @@
                                                                         </div>
                                                                         <span class="read-more-btn" id="readMoreBtn">Read More</span>
                                                                     </td>
-                                                                    <c:if test="${loginedUser.role!=2}">
-                                                                        <td style="width: 200px">
-                                                                            <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#updateCriteria" onclick="getModal(${i.id})"><i class="fa fa-pencil" ></i></a>
-                                                                            <a href="javascript:void(0);" class="btn btn-sm btn-outline-danger" onclick="deleteStatus(${i.id})"><i class="fa fa-trash"></i></a>
-                                                                        </td>
-                                                                    </c:if>
-                                                                    <c:if test="${loginedUser.role!=2}">
-                                                                        <td style="width: 150px" class="statusCell" onclick="changeStatus(${i.id})" id="status${i.id}">
-                                                                        </c:if>
-                                                                        <c:if test="${loginedUser.role==2}">
-                                                                        <td style="width: 150px" class="statusCell">
-                                                                        </c:if>
+                                                                    <td style="width: 150px" class="statusCell" id="status${i.id}">
                                                                         <c:choose >
                                                                             <c:when test="${i.status==true}">
                                                                                 <span class="badge bg-success">Active</span><br>
@@ -226,6 +216,14 @@
                                                                             </c:when>
                                                                         </c:choose>
                                                                     </td>
+                                                                    <c:if test="${loginedUser.role!=2}">
+                                                                        <td style="width: 200px">
+                                                                            <a href="javascript:void(0);" class="btn btn-sm btn-outline-info" onclick="changeStatus(${i.id})"><i class="fa fa-power-off"></i></a>
+                                                                            <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#updateCriteria" onclick="getModal(${i.id})"><i class="fa fa-pencil" ></i></a>
+
+                                                                        </td>
+                                                                    </c:if>
+
                                                                 </tr>
                                                             </c:forEach>
                                                         </tbody>
@@ -266,20 +264,21 @@
                                     <div class="row g-2">
                                         <input type="text" name="action" hidden value="update">
                                         <input type="text" name="uID" hidden value="${modalItem.id}">
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             <label>Name*:</label>
 
                                             <input type="text" class="form-control" placeholder="Name" name="uName" value="${modalItem.name}">
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <label>Weight:</label>
-                                            <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="uWeight" value="${modalItem.weight}">
+                                            <input type="number" min="1" max="${100 - modalItem.milestone.totalEvalWeight}" class="form-control weightInput" placeholder="Weight" name="uWeight" value="${modalItem.weight}">
+                                            <label class="total-weight" style="font-size: 12px">(Current total weight: ${modalItem.milestone.totalEvalWeight} )</label>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             <label>Milestone</label>
-                                            <select name="uMilestone" class="form-select">
+                                            <select name="uMilestone" class="form-select milestoneSelect" onchange="ChangeTotalWeight(this)">
                                                 <c:forEach items="${msList}" var="m">
-                                                    <option value="${m.id}" ${modalItem.milestone.id==m.id?'selected':''}>${m.name}</option>
+                                                    <option value="${m.id}" totalWeight="${m.totalEvalWeight}" ${modalItem.milestone.id==m.id?'selected':''}>${m.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
@@ -312,19 +311,20 @@
                                 <div class="modal-body">
                                     <div class="row g-2">
                                         <input type="text" name="action" hidden value="add">
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             <label>Name*:</label>
-                                            <input type="text" class="form-control" placeholder="Name" name="Name" value="${oldAddItem.name}">
+                                            <input type="text" class="form-control" placeholder="Name" name="Name" required value="${oldAddItem.name}">
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <label>Weight:</label>
-                                            <input type="number" min="1" max="100" class="form-control" placeholder="Weight" name="Weight" value="${oldAddItem.weight}">
+                                            <input type="number" min="1" max="100" class="form-control weightInput" placeholder="Weight" name="Weight" value="${oldAddItem.weight}">
+                                            <label class="total-weight" style="font-size: 12px"></label>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             <label>Milestone</label>
-                                            <select name="Milestone" class="form-select">
+                                            <select name="Milestone" class="form-select milestoneSelect" id="addMileList"  onchange="ChangeTotalWeight(this)">
                                                 <c:forEach items="${msList}" var="m">
-                                                    <option value="${m.id}" ${oldAddItem.milestone.id==m.id?'selected':''}>${m.name}</option>
+                                                    <option value="${m.id}" totalWeight="${m.totalEvalWeight}" ${oldAddItem.milestone.id==m.id?'selected':''}>${m.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
@@ -341,7 +341,7 @@
                                     </c:if>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Add</button>
+                                    <button type="submit" class="btn btn-primary submitBtn" >Add</button>
                                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </form>
@@ -361,13 +361,13 @@
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
         <c:if test="${requestScope.successMess!=null}">
             <script>
-                                                                            Swal.fire({
-                                                                                position: 'top-end',
-                                                                                icon: 'success',
-                                                                                title: '${successMess}',
-                                                                                showConfirmButton: false,
-                                                                                timer: 1500
-                                                                            });
+                                                Swal.fire({
+                                                    position: 'top-end',
+                                                    icon: 'success',
+                                                    title: '${successMess}',
+                                                    showConfirmButton: false,
+                                                    timer: 1500
+                                                });
 
             </script>
         </c:if>
@@ -402,7 +402,8 @@
                     $th.attr('sortBy', sortBy);
                 });
                 $('.select2Project').select2();
-
+                $("#addMileList option:first").attr('selected', 'selected');
+                ChangeTotalWeight($("#addMileList"));
             });
             $readMoreBtn = $(' .read-more-btn');
             $readMoreBtn.on('click', function () {
@@ -431,35 +432,38 @@
                 });
             }
             ;
-            function deleteStatus(id) {
-                Swal.fire({
-                    title: "Do you want to delete criteria with id=" + id + " ?",
-                    showCancelButton: true,
-                    confirmButtonText: "Delete",
-                    confirmButtonColor: "#FC5A69"
-                }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "eval",
-                            type: 'post',
-                            data: {
-                                criteriaId: id,
-                                action: "delete"
-                            },
-                            success: function () {
-                                Swal.fire("Deleted!", "", "success");
-                                $(' .tableBody').load("${pageContext.request.contextPath}/project/eval?page=${page} .tableBody > *");
-                            }
-                        });
-                    }
+            function getModal(id,thisbutton) {
+                $(' #updateCriteria').load("${pageContext.request.contextPath}/project/eval?page=${page}&modalItemID=" + id + " #updateCriteria > *", function () {
+                    ChangeTotalWeight($("#updateCriteria").find(".milestoneSelect"));
                 });
             }
             ;
-            function getModal(id) {
-                $(' #updateCriteria').load("${pageContext.request.contextPath}/project/eval?page=${page}&modalItemID=" + id + " #updateCriteria > *");
+
+            function ChangeTotalWeight(selectElement) {
+                var totalWeight = $(selectElement).find('option:selected').attr('totalWeight'); // Get the totalWeight attribute of the selected option
+                // Update UI or perform actions based on totalWeight
+                $(".total-weight").text("Current total weight: " + totalWeight + ")");
+                var weightInput = $(selectElement).closest('form').find('.weightInput');
+                var submitbtn = $(selectElement).closest('form').find('.submitBtn');
+                var curInput= $(weightInput).val();
+                var used = totalWeight-curInput;
+                var maxVal = 100 - used;
+                console.log(curInput);
+                console.log(maxVal);
+
+                if (maxVal> 0) {
+                    $(".weightInput").prop('max', maxVal);
+                    $(submitbtn).prop("disabled", false);
+
+                } else {
+                    $(".weightInput").prop('max', 0);
+                    $(".weightInput").prop('min', 0);
+                    $(submitbtn).prop("disabled", true);
+                }
+                if ($(weightInput).val() > (maxVal)) {
+                    $(weightInput).val($(weightInput).prop('max'));
+                }
             }
-            ;
             </c:if>
             function changeSort(name, sortBy) {
                 $.ajax({

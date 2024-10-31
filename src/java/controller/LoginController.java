@@ -4,7 +4,6 @@
  */
 package controller;
 
-import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.MessagingException;
 import model.User;
 import service.BaseService;
 import service.UserService;
@@ -78,7 +78,6 @@ public class LoginController extends HttpServlet {
         } else if (action.contains("forgot-password")) {
             request.getRequestDispatcher("/WEB-INF/view/user/fogotpassword.jsp").forward(request, response);
         }
-
     }
 
     /**
@@ -128,7 +127,6 @@ public class LoginController extends HttpServlet {
                 request.getSession().setAttribute("loginedUser", uService.getUserByEmail(email));
                 response.sendRedirect(request.getContextPath() + "/dashboard");
             } else {
-                
                 request.getSession().setAttribute("email", email);
                 request.getSession().setAttribute("pass", pass);
                 request.getSession().setAttribute("errorMess", "Sai tài khoản hoặc mật khẩu");
@@ -141,47 +139,55 @@ public class LoginController extends HttpServlet {
     }
 
     private void registerPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String fullName = request.getParameter("fullName").trim();
-        String email = request.getParameter("email").trim();
-        String password = request.getParameter("password").trim();
-        String rePassword = request.getParameter("rePassword").trim();
-        String otp = BaseService.getRandom();
-        uService.saveOtp(email, otp);
-        boolean result = BaseService.sendEmail(email, otp);
-        if (email.isBlank()) {
-            request.setAttribute("emailError", "Email can not be blank");
-            request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
-        } else if (uService.isEmailExists(email)) {
-            request.setAttribute("emailError", "Email is used");
-            request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
+        try {
+            String fullName = request.getParameter("fullName").trim();
+            String email = request.getParameter("email").trim();
+            String password = request.getParameter("password").trim();
+            String rePassword = request.getParameter("rePassword").trim();
+            String otp = BaseService.getRandom();
+            uService.saveOtp(email, otp);
+            boolean result = BaseService.sendEmail(email, "Forgot password OTP", "Here is OTP to reset your password: " + otp);
+            if (email.isBlank()) {
+                request.setAttribute("emailError", "Email can not be blank");
+                request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
+            } else if (uService.isEmailExists(email)) {
+                request.setAttribute("emailError", "Email is used");
+                request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
+            }
+            if (password.isEmpty()) {
+                request.setAttribute("passwordError", "Password can not be empty or null");
+                request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
+            }
+            if (!rePassword.equals(password)) {
+                request.setAttribute("rePasswordError", "Re-enter password does not match");
+                request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
+            }
+            if (!uService.createUser(fullName, email, password)) {
+                request.setAttribute("error", "Register unsuccessfully");
+                request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
+            }
+            if (result) {
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("/WEB-INF/view/user/verify.jsp").forward(request, response);
+            }
+        } catch (MessagingException ex) {
+            throw new  ServletException(ex);
         }
-        if (password.isEmpty()) {
-            request.setAttribute("passwordError", "Password can not be empty or null");
-            request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
-        }
-        if (!rePassword.equals(password)) {
-            request.setAttribute("rePasswordError", "Re-enter password does not match");
-            request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
-        }
-        if (!uService.createUser(fullName, email, password)) {
-            request.setAttribute("error", "Register unsuccessfully");
-            request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
-        }
-        if(result){
-            request.setAttribute("email", email);
-            request.getRequestDispatcher("/WEB-INF/view/user/verify.jsp").forward(request, response);
-        }   
-        
+
     }
 
     private void forgotPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String email = request.getParameter("email");
-        String otp = BaseService.getRandom();
-        uService.saveOtp(email, otp);
-        boolean result = BaseService.sendEmail(email, otp);
-        if (result) {
-            request.setAttribute("email", email);
-            request.getRequestDispatcher("/WEB-INF/view/user/verify.jsp").forward(request, response);
+        try {
+            String email = request.getParameter("email");
+            String otp = BaseService.getRandom();
+            uService.saveOtp(email, otp);
+            boolean result = BaseService.sendEmail(email, "Forgot password OTP", "Here is OTP to reset your password: " + otp);
+            if (result) {
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("/WEB-INF/view/user/verify.jsp").forward(request, response);
+            }
+        } catch (MessagingException ex) {
+            throw new ServletException(ex);
         }
     }
 
@@ -194,7 +200,6 @@ public class LoginController extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         if (user == null) {
             request.setAttribute("error", "User is null");
             request.getRequestDispatcher("/WEB-INF/view/user/verify.jsp").forward(request, response);
@@ -207,7 +212,7 @@ public class LoginController extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/view/user/verify.jsp").forward(request, response);
         }
     }
-    
+
     private void resetPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");

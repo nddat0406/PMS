@@ -27,7 +27,6 @@ import model.Project;
 import service.BaseService;
 import model.Milestone;
 import model.Team;
-import model.User;
 import org.apache.poi.ss.usermodel.Workbook;
 import service.CriteriaService;
 import service.GroupService;
@@ -131,7 +130,8 @@ public class ProjectConfigController extends HttpServlet {
                     if (teamAddId != null) {
                         try {
                             Integer pID = (Integer) request.getSession().getAttribute("selectedProject");
-                            request.setAttribute("addMemberList", tService.getAddMemberList( pID));
+                            Integer mID = (Integer) request.getSession().getAttribute("milestoneFilter");
+                            request.setAttribute("addMemberList", tService.getAddMemberList(pID, mID));
                         } catch (SQLException ex) {
                             throw new ServletException(ex);
                         }
@@ -139,7 +139,9 @@ public class ProjectConfigController extends HttpServlet {
                     if (modalItemIDRaw != null) {
                         try {
                             int modalItemID = Integer.parseInt(modalItemIDRaw);
-                            request.setAttribute("modalItem", tService.getTeamById(modalItemID, list));
+                            Integer mID = (Integer) request.getSession().getAttribute("milestoneFilter");
+
+                            request.setAttribute("modalItem", tService.getTeamById(modalItemID, list, mID));
                         } catch (SQLException ex) {
                             throw new ServletException(ex);
                         }
@@ -194,8 +196,6 @@ public class ProjectConfigController extends HttpServlet {
                 switch (action) {
                     case "sort" ->
                         postMemberSort(request, response);
-                    case "changeStatus" ->
-                        postMemberFlipStatus(request, response);
                     case "filter" ->
                         postMemberFilter(request, response);
                     case "export" ->
@@ -281,7 +281,7 @@ public class ProjectConfigController extends HttpServlet {
             if (pIdRaw == null) {
                 pID = (Integer) session.getAttribute("selectedProject");
                 if (pID == null) {
-                    throw new ServletException("Some thing went wrong, cannot find the criteria id");
+                    throw new ServletException("Some thing went wrong, cannot find the project id");
                 }
             } else {
                 pID = Integer.valueOf(pIdRaw);
@@ -333,7 +333,6 @@ public class ProjectConfigController extends HttpServlet {
         try {
             Integer pID;
             String pIdRaw = request.getParameter("projectId");
-//            String pIdRaw = "25";
             if (pIdRaw == null) {
                 pID = (Integer) session.getAttribute("selectedProject");
                 if (pID == null) {
@@ -381,9 +380,12 @@ public class ProjectConfigController extends HttpServlet {
                     session.setAttribute("selectedProject", pID);
                 }
             }
-            List<Team> list = tService.getTeamsByProject(pID);
+            List<Milestone> mList = mService.getAllMilestone(pID);
+            List<Team> list = tService.getTeamsByProject(pID, mList.get(0).getId());
+            list = tService.searchFilter(list, mList.get(0).getId(), "");
             session.setAttribute("teamList", list);
-            session.setAttribute("msList", mService.getAllMilestone(pID));
+            session.setAttribute("msList", mList);
+            session.setAttribute("milestoneFilter", mList.get(0).getId());
             pagination(request, response, list, linkTeam);
         } catch (SQLException ex) {
             throw new ServletException(ex);
@@ -627,7 +629,9 @@ public class ProjectConfigController extends HttpServlet {
         String fieldName = request.getParameter("fieldName");
         String order = request.getParameter("sortBy");
         try {
-            List<Criteria> list = cService.listCriteriaOfProject((int) session.getAttribute("selectedProject"));
+            int pID = (int) session.getAttribute("selectedProject");
+            List<Criteria> list = cService.listCriteriaOfProject(pID);
+            session.setAttribute("msList", mService.getAllMilestone(pID));
             list = cService.searchFilter(list, mileFilter, statusFilter, searchKey);
             if (fieldName != null && order != null) {
                 baseService.sortListByField(list, fieldName, order);
@@ -703,19 +707,6 @@ public class ProjectConfigController extends HttpServlet {
         }
     }
 
-    private void postMemberFlipStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-            int id = Integer.parseInt(request.getParameter("allocateId"));
-            List<Allocation> list = (List<Allocation>) request.getSession().getAttribute("memberList");
-            pService.flipStatusMember(id, list);
-            list = refreshMemberChanges(request);
-            pagination(request, response, list, linkMember);
-        } catch (SQLException ex) {
-            throw new ServletException(ex);
-        }
-
-    }
-
     private void exportToExcel(HttpServletResponse response, HttpServletRequest request) throws IOException, ServletException {
         try {
             List<Allocation> list = pService.getProjectMembers((int) request.getSession().getAttribute("selectedProject"));
@@ -743,7 +734,7 @@ public class ProjectConfigController extends HttpServlet {
             t.setTopic(topic);
             int[] mile;
             List<Milestone> m = new ArrayList<>();
-            if (mileRaw!=null && mileRaw.length != 0) {
+            if (mileRaw != null && mileRaw.length != 0) {
                 mile = Arrays.stream(mileRaw).mapToInt(Integer::valueOf).toArray();
                 for (Integer integer : mile) {
                     m.add(new Milestone(integer));
@@ -783,7 +774,7 @@ public class ProjectConfigController extends HttpServlet {
             t.setTopic(uTopic);
             int[] mile;
             List<Milestone> m = new ArrayList<>();
-            if (mileRaw!=null && mileRaw.length != 0) {
+            if (mileRaw != null && mileRaw.length != 0) {
                 mile = Arrays.stream(mileRaw).mapToInt(Integer::valueOf).toArray();
                 for (Integer integer : mile) {
                     m.add(new Milestone(integer));
@@ -826,7 +817,9 @@ public class ProjectConfigController extends HttpServlet {
         String searchKey = (String) session.getAttribute("searchKey");
         Integer mileFilter = (Integer) session.getAttribute("milestoneFilter");
         try {
-            List<Team> list = tService.getTeamsByProject((int) session.getAttribute("selectedProject"));
+            int pID = (int) session.getAttribute("selectedProject");
+            int mID = (int) session.getAttribute("milestoneFilter");
+            List<Team> list = tService.getTeamsByProject(pID, mID);
             list = tService.searchFilter(list, mileFilter, searchKey);
             session.setAttribute("teamList", list);
             return list;
@@ -841,7 +834,8 @@ public class ProjectConfigController extends HttpServlet {
             int mileFilter = baseService.TryParseInt(mileFilterRaw);
             String searchKey = request.getParameter("searchKey");
             HttpSession session = request.getSession();
-            List<Team> list = tService.getTeamsByProject((int) session.getAttribute("selectedProject"));
+            int pID = (int) session.getAttribute("selectedProject");
+            List<Team> list = tService.getTeamsByProject(pID, mileFilter);
             list = tService.searchFilter(list, mileFilter, searchKey);
             session.setAttribute("searchKey", searchKey);
             session.setAttribute("milestoneFilter", mileFilter);
@@ -861,7 +855,8 @@ public class ProjectConfigController extends HttpServlet {
             // Convert to int array
             int[] numbers = Arrays.stream(stringNumbers).mapToInt(Integer::parseInt).toArray();
             List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
-            tService.addMembers(numbers, teamId, list);
+            int mID = (int) request.getSession().getAttribute("milestoneFilter");
+            tService.addMembers(numbers, teamId, mID, list);
             list = refreshTeamChanges(request);
             pagination(request, response, list, linkTeam);
         } catch (SQLException ex) {
@@ -875,7 +870,8 @@ public class ProjectConfigController extends HttpServlet {
             int teamId = Integer.parseInt(request.getParameter("teamId"));
             int memberId = Integer.parseInt(request.getParameter("memberId"));
             List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
-            tService.deleteMember(teamId, memberId, list);
+            int mID = (int) request.getSession().getAttribute("milestoneFilter");
+            tService.deleteMember(teamId, memberId, list, mID);
             list = refreshTeamChanges(request);
             pagination(request, response, list, linkTeam);
         } catch (NumberFormatException | SQLException e) {
@@ -888,7 +884,8 @@ public class ProjectConfigController extends HttpServlet {
             int teamId = Integer.parseInt(request.getParameter("teamId"));
             int memberId = Integer.parseInt(request.getParameter("memberId"));
             List<Team> list = (List<Team>) request.getSession().getAttribute("teamList");
-            tService.changeRole(teamId, memberId, list);
+            int mID = (int) request.getSession().getAttribute("milestoneFilter");
+            tService.changeRole(teamId, memberId, list, mID);
             list = refreshTeamChanges(request);
             pagination(request, response, list, linkTeam);
         } catch (NumberFormatException | SQLException e) {

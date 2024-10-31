@@ -38,6 +38,7 @@ public class MilestoneDAO extends BaseDAO {
             temp.setStatus(rs.getInt("status"));
             temp.setDeliver(rs.getString("deliver"));
             temp.setPhase(phaseDAO.getPhaseById(rs.getInt("phaseId")));
+
             return temp;
         } catch (SQLException e) {
             throw new SQLException(e);
@@ -129,5 +130,16 @@ public class MilestoneDAO extends BaseDAO {
             }
         }
         return result;
+    }
+
+    private int getTotalWeight(int id) throws SQLException {
+        String sql = "SELECT sum(weight) FROM pms.project_criteria where milestoneId=? and status=1";
+        PreparedStatement pre = getConnection().prepareStatement(sql);
+        pre.setInt(1, id);
+        ResultSet rs = pre.executeQuery();
+        if(rs.next()){
+            return rs.getInt(1);
+        }
+        return 0;
     }
 }

@@ -23,6 +23,7 @@ public class Project {
     private Group department;
     private Group domain;
     private List<User> manager;
+    private List<Allocation> allocation;
 
     public Project() {
     }
@@ -117,5 +118,13 @@ public class Project {
 
     public int getDomainId() {
         return domain != null ? domain.getId() : 0; // Trả về 0 nếu domain là null
+    }
+
+    public List<Allocation> getAllocation() {
+        return allocation;
+    }
+
+    public void setAllocation(List<Allocation> allocation) {
+        this.allocation = allocation;
     }
 }

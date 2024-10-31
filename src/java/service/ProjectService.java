@@ -4,6 +4,7 @@
  */
 package service;
 
+import dal.AllocationDAO;
 import dal.ProjectDAO;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -30,13 +31,14 @@ public class ProjectService {
 
     private ProjectDAO pdao = new ProjectDAO();
     private BaseService baseService = new BaseService();
+    private AllocationDAO adao = new AllocationDAO();
 
     public List<Allocation> getByUser(int id, int role) throws SQLException {
         try {
             if (ADMIN_ROLE == role) {
-                return pdao.getAllInAllocation();
+                return adao.getAllProject();
             } else {
-                return pdao.getAllocation(id);
+                return adao.getActiveAllocationByUser(id);
             }
         } catch (SQLException e) {
             throw new SQLException(e);
@@ -59,7 +61,7 @@ public class ProjectService {
     }
 
     public List<Allocation> getProjectMembers(Integer pID) throws SQLException {
-        return pdao.getAllMember(pID);
+        return adao.getAllMember(pID);
     }
 
     public void flipStatusMember(int id, List<Allocation> list) throws SQLException {
@@ -73,11 +75,11 @@ public class ProjectService {
     public List<Allocation> searchFilterMember(List<Allocation> list, Integer deptFilter, Integer statusFilter, String searchKey) {
         List<Allocation> pList = new ArrayList<>();
         deptFilter = baseService.TryParseInteger(deptFilter);
-        statusFilter = baseService.TryParseInteger(statusFilter);
+        boolean status = baseService.TryParseInteger(statusFilter) == 1;
         for (Allocation allocation : list) {
             User temp = allocation.getUser();
             if ((temp.getDepartment().getId() == deptFilter || deptFilter == 0)
-                    && (temp.getStatus() == statusFilter || statusFilter == 0)) {
+                    && (allocation.isStatus() == status || statusFilter == 0)) {
                 if (searchKey == null || searchKey.isBlank() || temp.getFullname().toLowerCase().contains(searchKey.toLowerCase())) {
                     pList.add(allocation);
                 }
@@ -105,7 +107,7 @@ public class ProjectService {
             row.createCell(0).setCellValue(u.getId());
             row.createCell(1).setCellValue(u.getFullname());
             row.createCell(2).setCellValue(u.getEmail());
-            row.createCell(3).setCellValue(u.getRoleString());
+            row.createCell(3).setCellValue(a.getRole().getName());
             row.createCell(4).setCellValue(a.getEffortRate());
             row.createCell(5).setCellValue(u.getDepartment().getName());
             row.createCell(6).setCellValue(a.getStatusString());
@@ -114,7 +116,7 @@ public class ProjectService {
     }
 
     public List<User> getProjectUsers(Integer pID) throws SQLException {
-        List<Allocation> list = pdao.getAllMember(pID);
+        List<Allocation> list = adao.getAllMember(pID);
         List<User> temp = new ArrayList<>();
         for (Allocation allocation : list) {
             temp.add(allocation.getUser());
@@ -123,13 +125,13 @@ public class ProjectService {
     }
 //  ------------------  project list vs project detail -----------------------------
 
-    public List<Project> getProjects(int userId, int page, int pageSize, String keyword, Integer status, int role) {
+    public List<Project> getProjects(int userId, int page, int pageSize, String keyword, Integer status, Integer domainId, Integer departmentId, int role) {
         // Kiểm tra tính hợp lệ của page và pageSize
         if (role == 1) {
-            return pdao.listAllProjectsForAdmin(page, pageSize, keyword, status);
+            return pdao.listAllProjectsForAdmin(page, pageSize, keyword, status, domainId, departmentId);
         } else {
 
-            return pdao.listProjects(userId, page, pageSize, keyword, status);
+            return pdao.listProjects(userId, page, pageSize, keyword, status, domainId, departmentId);
         }
     }
 
@@ -149,14 +151,32 @@ public class ProjectService {
             if (project.getCode() != null && project.getCode().length() > 10) {
                 return "Project code must not exceed 10 characters.";  // Trả về thông báo lỗi
             }
-            // check Code
+            // check Code and name
+            if (pdao.isCodeExists(project.getCode()) && pdao.isNameExists(project.getName())) {
+                return " code and name already exists";  // Trả về thông báo lỗi
+            }
             if (pdao.isCodeExists(project.getCode())) {
-                return "Project code already exists";  // Trả về thông báo lỗi
+                return "code already exists";  // Trả về thông báo lỗi
             }
 
             // check Name
             if (pdao.isNameExists(project.getName())) {
-                return "Project name already exists";  // Trả về thông báo lỗi
+                return "name already exists";  // Trả về thông báo lỗi
+            }
+// Thiết lập startDate cho các milestones
+            Date startDate = project.getStartDate();
+
+// Lấy ngày hiện tại mà không có thành phần thời gian
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+            cal.set(java.util.Calendar.MINUTE, 0);
+            cal.set(java.util.Calendar.SECOND, 0);
+            cal.set(java.util.Calendar.MILLISECOND, 0);
+            java.util.Date currentDate = cal.getTime();
+
+// Kiểm tra xem startDate có phải là ngày hôm nay hoặc trong tương lai không
+            if (startDate == null || startDate.before(currentDate)) {
+                return "Start date must be today or in the future.";  // Trả về thông báo lỗi
             }
 
             // Gọi phương thức thêm project và lấy projectId
@@ -174,15 +194,6 @@ public class ProjectService {
                 // Kiểm tra nếu không có phases nào được trả về
                 if (phases.isEmpty()) {
                     return "No phases found for domainId: " + project.getDomain().getId();  // Trả về thông báo lỗi
-                }
-
-                // Thiết lập startDate cho các milestones
-                Date startDate = project.getStartDate();
-                java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
-
-                // Kiểm tra xem startDate có phải là ngày trong quá khứ không
-                if (startDate == null || startDate.before(currentDate)) {
-                    return "Start date must be today or in the future.";  // Trả về thông báo lỗi
                 }
 
                 // Lặp qua các giai đoạn và tạo milestones
@@ -228,7 +239,6 @@ public class ProjectService {
             }
         } catch (SQLException e) {
             System.err.println("Error while adding project or retrieving phases: " + e.getMessage());
-            e.printStackTrace();
             return "An error occurred while adding the project: " + e.getMessage();  // Trả về thông báo lỗi
         }
     }
