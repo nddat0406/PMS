@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
-<<<<<<< HEAD
-=======
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group name="test">
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/AllocationController.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/ProjectConfigController.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/Allocation/alloList.jsp</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projectteam.jsp</file>
-        </group>
         <group>
-            <file>file:/D:/fpt/SWP%20FALL24/31-10-2024/web/WEB-INF/view/user/projectList/ProjectDetail.jsp</file>
-            <file>file:/D:/fpt/SWP%20FALL24/31-10-2024/src/java/model/User.java</file>
-            <file>file:/D:/fpt/SWP%20FALL24/31-10-2024/web/WEB-INF/view/admin/UserList.jsp</file>
-            <file>file:/D:/fpt/SWP%20FALL24/31-10-2024/src/java/service/ProjectService.java</file>
-            <file>file:/D:/fpt/SWP%20FALL24/31-10-2024/src/java/controller/ProjectController.java</file>
-            <file>file:/D:/fpt/SWP%20FALL24/31-10-2024/web/WEB-INF/view/user/projectList/Project.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/team6/web/WEB-INF/view/admin/DefectList.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/team6/web/WEB-INF/classes/app.properties</file>
+            <file>file:/D:/FALL2024/SWP391/team6/src/java/dal/RequirementDAO.java</file>
+            <file>file:/D:/FALL2024/SWP391/team6/web/WEB-INF/view/common/sidebar.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/team6/web/WEB-INF/view/admin/DefectDetails.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/team6/src/java/controller/DefectController.java</file>
+            <file>file:/D:/FALL2024/SWP391/team6/src/java/model/Project.java</file>
+            <file>file:/D:/FALL2024/SWP391/team6/src/java/dal/DefectDAO.java</file>
+            <file>file:/D:/FALL2024/SWP391/team6/src/java/model/User.java</file>
+            <file>file:/D:/FALL2024/SWP391/team6/src/java/dal/CriteriaDAO.java</file>
+            <file>file:/D:/FALL2024/SWP391/team6/src/java/service/BaseService.java</file>
+            <file>file:/D:/FALL2024/SWP391/team6/src/java/service/UserService.java</file>
+            <file>file:/D:/FALL2024/SWP391/team6/src/java/service/MilestoneService.java</file>
+            <file>file:/D:/FALL2024/SWP391/team6/src/java/dal/AllocationDAO.java</file>
+            <file>file:/D:/FALL2024/SWP391/team6/src/java/service/RequirementService.java</file>
+            <file>file:/D:/FALL2024/SWP391/team6/src/java/dal/MilestoneDAO.java</file>
         </group>
     </open-files>
->>>>>>> 3af5cf3a61379b6831f300686a351d7106260fb4
 </project-private>

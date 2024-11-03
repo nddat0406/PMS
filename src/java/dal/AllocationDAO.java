@@ -12,7 +12,6 @@ import java.util.List;
 import model.Allocation;
 import model.Setting;
 import model.User;
-
 /**
  *
  * @author ASUS TUF

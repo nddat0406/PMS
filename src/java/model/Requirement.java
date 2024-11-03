@@ -8,7 +8,7 @@ package model;
  *
  * @author HP
  */
-class Requirement {
+public class Requirement {
     private int id;
     private Project project;
     private User owner;

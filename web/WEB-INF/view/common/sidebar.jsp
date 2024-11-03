@@ -41,10 +41,11 @@
                             <ul class="list-unstyled">
                                 <li><a href="${pageContext.request.contextPath}/admin/department">Department Management</a></li>
                                 <li><a href="${pageContext.request.contextPath}/admin/domain">Domain Management</a></li>
+
                             </ul>
                         </li>
                         <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-tasks"></i><span>Project</span></a></li> 
-
+                        <li><a href="${pageContext.request.contextPath}/admin/defectlist"><i class="fa fa-tasks"></i><span>Defect</span></a></li> 
                         <li><a href="${pageContext.request.contextPath}/settings"><i class="fa fa-cogs"></i><span>Setting Management</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/user/profile"><i class="fa fa-user"></i><span>Users profile</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/logout"><i class="fa fa-sign-out"></i><span>Logout</span></a></li>
