@@ -234,7 +234,7 @@ public class ProjectService {
         }
     }
 
-    public String getRoleByUserAndProject(int userId, int projectId) {
+    public String getRoleByUserAndProject(int userId, int projectId) throws SQLException {
         // Gọi hàm từ ProjectDAO
         return pdao.getRoleByUserAndProject(userId, projectId);
     }
@@ -264,8 +264,12 @@ public class ProjectService {
             return true;
         } else {
             throw new IllegalAccessError("Illegal action!");
-
         }
     }
+    
+    public List<Project> getAllProject() throws SQLException{
+        return pdao.getAllProject();
+    }
+
 
 }

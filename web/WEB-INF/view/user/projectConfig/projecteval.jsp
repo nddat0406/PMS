@@ -432,7 +432,7 @@
                 });
             }
             ;
-            function getModal(id,thisbutton) {
+            function getModal(id) {
                 $(' #updateCriteria').load("${pageContext.request.contextPath}/project/eval?page=${page}&modalItemID=" + id + " #updateCriteria > *", function () {
                     ChangeTotalWeight($("#updateCriteria").find(".milestoneSelect"));
                 });

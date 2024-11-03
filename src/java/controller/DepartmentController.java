@@ -40,9 +40,7 @@ public class DepartmentController extends HttpServlet {
                     break;
             }
         } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Department ID");
-        } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred");
+            throw new ServletException( "Invalid Department ID");
         }
     }
 
@@ -72,7 +70,7 @@ public class DepartmentController extends HttpServlet {
                     break;
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DepartmentController.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServletException(ex);
         }
     }
 

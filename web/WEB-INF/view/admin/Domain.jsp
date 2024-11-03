@@ -76,19 +76,22 @@
                                     <div class="card mb-4">
                                         <!-- Nút Add New -->
                                         <div class="action-bar">
+                                        <c:if test="${loginedUser.role==1}">
+
                                             <form action="domain?action=add" method="get">
                                                 <input type="hidden" name="action" value="add">
                                                 <button type="submit" class="btn btn-outline-secondary">Add New</button>
                                             </form>
-                                        </div>
+                                        </c:if>
+                                    </div>
 
-                                        <form method="get" action="domain">
-                                            <input type="hidden" name="action" value="filter">
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    <select name="status" class="form-control">
-                                                        <option value="">Status</option>
-                                                        <option value="1" ${filterStatus == 1 ? 'selected' : ''}>Active</option>
+                                    <form method="get" action="domain">
+                                        <input type="hidden" name="action" value="filter">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <select name="status" class="form-control">
+                                                    <option value="">Status</option>
+                                                    <option value="1" ${filterStatus == 1 ? 'selected' : ''}>Active</option>
                                                     <option value="0" ${filterStatus == 0 ? 'selected' : ''}>Inactive</option>
                                                 </select>
                                             </div>
@@ -114,7 +117,11 @@
                                                     <th>Name</th>
                                                     <th>Code</th>
                                                     <th>Status</th>
-                                                    <th>Action</th>
+                                                        <c:if test="${loginedUser.role==1}">
+
+                                                        <th>Action</th>
+                                                        </c:if>
+
                                                     <th>Details</th>
                                                 </tr>
                                             </thead>
@@ -136,33 +143,35 @@
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </td>
-                                                        <td class="Domain-actions">
-                                                            <div class="btn-group">
-                                                                <form action="domain?action=edit" method="get" style="display: inline-block;">
-                                                                    <input type="hidden" name="action" value="edit">
-                                                                    <input type="hidden" name="id" value="${d.id}">
-                                                                    <button type="submit" class="btn btn-sm btn-outline-success">
-                                                                        <i class="fa fa-edit"></i> 
-                                                                    </button>
-                                                                </form>
-                                                                <!-- Nút chuyển đổi trạng thái -->
-                                                                <form action="domain?action=update" method="post" style="display: inline-block;">
-                                                                    <input type="hidden" name="id" value="${d.id}">
-                                                                    <input type="hidden" name="status" value="${d.status == 1 ? 0 : 1}">
+                                                        <c:if test="${loginedUser.role==1}">
+
+                                                            <td class="Domain-actions">
+                                                                <div class="btn-group">
+                                                                    <form action="domain?action=edit" method="get" style="display: inline-block;">
+                                                                        <input type="hidden" name="action" value="edit">
+                                                                        <input type="hidden" name="id" value="${d.id}">
+                                                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                                                            <i class="fa fa-edit"></i> 
+                                                                        </button>
+                                                                    </form>
                                                                     <!-- Nút chuyển đổi trạng thái -->
-                                                                    <button type="submit" class="btn btn-sm ${d.status == 1 ? 'btn-outline-danger' : 'btn-outline-primary'}">
-                                                                        <i class="fa ${d.status == 1 ? 'fa-times' : 'fa-check'}"></i> 
-                                                                        ${d.status == 1 ? 'Inactive' : 'Active'}
-                                                                    </button>
-                                                                </form>
-                                                                <td>
-                                                                   <a href="${pageContext.request.contextPath}/domain?domainId=${d.id}" class="btn" >
+                                                                    <form action="domain?action=update" method="post" style="display: inline-block;">
+                                                                        <input type="hidden" name="id" value="${d.id}">
+                                                                        <input type="hidden" name="status" value="${d.status == 1 ? 0 : 1}">
+                                                                        <!-- Nút chuyển đổi trạng thái -->
+                                                                        <button type="submit" class="btn btn-sm ${d.status == 1 ? 'btn-outline-danger' : 'btn-outline-primary'}">
+                                                                            <i class="fa ${d.status == 1 ? 'fa-times' : 'fa-check'}"></i> 
+                                                                            ${d.status == 1 ? 'Inactive' : 'Active'}
+                                                                        </button>
+                                                                    </form>
+                                                            </td>
+                                                        </c:if>
+                                                        <td>
+                                                            <a href="${pageContext.request.contextPath}/domain?domainId=${d.id}" class="btn" >
                                                                 <strong>Domain Configs</strong>
                                                             </a>
-                                                                </td>
-
-                                                            </div>
                                                         </td>
+                                                        </div>
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>

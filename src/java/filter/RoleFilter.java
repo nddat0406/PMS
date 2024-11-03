@@ -118,7 +118,10 @@ public class RoleFilter implements Filter {
             req.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
             return;
         }
-        if (acc.getRole() != BaseService.ADMIN_ROLE) {
+        String path = req.getServletPath();
+        if (acc.getRole() != BaseService.ADMIN_ROLE 
+                && !path.contains("/admin/department")
+                && !path.contains("/admin/domain")) {
             res.sendRedirect(req.getContextPath() + "/dashboard");
             return;
         }

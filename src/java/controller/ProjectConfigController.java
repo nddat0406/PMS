@@ -153,7 +153,7 @@ public class ProjectConfigController extends HttpServlet {
             case "milestone" ->
                 getProjectMilestone(request, response);
             default ->
-                throw new AssertionError();
+                getProjectMilestone(request, response);
         }
     }
 

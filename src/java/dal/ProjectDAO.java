@@ -14,6 +14,8 @@ import model.Group;
 import model.Milestone;
 import model.Project;
 import model.ProjectPhase;
+import model.Setting;
+import model.User;
 
 /**
  *
@@ -23,8 +25,6 @@ public class ProjectDAO extends BaseDAO {
 
     private GroupDAO gdao = new GroupDAO();
     private UserDAO udao = new UserDAO();
-
-
 
     public List<Project> getAllByUser(int id) throws SQLException {
         String str = "select p.* from allocation a join project p on p.id = a.projectId where userId = ?";
@@ -42,8 +42,6 @@ public class ProjectDAO extends BaseDAO {
             throw new SQLException(e);
         }
     }
-
-
 
     public Project setProjectInfor(ResultSet rs) throws SQLException {
         try {
@@ -68,8 +66,6 @@ public class ProjectDAO extends BaseDAO {
             throw new SQLException(ex);
         }
     }
-
-
 
     private String getBizTerm(int id) throws SQLException {
         String str = "select name from setting where id=? and type=1 and status = 1";
@@ -96,8 +92,6 @@ public class ProjectDAO extends BaseDAO {
             throw new SQLException(e);
         }
     }
-
-
 
     public void flipStatusMemberOfPrj(int id) throws SQLException {
         String sql = """
@@ -308,10 +302,11 @@ public class ProjectDAO extends BaseDAO {
         }
         return 0; // Trả về 0 nếu không thành công
     }
+
     // Hàm kiểm tra nếu code đã tồn tại
     public boolean isCodeExists(String code) throws SQLException {
         String query = "SELECT COUNT(*) FROM project WHERE code = ?";
-        
+
         try (PreparedStatement statement = getConnection().prepareStatement(query)) {
             statement.setString(1, code);
             ResultSet resultSet = statement.executeQuery();
@@ -328,12 +323,12 @@ public class ProjectDAO extends BaseDAO {
     // Hàm kiểm tra nếu name đã tồn tại
     public boolean isNameExists(String name) throws SQLException {
         String query = "SELECT COUNT(*) FROM project WHERE name = ?";
-        
+
         try (PreparedStatement statement = getConnection().prepareStatement(query)) {
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return resultSet.getInt(1) > 0;  
+                return resultSet.getInt(1) > 0;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -342,6 +337,7 @@ public class ProjectDAO extends BaseDAO {
         return false;
     }
 // Lấy danh sách các giai đoạn dựa trên domainId từ bảng 'projectphase'
+
     public List<ProjectPhase> getPhasesByDomainId(int domainId) throws SQLException {
         List<ProjectPhase> phases = new ArrayList<>();
         String sql = "SELECT id, name, priority FROM projectphase WHERE domainId = ?";
@@ -383,26 +379,23 @@ public class ProjectDAO extends BaseDAO {
     }
 
     // lấy role để phân quyền 
-    public String getRoleByUserAndProject(int userId, int projectId) {
+    public String getRoleByUserAndProject(int userId, int projectId) throws SQLException {
         String role = null;
 
-        try {
-            // Truy vấn SQL để lấy projectRole từ bảng allocation
-            String query = "SELECT projectRole FROM allocation WHERE userId = ? AND projectId = ? LIMIT 1";
+        // Truy vấn SQL để lấy projectRole từ bảng allocation
+        String query = "SELECT projectRole FROM allocation WHERE userId = ? AND projectId = ? LIMIT 1";
 
-            PreparedStatement statement = getConnection().prepareStatement(query);
-            statement.setInt(1, userId);
-            statement.setInt(2, projectId);
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1, userId);
+        statement.setInt(2, projectId);
 
-            ResultSet resultSet = statement.executeQuery();
+        ResultSet resultSet = statement.executeQuery();
 
-            // Nếu có kết quả, lấy giá trị của projectRole
-            if (resultSet.next()) {
-                role = resultSet.getString("projectRole");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        // Nếu có kết quả, lấy giá trị của projectRole
+        if (resultSet.next()) {
+            role = resultSet.getString("projectRole");
         }
+
         // Trả về role (nếu không có kết quả sẽ là null)
         return role;
     }
@@ -424,30 +417,6 @@ public class ProjectDAO extends BaseDAO {
             throw new SQLException("Không thể cập nhật trạng thái dự án");
         }
     }
-    // Hàm main để chạy thử
-
-    public static void main(String[] args) {
-        ProjectDAO manager = new ProjectDAO();
-
-        // Test với userId = 1, page = 1, pageSize = 10, keyword là "Test", và status là 1
-        int userId = 4;
-        int page = 1;
-        int pageSize = 10;
-        String keyword = null;
-        Integer status = 1;
-
-        List<Project> projects = manager.listProjects(userId, page, pageSize, keyword, status);
-
-        // In ra kết quả
-        for (Project project : projects) {
-            System.out.println("Project ID: " + project.getId());
-            System.out.println("Project Name: " + project.getName());
-            System.out.println("Project Code: " + project.getCode());
-            System.out.println("Project Domain: " + project.getDomain().getName());
-            System.out.println("Project Department: " + project.getDepartment().getName());
-            System.out.println("-------------------------------------");
-        }
-    }
 
     public List<Project> getAllProjectPharse() throws SQLException {
         String str = "select * from projectphase";
@@ -466,7 +435,7 @@ public class ProjectDAO extends BaseDAO {
             throw new SQLException(e);
         }
     }
-    
+
     public Project getAllProjectPharseBYId(int id) throws SQLException {
         String str = "select * from projectphase  where id = ?";
         try {
@@ -484,7 +453,8 @@ public class ProjectDAO extends BaseDAO {
             throw new SQLException(e);
         }
     }
-        // Hàm list all prj for admin 
+    // Hàm list all prj for admin 
+
     public List<Project> listAllProjectsForAdmin(int page, int pageSize, String keyword, Integer status) {
         List<Project> projects = new ArrayList<>();
 
@@ -562,5 +532,76 @@ public class ProjectDAO extends BaseDAO {
         }
 
         return projects;
+    }
+
+    public List<Project> getAllProject() throws SQLException {
+        String str = "select * from project";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        ResultSet rs = pre.executeQuery();
+        List<Project> projectList = new ArrayList<>();
+        while (rs.next()) {
+            Project project = new Project();
+            project.setId(rs.getInt("id"));
+            project.setName(rs.getString("name"));
+            project.setCode(rs.getString("code"));
+            projectList.add(project);
+        }
+        return projectList;
+    }
+
+    public List<User> getProjectAllocationUser(Integer PID) throws SQLException {
+        String str = """
+                     SELECT 
+                         u.id, 
+                         u.email, 
+                         u.fullname,
+                         u.image
+                     FROM 
+                         user u
+                     LEFT JOIN 
+                         allocation a ON u.id = a.userId AND a.projectId = ?
+                     WHERE 
+                         a.id IS NULL and u.status=1""";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setInt(1, PID);
+        ResultSet rs = pre.executeQuery();
+        List<User> userList = new ArrayList<>();
+        while (rs.next()) {
+            User temp = new User();
+            temp.setId(rs.getInt(1));
+            temp.setEmail(rs.getString(2));
+            temp.setFullname(rs.getString(3));
+            temp.setImage(rs.getString(4));
+            userList.add(temp);
+        }
+        return userList;
+    }
+
+    public List<Setting> getListRole(Integer PID) throws SQLException {
+        String str = """
+                     SELECT DISTINCT 
+                     ds.id,
+                         ds.name,
+                         ds.priority
+                     FROM 
+                         allocation a
+                     JOIN 
+                         project p ON a.projectId = p.id
+                     JOIN 
+                         domain_setting ds ON ds.id = a.role
+                     WHERE 
+                         p.id = ? AND ds.type = 2""";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setInt(1, PID);
+        ResultSet rs = pre.executeQuery();
+        List<Setting> settingList = new ArrayList<>();
+        while (rs.next()) {
+            Setting temp = new Setting();
+            temp.setId(rs.getInt(1));
+            temp.setName(rs.getString(2));
+            temp.setPriority(rs.getInt(3));
+            settingList.add(temp);
+        }
+        return settingList;
     }
 }

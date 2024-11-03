@@ -77,10 +77,8 @@
                                     <div class="col-md-6 col-sm-12">
                                         <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Department</h2>
                                         <ul class="breadcrumb mb-0">
-
                                         </ul>
                                     </div>
-
                                 </div>
                             </div>
 
@@ -89,21 +87,23 @@
 
                                     <div class="card mb-4">
                                         <div class="action-bar">
+                                        <c:if test="${loginedUser.role==1}">
                                             <form action="department" method="get">
                                                 <input type="hidden" name="action" value="add">
                                                 <button type="submit" class="btn btn-outline-secondary">Add New</button>
                                             </form>
-                                        </div>
-                                        <form method="post" action="department">
-                                            <input type="hidden" name="action" value="filter">
+                                        </c:if>
+                                    </div>
+                                    <form method="post" action="department">
+                                        <input type="hidden" name="action" value="filter">
 
-                                            <div class="row">
-                                                <!--                                            <div class="col-md-3">
-                                                                                                <input type="text" name="code" class="form-control" placeholder="Filter by Code" value="${filterCode}">
-                                                                                            </div>
-                                                                                            <div class="col-md-3">
-                                                                                                <input type="text" name="name" class="form-control" placeholder="Filter by Name" value="${filterName}">
-                                                                                            </div>-->
+                                        <div class="row">
+                                            <!--                                            <div class="col-md-3">
+                                                                                            <input type="text" name="code" class="form-control" placeholder="Filter by Code" value="${filterCode}">
+                                                                                        </div>
+                                                                                        <div class="col-md-3">
+                                                                                            <input type="text" name="name" class="form-control" placeholder="Filter by Name" value="${filterName}">
+                                                                                        </div>-->
                                             <div class="col-md-3">
                                                 <select name="status" class="form-control">
                                                     <option value="">Status</option>
@@ -139,7 +139,9 @@
                                                     <th>Name</th>
                                                     <th>Parent</th>
                                                     <th>Status</th>
-                                                    <th>Action</th>
+                                                        <c:if test="${loginedUser.role==1}">
+                                                        <th>Action</th>
+                                                        </c:if>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -167,31 +169,29 @@
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </td>
-
-                                                        <td class="Domain-actions">
-                                                            <div class="btn-group">
-                                                                <form action="department?action=edit" method="post" style="display: inline-block;">
-                                                                    <input type="hidden" name="action" value="edit">
-                                                                    <input type="hidden" name="id" value="${d.id}">
-                                                                    <button type="submit" class="btn btn-sm btn-outline-success">
-                                                                        <i class="fa fa-edit"></i> 
-                                                                    </button>
-                                                                </form>
-                                                                <!-- Nút chuyển đổi trạng thái -->
-                                                                <form action="department?action=update" method="post" style="display: inline-block;">
-                                                                    <input type="hidden" name="id" value="${d.id}">
-                                                                    <input type="hidden" name="status" value="${d.status == 1 ? 0 : 1}">
+                                                        <c:if test="${loginedUser.role==1}">
+                                                            <td class="Domain-actions">
+                                                                <div class="btn-group">
+                                                                    <form action="department?action=edit" method="post" style="display: inline-block;">
+                                                                        <input type="hidden" name="action" value="edit">
+                                                                        <input type="hidden" name="id" value="${d.id}">
+                                                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                                                            <i class="fa fa-edit"></i> 
+                                                                        </button>
+                                                                    </form>
                                                                     <!-- Nút chuyển đổi trạng thái -->
-                                                                    <button type="submit" class="btn btn-sm ${d.status == 1 ? 'btn-outline-danger' : 'btn-outline-primary'}">
-                                                                        <i class="fa ${d.status == 1 ? 'fa-times' : 'fa-check'}"></i> 
-                                                                        ${d.status == 1 ? 'Inactive' : 'Active'}
-                                                                    </button>
-                                                                </form>
-
-                                                            </div>
-
-                                                        </td>
-
+                                                                    <form action="department?action=update" method="post" style="display: inline-block;">
+                                                                        <input type="hidden" name="id" value="${d.id}">
+                                                                        <input type="hidden" name="status" value="${d.status == 1 ? 0 : 1}">
+                                                                        <!-- Nút chuyển đổi trạng thái -->
+                                                                        <button type="submit" class="btn btn-sm ${d.status == 1 ? 'btn-outline-danger' : 'btn-outline-primary'}">
+                                                                            <i class="fa ${d.status == 1 ? 'fa-times' : 'fa-check'}"></i> 
+                                                                            ${d.status == 1 ? 'Inactive' : 'Active'}
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
+                                                            </td>
+                                                        </c:if>
                                                     </tr>
                                                 </c:forEach>
 
@@ -239,7 +239,7 @@
             $(document).ready(function () {
                 var extensions = {
                     "sFilter": "dataTables_filter custom_filter_class"
-                }
+                };
                 $.extend($.fn.dataTableExt.oStdClasses, extensions);
                 $('#project_list').dataTable({
                     responsive: true,
@@ -248,10 +248,10 @@
                 });
 
                 // Tooltip
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
                 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl)
-                })
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
             });
         </script>
     </body>

@@ -88,38 +88,54 @@
                             </div>
 
                             <div class="row g-2 row-deck mb-2">
-                                <div class="col-lg-3 col-md-6 col-sm-6 text-center">
-                                    <div class="card chart-color1">
-                                        <div class="card-body p-lg-4 text-light">
-                                            <h3>${listSize}</h3>
-                                        <span>Associated Projects</span>
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="card col-lg-8" style="    justify-content: center;align-items: center;">
+                                        <div class="row col-lg-12">
+                                            <div class="col-lg-6 col-md-6 col-sm-6 text-center" style="margin-bottom: 10px;">
+                                                <div class="card chart-color1">
+                                                    <div class="card-body p-lg-4 text-light">
+                                                        <h3>${listSize}</h3>
+                                                    <span>Associated Projects</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-6 text-center" style="margin-bottom: 10px;">
+                                            <div class="card chart-color2">
+                                                <div class="card-body p-lg-4 text-light">
+                                                    <h3>${assignedReq}</h3>
+                                                    <span>Assigned Requirement</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-6 text-center" >
+                                            <div class="card chart-color5">
+                                                <div class="card-body p-lg-4">
+                                                    <h3>${assignedIssue}</h3>
+                                                    <span>Assigned Issue</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-6 text-center">
+                                            <div class="card chart-color4">
+                                                <div class="card-body p-lg-4 text-light">
+                                                    <h3>0</h3>
+                                                    <span>Analytics</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card col-lg-4">
+                                    <div class="col-lg-12">
+                                        <div class="mb-4 col-lg-12">
+                                            <div class="">
+                                                <div id="apex-circle-gradient"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 text-center">
-                                <div class="card chart-color2">
-                                    <div class="card-body p-lg-4 text-light">
-                                        <h3>15</h3>
-                                        <span>Today Tasks</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 text-center">
-                                <div class="card chart-color3">
-                                    <div class="card-body p-lg-4">
-                                        <h3>125</h3>
-                                        <span>Statistics</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6 text-center">
-                                <div class="card chart-color4">
-                                    <div class="card-body p-lg-4 text-light">
-                                        <h3>318</h3>
-                                        <span>Analytics</span>
-                                    </div>
-                                </div>
-                            </div>
+
                             <div class="col-lg-12 col-md-12">
                                 <div class="card">
                                     <div class="card-header">
@@ -247,6 +263,7 @@
         <!-- core js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/knobchart.bundle.js"></script>
 
         <!-- page js file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
@@ -255,13 +272,12 @@
                                                         $(document).ready(function () {
                                                             // Event handler for clicking on the table headers
                                                             $(' .sortTableHead').on('click', function () {
-                                                                var $th = $(this);  // Get the clicked <th> element as a jQuery object
+                                                                var $th = $(this); // Get the clicked <th> element as a jQuery object
 
-                                                                var name = $th.attr('name');  // Get the 'name' attribute
-                                                                var sortBy = $th.attr('sortBy');  // Get the 'sortBy' attribute
+                                                                var name = $th.attr('name'); // Get the 'name' attribute
+                                                                var sortBy = $th.attr('sortBy'); // Get the 'sortBy' attribute
                                                                 changeSort(name, sortBy);
                                                                 $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
-
                                                                 // Toggle the sortBy attribute between 'asc' and 'desc'
                                                                 if (sortBy === 'asc') {
                                                                     sortBy = 'desc';
@@ -274,6 +290,92 @@
                                                                 // Set the updated sortBy attribute
                                                                 $th.attr('sortBy', sortBy);
                                                             });
+
+                                                            var options = {
+                                                                chart: {
+                                                                    height: 250,
+                                                                    type: 'radialBar'
+                                                                },
+                                                                colors: ['var(--chart-color1)'],
+                                                                plotOptions: {
+                                                                    radialBar: {
+                                                                        startAngle: -135,
+                                                                        endAngle: 225,
+                                                                        hollow: {
+                                                                            margin: 0,
+                                                                            size: '70%',
+                                                                            background: '#fff',
+                                                                            image: undefined,
+                                                                            imageOffsetX: 0,
+                                                                            imageOffsetY: 0,
+                                                                            position: 'front',
+
+                                                                            dropShadow: {
+                                                                                enabled: true,
+                                                                                top: 3,
+                                                                                left: 0,
+                                                                                blur: 4,
+                                                                                opacity: 0.24
+                                                                            }
+                                                                        },
+                                                                        track: {
+                                                                            background: '#fff',
+                                                                            strokeWidth: '67%',
+                                                                            margin: 0, // margin is in pixels
+                                                                            dropShadow: {
+                                                                                enabled: true,
+                                                                                top: -3,
+                                                                                left: 0,
+                                                                                blur: 4,
+                                                                                opacity: 0.35
+                                                                            }
+                                                                        },
+
+                                                                        dataLabels: {
+                                                                            showOn: 'always',
+                                                                            name: {
+                                                                                offsetY: -10,
+                                                                                show: true,
+                                                                                color: '#888',
+                                                                                fontSize: '17px'
+                                                                            },
+                                                                            value: {
+                                                                                formatter: function (val) {
+                                                                                    return parseInt(val);
+                                                                                },
+                                                                                color: '#111',
+                                                                                fontSize: '36px',
+                                                                                show: true,
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                fill: {
+                                                                    type: 'gradient',
+                                                                    gradient: {
+                                                                        shade: 'dark',
+                                                                        type: 'horizontal',
+                                                                        shadeIntensity: 0.5,
+                                                                        gradientTocolors: ['var(--chart-color1)'],
+                                                                        inverseColors: true,
+                                                                        opacityFrom: 1,
+                                                                        opacityTo: 1,
+                                                                        stops: [0, 100]
+                                                                    }
+                                                                },
+                                                                series: [${avgEffort}],
+                                                                stroke: {
+                                                                    lineCap: 'round'
+                                                                },
+                                                                labels: ['Avg Effort'],
+                                                            }
+
+                                                            var chart = new ApexCharts(
+                                                                    document.querySelector("#apex-circle-gradient"),
+                                                                    options
+                                                                    );
+
+                                                            chart.render();
                                                         });
 
         </script>

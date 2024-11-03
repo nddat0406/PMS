@@ -12,9 +12,11 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import model.Allocation;
 import model.User;
 import model.Group;
 import static service.BaseService.*;
@@ -279,5 +281,21 @@ public class UserService {
 
     public void updateEmail(String email, int id) throws SQLException {
         udao.updateEmail(email, id);
+    }
+
+    public int countAssignedReq(int id) throws SQLException {
+        return udao.countAssignedReq(id);
+    }
+
+    public int countAssignedIssue(int id) throws SQLException {
+        return udao.countAssignedIssue(id);
+    }
+
+    public double getAvgEffort(List<Allocation> list) {
+        IntSummaryStatistics stats = list
+                .stream()
+                .mapToInt(Allocation::getEffortRate)
+                .summaryStatistics();
+        return stats.getAverage();
     }
 }

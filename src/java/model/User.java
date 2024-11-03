@@ -30,6 +30,13 @@ public class User {
     private String otp;
     private Date otp_expiry;//Sử dụng kiểu dữ liệu Date cho thời gian hết hạn OTP
 
+    public User() {
+    }
+
+    public User(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }
@@ -114,7 +121,8 @@ public class User {
             case 6 -> {
                 return "PMO Manager";
             }
-            default -> throw new AssertionError();
+            default ->
+                throw new AssertionError();
         }
     }
 
@@ -159,7 +167,7 @@ public class User {
     }
 
     public String getBirthdateString() {
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         if (birthdate != null) {
             return formatter.format(birthdate);
         } else {

@@ -686,4 +686,26 @@ public class UserDAO extends BaseDAO {
     public static void main(String[] args) throws SQLException {
         System.out.println(new UserDAO().isOTP_Expired(3));
     }
+
+    public int countAssignedReq(int id) throws SQLException {
+        String sql = "SELECT count(*) FROM pms.requirement where userId=?";
+        PreparedStatement pstmt = getConnection().prepareStatement(sql);
+        pstmt.setInt(1, id);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+                return rs.getInt(1);
+        }
+        return 0;
+    }
+
+    public int countAssignedIssue(int id) throws SQLException {
+        String sql = "SELECT count(*) FROM pms.issue where assignee=?";
+        PreparedStatement pstmt = getConnection().prepareStatement(sql);
+        pstmt.setInt(1, id);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+                return rs.getInt(1);
+        }
+        return 0;
+    }
 }

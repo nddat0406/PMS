@@ -143,8 +143,8 @@
                                                                 </div>
                                                                 <div class="mb-3">
                                                                     <label class="form-label">Birth Date:</label>
-                                                                    <div class="input-group date" data-date-autoclose="true" data-provide="datepicker">
-                                                                        <input type="text" name="birthdate"  class="form-control" value="${p.getBirthdateString()}"/>
+                                                                    <div class="input-group date" data-date-autoclose="true" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                                                        <input type="text" name="birthdate"  class="form-control" value="${p.getBirthdateString()}" />
                                                                         <div class="input-group-append">
                                                                             <button class="btn btn-outline-secondary" type="button"><i class="fa fa-calendar"></i></button>
                                                                         </div>
