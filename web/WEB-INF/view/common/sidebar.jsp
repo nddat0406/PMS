@@ -39,12 +39,13 @@
                         <li>
                             <a href="#Employees" class="has-arrow"><i class="fa fa-building"></i><span>Group Management</span></a>
                             <ul class="list-unstyled">
-                                <li><a href="${pageContext.request.contextPath}/admin/department?action=list">Department Management</a></li>
-                                <li><a href="${pageContext.request.contextPath}/admin/domain?action=list">Domain Management</a></li>
+
+                                <li><a href="${pageContext.request.contextPath}/admin/department">Department Management</a></li>
+                                <li><a href="${pageContext.request.contextPath}/admin/domain">Domain Management</a></li>
                             </ul>
                         </li>
                         <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-tasks"></i><span>Project</span></a></li> 
-
+                        <li><a href="${pageContext.request.contextPath}/admin/defectlist"><i class="fa fa-tasks"></i><span>Defect</span></a></li> 
                         <li><a href="${pageContext.request.contextPath}/settings"><i class="fa fa-cogs"></i><span>Setting Management</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/allocation"><i class="fa fa-sitemap"></i><span>Allocation List</span></a></li>
 

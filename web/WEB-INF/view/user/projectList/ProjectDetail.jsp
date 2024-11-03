@@ -48,13 +48,15 @@
                                 <div class="col-lg-12 col-md-12">
                                     <div class="card mb-4">
                                         <div class="card-body">
-                                            <h3 class="m-0">Project Detail: ${project.name}</h3>
+                                            <h3 class="m-0">Name: ${project.name}</h3>
                                         <p class="status-label">Code: ${project.code}</p>
+                                        <p class="status-label">Domain: ${project.domain.name}</p>
+                                        <p class="status-label">Department: ${project.department.name}</p>
                                         <p class="status-label">Start Date: <fmt:formatDate value="${project.startDate}" pattern="dd/MM/yyyy" /></p>
                                         <p class="status-label">Detail: ${project.details}</p>
 
                                         <!-- Phần này chỉ hiển thị nếu role là Project Manager -->
-                                        <c:if test="${role == 'Project Manager'}">
+                                        <c:if test="${role == 1}">
                                             <form action="${pageContext.request.contextPath}/projectlist?action=update" method="post">
                                                 <label for="status">Update Project Status:</label>
                                                 <div class="form-check">
@@ -71,7 +73,7 @@
                                         </c:if>
 
                                         <!-- Nếu không phải Project Manager, chỉ hiển thị trạng thái -->
-                                        <c:if test="${role != 'Project Manager'}">
+                                        <c:if test="${role != 1}">
                                             <p class="status-label">Current Project Status: 
                                                 <c:choose>
                                                     <c:when test="${project.status == 1}">
@@ -108,30 +110,6 @@
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </td>
-                                                    </tr>
-                                                </c:forEach>
-                                            </tbody>
-                                        </table>
-
-                                        <h3>Project Members</h3>
-                                        <table id="ProjectMembers" class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>Full Name</th>
-                                                    <th>Role</th>
-                                                    <th>Effort Rate</th>
-                                                    <th>Start Date</th>
-                                                    <th>End Date</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <c:forEach var="allocation" items="${allocations}">
-                                                    <tr>
-                                                        <td>${allocation.user.fullname}</td>
-                                                        <td>${allocation.getRoleBadge()}</td>
-                                                        <td>${allocation.effortRate}%</td>
-                                                        <td><fmt:formatDate value="${allocation.startDate}" pattern="dd/MM/yyyy" /></td>
-                                                        <td><fmt:formatDate value="${allocation.endDate}" pattern="dd/MM/yyyy" /></td>
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>

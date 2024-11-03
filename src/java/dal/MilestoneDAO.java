@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Criteria;
 import model.Milestone;
 
@@ -18,6 +20,8 @@ import model.Milestone;
  */
 public class MilestoneDAO extends BaseDAO {
 
+    private final PhaseDAO phaseDAO = new PhaseDAO();
+
     public Milestone getMilestoneById(int id) throws SQLException {
         String str = "SELECT * FROM pms.milestone where id=?";
         try {
@@ -26,15 +30,15 @@ public class MilestoneDAO extends BaseDAO {
             ResultSet rs = pre.executeQuery();
             rs.next();
             Milestone temp = new Milestone();
-            temp.setId(rs.getInt(1));
-            temp.setName(rs.getString(2));
-            temp.setPriority(rs.getInt(3));
-            temp.setDetails(rs.getString(4));
-            temp.setEndDate(rs.getDate(5));
-            temp.setStatus(rs.getInt(6));
-            temp.setDeliver(rs.getString(7));
-            temp.setIsFinal(rs.getBoolean("isFinal"));
-            temp.setTotalEvalWeight(this.getTotalWeight(rs.getInt(1)));
+            temp.setId(rs.getInt("id"));
+            temp.setName(rs.getString("name"));
+            temp.setPriority(rs.getInt("priority"));
+            temp.setDetails(rs.getString("details"));
+            temp.setEndDate(rs.getDate("endDate"));
+            temp.setStatus(rs.getInt("status"));
+            temp.setDeliver(rs.getString("deliver"));
+            temp.setPhase(phaseDAO.getPhaseById(rs.getInt("phaseId")));
+
             return temp;
         } catch (SQLException e) {
             throw new SQLException(e);
@@ -42,6 +46,7 @@ public class MilestoneDAO extends BaseDAO {
     }
 
     public List<Milestone> getAllByProjectId(int id) throws SQLException {
+        System.out.println(id);
         String str = "SELECT * FROM pms.milestone where projectId=?";
         try {
             List<Milestone> list = new ArrayList<>();
@@ -50,15 +55,14 @@ public class MilestoneDAO extends BaseDAO {
             ResultSet rs = pre.executeQuery();
             while (rs.next()) {
                 Milestone temp = new Milestone();
-                temp.setId(rs.getInt(1));
-                temp.setName(rs.getString(2));
-                temp.setPriority(rs.getInt(3));
-                temp.setDetails(rs.getString(4));
-                temp.setEndDate(rs.getDate(5));
-                temp.setStatus(rs.getInt(6));
-                temp.setDeliver(rs.getString(7));
-                temp.setIsFinal(rs.getBoolean("isFinal"));
-                temp.setTotalEvalWeight(this.getTotalWeight(rs.getInt(1)));
+                temp.setId(rs.getInt("id"));
+                temp.setName(rs.getString("name"));
+                temp.setPriority(rs.getInt("priority"));
+                temp.setDetails(rs.getString("details"));
+                temp.setEndDate(rs.getDate("endDate"));
+                temp.setStatus(rs.getInt("status"));
+                temp.setDeliver(rs.getString("deliver"));
+                temp.setPhase(phaseDAO.getPhaseById(rs.getInt("phaseId")));
                 list.add(temp);
             }
             return list;
@@ -114,14 +118,14 @@ public class MilestoneDAO extends BaseDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Milestone temp = new Milestone();
-                    temp.setId(rs.getInt(1));
-                    temp.setName(rs.getString(2));
-                    temp.setPriority(rs.getInt(3));
-                    temp.setDetails(rs.getString(4));
-                    temp.setEndDate(rs.getDate(5));
-                    temp.setStatus(rs.getInt(6));
-                    temp.setDeliver(rs.getString(7));
-                    temp.setIsFinal(rs.getBoolean("isFinal"));
+                    temp.setId(rs.getInt("id"));
+                    temp.setName(rs.getString("name"));
+                    temp.setPriority(rs.getInt("priority"));
+                    temp.setDetails(rs.getString("details"));
+                    temp.setEndDate(rs.getDate("endDate"));
+                    temp.setStatus(rs.getInt("status"));
+                    temp.setDeliver(rs.getString("deliver"));
+                    temp.setPhase(phaseDAO.getPhaseById(rs.getInt("phaseId")));
                     result.add(temp);
                 }
             }

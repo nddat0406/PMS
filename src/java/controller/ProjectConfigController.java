@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import model.Allocation;
 import model.Criteria;
 import model.Project;
@@ -417,7 +418,7 @@ public class ProjectConfigController extends HttpServlet {
         request.getRequestDispatcher(link).forward(request, response);
     }
 
-    private void updateMilestone(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+    private void updateMilestone(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
         // Lấy dữ liệu từ form
         int id = Integer.parseInt(request.getParameter("mileStoneId"));
         String name = request.getParameter("milestoneName");
@@ -426,23 +427,87 @@ public class ProjectConfigController extends HttpServlet {
         int status = Integer.parseInt(request.getParameter("milestoneStatus"));
         String details = request.getParameter("milestoneDetails");
 
-        // Tạo đối tượng Milestone và cập nhật dữ liệu
-        Milestone milestone = new Milestone();
-        milestone.setId(id);
-        milestone.setName(name);
-        milestone.setPriority(priority);
-        milestone.setEndDate(Date.valueOf(endDate));
-        milestone.setStatus(status);
-        milestone.setDetails(details);
+        try {
 
-        // Gọi service để cập nhật milestone
-        mService.updateMilestone(milestone);
+            // Validate input
+            List<String> errors = new ArrayList<>();
 
-        // Redirect về trang milestone sau khi cập nhật thành công
-        response.sendRedirect(request.getContextPath() + "/project/milestone");
+            // Validate name
+            if (name == null || name.trim().isEmpty()) {
+                errors.add("Name is required");
+            } else if (name.length() > 30) {
+                errors.add("Name must be less than 30 characters");
+            }
+
+            // Validate details
+            if (details == null || details.trim().isEmpty()) {
+                errors.add("Details is required");
+            } else if (details.length() > 500) {
+                errors.add("Details must be less than 500 characters");
+            }
+
+            if (!errors.isEmpty()) {
+                request.setAttribute("errorMessage", String.join(", ", errors));
+                getProjectMilestone(request, response);
+                return;
+            }
+            // Get original milestone to check its current state
+            Milestone originalMilestone = mService.getMilestoneById(id);
+            int projectId = (int) request.getSession().getAttribute("selectedProject");
+            List<Milestone> projectMilestones = mService.getAllMilestone(projectId);
+
+            // Case 1: Closing a milestone in final phase - check if all others are closed
+            if (status == 0 && originalMilestone.getPhase().isFinalPhase()) {
+                boolean hasOpenMilestones = projectMilestones.stream()
+                        .filter(m -> m.getId() != id) // Exclude current milestone
+                        .anyMatch(m -> m.getStatus() != 0); // Check if any milestone is not closed
+
+                if (hasOpenMilestones) {
+                    throw new SQLException("Cannot close this milestone: All other milestones must be closed first because this milestone belongs to a final phase.");
+                }
+
+                pService.updateProjectStatus(projectId, 3);
+            }
+
+            // Case 2: Opening a milestone - need to open final phase milestones
+            if (status != 0) { // Assuming 1 is "open" status
+                // Find final phase milestones
+                List<Milestone> finalPhaseMilestones = projectMilestones.stream()
+                        .filter(m -> m.getPhase().isFinalPhase())
+                        .collect(Collectors.toList());
+
+                // Update their status to open
+                for (Milestone finalMilestone : finalPhaseMilestones) {
+                    if (finalMilestone.getStatus() == 0) { // If it was closed
+                        finalMilestone.setStatus(1); // Set to open
+                        mService.updateMilestone(finalMilestone);
+                    }
+                }
+                pService.updateProjectStatus(projectId, 1);
+            }
+
+            // Tạo đối tượng Milestone và cập nhật dữ liệu
+            Milestone milestone = new Milestone();
+            milestone.setId(id);
+            milestone.setName(name);
+            milestone.setPriority(priority);
+            milestone.setEndDate(Date.valueOf(endDate));
+            milestone.setStatus(status);
+            milestone.setDetails(details);
+
+            // Gọi service để cập nhật milestone
+            mService.updateMilestone(milestone);
+
+            // Redirect về trang milestone sau khi cập nhật thành công
+            response.sendRedirect(request.getContextPath() + "/project/milestone");
+        } catch (SQLException ex) {
+            // Add error message to request and forward back to milestone page
+            request.setAttribute("errorMessage", ex.getMessage());
+            getProjectMilestone(request, response);
+        }
     }
-
     //post eval
+
     private void postEvalFilter(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String mileFilterRaw = request.getParameter("milestoneFilter");
         String statusFilterRaw = request.getParameter("statusFilter");

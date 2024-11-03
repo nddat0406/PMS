@@ -14,7 +14,6 @@ import model.Allocation;
 import model.Project;
 import model.Setting;
 import model.User;
-
 /**
  *
  * @author ASUS TUF

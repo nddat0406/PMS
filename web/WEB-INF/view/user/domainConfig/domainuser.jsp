@@ -63,8 +63,8 @@
                                             <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link active" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                             </li>
-                                            <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link " id="ProjectPhase-tab" href="domain/projectphase" role="tab">Project Phase</a>
+                                           <li class="nav-item" role="presentation" style="width: 150px">
+                                                <a class="nav-link" id="ProjectPhase-tab" href="${pageContext.request.contextPath}/phaselist" role="tab">Project Phase</a>
                                             </li>
                                         </ul>
                                     </div>

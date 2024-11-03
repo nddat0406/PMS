@@ -34,6 +34,14 @@ public class MilestoneService {
         }
     }
 
+
+    public Milestone getMilestoneById(int id) throws SQLException {
+        try {
+            return mdao.getMilestoneById(id);
+        } catch (Exception e) {
+            throw new SQLException(e);
+        }
+    }
     public List<Milestone> getAllMilestone(int id) throws SQLException {
         return mdao.getAllByProjectId(id);
     }

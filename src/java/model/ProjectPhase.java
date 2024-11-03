@@ -81,6 +81,11 @@ public class ProjectPhase {
     public void setDomain(Group domain) {
         this.domain = domain;
     }
+
+    @Override
+    public String toString() {
+        return "ProjectPhase{" + "id=" + id + ", name=" + name + ", priority=" + priority + ", details=" + details + ", finalPhase=" + finalPhase + ", completeRate=" + completeRate + ", status=" + status + ", domain=" + domain + '}';
+    }
     
     
 }
