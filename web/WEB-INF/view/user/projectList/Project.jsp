@@ -264,14 +264,21 @@
                             </table>
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination">
+                                    <!-- Previous Page Link -->
                                     <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                        <a class="page-link" href="?action=list&page=${currentPage - 1}" aria-label="Previous">
+                                        <a class="page-link" href="?action=list&page=${currentPage - 1}&status=${param.status}&domainId=${param.domainId}&departmentId=${param.departmentId}" aria-label="Previous">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
-                                    <li class="page-item active"><a class="page-link">${currentPage}</a></li>
+
+                                    <!-- Current Page Indicator -->
+                                    <li class="page-item active">
+                                        <a class="page-link text-primary">${currentPage}</a>
+                                    </li>
+
+                                    <!-- Next Page Link -->
                                     <li class="page-item">
-                                        <a class="page-link" href="?action=list&page=${currentPage + 1}" aria-label="Next">
+                                        <a class="page-link" href="?action=list&page=${currentPage + 1}&status=${param.status}&domainId=${param.domainId}&departmentId=${param.departmentId}" aria-label="Next">
                                             <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>

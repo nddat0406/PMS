@@ -17,5 +17,10 @@
             <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/Allocation/alloList.jsp</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projectteam.jsp</file>
         </group>
+        <group>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/src/java/dal/TimesheetDAO.java</file>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/web/WEB-INF/view/user/timesheet/timesheet.jsp</file>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/src/java/controller/TimesheetController.java</file>
+        </group>
     </open-files>
 </project-private>

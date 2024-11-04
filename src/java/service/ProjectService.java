@@ -127,7 +127,7 @@ public class ProjectService {
 
     public List<Project> getProjects(int userId, int page, int pageSize, String keyword, Integer status, Integer domainId, Integer departmentId, int role) {
         // Kiểm tra tính hợp lệ của page và pageSize
-        if (role == 1) {
+        if (role == ADMIN_ROLE) {
             return pdao.listAllProjectsForAdmin(page, pageSize, keyword, status, domainId, departmentId);
         } else {
 
