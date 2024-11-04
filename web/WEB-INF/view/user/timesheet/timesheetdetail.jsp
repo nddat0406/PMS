@@ -80,7 +80,7 @@
                                 </div>
 
                                 <!-- Form chỉnh sửa (chỉ hiển thị với Admin) -->
-                                <c:if test="${role == 1}">
+                                <c:if test="${role == 1 ||role == 4 }">
                                     <div class="card mt-4">
                                         <div class="card-header">
                                             <h5>Edit Timesheet</h5>
