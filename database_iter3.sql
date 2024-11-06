@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `pms` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `pms`;
 -- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
 --
 -- Host: localhost    Database: pms
@@ -37,7 +39,7 @@ CREATE TABLE `allocation` (
   KEY `Role_of_domainsetting_idx` (`role`),
   CONSTRAINT `Allocation_has_User` FOREIGN KEY (`userId`) REFERENCES `user` (`id`),
   CONSTRAINT `Allocation_of_Project` FOREIGN KEY (`projectId`) REFERENCES `project` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -46,7 +48,7 @@ CREATE TABLE `allocation` (
 
 LOCK TABLES `allocation` WRITE;
 /*!40000 ALTER TABLE `allocation` DISABLE KEYS */;
-INSERT INTO `allocation` VALUES (4,21,'2023-01-01',NULL,100,_binary '',1,1),(4,22,'2024-09-01','2025-02-01',60,_binary '',2,NULL),(4,26,'2023-06-01','2023-11-01',50,_binary '',3,NULL),(4,27,'2025-02-01','2025-07-01',80,_binary '',4,NULL),(4,31,'2023-11-01','2024-04-01',70,_binary '',5,NULL),(4,36,'2024-04-01','2024-09-01',90,_binary '',6,NULL),(5,21,'2023-02-01','2023-07-01',80,_binary '',7,2),(5,22,'2024-10-01','2025-03-01',90,_binary '',8,NULL),(5,27,'2023-07-01','2023-12-01',100,_binary '',9,NULL),(5,28,'2025-03-01','2025-08-01',60,_binary '',10,NULL),(5,32,'2023-12-01','2024-05-01',50,_binary '',11,NULL),(5,37,'2024-05-01','2024-10-01',70,_binary '',12,NULL),(6,21,'2023-03-01','2023-08-01',60,_binary '',13,3),(6,24,'2024-11-01','2025-04-01',70,_binary '',14,NULL),(6,28,'2023-08-01','2024-01-01',80,_binary '',15,NULL),(6,29,'2025-04-01','2025-09-01',90,_binary '',16,NULL),(6,33,'2024-01-01','2024-06-01',100,_binary '',17,NULL),(6,38,'2024-06-01','2024-11-01',50,_binary '',18,NULL),(7,21,'2023-04-01','2023-09-01',90,_binary '',19,4),(7,25,'2024-12-01','2025-05-01',50,_binary '',20,NULL),(7,22,'2025-05-01','2025-10-01',70,_binary '',22,NULL),(7,34,'2024-02-01','2024-07-01',80,_binary '',23,NULL),(7,39,'2024-07-01','2024-12-01',100,_binary '',24,NULL),(8,21,'2023-05-01','2023-10-01',70,_binary '',25,5),(8,22,'2025-01-01','2025-06-01',100,_binary '',26,NULL),(8,30,'2023-10-01','2024-03-01',90,_binary '',27,NULL),(8,31,'2025-06-01','2025-11-01',50,_binary '',28,NULL),(8,35,'2024-03-01','2024-08-01',60,_binary '',29,NULL),(8,40,'2024-08-01','2025-01-01',80,_binary '',30,NULL);
+INSERT INTO `allocation` VALUES (4,21,'2023-01-01','2024-11-20',0,_binary '',1,3),(4,22,'2024-09-01','2024-11-05',60,_binary '',2,NULL),(4,26,'2023-06-01','2024-11-05',50,_binary '',3,NULL),(4,27,'2025-02-01',NULL,80,_binary '',4,NULL),(4,31,'2023-11-01',NULL,70,_binary '',5,NULL),(4,36,'2024-04-01',NULL,90,_binary '',6,NULL),(5,21,'2023-02-01',NULL,0,_binary '',7,2),(5,22,'2024-10-01',NULL,90,_binary '',8,NULL),(5,27,'2023-07-01',NULL,100,_binary '',9,NULL),(5,28,'2025-03-01',NULL,60,_binary '',10,NULL),(5,32,'2023-12-01',NULL,50,_binary '',11,NULL),(6,21,'2023-03-01','2025-09-11',0,_binary '',13,1),(6,24,'2024-11-01',NULL,70,_binary '',14,NULL),(6,28,'2023-08-01',NULL,80,_binary '',15,NULL),(6,29,'2025-04-01',NULL,90,_binary '',16,NULL),(6,33,'2024-01-01',NULL,100,_binary '',17,NULL),(6,38,'2024-06-01',NULL,50,_binary '',18,NULL),(7,21,'2023-04-01',NULL,90,_binary '',19,4),(7,25,'2024-12-01',NULL,50,_binary '',20,NULL),(7,22,'2025-05-01',NULL,70,_binary '',22,NULL),(7,34,'2024-02-01',NULL,80,_binary '',23,NULL),(7,39,'2024-07-01',NULL,100,_binary '',24,NULL),(8,21,'2023-05-01',NULL,70,_binary '',25,5),(8,22,'2025-01-01',NULL,100,_binary '',26,NULL),(8,30,'2023-10-01',NULL,90,_binary '',27,NULL),(8,31,'2025-06-01',NULL,50,_binary '',28,NULL),(9,35,'2024-03-01',NULL,60,_binary '',29,NULL),(15,21,'2024-11-03',NULL,0,_binary '',33,1),(11,21,'2024-11-21',NULL,0,_binary '',37,1),(3,21,'2024-11-06',NULL,0,_binary '',38,1),(13,21,'2024-11-12',NULL,0,_binary '',39,1),(14,21,'2024-11-13',NULL,0,_binary '\0',40,3);
 /*!40000 ALTER TABLE `allocation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -67,10 +69,14 @@ CREATE TABLE `defect` (
   `details` varchar(500) DEFAULT NULL,
   `duedate` date DEFAULT NULL,
   `status` tinyint DEFAULT '1',
+  `assignee` int NOT NULL,
+  `attachfile` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `Defect_of_requirement_idx` (`requirementId`),
   KEY `Defect_serveriry_idx` (`serverityId`),
   KEY `Defect_of_project_idx` (`projectId`),
+  KEY `Assign_to_idx` (`assignee`),
+  CONSTRAINT `Assign_to` FOREIGN KEY (`assignee`) REFERENCES `user` (`id`),
   CONSTRAINT `Defect_of_project` FOREIGN KEY (`projectId`) REFERENCES `project` (`id`),
   CONSTRAINT `Defect_of_requirement` FOREIGN KEY (`requirementId`) REFERENCES `requirement` (`id`),
   CONSTRAINT `Defect_serveriry` FOREIGN KEY (`serverityId`) REFERENCES `setting` (`id`)
@@ -226,10 +232,13 @@ CREATE TABLE `issue` (
   `details` varchar(500) DEFAULT NULL,
   `type` int NOT NULL,
   `status` tinyint DEFAULT '1',
+  `assignee` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `Issue_of_requirement_idx` (`requirementId`),
   KEY `Issue_of_type_idx` (`type`),
   KEY `Issue_of_project_idx` (`projectId`),
+  KEY `Issue_assign_to_idx` (`assignee`),
+  CONSTRAINT `Issue_assign_to` FOREIGN KEY (`assignee`) REFERENCES `user` (`id`),
   CONSTRAINT `Issue_of_project` FOREIGN KEY (`projectId`) REFERENCES `project` (`id`),
   CONSTRAINT `Issue_of_requirement` FOREIGN KEY (`requirementId`) REFERENCES `requirement` (`id`),
   CONSTRAINT `Issue_of_type` FOREIGN KEY (`type`) REFERENCES `domain_setting` (`id`)
@@ -672,7 +681,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (3,'nguyendatrip1234@gmail.com','admin','0123456790','$2a$10$Q/EtttJ/oZBtJlHQI9JEYOU9xWPuGF0WKlDbN/sV5nte3bm22Fw5S','test',1,1,1,'/PMS/images/3_foo.jpg','Nghe an',1,'2022-10-28','877537','2024-10-29 18:10:58'),(4,'user@gmail.com','John Doe','0123456789','$2a$10$Skg9.od.l3mHc5Grg61GgOjUVpopu73Vx5kGVlUmAD4Azqc3k92D2','Note 1',2,1,1,'/PMS/images/2021-11-04.png','Ha Noi',1,'2024-10-29',NULL,NULL),(5,'jane.smith@example.com','Jane Smith','0987654321','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','New employee',3,1,2,'image2.png','TP HCM',1,'2024-10-24',NULL,NULL),(6,'alice.jones@example.com','Alice Jones','1122334455','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','Senior Developer',4,1,3,'image3.png','Nghe An',1,'2024-10-24',NULL,NULL),(7,'bob.brown@example.com','Bob Brown','2233445566','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','Team Lead',5,1,4,'image4.png','Ninh Binh',1,'2024-10-24',NULL,NULL),(8,'charlie.davis@example.com','Charlie Davis','3344556677','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','Project Manager',6,1,5,'image5.png','Tuyen Quang',0,'2024-10-24',NULL,NULL),(9,'david.wilson@example.com','David Wilson','4455667788','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','HR Manager',2,0,1,'image6.png','Ha Noi',0,'2024-10-24',NULL,NULL),(10,'emma.thomas@example.com','Emma Thomas','5566778899','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','Marketing Lead',2,0,2,'image7.png','My Tho',0,'2024-10-24',NULL,NULL),(11,'oliver.johnson@example.com','Oliver Johnson','6677889900','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','Intern',2,1,3,'image8.png','Thanh Hoa',1,'2024-10-24',NULL,NULL),(12,'sophia.lee@example.com','Sophia Lee','7788990011','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','Product Manager',2,0,4,'image9.png','Nam Dinh',1,'2024-10-24',NULL,NULL),(13,'liam.martin@example.com','Liam Martin','8899001122','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','CTO',2,1,5,'image10.png','Nghe An',0,'2024-10-24',NULL,NULL),(14,'t@gmail.com','dat nguyen','0123456789','$2a$10$CZ24WD9tKlH1SiHZMdlrrOMqXNS0VN2Skafm9MnCW.DxLCD4OGTXW','',1,1,1,'/PMS_iter_2/images/2021-09-28 (3).png','da',0,'2024-09-12',NULL,NULL),(15,'u@gmail.com','dat nguyen','','$2a$10$SQurBk/.cN.1EZuh/YPRj.Pg3o40lz4gKSPCIqNRKViPUHlwgeMx6','',1,1,1,'','',0,NULL,NULL,NULL),(16,'a@gmail.com','dat ădfafw','','$2a$10$JTOemCTNpHaoPsyt4K8DMu/pWT7kejnhSKMkw5oqaFCUgTM4zc49O','',1,1,1,'','',0,NULL,NULL,NULL);
+INSERT INTO `user` VALUES (3,'Admin@gmail.com','admin','0123456790','$2a$10$Q/EtttJ/oZBtJlHQI9JEYOU9xWPuGF0WKlDbN/sV5nte3bm22Fw5S','test',1,1,1,'/PMS/images/3_foo.jpg','Nghe an',1,'2022-10-28','877537','2024-11-04 13:34:58'),(4,'Member@gmail.com','John Doe','0123456789','$2a$10$Skg9.od.l3mHc5Grg61GgOjUVpopu73Vx5kGVlUmAD4Azqc3k92D2','Note 1',2,1,1,'/PMS/images/4_z4677560308042_b074c45de6976cfdf9482049729ad8f9 (2).jpg','Ha Noi',1,'2024-10-29','005062','2024-11-04 13:34:58'),(5,'QA@gmail.com','Jane Smith','0987654321','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','New employee',3,1,2,'image2.png','TP HCM',1,'2024-10-24',NULL,NULL),(6,'PM@gmail.com','Alice Jones','1122334455','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','Senior Developer',4,1,3,'image3.png','Nghe An',1,'2024-10-24',NULL,NULL),(7,'dept@gmail.com','Bob Brown','2233445566','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','Team Lead',5,1,1,'image4.png','Ninh Binh',1,'2024-10-24',NULL,NULL),(8,'PMO@gmail.com','Charlie Davis','3344556677','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','Project Manager',6,1,5,'image5.png','Tuyen Quang',0,'2024-10-24',NULL,NULL),(9,'david.wilson@example.com','David Wilson','4455667788','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','HR Manager',2,0,1,'image6.png','Ha Noi',0,'2024-10-24',NULL,NULL),(10,'emma.thomas@example.com','Emma Thomas','5566778899','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','Marketing Lead',2,0,2,'image7.png','My Tho',0,'2024-10-24',NULL,NULL),(11,'oliver.johnson@example.com','Oliver Johnson','6677889900','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','Intern',2,1,3,'image8.png','Thanh Hoa',1,'2024-10-24',NULL,NULL),(12,'sophia.lee@example.com','Sophia Lee','7788990011','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','Product Manager',2,0,4,'image9.png','Nam Dinh',1,'2024-10-24',NULL,NULL),(13,'liam.martin@example.com','Liam Martin','8899001122','$2a$10$gnCMkfBp9H5m3Ba73fn2COKXn/xoixvhEO7a3YyIZWWcAhKgJq28.','CTO',2,1,5,'image10.png','Nghe An',0,'2024-10-24',NULL,NULL),(14,'t@gmail.com','dat nguyen','0123456789','$2a$10$CZ24WD9tKlH1SiHZMdlrrOMqXNS0VN2Skafm9MnCW.DxLCD4OGTXW','',1,1,1,'/PMS_iter_2/images/2021-09-28 (3).png','da',0,'2024-09-12',NULL,NULL),(15,'u@gmail.com','dat nguyen','','$2a$10$SQurBk/.cN.1EZuh/YPRj.Pg3o40lz4gKSPCIqNRKViPUHlwgeMx6','',1,1,1,'','',0,NULL,NULL,NULL),(16,'a@gmail.com','dat ădfafw','','$2a$10$JTOemCTNpHaoPsyt4K8DMu/pWT7kejnhSKMkw5oqaFCUgTM4zc49O','',1,1,1,'','',0,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -685,4 +694,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-30 22:24:01
+-- Dump completed on 2024-11-06 17:08:14

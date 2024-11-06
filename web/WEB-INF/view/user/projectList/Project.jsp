@@ -57,6 +57,7 @@
                         </c:if>
 
                         <!-- Button để mở modal "Add Project" -->
+<<<<<<< HEAD
                         <div class="action-bar">
                             <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#AddProjectModal">Add New Project</button>
                         </div>
@@ -68,6 +69,22 @@
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="AddProjectModalLabel">Add New Project</h5>                                        
                                     </div>
+=======
+                        <c:if test="${sessionScope.loginedUser.role ==1}">
+                            <div class="action-bar">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#AddProjectModal">Add New Project</button>
+                            </div>
+                        </c:if>
+                        <!-- Modal "Add Project" -->
+                        <div class="modal fade" id="AddProjectModal" tabindex="-1" aria-labelledby="AddProjectModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="AddProjectModalLabel">Add New Project</h5>                                        
+                                    </div>
+
+>>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
                                     <div class="modal-body">
                                         <!-- Hiển thị thông báo lỗi nếu có -->
                                         <c:if test="${not empty sessionScope.error}">
@@ -249,6 +266,15 @@
 
                                             <td class="Project-actions">
                                                 <div class="btn-group">
+<<<<<<< HEAD
+=======
+                                                    <form action="project/milestone" method="get" style="display: inline-block;">
+                                                        <input type="hidden" name="projectId" value="${project.id}">
+                                                        <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fa fa-cog"></i> <!-- Icon for Project Configs -->
+                                                        </button>
+                                                    </form>
+>>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
                                                     <form action="projectlist?action=view" method="get" style="display: inline-block;">
                                                         <input type="hidden" name="action" value="view">
                                                         <input type="hidden" name="id" value="${project.id}">
