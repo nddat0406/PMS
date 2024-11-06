@@ -15,7 +15,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
 
@@ -113,9 +112,9 @@ public class LoginFilter implements Filter {
         String path = req.getServletPath();
         HttpSession session = req.getSession();
         User acc = (User) session.getAttribute("loginedUser");
-        if (acc == null && (!path.contains("login") 
-                && !path.contains("logout") 
-                && !path.contains("register") 
+        if (acc == null && (!path.contains("login")
+                && !path.contains("logout")
+                && !path.contains("register")
                 && !path.contains("GoogleLogin")
                 && !path.contains("forgot-password")
                 && !path.contains("assets"))) {
@@ -139,13 +138,14 @@ public class LoginFilter implements Filter {
         // If there was a problem, we want to rethrow it if it is
         // a known type, otherwise log it.
         if (problem != null) {
-            if (problem instanceof ServletException) {
-                throw (ServletException) problem;
-            }
             if (problem instanceof IOException) {
                 throw (IOException) problem;
             }
-            sendProcessingError(problem, response);
+            if (problem instanceof ServletException) {
+                throw (ServletException) problem;
+
+            }
+            throw new ServletException(problem);
         }
     }
 

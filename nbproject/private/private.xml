@@ -2,9 +2,35 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+<<<<<<< HEAD
         <group>
             <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/user/projectConfig/projecteval.jsp</file>
             <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/user/projectConfig/projectmilestone.jsp</file>
+=======
+        <group name="Prj301-class">
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/model/Allocation.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/AllocationService.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/Allocation/alloList.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/AllocationDAO.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/filter/LoginFilter.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/AllocationController.java</file>
+        </group>
+        <group>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/src/java/dal/TimesheetDAO.java</file>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/web/WEB-INF/view/user/timesheet/timesheetdetail.jsp</file>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/web/WEB-INF/view/user/timesheet/timesheet.jsp</file>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/src/java/service/TimesheetService.java</file>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/web/WEB-INF/view/common/sidebar.jsp</file>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/src/java/controller/TimesheetController.java</file>
+        </group>
+        <group name="test">
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/timesheet/timesheetdetail.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/common/ErrorPages/500Error.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/timesheet/timesheet.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/common/ErrorPages/404Error.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/common/sidebar.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/META-INF/context.xml</file>
+>>>>>>> a3d8b9e93d6cb81f5a57da8726ffc5304f8dc4c8
         </group>
     </open-files>
 </project-private>

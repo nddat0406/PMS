@@ -193,6 +193,9 @@ public class UserController extends HttpServlet {
             int role = loginedUser.getRole();
             List<Allocation> list = pService.getByUser(id, role);
             request.setAttribute("listSize", list.size());
+            request.setAttribute("assignedReq", uService.countAssignedReq(id));
+            request.setAttribute("assignedIssue", uService.countAssignedIssue(id));
+            request.setAttribute("avgEffort", uService.getAvgEffort(list));
             request.setAttribute("searchSize", list.size());
             session.setAttribute("allocationList", list);
             session.setAttribute("myProjectList", pService.getProjectsInAllocation(list));
@@ -221,8 +224,7 @@ public class UserController extends HttpServlet {
             request.setAttribute("profile", uService.getUserProfile(id));
             request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
         } catch (SQLException ex) {
-            ex.printStackTrace();
-            response.getWriter().print(ex.getMessage());
+            throw new ServletException(ex);
         }
     }
 
@@ -287,7 +289,7 @@ public class UserController extends HttpServlet {
         user.setFullname(fullname);
         user.setMobile(mobile);
         user.setGender(genderRaw.equals("male"));
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         try {
             user.setBirthdate(new Date(formatter.parse(birthdate).getTime()));
             Part part = request.getPart("image");

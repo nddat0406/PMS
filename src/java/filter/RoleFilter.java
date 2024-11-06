@@ -17,6 +17,8 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.User;
 import service.BaseService;
 
@@ -118,7 +120,10 @@ public class RoleFilter implements Filter {
             req.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
             return;
         }
-        if (acc.getRole() != BaseService.ADMIN_ROLE) {
+        String path = req.getServletPath();
+        if (acc.getRole() != BaseService.ADMIN_ROLE
+                && !path.contains("/admin/department")
+                && !path.contains("/admin/domain")) {
             res.sendRedirect(req.getContextPath() + "/dashboard");
             return;
         }
@@ -137,13 +142,15 @@ public class RoleFilter implements Filter {
         // If there was a problem, we want to rethrow it if it is
         // a known type, otherwise log it.
         if (problem != null) {
-            if (problem instanceof ServletException) {
-                throw (ServletException) problem;
-            }
             if (problem instanceof IOException) {
                 throw (IOException) problem;
             }
-            sendProcessingError(problem, response);
+            if (problem instanceof ServletException) {
+                throw (ServletException) problem;
+
+            }
+            throw new ServletException(problem);
+
         }
     }
 

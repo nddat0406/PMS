@@ -82,7 +82,6 @@
     </head>
 
     <body>
-
         <div id="layout" class="theme-cyan">
             <!-- Page Loader -->
             <jsp:include page="../../common/pageLoader.jsp"></jsp:include>
@@ -271,7 +270,7 @@
                                                                                         <ul class="link-info">
                                                                                             <c:forEach items="${i.milestone}" var="m">
                                                                                                 <li><h6>${m.name}</h6></li>
-                                                                                                    </c:forEach>
+                                                                                            </c:forEach>
                                                                                         </ul>
                                                                                     </div>
                                                                                 </div>

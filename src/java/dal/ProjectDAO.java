@@ -14,6 +14,8 @@ import model.Group;
 import model.Milestone;
 import model.Project;
 import model.ProjectPhase;
+import model.Setting;
+import model.User;
 
 /**
  *
@@ -397,26 +399,23 @@ public class ProjectDAO extends BaseDAO {
     }
 
     // lấy role để phân quyền 
-    public String getRoleByUserAndProject(int userId, int projectId) {
+    public String getRoleByUserAndProject(int userId, int projectId) throws SQLException {
         String role = null;
 
-        try {
-            // Truy vấn SQL để lấy projectRole từ bảng allocation
-            String query = "SELECT projectRole FROM allocation WHERE userId = ? AND projectId = ? LIMIT 1";
+        // Truy vấn SQL để lấy projectRole từ bảng allocation
+        String query = "SELECT projectRole FROM allocation WHERE userId = ? AND projectId = ? LIMIT 1";
 
-            PreparedStatement statement = getConnection().prepareStatement(query);
-            statement.setInt(1, userId);
-            statement.setInt(2, projectId);
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1, userId);
+        statement.setInt(2, projectId);
 
-            ResultSet resultSet = statement.executeQuery();
+        ResultSet resultSet = statement.executeQuery();
 
-            // Nếu có kết quả, lấy giá trị của projectRole
-            if (resultSet.next()) {
-                role = resultSet.getString("projectRole");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        // Nếu có kết quả, lấy giá trị của projectRole
+        if (resultSet.next()) {
+            role = resultSet.getString("projectRole");
         }
+
         // Trả về role (nếu không có kết quả sẽ là null)
         return role;
     }
@@ -581,5 +580,74 @@ public class ProjectDAO extends BaseDAO {
 
         return projects;
     }
+    public List<Project> getAllProject() throws SQLException {
+        String str = "select * from project";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        ResultSet rs = pre.executeQuery();
+        List<Project> projectList = new ArrayList<>();
+        while (rs.next()) {
+            Project project = new Project();
+            project.setId(rs.getInt("id"));
+            project.setName(rs.getString("name"));
+            project.setCode(rs.getString("code"));
+            projectList.add(project);
+        }
+        return projectList;
+    }
 
+    public List<User> getProjectAllocationUser(Integer PID) throws SQLException {
+        String str = """
+                     SELECT 
+                         u.id, 
+                         u.email, 
+                         u.fullname,
+                         u.image
+                     FROM 
+                         user u
+                     LEFT JOIN 
+                         allocation a ON u.id = a.userId AND a.projectId = ?
+                     WHERE 
+                         a.id IS NULL and u.status=1""";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setInt(1, PID);
+        ResultSet rs = pre.executeQuery();
+        List<User> userList = new ArrayList<>();
+        while (rs.next()) {
+            User temp = new User();
+            temp.setId(rs.getInt(1));
+            temp.setEmail(rs.getString(2));
+            temp.setFullname(rs.getString(3));
+            temp.setImage(rs.getString(4));
+            userList.add(temp);
+        }
+        return userList;
+    }
+
+    public List<Setting> getListRole(Integer PID) throws SQLException {
+        String str = """
+                     SELECT DISTINCT 
+                     ds.id,
+                         ds.name,
+                         ds.priority
+                     FROM 
+                         allocation a
+                     JOIN 
+                         project p ON a.projectId = p.id
+                     JOIN 
+                         domain_setting ds ON ds.id = a.role
+                     WHERE 
+                         p.id = ? AND ds.type = 2""";
+        PreparedStatement pre = getConnection().prepareStatement(str);
+        pre.setInt(1, PID);
+        ResultSet rs = pre.executeQuery();
+        List<Setting> settingList = new ArrayList<>();
+        while (rs.next()) {
+            Setting temp = new Setting();
+            temp.setId(rs.getInt(1));
+            temp.setName(rs.getString(2));
+            temp.setPriority(rs.getInt(3));
+            settingList.add(temp);
+        }
+        return settingList;
+    }
 }

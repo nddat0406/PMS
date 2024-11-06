@@ -155,6 +155,7 @@ public class ProjectController extends HttpServlet {
         int totalPages = (int) Math.ceil((double) totalProjects / pageSize);
 
         // Đưa dữ liệu vào request attribute để gửi tới trang JSP.
+        request.setAttribute("role", roleUser);
         request.setAttribute("projects", projects);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);

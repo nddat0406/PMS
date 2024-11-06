@@ -22,8 +22,9 @@ public class Project {
     private int status;
     private Group department;
     private Group domain;
-    private List<User> manager;
+    private List<User> member;
     private List<Allocation> allocation;
+    private List<Setting> listRole;
 
     public Project() {
     }
@@ -104,13 +105,23 @@ public class Project {
         this.domain = domain;
     }
 
-    public List<User> getManager() {
-        return manager;
+    public List<User> getMember() {
+        return member;
     }
 
-    public void setManager(List<User> manager) {
-        this.manager = manager;
+    public void setMember(List<User> member) {
+        this.member = member;
     }
+
+    public List<Setting> getListRole() {
+        return listRole;
+    }
+
+    public void setListRole(List<Setting> listRole) {
+        this.listRole = listRole;
+    }
+
+
 
     public int getDepartmentId() {
         return department != null ? department.getId() : 0; // Trả về 0 nếu department là null

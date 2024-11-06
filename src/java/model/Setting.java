@@ -27,6 +27,10 @@ public class Setting {
         this.description = description;
     }
 
+    public Setting(int role) {
+        this.id = role;
+    }
+
     // Getters and Setters
     public int getId() {
         return id;

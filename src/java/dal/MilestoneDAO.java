@@ -46,6 +46,7 @@ public class MilestoneDAO extends BaseDAO {
     }
 
     public List<Milestone> getAllByProjectId(int id) throws SQLException {
+        System.out.println(id);
         String str = "SELECT * FROM pms.milestone where projectId=?";
         try {
             List<Milestone> list = new ArrayList<>();

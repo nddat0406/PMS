@@ -4,7 +4,7 @@ CREATE TRIGGER trg_UpdateStatus
 BEFORE UPDATE ON allocation
 FOR EACH ROW
 BEGIN
-    IF OLD.status <> NEW.status THEN
+    IF OLD.status <> NEW.status AND OLD.endDate = NEW.endDate THEN
         IF NEW.status = b'0' THEN
             SET NEW.endDate = NOW();  -- Set endDate to current date when status changes to false
         ELSEIF NEW.status = b'1' THEN
@@ -14,3 +14,5 @@ BEGIN
 END; //
 
 DELIMITER ;
+
+drop trigger trg_UpdateStatus

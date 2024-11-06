@@ -4,7 +4,8 @@
  */
 package model;
 
-import java.util.Date;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -33,6 +34,10 @@ public class Allocation {
         return user;
     }
 
+    public int getStatusInt() {
+        return status ? 1 : 2;
+    }
+
     public void setUser(User user) {
         this.user = user;
     }
@@ -53,12 +58,30 @@ public class Allocation {
         this.startDate = startDate;
     }
 
+    public String getStartDateString() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        if (startDate != null) {
+            return formatter.format(startDate);
+        } else {
+            return null;
+        }
+    }
+
     public Date getEndDate() {
         return endDate;
     }
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public String getEndDateString() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        if (endDate != null) {
+            return formatter.format(endDate);
+        } else {
+            return null;
+        }
     }
 
     public int getEffortRate() {
@@ -75,9 +98,9 @@ public class Allocation {
 
     public String getStatusString() {
         if (this.status) {
-            return "Active";
+            return "<span class=\"badge bg-success\">Active</span>";
         } else {
-            return "Inactive";
+            return "<span class=\"badge bg-secondary\">Inactive</span>";
         }
     }
 
@@ -94,7 +117,7 @@ public class Allocation {
     }
 
     public String getRoleBadge() {
-        if(this.role==null){
+        if (this.role == null) {
             return "<span class=\"badge bg-danger\">Cannot find role</span>";
         }
         if (role.getId() == 1) {
@@ -109,4 +132,10 @@ public class Allocation {
             return "<span class=\"badge bg-danger\">" + role.getName() + "</span>";
         }
     }
+
+    @Override
+    public String toString() {
+        return "Allocation{" + "id=" + id + ", user=" + user + ", project=" + project + ", startDate=" + startDate + ", endDate=" + endDate + ", effortRate=" + effortRate + ", status=" + status + ", role=" + role + '}';
+    }
+
 }
