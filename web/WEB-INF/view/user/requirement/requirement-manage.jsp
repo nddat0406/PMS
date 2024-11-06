@@ -308,92 +308,92 @@
             <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
 
             <script>
-                                // Filter change handler
-                                function ChangeFilter() {
-                                var complexityFilter = document.getElementById("complexityFilter").value;
-                                var projectFilter = document.getElementById("projectFilter").value;
-                                var statusFilter = document.getElementById("statusFilter").value;
-                                $.ajax({
-                                url: "requirement<script>
-                                        // Filter change handler
-                                                function ChangeFilter() {
-                                                var complexityFilter = document.getElementById("complexityFilter").value;
-                                                var projectFilter = document.getElementById("projectFilter").value;
-                                                var statusFilter = document.getElementById("statusFilter").value;
-                                                $.ajax({
-                                                url: "requirement",
-                                                        type: 'post',
-                                                        data: {
-                                                        complexityFilter: complexityFilter,
-                                                                projectFilter: projectFilter,
-                                                                statusFilter: statusFilter,
-                                                                action: "filter"
-                                                        },
-                                                        success: function () {
-                                                        $('.tableBody').load("${pageContext.request.contextPath}/requirement?page=${page} .tableBody > *");
-                                                        }
-                                                });
-                                                }
+                                            // Filter change handler
+                                            function ChangeFilter() {
+                                            var complexityFilter = document.getElementById("complexityFilter").value;
+                                            var projectFilter = document.getElementById("projectFilter").value;
+                                            var statusFilter = document.getElementById("statusFilter").value;
+                                            $.ajax({
+                                            url: "requirement<script>
+                                                    // Filter change handler
+                                                            function ChangeFilter() {
+                                                            var complexityFilter = document.getElementById("complexityFilter").value;
+                                                            var projectFilter = document.getElementById("projectFilter").value;
+                                                            var statusFilter = document.getElementById("statusFilter").value;
+                                                            $.ajax({
+                                                            url: "requirement",
+                                                                    type: 'post',
+                                                                    data: {
+                                                                    complexityFilter: complexityFilter,
+                                                                            projectFilter: projectFilter,
+                                                                            statusFilter: statusFilter,
+                                                                            action: "filter"
+                                                                    },
+                                                                    success: function () {
+                                                                    $('.tableBody').load("${pageContext.request.contextPath}/requirement?page=${page} .tableBody > *");
+                                                                    }
+                                                            });
+                                                            }
 
-                                        // Form submission handler
-                                        $('#button-modal-submit').on('click', function (e) {
-                                        e.preventDefault();
-                                        if (validateForm()) {
-                                        var isEdit = $('#modalRequirementId').val() !== '';
-                                        // Set action based on operation
-                                        $('#requirementForm').attr('action',
-                                                '${pageContext.request.contextPath}/requirement?action=' +
-                                                (isEdit ? 'update' : 'add')
-                                                );
-                                        $('#requirementForm').submit();
-                                        }
-                                        });
-                                        // Error handling functions
-                                        function showError(fieldId, message) {
-                                        const field = $(`#${fieldId}`);
-                                        field.addClass('is-invalid');
-                                        field.after(`<div class="invalid-feedback">${message}</div>`);
-                                        }
+                                                    // Form submission handler
+                                                    $('#button-modal-submit').on('click', function (e) {
+                                                    e.preventDefault();
+                                                    if (validateForm()) {
+                                                    var isEdit = $('#modalRequirementId').val() !== '';
+                                                    // Set action based on operation
+                                                    $('#requirementForm').attr('action',
+                                                            '${pageContext.request.contextPath}/requirement?action=' +
+                                                            (isEdit ? 'update' : 'add')
+                                                            );
+                                                    $('#requirementForm').submit();
+                                                    }
+                                                    });
+                                                    // Error handling functions
+                                                    function showError(fieldId, message) {
+                                                    const field = $(`#${fieldId}`);
+                                                    field.addClass('is-invalid');
+                                                    field.after(`<div class="invalid-feedback">${message}</div>`);
+                                                    }
 
-                                        function clearErrors() {
-                                        $('.is-invalid').removeClass('is-invalid');
-                                        $('.invalid-feedback').remove();
-                                        }
+                                                    function clearErrors() {
+                                                    $('.is-invalid').removeClass('is-invalid');
+                                                    $('.invalid-feedback').remove();
+                                                    }
 
-                                        // Sorting handlers
-                                        $(document).ready(function () {
-                                        $('.sortTableHead').on('click', function () {
-                                        var $th = $(this);
-                                        var name = $th.attr('name');
-                                        var sortBy = $th.attr('sortBy');
-                                        $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
-                                        if (sortBy === 'asc') {
-                                        sortBy = 'desc';
-                                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
-                                        } else {
-                                        sortBy = 'asc';
-                                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
-                                        }
+                                                    // Sorting handlers
+                                                    $(document).ready(function () {
+                                                    $('.sortTableHead').on('click', function () {
+                                                    var $th = $(this);
+                                                    var name = $th.attr('name');
+                                                    var sortBy = $th.attr('sortBy');
+                                                    $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+                                                    if (sortBy === 'asc') {
+                                                    sortBy = 'desc';
+                                                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
+                                                    } else {
+                                                    sortBy = 'asc';
+                                                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
+                                                    }
 
-                                        $th.attr('sortBy', sortBy);
-                                        $.ajax({
-                                        url: "requirement",
-                                                type: 'post',
-                                                data: {
-                                                sortBy: sortBy,
-                                                        fieldName: name,
-                                                        action: "sort"
-                                                },
-                                                success: function () {
-                                                $('.tableBody').load("${pageContext.request.contextPath}/requirement?page=${page} .tableBody > *");
-                                                }
-                                        });
-                                        });
-                                        });
-                                        // Show more/less for details
-                                        $(document).on('click', '.content-wrapper', function() {
-                                        $(this).toggleClass('expanded');
-                                        });
+                                                    $th.attr('sortBy', sortBy);
+                                                    $.ajax({
+                                                    url: "requirement",
+                                                            type: 'post',
+                                                            data: {
+                                                            sortBy: sortBy,
+                                                                    fieldName: name,
+                                                                    action: "sort"
+                                                            },
+                                                            success: function () {
+                                                            $('.tableBody').load("${pageContext.request.contextPath}/requirement?page=${page} .tableBody > *");
+                                                            }
+                                                    });
+                                                    });
+                                                    });
+                                                    // Show more/less for details
+                                                    $(document).on('click', '.content-wrapper', function() {
+                                                    $(this).toggleClass('expanded');
+                                                    });
             </script>
 
             <script>
@@ -525,7 +525,7 @@
                         });
                         }
 
-    // Function to load requirement milestone
+                        // Function to load requirement milestone
                         function loadRequirementMilestone(requirementId) {
                         return new Promise((resolve, reject) => {
                         $.ajax({
@@ -549,7 +549,7 @@
                         });
                         }
 
-    // Update the view-details click handler
+                        // Update the view-details click handler
                         $(document).on('click', '.view-details', function() {
                         var row = $(this).closest('tr');
                         var id = row.find('td:eq(0)').text();
@@ -597,7 +597,7 @@
                         var myModal = new bootstrap.Modal(document.getElementById('requirementDetailModal'));
                         myModal.show();
                         });
-    // Update the onchange handler for project selection
+                        // Update the onchange handler for project selection
                         $('#modalProject').on('change', function() {
                         var projectId = $(this).val();
                         loadMilestones(projectId)
