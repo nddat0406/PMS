@@ -64,24 +64,6 @@
                             <c:remove var="message" scope="session"/>
                         </c:if>
 
-<<<<<<< HEAD
-                        <!-- Button để mở modal "Add Project" -->
-<<<<<<< HEAD
-                        <div class="action-bar">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#AddProjectModal">Add New Project</button>
-                        </div>
-
-                        <!-- Modal "Add Project" -->
-                        <div class="modal fade" id="AddProjectModal" tabindex="-1" aria-labelledby="AddProjectModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="AddProjectModalLabel">Add New Project</h5>                                        
-                                    </div>
-=======
-=======
-                        <!-- Button to open modal "Add Project" -->
->>>>>>> f7db5d86e2e5c7022309219e5a8f39d3108ea560
                         <c:if test="${sessionScope.loginedUser.role ==1}">
                             <div class="action-bar">
                                 <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#AddProjectModal">Add New Project</button>
@@ -94,11 +76,6 @@
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="AddProjectModalLabel">Add New Project</h5>                                        
                                     </div>
-<<<<<<< HEAD
-
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
-=======
->>>>>>> f7db5d86e2e5c7022309219e5a8f39d3108ea560
                                     <div class="modal-body">
                                         <!-- Error message if any -->
                                         <c:if test="${not empty sessionScope.error}">
@@ -266,15 +243,12 @@
                                             </td>
                                             <td class="Project-actions">
                                                 <div class="btn-group">
-<<<<<<< HEAD
-=======
                                                     <form action="project/milestone" method="get" style="display: inline-block;">
                                                         <input type="hidden" name="projectId" value="${project.id}">
                                                         <button type="submit" class="btn btn-sm btn-outline-primary">
                                                             <i class="fa fa-cog"></i>
                                                         </button>
                                                     </form>
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
                                                     <form action="projectlist?action=view" method="get" style="display: inline-block;">
                                                         <input type="hidden" name="action" value="view">
                                                         <input type="hidden" name="id" value="${project.id}">

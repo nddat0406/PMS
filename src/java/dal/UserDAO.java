@@ -699,7 +699,7 @@ public class UserDAO extends BaseDAO {
     }
 
     public int countAssignedIssue(int id) throws SQLException {
-        String sql = "SELECT count(*) FROM pms.issue where assignee=?";
+        String sql = "SELECT count(*) FROM pms.issue where assignee_id=?";
         PreparedStatement pstmt = getConnection().prepareStatement(sql);
         pstmt.setInt(1, id);
         ResultSet rs = pstmt.executeQuery();
