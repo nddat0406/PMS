@@ -106,7 +106,7 @@ public class ProjectDAO extends BaseDAO {
 
     //  ------------------  project list vs project detail -----------------------------
     //list prj
-    public List<Project> listProjects(int userId, int page, int pageSize, String keyword, Integer status) {
+    public List<Project> listProjects(int userId, int page, int pageSize, String keyword, Integer status, Integer domainId, Integer departmentId) {
         List<Project> projects = new ArrayList<>();
         StringBuilder query = new StringBuilder("SELECT p.id, p.bizTerm, p.code, p.name, p.details, p.startDate, p.status, "
                 + "g1.id AS domainId, g1.name AS domainName, "
@@ -127,6 +127,16 @@ public class ProjectDAO extends BaseDAO {
             query.append("AND p.status = ? ");
         }
 
+        // Thêm điều kiện lọc theo domain nếu có
+        if (domainId != null) {
+            query.append("AND g1.id = ? ");
+        }
+
+        // Thêm điều kiện lọc theo department nếu có
+        if (departmentId != null) {
+            query.append("AND g2.id = ? ");
+        }
+
         query.append("LIMIT ? OFFSET ?");
         int offset = (page - 1) * pageSize;
 
@@ -145,6 +155,16 @@ public class ProjectDAO extends BaseDAO {
             // Thiết lập tham số lọc theo trạng thái
             if (status != null) {
                 pre.setInt(index++, status);
+            }
+
+            // Thiết lập tham số lọc theo domain
+            if (domainId != null) {
+                pre.setInt(index++, domainId);
+            }
+
+            // Thiết lập tham số lọc theo department
+            if (departmentId != null) {
+                pre.setInt(index++, departmentId);
             }
 
             // Thiết lập tham số phân trang
@@ -455,7 +475,7 @@ public class ProjectDAO extends BaseDAO {
     }
     // Hàm list all prj for admin 
 
-    public List<Project> listAllProjectsForAdmin(int page, int pageSize, String keyword, Integer status) {
+    public List<Project> listAllProjectsForAdmin(int page, int pageSize, String keyword, Integer status, Integer domainId, Integer departmentId) {
         List<Project> projects = new ArrayList<>();
 
         // Xây dựng câu truy vấn SQL
@@ -466,15 +486,32 @@ public class ProjectDAO extends BaseDAO {
                 + "JOIN `group` g1 ON p.domainId = g1.id AND g1.type = 1 " // Join để lấy thông tin domain (type = 1)
                 + "JOIN `group` g2 ON p.departmentId = g2.id AND g2.type = 0 "); // Join để lấy thông tin department (type = 0)
 
+        boolean hasCondition = false;
+
         // Điều kiện tìm kiếm theo keyword nếu có
         if (keyword != null && !keyword.trim().isEmpty()) {
-            query.append("WHERE p.name LIKE ? OR p.code LIKE ? ");
+            query.append("WHERE (p.name LIKE ? OR p.code LIKE ?) ");
+            hasCondition = true;
         }
 
         // Điều kiện lọc theo trạng thái nếu có
         if (status != null) {
-            query.append(keyword != null && !keyword.trim().isEmpty() ? "AND " : "WHERE ");
+            query.append(hasCondition ? "AND " : "WHERE ");
             query.append("p.status = ? ");
+            hasCondition = true;
+        }
+
+        // Điều kiện lọc theo domain nếu có
+        if (domainId != null) {
+            query.append(hasCondition ? "AND " : "WHERE ");
+            query.append("g1.id = ? ");
+            hasCondition = true;
+        }
+
+        // Điều kiện lọc theo department nếu có
+        if (departmentId != null) {
+            query.append(hasCondition ? "AND " : "WHERE ");
+            query.append("g2.id = ? ");
         }
 
         // Thêm phân trang
@@ -493,6 +530,16 @@ public class ProjectDAO extends BaseDAO {
             // Thiết lập tham số lọc trạng thái
             if (status != null) {
                 pre.setInt(index++, status);
+            }
+
+            // Thiết lập tham số lọc theo domain
+            if (domainId != null) {
+                pre.setInt(index++, domainId);
+            }
+
+            // Thiết lập tham số lọc theo department
+            if (departmentId != null) {
+                pre.setInt(index++, departmentId);
             }
 
             // Thiết lập phân trang
@@ -533,7 +580,6 @@ public class ProjectDAO extends BaseDAO {
 
         return projects;
     }
-
     public List<Project> getAllProject() throws SQLException {
         String str = "select * from project";
         PreparedStatement pre = getConnection().prepareStatement(str);

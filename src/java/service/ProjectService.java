@@ -75,11 +75,11 @@ public class ProjectService {
     public List<Allocation> searchFilterMember(List<Allocation> list, Integer deptFilter, Integer statusFilter, String searchKey) {
         List<Allocation> pList = new ArrayList<>();
         deptFilter = baseService.TryParseInteger(deptFilter);
-        boolean status = baseService.TryParseInteger(statusFilter)==1;
+        boolean status = baseService.TryParseInteger(statusFilter) == 1;
         for (Allocation allocation : list) {
             User temp = allocation.getUser();
             if ((temp.getDepartment().getId() == deptFilter || deptFilter == 0)
-                    && (allocation.isStatus()== status || statusFilter == 0)) {
+                    && (allocation.isStatus() == status || statusFilter == 0)) {
                 if (searchKey == null || searchKey.isBlank() || temp.getFullname().toLowerCase().contains(searchKey.toLowerCase())) {
                     pList.add(allocation);
                 }
@@ -125,13 +125,13 @@ public class ProjectService {
     }
 //  ------------------  project list vs project detail -----------------------------
 
-    public List<Project> getProjects(int userId, int page, int pageSize, String keyword, Integer status, int role) {
+    public List<Project> getProjects(int userId, int page, int pageSize, String keyword, Integer status, Integer domainId, Integer departmentId, int role) {
         // Kiểm tra tính hợp lệ của page và pageSize
-        if (role == 1) {
-            return pdao.listAllProjectsForAdmin(page, pageSize, keyword, status);
+        if (role == ADMIN_ROLE) {
+            return pdao.listAllProjectsForAdmin(page, pageSize, keyword, status, domainId, departmentId);
         } else {
 
-            return pdao.listProjects(userId, page, pageSize, keyword, status);
+            return pdao.listProjects(userId, page, pageSize, keyword, status, domainId, departmentId);
         }
     }
 
@@ -151,14 +151,32 @@ public class ProjectService {
             if (project.getCode() != null && project.getCode().length() > 10) {
                 return "Project code must not exceed 10 characters.";  // Trả về thông báo lỗi
             }
-            // check Code
+            // check Code and name
+            if (pdao.isCodeExists(project.getCode()) && pdao.isNameExists(project.getName())) {
+                return " code and name already exists";  // Trả về thông báo lỗi
+            }
             if (pdao.isCodeExists(project.getCode())) {
-                return "Project code already exists";  // Trả về thông báo lỗi
+                return "code already exists";  // Trả về thông báo lỗi
             }
 
             // check Name
             if (pdao.isNameExists(project.getName())) {
-                return "Project name already exists";  // Trả về thông báo lỗi
+                return "name already exists";  // Trả về thông báo lỗi
+            }
+// Thiết lập startDate cho các milestones
+            Date startDate = project.getStartDate();
+
+// Lấy ngày hiện tại mà không có thành phần thời gian
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+            cal.set(java.util.Calendar.MINUTE, 0);
+            cal.set(java.util.Calendar.SECOND, 0);
+            cal.set(java.util.Calendar.MILLISECOND, 0);
+            java.util.Date currentDate = cal.getTime();
+
+// Kiểm tra xem startDate có phải là ngày hôm nay hoặc trong tương lai không
+            if (startDate == null || startDate.before(currentDate)) {
+                return "Start date must be today or in the future.";  // Trả về thông báo lỗi
             }
 
             // Gọi phương thức thêm project và lấy projectId
@@ -176,15 +194,6 @@ public class ProjectService {
                 // Kiểm tra nếu không có phases nào được trả về
                 if (phases.isEmpty()) {
                     return "No phases found for domainId: " + project.getDomain().getId();  // Trả về thông báo lỗi
-                }
-
-                // Thiết lập startDate cho các milestones
-                Date startDate = project.getStartDate();
-                java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
-
-                // Kiểm tra xem startDate có phải là ngày trong quá khứ không
-                if (startDate == null || startDate.before(currentDate)) {
-                    return "Start date must be today or in the future.";  // Trả về thông báo lỗi
                 }
 
                 // Lặp qua các giai đoạn và tạo milestones

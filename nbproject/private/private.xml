@@ -11,11 +11,16 @@
             <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/AllocationController.java</file>
         </group>
         <group name="test">
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projecteval.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/DomainConfigController.java</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/AllocationController.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/AllocationService.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/Allocation/alloList.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/LoginController.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/UserController.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/model/Allocation.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/BaseService.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/assets/css/main_1.css</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projectteam.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/ForgotpasswordController.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/assets/css/main.css</file>
         </group>
     </open-files>
 </project-private>
