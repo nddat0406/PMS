@@ -40,7 +40,7 @@ public class DepartmentController extends HttpServlet {
                     break;
             }
         } catch (NumberFormatException e) {
-            throw new ServletException( "Invalid Department ID");
+            throw new ServletException("Invalid Department ID");
         }
     }
 
@@ -136,7 +136,7 @@ public class DepartmentController extends HttpServlet {
             departmentService.updateDepartment(updateId, updateCode, updateName, updateDetails, updateParentId, updateStatus);
 
             // Chuyển hướng đến danh sách department sau khi cập nhật thành công
-            paginateList(request, response);
+            response.sendRedirect(request.getContextPath() + "/admin/department");
         } catch (IllegalArgumentException e) {
             handleUpdateError(request, response, updateId, e.getMessage());
         }
@@ -195,9 +195,19 @@ public class DepartmentController extends HttpServlet {
     private void paginateList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int pageNumber = getPageNumber(request);
         int pageSize = 6;
-        List<Group> listD = departmentService.getDepartmentsByPage(pageNumber, pageSize);
+
+        Integer filterStatus = getFilterStatus(request); // Sử dụng filterStatus nếu có
+
+        List<Group> listD;
+        if (filterStatus != null) {
+            listD = departmentService.filterDepartments(pageNumber, pageSize, filterStatus);
+        } else {
+            listD = departmentService.getDepartmentsByPage(pageNumber, pageSize);
+        }
+
         request.setAttribute("listD", listD);
         request.setAttribute("currentPage", pageNumber);
+        request.setAttribute("filterStatus", filterStatus); // Đặt filterStatus vào attribute để duy trì trạng thái lọc
         request.getRequestDispatcher("/WEB-INF/view/admin/Department.jsp").forward(request, response);
     }
 
@@ -205,14 +215,10 @@ public class DepartmentController extends HttpServlet {
         int pageNumber = getPageNumber(request);
         int pageSize = 6;
 
-        String filterCode = request.getParameter("code");
-        String filterName = request.getParameter("name");
-        Integer filterStatus = getFilterStatus(request);
+        Integer filterStatus = getFilterStatus(request); // Lấy filterStatus từ request
 
-        List<Group> filteredList = departmentService.filterDepartments(pageNumber, pageSize, filterCode, filterName, filterStatus);
+        List<Group> filteredList = departmentService.filterDepartments(pageNumber, pageSize, filterStatus);
         request.setAttribute("listD", filteredList);
-        request.setAttribute("filterName", filterName);
-        request.setAttribute("filterCode", filterCode);
         request.setAttribute("filterStatus", filterStatus);
         request.setAttribute("currentPage", pageNumber);
         request.getRequestDispatcher("/WEB-INF/view/admin/Department.jsp").forward(request, response);
