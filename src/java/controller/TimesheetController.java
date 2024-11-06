@@ -66,13 +66,10 @@ public class TimesheetController extends HttpServlet {
             case "add":
                 addTimesheet(request, response);
                 break;
-<<<<<<< HEAD
-=======
             case "changestatus":
                 changeStatus(request, response);
 
                 break;
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
         }
 
     }
@@ -124,19 +121,14 @@ public class TimesheetController extends HttpServlet {
 
             List<User> reporters = timesheetService.getAllReporters();
             List<User> reviewers = timesheetService.getAllReviewers();
-<<<<<<< HEAD
-            List<Requirement> requirements = timesheetService.getAllRequirements();
-=======
+
             List<Requirement> requirements = timesheetService.getAllRequirements(userId, role);
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
             // Chuyển dữ liệu vào request để hiển thị trong JSP
             request.setAttribute("reporters", reporters);
             request.setAttribute("reviewers", reviewers);
             request.setAttribute("requirements", requirements);
-<<<<<<< HEAD
-=======
+
             request.setAttribute("role", role);
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
             // Gán giá trị vào request
             request.setAttribute("projects", projects);
             request.setAttribute("timesheets", timesheets);
@@ -204,9 +196,7 @@ public class TimesheetController extends HttpServlet {
             row.createCell(4).setCellValue(timesheet.getRequirement().getTitle());
             row.createCell(5).setCellValue(timesheet.getTimeCreated().toString());
             row.createCell(6).setCellValue(timesheet.getTimeCompleted() != null ? timesheet.getTimeCompleted().toString() : "");
-<<<<<<< HEAD
-            row.createCell(7).setCellValue(timesheet.getStatus() == 1 ? "Active" : "Inactive");
-=======
+
             row.createCell(7).setCellValue(
                     timesheet.getStatus() == 0 ? "Draft"
                     : timesheet.getStatus() == 1 ? "Submitted"
@@ -214,7 +204,6 @@ public class TimesheetController extends HttpServlet {
                     : timesheet.getStatus() == 3 ? "Rejected" : "Unknown"
             );
 
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
         }
 
         // Đặt tiêu đề cho file Excel
@@ -256,11 +245,8 @@ public class TimesheetController extends HttpServlet {
         List<Project> projects = timesheetService.getProjectsByUserRole(userId, role);
         List<User> reporters = timesheetService.getAllReporters();
         List<User> reviewers = timesheetService.getAllReviewers();
-<<<<<<< HEAD
-        List<Requirement> requirements = timesheetService.getAllRequirements();
-=======
+
         List<Requirement> requirements = timesheetService.getAllRequirements(userId, role);
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
         // Chuyển dữ liệu vào request để hiển thị trong JSP
         request.setAttribute("reporters", reporters);
         request.setAttribute("reviewers", reviewers);
@@ -274,16 +260,7 @@ public class TimesheetController extends HttpServlet {
 
     private void updateTimesheet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-<<<<<<< HEAD
-            int id = Integer.parseInt(request.getParameter("id").trim());
-            int reporterId = Integer.parseInt(request.getParameter("reporter").trim());
-            int reviewerId = request.getParameter("reviewer") != null ? Integer.parseInt(request.getParameter("reviewer").trim()) : 0;
-            int projectId = Integer.parseInt(request.getParameter("projectId").trim());
-            int requirementId = Integer.parseInt(request.getParameter("requirementId").trim());
-            int status = Integer.parseInt(request.getParameter("status").trim());
-            java.sql.Date timeCreate = java.sql.Date.valueOf(request.getParameter("timeCreate").trim());
-            java.sql.Date timeComplete = request.getParameter("timeComplete") != null ? java.sql.Date.valueOf(request.getParameter("timeComplete").trim()) : null;
-=======
+
             String idStr = request.getParameter("id");
             String reporterIdStr = request.getParameter("reporter");
             String reviewerIdStr = request.getParameter("reviewer");
@@ -307,7 +284,6 @@ public class TimesheetController extends HttpServlet {
             if (timeCompleteStr != null && !timeCompleteStr.trim().isEmpty()) {
                 timeComplete = java.sql.Date.valueOf(timeCompleteStr.trim());
             }
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
 
             Timesheet timesheet = new Timesheet();
             timesheet.setId(id);
@@ -339,16 +315,6 @@ public class TimesheetController extends HttpServlet {
 
             if (isUpdated) {
                 request.getSession().setAttribute("message", "Timesheet updated successfully!");
-<<<<<<< HEAD
-            } else {
-                request.getSession().setAttribute("message", "Failed to update timesheet!");
-            }
-            // Điều hướng về trang danh sách sau khi cập nhật
-            response.sendRedirect(request.getContextPath() + "/timesheet?action=list");
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("message", "Invalid input data!");
-=======
                 response.sendRedirect(request.getContextPath() + "/timesheet?action=list");
             } else {
                 request.getSession().setAttribute("message", "Failed to update timesheet!");
@@ -363,20 +329,10 @@ public class TimesheetController extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.getSession().setAttribute("message", "Invalid input data!");
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
             request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
     }
 
-<<<<<<< HEAD
-    private Date parseDate(String dateString) {
-        try {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            java.util.Date utilDate = format.parse(dateString); // Chuyển đổi thành java.util.Date
-            return new Date(utilDate.getTime()); // Chuyển đổi thành java.sql.Date
-        } catch (ParseException e) {
-            e.printStackTrace();
-=======
     private java.sql.Date parseDate(String dateString) {
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -385,32 +341,12 @@ public class TimesheetController extends HttpServlet {
             return new java.sql.Date(utilDate.getTime());
         } catch (ParseException e) {
             System.err.println("Date parsing error: Invalid format for input - " + dateString);
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
             return null;
         }
     }
 
     private void addTimesheet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-<<<<<<< HEAD
-            int reporterId = Integer.parseInt(request.getParameter("reporter"));
-            int reviewerId = Integer.parseInt(request.getParameter("reviewer"));
-            int projectId = Integer.parseInt(request.getParameter("projectId"));
-            int requirementId = Integer.parseInt(request.getParameter("requirementId"));
-            int status = Integer.parseInt(request.getParameter("status"));
-
-            // Parse timeCreate and timeComplete as java.util.Date, then convert to java.sql.Date
-            Date timeCreateUtil = parseDate(request.getParameter("timeCreate"));
-            Date timeCompleteUtil = request.getParameter("timeComplete") != null ? parseDate(request.getParameter("timeComplete")) : null;
-
-            // Convert to java.sql.Date for the database
-            java.sql.Date timeCreate = new java.sql.Date(timeCreateUtil.getTime());
-            java.sql.Date timeComplete = timeCompleteUtil != null ? new java.sql.Date(timeCompleteUtil.getTime()) : null;
-
-            Timesheet timesheet = new Timesheet();
-
-            // Set reporter and reviewer
-=======
             String reporterStr = request.getParameter("reporter");
             String reviewerStr = request.getParameter("reviewer");
             String projectStr = request.getParameter("projectId");
@@ -435,7 +371,6 @@ public class TimesheetController extends HttpServlet {
 
             // Tạo đối tượng Timesheet
             Timesheet timesheet = new Timesheet();
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
             User reporter = new User();
             reporter.setId(reporterId);
             timesheet.setReporter(reporter);
@@ -443,51 +378,21 @@ public class TimesheetController extends HttpServlet {
             User reviewer = new User();
             reviewer.setId(reviewerId);
             timesheet.setReviewer(reviewer);
-<<<<<<< HEAD
 
-            // Set project and requirement
             Project project = new Project();
             project.setId(projectId);
             timesheet.setProject(project);
-
-=======
-            Project project = new Project();
-            project.setId(projectId);
-            timesheet.setProject(project);
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
             Requirement requirement = new Requirement();
             requirement.setId(requirementId);
             timesheet.setRequirement(requirement);
-
-<<<<<<< HEAD
-            // Set other attributes
-=======
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
             timesheet.setStatus(status);
             timesheet.setTimeCreated(timeCreate);
             timesheet.setTimeCompleted(timeComplete);
-
-<<<<<<< HEAD
-=======
-            // Gọi service để thêm Timesheet (service sẽ tự động validate)
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
             boolean isInserted = timesheetService.addTimesheet(timesheet);
 
             if (isInserted) {
                 request.getSession().setAttribute("message", "Timesheet added successfully!");
-<<<<<<< HEAD
-            } else {
-                request.getSession().setAttribute("message", "Failed to add timesheet!");
-            }
-            response.sendRedirect(request.getContextPath() + "/timesheet?action=list");
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("message", "Invalid input data!");
-            request.getRequestDispatcher("/error.jsp").forward(request, response);
-        }
-    }
 
-=======
                 response.sendRedirect(request.getContextPath() + "/timesheet?action=list");
             } else {
                 request.getSession().setAttribute("errorMessage", "Failed to add timesheet!");
@@ -545,6 +450,4 @@ public class TimesheetController extends HttpServlet {
         session.setAttribute("timeCreate", request.getParameter("timeCreate"));
         session.setAttribute("timeComplete", request.getParameter("timeComplete"));
     }
-
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
 }

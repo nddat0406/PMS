@@ -316,7 +316,6 @@ public class TimesheetDAO extends BaseDAO {
         }
     }
 
-<<<<<<< HEAD
     public List<Timesheet> getAllTimesheets(int userId, int role) {
         List<Timesheet> timesheetList = new ArrayList<>();
         StringBuilder query = new StringBuilder("""
@@ -385,76 +384,6 @@ public class TimesheetDAO extends BaseDAO {
         }
         return timesheetList;
     }
-=======
-//    public List<Timesheet> getAllTimesheets(int userId, int role) {
-//        List<Timesheet> timesheetList = new ArrayList<>();
-//        StringBuilder query = new StringBuilder("""
-//        SELECT 
-//            t.id,
-//            u1.fullname AS reporter,
-//            u2.fullname AS reviewer,
-//            p.name AS project_name,
-//            r.title AS requirement_title,
-//            t.timeCreate,
-//            t.timeComplete,
-//            t.status
-//        FROM 
-//            timesheet t
-//        LEFT JOIN 
-//            user u1 ON t.reporter = u1.id
-//        EFT JOIN 
-//            user u2 ON t.reviewer = u2.id
-//        JOIN 
-//            project p ON t.projectId = p.id
-//        LEFT JOIN 
-//            requirement r ON t.requirementId = r.id
-//    """);
-//
-//
-//        if (role == MEMBER_ROLE) { 
-//            query.append("WHERE t.reporter = ? OR t.reviewer = ?  ");
-//        }
-//
-//        try (PreparedStatement pre = getConnection().prepareStatement(query.toString())) {
-//            if (role == MEMBER_ROLE) {
-//                pre.setInt(1, userId);
-//                pre.setInt(2, userId);
-//            }
-//
-//            try (ResultSet rs = pre.executeQuery()) {
-//                while (rs.next()) {
-//                    Timesheet timesheet = new Timesheet();
-//                    timesheet.setId(rs.getInt("id"));
-//
-//                    User reporter = new User();
-//                    reporter.setFullname(rs.getString("reporter"));
-//                    timesheet.setReporter(reporter);
-//
-//                    User reviewer = new User();
-//                    reviewer.setFullname(rs.getString("reviewer"));
-//                    timesheet.setReviewer(reviewer);
-//
-//                    Project project = new Project();
-//                    project.setName(rs.getString("project_name"));
-//                    timesheet.setProject(project);
-//
-//                    Requirement requirement = new Requirement();
-//                    requirement.setTitle(rs.getString("requirement_title"));
-//                    timesheet.setRequirement(requirement);
-//
-//                    timesheet.setTimeCreated(rs.getDate("timeCreate"));
-//                    timesheet.setTimeCompleted(rs.getDate("timeComplete"));
-//                    timesheet.setStatus(rs.getInt("status"));
-//
-//                    timesheetList.add(timesheet);
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return timesheetList;
-//    }
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
 
     public Timesheet getTimesheetById(int timesheetId) {
         Timesheet timesheet = null;
@@ -548,11 +477,7 @@ public class TimesheetDAO extends BaseDAO {
     public List<Project> getProjectsByUserId(int userId, int role) {
         List<Project> projects = new ArrayList<>();
         String query;
-<<<<<<< HEAD
-        if (role == ADMIN_ROLE) { // Giả sử role = 1 là Admin
-=======
-        if (role == ADMIN_ROLE) { 
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
+        if (role == ADMIN_ROLE) {
             query = "SELECT id, name FROM project";
         } else {
             query = """
@@ -583,10 +508,7 @@ public class TimesheetDAO extends BaseDAO {
 
         return projects;
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
     // Hàm lấy danh sách tất cả các reporter
     public List<User> getAllReporters() {
         List<User> reporters = new ArrayList<>();
@@ -623,21 +545,6 @@ public class TimesheetDAO extends BaseDAO {
         return reviewers;
     }
 
-<<<<<<< HEAD
-    public List<Requirement> getAllRequirements() {
-        List<Requirement> requirements = new ArrayList<>();
-        String query = "SELECT id, title FROM requirement";
-
-        try (PreparedStatement pre = getConnection().prepareStatement(query); ResultSet rs = pre.executeQuery()) {
-
-            while (rs.next()) {
-                Requirement requirement = new Requirement();
-                requirement.setId(rs.getInt("id"));
-                requirement.setTitle(rs.getString("title"));
-                requirements.add(requirement);
-            }
-
-=======
     public List<Requirement> getAllRequirements(int userId, int role) {
         List<Requirement> requirements = new ArrayList<>();
         String query;
@@ -668,7 +575,6 @@ public class TimesheetDAO extends BaseDAO {
                     requirements.add(requirement);
                 }
             }
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -698,8 +604,6 @@ public class TimesheetDAO extends BaseDAO {
         return false;
     }
 
-<<<<<<< HEAD
-=======
     public boolean updateTimesheetStatus(int timesheetId, int newStatus) {
         String query = "UPDATE timesheet SET status = ? WHERE id = ?";
 
@@ -708,12 +612,10 @@ public class TimesheetDAO extends BaseDAO {
             pre.setInt(2, timesheetId);
 
             int rowsUpdated = pre.executeUpdate();
-            return rowsUpdated > 0;  
+            return rowsUpdated > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
-
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
 }

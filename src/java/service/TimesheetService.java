@@ -3,8 +3,6 @@ package service;
 import dal.TimesheetDAO;
 import model.Timesheet;
 import java.util.List;
-import java.sql.Date;
-import java.sql.SQLException;
 import model.Project;
 import model.Requirement;
 import model.User;
@@ -88,11 +86,7 @@ public class TimesheetService {
     }
 
     public boolean updateTimesheet(Timesheet timesheet) {
-<<<<<<< HEAD
-        TimesheetDAO timesheetDAO = new TimesheetDAO();
-=======
         validateTimesheet(timesheet);
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
         return timesheetDAO.updateTimesheet(timesheet);
     }
 
@@ -108,16 +102,6 @@ public class TimesheetService {
         return timesheetDAO.getAllReviewers();
     }
 
-<<<<<<< HEAD
-    public List<Requirement> getAllRequirements() {
-        return timesheetDAO.getAllRequirements();
-    }
-
-    public boolean addTimesheet(Timesheet timesheet) {
-        return timesheetDAO.insertTimesheet(timesheet);
-    }
-
-=======
     public List<Requirement> getAllRequirements(int userId, int role) {
         return timesheetDAO.getAllRequirements(userId, role);
     }
@@ -180,5 +164,4 @@ public class TimesheetService {
             throw new IllegalArgumentException("Invalid status value.");
         }
     }
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
 }

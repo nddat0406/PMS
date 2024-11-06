@@ -139,8 +139,7 @@
                                                         <th name="user.department.name" sortBy="desc" class="sortTableHead" >department&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                         <th name="user.role" sortBy="desc" class="sortTableHead">Role&nbsp;<i class="fa fa-sort sort-icon" ></i></th>
                                                         <th name="effortRate" sortBy="desc" class="sortTableHead">Effort Rate&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                        <th name="startDate" sortBy="desc" class="sortTableHead">Start Date&nbsp;<i class="fa fa-sort sort-icon"></i></th>
-                                                        <th name="status" sortBy="desc" class="sortTableHead">status&nbsp;<i class="fa fa-sort sort-icon"></i></th>
+                                                        <th name="startDate" sortBy="desc" class="sortTableHead" style="text-align: center">Start Date - End Date&nbsp;<i class="fa fa-sort sort-icon"></i></th>
                                                             <c:if test="${loginedUser.role==1 || loginedUser.role==5 || loginedUser.role==6}">
                                                             <th>Action</th>
                                                             </c:if>
@@ -178,9 +177,6 @@
                                                                     <span><i class="fa fa-arrow-down"></i></span>
                                                                     <span>${t.endDate==null?'Not Yet':t.getEndDateString()}</span>
                                                                 </div>
-                                                            </td>
-                                                            <td>
-                                                                ${t.getStatusString()}
                                                             </td>
                                                             <c:if test="${loginedUser.role==1 || loginedUser.role==5 || loginedUser.role==6}">
                                                                 <td  style="width: 200px">
@@ -249,7 +245,7 @@
                                         <div class="col-md-6 col-sm-12">
                                             <label class="form-label">Start Date</label>
                                             <div class="input-group date" data-date-autoclose="true" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                                <input type="text" class="form-control" placeholder="Start Date" name="startDate" >
+                                                <input type="text" class="form-control" placeholder="Start Date" name="startDate">
                                                 <div class="input-group-append">
                                                     <button class="btn btn-outline-secondary" type="button"><i class="fa fa-calendar"></i></button>
                                                 </div>
@@ -257,8 +253,8 @@
                                         </div>
                                         <div class="col-md-6 col-sm-12">
                                             <label class="form-label">End Date</label>
-                                            <div class="input-group date" data-date-autoclose="true" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                                <input type="text" class="form-control" placeholder="End Date" name="endDate" >
+                                            <div class="input-group date" data-date-autoclose="true" data-provide="datepicker" data-date-format="dd/mm/yyyy" >
+                                                <input type="text" class="form-control" placeholder="End Date" name="endDate" required>
                                                 <div class="input-group-append">
                                                     <button class="btn btn-outline-secondary" type="button"><i class="fa fa-calendar"></i></button>
                                                 </div>

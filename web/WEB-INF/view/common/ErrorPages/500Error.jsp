@@ -1,36 +1,17 @@
-<%-- 
-    Document   : 500Error
-    Created on : Nov 4, 2024, 12:47:31 AM
-    Author     : HP
---%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" isErrorPage="true"%>
 
 <!DOCTYPE html>
 <html lang="en">
-
-
-    <!-- Mirrored from wrraptheme.com/templates/lucid/hr/bs5/dist/page-500.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 13 Sep 2024 06:42:38 GMT -->
     <head>
         <meta charset="utf-8">
-        <title>:: Lucid HR BS5 :: 500</title>
+        <title>Internal Server Error - 500</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="Lucid HR & Project Admin Dashboard Template with Bootstrap 5x">
-        <meta name="author" content="WrapTheme, design by: ThemeMakker.com">
-
-        <link rel="icon" href="favicon.ico" type="image/x-icon">
-        <!-- VENDOR CSS -->
-
-
-        <!-- MAIN CSS -->
-        <link rel="stylesheet" href="assets/css/main.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
     </head>
 
     <body>
-
         <div id="layout" class="theme-cyan">
-            <!-- WRAPPER -->
             <div id="wrapper">
                 <div class="d-flex h100vh align-items-center auth-main w-100">
                     <div class="auth-box">
@@ -53,18 +34,44 @@
                                 500<br />Internal Server Error
                             </div>
                             <div class="card-body">
-                                <p>Apparently we're experiencing an error. But don't worry, we will solve it shortly. Please try after some time.</p>
+                                <p>We're currently experiencing an error. Please try again later.</p>
                                 <div class="mt-3">
                                     <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-primary"><i class="fa fa-home me-2"></i>Home</a>
+                                    <a class="btn btn-danger"  data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                        <i class="fa fa-bug me-2" ></i>See Cause</a>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="collapse" id="collapseExample">
+                        <div >
+                            <div class="card shadow p-lg-4" style="margin: 20px;max-width: 1200px">
+                                <div class="card-header fs-4 fw-bold">
+                                    500<br />Internal Server Error
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Error Message:</strong> <%= exception.getMessage() %></p>
+                                    <div class="stack-trace mt-3">
+                                        <p><strong>Stack Trace:</strong></p>
+                                        <pre style="max-height: 600px;max-width: 1400px; word-wrap: break-word">
+                                            <%
+                                                // Print the full stack trace
+                                                exception.printStackTrace(new java.io.PrintWriter(out));
+                                            %>
+                                        </pre>
+                                    </div>
+                                </div>                           
+                            </div>
+                        </div>                    
+                    </div>
                 </div>
-            </div>
-            <!-- END WRAPPER -->
-        </div>
-    </body>
 
-    <!-- Mirrored from wrraptheme.com/templates/lucid/hr/bs5/dist/page-500.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 13 Sep 2024 06:42:38 GMT -->
+            </div>
+        </div>
+        <!-- core js file -->
+        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+
+        <!-- page js file -->
+        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+    </body>
 </html>

@@ -293,14 +293,12 @@ public class AllocationController extends HttpServlet {
             } else {
                 allocation.setEndDate(new Date(formatter.parse(endDate).getTime()));
             }
-
             List<String> error = aService.update(allocation);
             if (error != null) {
                 List<Allocation> list = (List<Allocation>) request.getSession().getAttribute("alloList");
                 request.setAttribute("updateErrorMess", error);
                 request.setAttribute("isUpdate", true);
                 pagination(request, response, list, alloLink);
-                return;
             }
             List<Allocation> list = refreshChanges(request);
             request.setAttribute("successMess", "Update successful!");

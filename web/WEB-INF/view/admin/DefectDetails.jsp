@@ -54,7 +54,7 @@
                                     Edit Defect
                                 </h2>
                                 <ul class="breadcrumb mb-0">
-                                    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin/defectlist">Defects</a></li>
+                                    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/defectlist">Defects</a></li>
                                     <li class="breadcrumb-item active">Edit</li>
                                 </ul>
                             </div>
@@ -75,7 +75,7 @@
                                         </div>
                                     </c:if>
 
-                                    <form action="${pageContext.request.contextPath}/admin/defectdetail" method="POST">
+                                    <form action="${pageContext.request.contextPath}/defectdetail" method="POST">
                                         <input type="hidden" name="action" value="edit">
                                         <input type="hidden" name="id" value="${defect.id}">
 
@@ -168,7 +168,7 @@
                                             <button type="submit" class="btn btn-primary">
                                                 Update Defect
                                             </button>
-                                            <a href="${pageContext.request.contextPath}/admin/defectlist" 
+                                            <a href="${pageContext.request.contextPath}/defectlist" 
                                                class="btn btn-secondary">
                                                 Cancel
                                             </a>

@@ -112,9 +112,9 @@ public class LoginFilter implements Filter {
         String path = req.getServletPath();
         HttpSession session = req.getSession();
         User acc = (User) session.getAttribute("loginedUser");
-        if (acc == null && (!path.contains("login") 
-                && !path.contains("logout") 
-                && !path.contains("register") 
+        if (acc == null && (!path.contains("login")
+                && !path.contains("logout")
+                && !path.contains("register")
                 && !path.contains("GoogleLogin")
                 && !path.contains("forgot-password")
                 && !path.contains("assets"))) {
@@ -141,7 +141,11 @@ public class LoginFilter implements Filter {
             if (problem instanceof IOException) {
                 throw (IOException) problem;
             }
-            throw (ServletException) problem;
+            if (problem instanceof ServletException) {
+                throw (ServletException) problem;
+
+            }
+            throw new ServletException(problem);
         }
     }
 

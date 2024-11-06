@@ -21,19 +21,15 @@ import model.Setting;
 import service.RequirementService;
 import service.MilestoneService;
 import service.SettingService;
-import service.ProjectService;
-import service.BaseService;
 
 @WebServlet(name = "DefectController", 
-           urlPatterns = {"/admin/defectlist", "/admin/defectdetail"})
+           urlPatterns = {"/defectlist", "/defectdetail"})
 public class DefectController extends HttpServlet {
     
     private DefectDAO defectDAO;
     private RequirementService requirementService;
     private MilestoneService milestoneService;
     private SettingService settingService;
-    private ProjectService projectService;
-    private BaseService baseService;
     
     @Override
     public void init() throws ServletException {
@@ -41,8 +37,6 @@ public class DefectController extends HttpServlet {
         requirementService = new RequirementService();
         milestoneService = new MilestoneService();
         settingService = new SettingService();
-        projectService = new ProjectService();
-        baseService = new BaseService();
     }
     
     @Override
@@ -118,7 +112,7 @@ public class DefectController extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/view/admin/DefectDetails.jsp")
                    .forward(request, response);
         } else {
-            response.sendRedirect(request.getContextPath() + "/admin/defectlist");
+            response.sendRedirect(request.getContextPath() + "/defectlist");
         }
     }
     
@@ -154,7 +148,7 @@ public class DefectController extends HttpServlet {
             // Validate defect data
             validateDefect(defect);
             defectDAO.insert(defect);
-            response.sendRedirect(request.getContextPath() + "/admin/defectlist");
+            response.sendRedirect(request.getContextPath() + "/defectlist");
         } catch (Exception e) {
             request.setAttribute("error", e.getMessage());
             request.setAttribute("defect", defect);
@@ -173,14 +167,14 @@ public class DefectController extends HttpServlet {
             try {
                 validateDefect(defect);
                 defectDAO.update(defect);
-                response.sendRedirect(request.getContextPath() + "/admin/defectlist");
+                response.sendRedirect(request.getContextPath() + "/defectlist");
             } catch (Exception e) {
                 request.setAttribute("error", e.getMessage());
                 request.setAttribute("defect", defect);
                 showDefectDetail(request, response);
             }
         } else {
-            response.sendRedirect(request.getContextPath() + "/admin/defectlist");
+            response.sendRedirect(request.getContextPath() + "/defectlist");
         }
     }
     
@@ -188,7 +182,7 @@ public class DefectController extends HttpServlet {
             throws ServletException, IOException, SQLException {
         int id = Integer.parseInt(request.getParameter("id"));
         defectDAO.delete(id);
-        response.sendRedirect(request.getContextPath() + "/admin/defectlist");
+        response.sendRedirect(request.getContextPath() + "/defectlist");
     }
     
     private void handleStatusChange(HttpServletRequest request, HttpServletResponse response) 
@@ -196,7 +190,7 @@ public class DefectController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         int status = Integer.parseInt(request.getParameter("status"));
         defectDAO.updateStatus(id, status);
-        response.sendRedirect(request.getContextPath() + "/admin/defectlist");
+        response.sendRedirect(request.getContextPath() + "/defectlist");
     }
     
     private void populateDefectFromRequest(Defect defect, HttpServletRequest request) 
