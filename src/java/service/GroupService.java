@@ -67,11 +67,11 @@ public class GroupService {
         return gdao.Search(keyword);
     }
 
-    public List<Group> filterGroups(int pageNumber, int pageSize, String name, String code, Integer status) {
+    public List<Group> filterGroups(int pageNumber, int pageSize, Integer status) {
         if (pageNumber <= 0 || pageSize <= 0) {
             throw new IllegalArgumentException("Page number and page size must be greater than 0.");
         }
-        return gdao.filterGroups(pageNumber, pageSize, name, code, status);
+        return gdao.filterGroups(pageNumber, pageSize, status);
     }
 
     private void validateGroup(String code, String name, String details, int status) {
@@ -144,8 +144,8 @@ public class GroupService {
     }
 
     // Lọc danh sách phòng ban theo tiêu chí
-    public List<Group> filterDepartments(int pageNumber, int pageSize, String code, String name, Integer status) {
-        return gdao.filter(pageNumber, pageSize, code, name, status);
+    public List<Group> filterDepartments(int pageNumber, int pageSize, Integer status) {
+        return gdao.filter(pageNumber, pageSize,status);
     }
 
     // Tìm kiếm phòng ban theo từ khóa
@@ -159,6 +159,9 @@ public class GroupService {
         return isCodeDuplicate || isNameDuplicate; // Trả về true nếu code hoặc name bị trùng
     }
 
+    
+    
+    
     public List<Group> getDomainUsersWithPagination(int page, int pageSize) {
         return gdao.getDomainUsersWithPagination(page, pageSize);
     }

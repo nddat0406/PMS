@@ -49,18 +49,15 @@ public class GroupDAO extends BaseDAO {
     public List<Group> Read(int pageNumber, int pageSize) {
         List<Group> listD = new ArrayList<>();
 
-        // Tính toán offset dựa trên số trang và số bản ghi trên mỗi trang
         int offset = (pageNumber - 1) * pageSize;
 
-        // Câu truy vấn với limit và offset để phân trang
         String sql = "SELECT * FROM pms.group  where type=1  LIMIT ? OFFSET ?";
 
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
 
-            // Đặt giá trị limit (số bản ghi cần lấy) và offset (vị trí bắt đầu)
-            pre.setInt(1, pageSize);  // Số lượng bản ghi trên mỗi trang (7 domain)
-            pre.setInt(2, offset);    // Vị trí bắt đầu
+            pre.setInt(1, pageSize);  
+            pre.setInt(2, offset);    
 
             ResultSet rs = pre.executeQuery();
 
@@ -125,7 +122,6 @@ public class GroupDAO extends BaseDAO {
         return n;
     }
 
-    // Lấy thông tin chi tiết của domain theo ID
 // Lấy thông tin chi tiết của domain theo ID
     public Group Detail(int domainID) {
         Group domain = null;
@@ -148,7 +144,7 @@ public class GroupDAO extends BaseDAO {
             e.printStackTrace();
         }
 
-        return domain; // Trả về đối tượng domain
+        return domain; 
     }
 
     public List<Group> Search(String keyword) {
@@ -215,17 +211,11 @@ public class GroupDAO extends BaseDAO {
         return false;
     }
 
-    public List<Group> filterGroups(int pageNumber, int pageSize, String name, String code, Integer status) {
+    public List<Group> filterGroups(int pageNumber, int pageSize, Integer status) {
         List<Group> groups = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM pms.group  where type=1 and 1=1");
 
         // Append các điều kiện filter
-        if (name != null && !name.isEmpty()) {
-            sql.append(" AND name LIKE ?");
-        }
-        if (code != null && !code.isEmpty()) {
-            sql.append(" AND code LIKE ?");
-        }
         if (status != null) {
             sql.append(" AND status = ?");
         }
@@ -237,12 +227,6 @@ public class GroupDAO extends BaseDAO {
 
             // Set giá trị cho các điều kiện filter
             int paramIndex = 1;
-            if (name != null && !name.isEmpty()) {
-                pre.setString(paramIndex++, "%" + name + "%");
-            }
-            if (code != null && !code.isEmpty()) {
-                pre.setString(paramIndex++, "%" + code + "%");
-            }
             if (status != null) {
                 pre.setInt(paramIndex++, status);
             }
@@ -268,7 +252,7 @@ public class GroupDAO extends BaseDAO {
         return groups;
     }
 
-     public List<Group> getAllDomain() throws SQLException {
+    public List<Group> getAllDomain() throws SQLException {
         List<Group> listD = new ArrayList<>();
         String sql = "SELECT * FROM pms.group  where type=1";
         try {
@@ -294,7 +278,7 @@ public class GroupDAO extends BaseDAO {
         return listD;
     }
 
-   public List<Group> getDomainUser() {
+    public List<Group> getDomainUser() {
         List<Group> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.domain_user";
 
@@ -458,7 +442,7 @@ public class GroupDAO extends BaseDAO {
 
     // Thêm phòng ban mới
     public int Add(String code, String name, String details, Integer parent, int status) {
-        String sql = "INSERT INTO pms.group (code, name, details, status" + (parent != null ? ", parent" : "") + ") VALUES (?, ?, ?, ?" + (parent != null ? ", ?" : "") + ")";
+        String sql = "INSERT INTO pms.group (code, name, details, status, type" + (parent != null ? ", parent" : "") + ") VALUES (?, ?, ?, ?, 0" + (parent != null ? ", ?" : "") + ")";
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, code);
@@ -538,17 +522,11 @@ public class GroupDAO extends BaseDAO {
     }
 
     // Phương thức lọc phòng ban theo mã, tên, phòng ban cha và trạng thái
-    public List<Group> filter(int pageNumber, int pageSize, String code, String name, Integer status) {
+    public List<Group> filter(int pageNumber, int pageSize , Integer status) {
         List<Group> departments = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM pms.group  where type=0 and 1=1");
 
         // Append các điều kiện filter
-        if (code != null && !code.isEmpty()) {
-            sql.append(" AND code LIKE ?");
-        }
-        if (name != null && !name.isEmpty()) {
-            sql.append(" AND name LIKE ?");
-        }
         if (status != null) {
             sql.append(" AND status = ?");
         }
@@ -559,12 +537,6 @@ public class GroupDAO extends BaseDAO {
 
             // Set giá trị cho các điều kiện filter
             int paramIndex = 1;
-            if (code != null && !code.isEmpty()) {
-                pre.setString(paramIndex++, "%" + code + "%");
-            }
-            if (name != null && !name.isEmpty()) {
-                pre.setString(paramIndex++, "%" + name + "%");
-            }
             if (status != null) {
                 pre.setInt(paramIndex++, status);
             }
@@ -673,6 +645,11 @@ public class GroupDAO extends BaseDAO {
         return false;
     }
 
+    
+    
+    
+    
+    
     public List<Group> getAllUserDomain() {
         List<Group> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.domain_user JOIN pms.user ON domain_user.userId = user.id JOIN pms.domain ON domain_user.domainId = domain.id;";

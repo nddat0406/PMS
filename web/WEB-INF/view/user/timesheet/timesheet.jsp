@@ -10,6 +10,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Thêm các thư viện CSS cần thiết -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/dataTables.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
@@ -406,18 +407,19 @@
                         <table id="Timesheet" class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Reporter</th>
-                                    <th>Reviewer</th>
-                                    <th>Project</th>
-                                    <th>Requirement</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
-                                    <th>Status</th>
+                                    <th class="sortTableHead" name="id" sortBy="asc">ID <i class="fa fa-sort sort-icon"></i></th>
+                                    <th class="sortTableHead" name="reporter" sortBy="asc">Reporter <i class="fa fa-sort sort-icon"></i></th>
+                                    <th class="sortTableHead" name="reviewer" sortBy="asc">Reviewer <i class="fa fa-sort sort-icon"></i></th>
+                                    <th class="sortTableHead" name="project" sortBy="asc">Project <i class="fa fa-sort sort-icon"></i></th>
+                                    <th class="sortTableHead" name="requirement" sortBy="asc">Requirement <i class="fa fa-sort sort-icon"></i></th>
+                                    <th class="sortTableHead" name="startDate" sortBy="asc">Start Date <i class="fa fa-sort sort-icon"></i></th>
+                                    <th class="sortTableHead" name="endDate" sortBy="asc">End Date <i class="fa fa-sort sort-icon"></i></th>
+                                    <th class="sortTableHead" name="status" sortBy="asc">Status <i class="fa fa-sort sort-icon"></i></th>
                                     <th>Action</th>
                                 </tr>
+
                             </thead>
-                            <tbody>
+                            <tbody class="tableBody">
                                 <c:if test="${empty timesheets}">
                                     <tr>
                                         <td colspan="9">No data available.</td>
@@ -438,6 +440,7 @@
                                               timesheet.status == 2 ? 'APPROVED' :
                                               timesheet.status == 3 ? 'REJECTED' : 'Unknown'}
                                         </td>
+
                                         <td>
                                             <!-- Nút View/Edit -->
                                             <form action="${pageContext.request.contextPath}/timesheet?action=22222222222222222222222222222" method="get" style="display: inline-block;">
@@ -582,7 +585,96 @@
     </body>
 =======
     </div>
+    <script>
+        $(document).ready(function () {
+            function parseDate(dateString) {
+                var parts = dateString.split('/');
+                if (parts.length === 3) {
+                    return new Date(parts[2], parts[1] - 1, parts[0]); // Năm, tháng (0-indexed), ngày
+                }
+                return null;
+            }
 
+            function sortTable(columnIndex, order) {
+                var rows = $('.tableBody tr').get();
+
+                rows.sort(function (a, b) {
+                    var A = $(a).children('td').eq(columnIndex).text().toUpperCase();
+                    var B = $(b).children('td').eq(columnIndex).text().toUpperCase();
+
+                    if (columnIndex === 5 || columnIndex === 6) { // Chỉ số cột Start Date/End Date
+                        var dateA = parseDate(A);
+                        var dateB = parseDate(B);
+
+                        if (dateA && dateB) {
+                            return order === 'asc' ? dateA - dateB : dateB - dateA;
+                        }
+                    }
+
+                    if (A < B) {
+                        return order === 'asc' ? -1 : 1;
+                    }
+                    if (A > B) {
+                        return order === 'asc' ? 1 : -1;
+                    }
+                    return 0;
+                });
+
+                $.each(rows, function (index, row) {
+                    $('.tableBody').append(row);
+                });
+                rows.sort(function (a, b) {
+                    var A = $(a).children('td').eq(columnIndex).text().toUpperCase();
+                    var B = $(b).children('td').eq(columnIndex).text().toUpperCase();
+
+                    // Kiểm tra nếu là số và chuyển đổi trước khi so sánh
+                    var numA = parseFloat(A) || A;
+                    var numB = parseFloat(B) || B;
+
+                    if (!isNaN(numA) && !isNaN(numB)) {
+                        return order === 'asc' ? numA - numB : numB - numA;
+                    }
+
+                    // Nếu không phải số, sử dụng so sánh chuỗi thông thường
+                    if (A < B) {
+                        return order === 'asc' ? -1 : 1;
+                    }
+                    if (A > B) {
+                        return order === 'asc' ? 1 : -1;
+                    }
+                    return 0;
+                });
+
+                $.each(rows, function (index, row) {
+                    $('.tableBody').append(row);
+                });
+            }
+
+            $('.sortTableHead').on('click', function () {
+                var $th = $(this);
+                var columnIndex = $th.index();
+                var sortBy = $th.attr('sortBy');
+
+                sortTable(columnIndex, sortBy);
+
+                // Xóa biểu tượng sắp xếp khỏi các cột khác
+                $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+
+                // Cập nhật biểu tượng sắp xếp cho cột được nhấn
+                if (sortBy === 'asc') {
+                    sortBy = 'desc';
+                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
+                } else {
+                    sortBy = 'asc';
+                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
+                }
+
+                // Cập nhật trạng thái sắp xếp trong thuộc tính `sortBy`
+                $th.attr('sortBy', sortBy);
+            });
+        });
+
+    </script>
     <script>
         function exportToExcel() {
             $.ajax({
