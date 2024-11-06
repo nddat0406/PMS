@@ -126,7 +126,7 @@ public class DefectDAO extends BaseDAO {
     private Defect mapResultSetToDefect(ResultSet rs) throws SQLException {
         Defect defect = new Defect();
         defect.setId(rs.getInt("id"));
-        defect.setRequirement(requirementDAO.getById(rs.getInt("requirementId")));
+        defect.setRequirement(requirementDAO.getRequirementById(rs.getInt("requirementId")));
         defect.setMilestone(milestoneDAO.getMilestoneById(rs.getInt("milestoneId")));
         defect.setServerity(settingDAO.getSettingById(rs.getInt("serverityId")));
         defect.setTitle(rs.getString("title"));

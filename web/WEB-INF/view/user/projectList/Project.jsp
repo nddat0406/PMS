@@ -64,6 +64,7 @@
                             <c:remove var="message" scope="session"/>
                         </c:if>
 
+
                         <c:if test="${sessionScope.loginedUser.role ==1}">
                             <div class="action-bar">
                                 <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#AddProjectModal">Add New Project</button>
@@ -243,12 +244,14 @@
                                             </td>
                                             <td class="Project-actions">
                                                 <div class="btn-group">
+
                                                     <form action="project/milestone" method="get" style="display: inline-block;">
                                                         <input type="hidden" name="projectId" value="${project.id}">
                                                         <button type="submit" class="btn btn-sm btn-outline-primary">
                                                             <i class="fa fa-cog"></i>
                                                         </button>
                                                     </form>
+
                                                     <form action="projectlist?action=view" method="get" style="display: inline-block;">
                                                         <input type="hidden" name="action" value="view">
                                                         <input type="hidden" name="id" value="${project.id}">

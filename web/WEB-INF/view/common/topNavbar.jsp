@@ -25,9 +25,8 @@
                       c1.9,0,3.4-0.5,4.4-1.4S80.8,13.3,80.8,11.4z" />
                 </svg>
             </a>
-        </div>
-
-        <div class="d-flex flex-grow-1 align-items-center">
+        </div> 
+          <div class="d-flex flex-grow-1 align-items-center">
             <div class="d-flex">
                 <form id="navbar-search" class="navbar-form search-form position-relative d-none d-md-block">
                     <input value="" class="form-control" placeholder="Search here..." type="text">
@@ -37,13 +36,10 @@
             <div class="align-items-center">
                 <ul class="nav navbar-nav flex-row justify-content-end align-items-center" >
                     <li><a href="${pageContext.request.contextPath}/dashboard" class="icon-menu">Dashboard</a></li>
-                    <li><a href="#" class="icon-menu">Requirement</a></li>
-
+                    <li><a href="${pageContext.request.contextPath}/requirement" class="icon-menu">Requirement</a></li>
                     <li><a href="#" class="icon-menu">Timesheets</a></li>
                     <li><a href="${pageContext.request.contextPath}/issue" class="icon-menu">Issues</a></li>
-
-
-                </ul>
+             </ul>
             </div>
             <div class="flex-grow-1">
                 <ul class="nav navbar-nav flex-row justify-content-end align-items-center">

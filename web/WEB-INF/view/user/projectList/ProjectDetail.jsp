@@ -58,6 +58,7 @@
                                         <!-- Phần này chỉ hiển thị nếu role là Project Manager -->
 
                                         <c:if test="${role == 1 || role == 3 || role == 4}">
+
                                             <form action="${pageContext.request.contextPath}/projectlist?action=update" method="post">
                                                 <label for="status">Update Project Status:</label>
                                                 <div class="form-check">

@@ -87,7 +87,7 @@ public class DefectController extends HttpServlet {
         
         // Get data for filters
         request.setAttribute("defects", defects);
-        request.setAttribute("requirements", requirementService.getAllRequirements());
+        request.setAttribute("requirements", requirementService.getAll());
         request.setAttribute("milestones", milestoneService.getAllMilestone(loginUser.getId()));
         request.setAttribute("serverities", settingService.getAllSettings());
         
@@ -103,9 +103,9 @@ public class DefectController extends HttpServlet {
         if (defect != null) {
             // Load related data
             request.setAttribute("defect", defect);
-            request.setAttribute("requirements", requirementService.getAllRequirements());
+            request.setAttribute("requirements", requirementService.getAll());
             request.setAttribute("milestones", milestoneService.getAllMilestone(
-                defect.getRequirement().getProject().getId()
+                defect.getRequirement().getProjectId()
             ));
             request.setAttribute("serverities", settingService.getAllSettings());
             
@@ -129,7 +129,7 @@ public class DefectController extends HttpServlet {
                                        serverityId, status, keyword);
         
         request.setAttribute("defects", defects);
-        request.setAttribute("requirements", requirementService.getAllRequirements());
+        request.setAttribute("requirements", requirementService.getAll());
         request.setAttribute("milestones", milestoneService.getAllMilestone(
             ((User)request.getSession().getAttribute("loginedUser")).getId()
         ));

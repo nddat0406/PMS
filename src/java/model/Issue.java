@@ -30,5 +30,4 @@ public class Issue {
     private Date due_date;
     private Date end_date;
     private int status;
-
 }
