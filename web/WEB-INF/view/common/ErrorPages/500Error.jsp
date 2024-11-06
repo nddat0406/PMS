@@ -53,7 +53,7 @@
                                     <p><strong>Error Message:</strong> <%= exception.getMessage() %></p>
                                     <div class="stack-trace mt-3">
                                         <p><strong>Stack Trace:</strong></p>
-                                        <pre style="max-height: 600px;max-width: 1400px; word-wrap: break-word">
+                                        <pre style="max-height: 600px;max-width: 1200px; word-wrap: break-word">
                                             <%
                                                 // Print the full stack trace
                                                 exception.printStackTrace(new java.io.PrintWriter(out));

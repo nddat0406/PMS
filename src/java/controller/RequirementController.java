@@ -24,7 +24,7 @@ import service.RequirementService;
  *
  * @author DELL
  */
-@WebServlet(name="RequirementController", urlPatterns={"/RequirementController"})
+@WebServlet(name="RequirementController", urlPatterns={"/requirement"})
 public class RequirementController extends HttpServlet {
    
    private final RequirementService requirementService = new RequirementService();

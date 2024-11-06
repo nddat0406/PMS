@@ -24,5 +24,4 @@ public class Requirement {
     private String complexity;
     private int status;
     private int estimatedEffort;
-
 }

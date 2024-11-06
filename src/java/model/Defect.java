@@ -21,7 +21,10 @@ public class Defect {
     private String details;
     private Date duedate;
     private int status;
-
+    private User assignee;
+    private String attachFile;
+    
+    
     public int getId() {
         return id;
     }
@@ -94,4 +97,20 @@ public class Defect {
         this.serverity = serverity;
     }
 
+    public User getAssignee() {
+        return assignee;
+    }
+
+    public void setAssignee(User assignee) {
+        this.assignee = assignee;
+    }
+
+    public String getAttachFile() {
+        return attachFile;
+    }
+
+    public void setAttachFile(String attachFile) {
+        this.attachFile = attachFile;
+    }
+    
 }
