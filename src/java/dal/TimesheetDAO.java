@@ -316,74 +316,74 @@ public class TimesheetDAO extends BaseDAO {
         }
     }
 
-    public List<Timesheet> getAllTimesheets(int userId, int role) {
-        List<Timesheet> timesheetList = new ArrayList<>();
-        StringBuilder query = new StringBuilder("""
-        SELECT 
-            t.id,
-            u1.fullname AS reporter,
-            u2.fullname AS reviewer,
-            p.name AS project_name,
-            r.title AS requirement_title,
-            t.timeCreate,
-            t.timeComplete,
-            t.status
-        FROM 
-            timesheet t
-        LEFT JOIN 
-            user u1 ON t.reporter = u1.id
-        EFT JOIN 
-            user u2 ON t.reviewer = u2.id
-        JOIN 
-            project p ON t.projectId = p.id
-        LEFT JOIN 
-            requirement r ON t.requirementId = r.id
-    """);
-
-        // Thêm điều kiện nếu người dùng là Member (không phải Admin)
-        if (role == MEMBER_ROLE) { // Giả sử role = 1 là Admin
-            query.append("WHERE t.reporter = ? OR t.reviewer = ?  ");
-        }
-
-        try (PreparedStatement pre = getConnection().prepareStatement(query.toString())) {
-            if (role == MEMBER_ROLE) {
-                pre.setInt(1, userId);
-                pre.setInt(2, userId);
-            }
-
-            try (ResultSet rs = pre.executeQuery()) {
-                while (rs.next()) {
-                    Timesheet timesheet = new Timesheet();
-                    timesheet.setId(rs.getInt("id"));
-
-                    User reporter = new User();
-                    reporter.setFullname(rs.getString("reporter"));
-                    timesheet.setReporter(reporter);
-
-                    User reviewer = new User();
-                    reviewer.setFullname(rs.getString("reviewer"));
-                    timesheet.setReviewer(reviewer);
-
-                    Project project = new Project();
-                    project.setName(rs.getString("project_name"));
-                    timesheet.setProject(project);
-
-                    Requirement requirement = new Requirement();
-                    requirement.setTitle(rs.getString("requirement_title"));
-                    timesheet.setRequirement(requirement);
-
-                    timesheet.setTimeCreated(rs.getDate("timeCreate"));
-                    timesheet.setTimeCompleted(rs.getDate("timeComplete"));
-                    timesheet.setStatus(rs.getInt("status"));
-
-                    timesheetList.add(timesheet);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return timesheetList;
-    }
+//    public List<Timesheet> getAllTimesheets(int userId, int role) {
+//        List<Timesheet> timesheetList = new ArrayList<>();
+//        StringBuilder query = new StringBuilder("""
+//        SELECT 
+//            t.id,
+//            u1.fullname AS reporter,
+//            u2.fullname AS reviewer,
+//            p.name AS project_name,
+//            r.title AS requirement_title,
+//            t.timeCreate,
+//            t.timeComplete,
+//            t.status
+//        FROM 
+//            timesheet t
+//        LEFT JOIN 
+//            user u1 ON t.reporter = u1.id
+//        EFT JOIN 
+//            user u2 ON t.reviewer = u2.id
+//        JOIN 
+//            project p ON t.projectId = p.id
+//        LEFT JOIN 
+//            requirement r ON t.requirementId = r.id
+//    """);
+//
+//
+//        if (role == MEMBER_ROLE) { 
+//            query.append("WHERE t.reporter = ? OR t.reviewer = ?  ");
+//        }
+//
+//        try (PreparedStatement pre = getConnection().prepareStatement(query.toString())) {
+//            if (role == MEMBER_ROLE) {
+//                pre.setInt(1, userId);
+//                pre.setInt(2, userId);
+//            }
+//
+//            try (ResultSet rs = pre.executeQuery()) {
+//                while (rs.next()) {
+//                    Timesheet timesheet = new Timesheet();
+//                    timesheet.setId(rs.getInt("id"));
+//
+//                    User reporter = new User();
+//                    reporter.setFullname(rs.getString("reporter"));
+//                    timesheet.setReporter(reporter);
+//
+//                    User reviewer = new User();
+//                    reviewer.setFullname(rs.getString("reviewer"));
+//                    timesheet.setReviewer(reviewer);
+//
+//                    Project project = new Project();
+//                    project.setName(rs.getString("project_name"));
+//                    timesheet.setProject(project);
+//
+//                    Requirement requirement = new Requirement();
+//                    requirement.setTitle(rs.getString("requirement_title"));
+//                    timesheet.setRequirement(requirement);
+//
+//                    timesheet.setTimeCreated(rs.getDate("timeCreate"));
+//                    timesheet.setTimeCompleted(rs.getDate("timeComplete"));
+//                    timesheet.setStatus(rs.getInt("status"));
+//
+//                    timesheetList.add(timesheet);
+//                }
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return timesheetList;
+//    }
 
     public Timesheet getTimesheetById(int timesheetId) {
         Timesheet timesheet = null;
@@ -477,7 +477,7 @@ public class TimesheetDAO extends BaseDAO {
     public List<Project> getProjectsByUserId(int userId, int role) {
         List<Project> projects = new ArrayList<>();
         String query;
-        if (role == ADMIN_ROLE) { // Giả sử role = 1 là Admin
+        if (role == ADMIN_ROLE) { 
             query = "SELECT id, name FROM project";
         } else {
             query = """
@@ -508,6 +508,7 @@ public class TimesheetDAO extends BaseDAO {
 
         return projects;
     }
+
     // Hàm lấy danh sách tất cả các reporter
     public List<User> getAllReporters() {
         List<User> reporters = new ArrayList<>();
@@ -544,19 +545,36 @@ public class TimesheetDAO extends BaseDAO {
         return reviewers;
     }
 
-    public List<Requirement> getAllRequirements() {
+    public List<Requirement> getAllRequirements(int userId, int role) {
         List<Requirement> requirements = new ArrayList<>();
-        String query = "SELECT id, title FROM requirement";
+        String query;
 
-        try (PreparedStatement pre = getConnection().prepareStatement(query); ResultSet rs = pre.executeQuery()) {
+        if (role == ADMIN_ROLE) { // Giả sử role = 1 là Admin
+            query = "SELECT id, title FROM requirement";
+        } else {
+            query = """
+            SELECT DISTINCT r.id, r.title
+            FROM requirement r
+            JOIN project p ON r.projectId = p.id
+            JOIN timesheet t ON p.id = t.projectId
+            WHERE (t.reporter = ? OR t.reviewer = ?)
+        """;
+        }
 
-            while (rs.next()) {
-                Requirement requirement = new Requirement();
-                requirement.setId(rs.getInt("id"));
-                requirement.setTitle(rs.getString("title"));
-                requirements.add(requirement);
+        try (PreparedStatement pre = getConnection().prepareStatement(query)) {
+            if (role != ADMIN_ROLE) {
+                pre.setInt(1, userId);
+                pre.setInt(2, userId);
             }
 
+            try (ResultSet rs = pre.executeQuery()) {
+                while (rs.next()) {
+                    Requirement requirement = new Requirement();
+                    requirement.setId(rs.getInt("id"));
+                    requirement.setTitle(rs.getString("title"));
+                    requirements.add(requirement);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -580,6 +598,21 @@ public class TimesheetDAO extends BaseDAO {
             stmt.setInt(7, timesheet.getStatus());
 
             return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateTimesheetStatus(int timesheetId, int newStatus) {
+        String query = "UPDATE timesheet SET status = ? WHERE id = ?";
+
+        try (PreparedStatement pre = getConnection().prepareStatement(query)) {
+            pre.setInt(1, newStatus);
+            pre.setInt(2, timesheetId);
+
+            int rowsUpdated = pre.executeUpdate();
+            return rowsUpdated > 0;  
         } catch (SQLException e) {
             e.printStackTrace();
         }

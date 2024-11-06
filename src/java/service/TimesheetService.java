@@ -88,7 +88,7 @@ public class TimesheetService {
     }
 
     public boolean updateTimesheet(Timesheet timesheet) {
-        TimesheetDAO timesheetDAO = new TimesheetDAO();
+        validateTimesheet(timesheet);
         return timesheetDAO.updateTimesheet(timesheet);
     }
 
@@ -104,12 +104,66 @@ public class TimesheetService {
         return timesheetDAO.getAllReviewers();
     }
 
-    public List<Requirement> getAllRequirements() {
-        return timesheetDAO.getAllRequirements();
+    public List<Requirement> getAllRequirements(int userId, int role) {
+        return timesheetDAO.getAllRequirements(userId, role);
     }
 
-    public boolean addTimesheet(Timesheet timesheet) {
+    public boolean updateTimesheetStatus(int timesheetId, int newStatus) {
+        return timesheetDAO.updateTimesheetStatus(timesheetId, newStatus);
+    }
+
+    public boolean addTimesheet(Timesheet timesheet) throws IllegalArgumentException {
+        validateTimesheet(timesheet);
         return timesheetDAO.insertTimesheet(timesheet);
     }
 
+    private void validateTimesheet(Timesheet timesheet) throws IllegalArgumentException {
+        // Kiểm tra chung nếu bất kỳ trường nào không có giá trị
+        if (timesheet.getReporter() == null || timesheet.getReporter().getId() <= 0
+                || timesheet.getReviewer() == null || timesheet.getReviewer().getId() <= 0
+                || timesheet.getProject() == null || timesheet.getProject().getId() <= 0
+                || timesheet.getRequirement() == null || timesheet.getRequirement().getId() <= 0
+                || timesheet.getTimeCreated() == null) {
+
+            throw new IllegalArgumentException("Please fill out all required information.");
+        }
+        // Kiểm tra các trường bắt buộc
+        if (timesheet.getReporter() == null || timesheet.getReporter().getId() <= 0) {
+            throw new IllegalArgumentException("Reporter is required.");
+        }
+        if (timesheet.getReviewer() == null || timesheet.getReviewer().getId() <= 0) {
+            throw new IllegalArgumentException("Reviewer is required.");
+        }
+        if (timesheet.getProject() == null || timesheet.getProject().getId() <= 0) {
+            throw new IllegalArgumentException("Project is required.");
+        }
+        if (timesheet.getRequirement() == null || timesheet.getRequirement().getId() <= 0) {
+            throw new IllegalArgumentException("Requirement is required.");
+        }
+
+        // Lấy ngày hiện tại không có thành phần thời gian
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        cal.set(java.util.Calendar.MINUTE, 0);
+        cal.set(java.util.Calendar.SECOND, 0);
+        cal.set(java.util.Calendar.MILLISECOND, 0);
+        java.util.Date currentDate = cal.getTime();
+
+        // Kiểm tra Time Created
+        if (timesheet.getTimeCreated() == null) {
+            throw new IllegalArgumentException("Time Created is required.");
+        }
+        if (timesheet.getTimeCreated().before(currentDate)) {
+            throw new IllegalArgumentException("Time Created must be today or a future date.");
+        }
+
+        if (timesheet.getTimeCompleted() != null && timesheet.getTimeCompleted().before(timesheet.getTimeCreated())) {
+            throw new IllegalArgumentException("Time Completed must be after Time Created.");
+        }
+
+        int status = timesheet.getStatus();
+        if (status < 0 || status > 3) {
+            throw new IllegalArgumentException("Invalid status value.");
+        }
+    }
 }

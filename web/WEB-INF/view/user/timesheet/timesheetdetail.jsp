@@ -57,7 +57,10 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label><strong>Status:</strong></label>
-                                        <p>${timesheet.status == 1 ? 'Active' : 'Inactive'}</p>
+                                        <p>               ${timesheet.status == 0 ? 'DRAFT' :
+                                                            timesheet.status == 1 ? 'SUBMITTED' :
+                                                            timesheet.status == 2 ? 'APPROVED' :
+                                                            timesheet.status == 3 ? 'REJECTED' : 'Unknown'}</p>
                                     </div>
                                 </div>
 
@@ -79,74 +82,111 @@
                                     </div>
                                 </div>
 
-                                <!-- Form chỉnh sửa (chỉ hiển thị với Admin) -->
-                                <c:if test="${role == 1 ||role == 4 }">
+                                <!-- for (status:draft,submitted hoặc Admin,prj manager,dept manager,pmo) -->
+                                <c:if test="${role == 1 || role == 4 || role == 5 || role == 6 || timesheet.status == 0 || timesheet.status == 3}">
                                     <div class="card mt-4">
                                         <div class="card-header">
                                             <h5>Edit Timesheet</h5>
                                         </div>
+
                                         <div class="card-body">
+                                            <c:if test="${not empty sessionScope.errorMessage}">
+                                                <div class="alert alert-danger" role="alert">
+                                                    ${sessionScope.errorMessage}
+                                                </div>
+                                            </c:if>
                                             <form action="${pageContext.request.contextPath}/timesheet" method="POST">
                                                 <input type="hidden" name="action" value="update">
                                                 <input type="hidden" name="id" value="${timesheet.id}">
 
                                                 <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label for="reporter"><strong>Reporter:</strong></label>
-                                                        <select id="reporter" name="reporter" class="form-control" required>
-                                                            <option value="">Select Reporter</option>
-                                                            <c:forEach var="reporter" items="${reporters}">
-                                                                <option value="${reporter.id}" <c:if test="${timesheet.reporter.id == reporter.id}">selected</c:if>>${reporter.fullname}</option>
-                                                            </c:forEach>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label for="reviewer"><strong>Reviewer:</strong></label>
-                                                        <select id="reviewer" name="reviewer" class="form-control">
-                                                            <option value="">Select Reviewer</option>
-                                                            <c:forEach var="reviewer" items="${reviewers}">
-                                                                <option value="${reviewer.id}" <c:if test="${timesheet.reviewer != null && timesheet.reviewer.id == reviewer.id}">selected</c:if>>${reviewer.fullname}</option>
-                                                            </c:forEach>
-                                                        </select>
-                                                    </div>
+                                                    <c:if test="${role == 1 || role == 4 || role == 5 || role == 6}">
+                                                        <div class="col-md-6">
+                                                            <label for="reporter"><strong>Reporter:</strong></label>
+                                                            <select id="reporter" name="reporter" class="form-control">
+                                                                <option value="">Select Reporter</option>
+                                                                <c:forEach var="reporter" items="${reporters}">
+                                                                    <option value="${reporter.id}" 
+                                                                            <c:if test="${sessionScope.reporterId == reporter.id || timesheet.reporter.id == reporter.id}">selected</c:if>>
+                                                                        ${reporter.fullname}
+                                                                    </option>
+                                                                </c:forEach>
+                                                            </select>
+                                                        </div>
+                                                    </c:if>
+                                                    <c:if test="${role == 2}">
+                                                        <input type="hidden" name="reporter" value="${sessionScope.loginedUser.id}">
+                                                    </c:if>
+                                                    <c:if test="${role == 2|| role == 1}">
+                                                        <div class="col-md-6">
+                                                            <label for="reviewer"><strong>Reviewer:</strong></label>
+                                                            <select id="reviewer" name="reviewer" class="form-control">
+                                                                <option value="">Select Reviewer</option>
+                                                                <c:forEach var="reviewer" items="${reviewers}">
+                                                                    <option value="${reviewer.id}" 
+                                                                            <c:if test="${sessionScope.reviewerId == reviewer.id || (timesheet.reviewer != null && timesheet.reviewer.id == reviewer.id)}">selected</c:if>>
+                                                                        ${reviewer.fullname}
+                                                                    </option>
+                                                                </c:forEach>
+                                                            </select>
+                                                        </div>
+                                                    </c:if>
+                                                    <c:if test="${role == 4 || role == 5 || role == 6}">
+                                                        <input type="hidden" name="reviewer" value="${sessionScope.loginedUser.id}">
+                                                    </c:if>
                                                 </div>
 
                                                 <div class="row mb-3">
                                                     <div class="col-md-4">
                                                         <label for="project"><strong>Project:</strong></label>
-                                                        <select id="project" name="projectId" class="form-control" required>
+                                                        <select id="project" name="projectId" class="form-control">
                                                             <option value="">Select Project</option>
                                                             <c:forEach var="project" items="${projects}">
-                                                                <option value="${project.id}" <c:if test="${project.id == timesheet.project.id}">selected</c:if>>${project.name}</option>
+                                                                <option value="${project.id}" 
+                                                                        <c:if test="${sessionScope.projectId == project.id || project.id == timesheet.project.id}">selected</c:if>>
+                                                                    ${project.name}
+                                                                </option>
                                                             </c:forEach>
                                                         </select>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label for="requirement"><strong>Requirement:</strong></label>
-                                                        <select id="requirement" name="requirementId" class="form-control" required>
+                                                        <select id="requirement" name="requirementId" class="form-control">
                                                             <option value="">Select Requirement</option>
                                                             <c:forEach var="requirement" items="${requirements}">
-                                                                <option value="${requirement.id}" <c:if test="${requirement.id == timesheet.requirement.id}">selected</c:if>>${requirement.title}</option>
+                                                                <option value="${requirement.id}" 
+                                                                        <c:if test="${sessionScope.requirementId == requirement.id || requirement.id == timesheet.requirement.id}">selected</c:if>>
+                                                                    ${requirement.title}
+                                                                </option>
                                                             </c:forEach>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4">
-                                                        <label for="status"><strong>Status:</strong></label>
-                                                        <select id="status" name="status" class="form-control">
-                                                            <option value="1" <c:if test="${timesheet.status == 1}">selected</c:if>>Active</option>
-                                                            <option value="0" <c:if test="${timesheet.status == 0}">selected</c:if>>Inactive</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
+                                                    <c:if test="${role == 1}">
+                                                        <div class="col-md-4">
+                                                            <label for="status"><strong>Status:</strong></label>
+                                                            <select id="status" name="status" class="form-control">
+                                                                <option value="0" <c:if test="${sessionScope.status == '0' || timesheet.status == 0}">selected</c:if>>Draft</option>
+                                                                <option value="1" <c:if test="${sessionScope.status == '1' || timesheet.status == 1}">selected</c:if>>Submitted</option>
+                                                                <option value="2" <c:if test="${sessionScope.status == '2' || timesheet.status == 2}">selected</c:if>>Approved</option>
+                                                                <option value="3" <c:if test="${sessionScope.status == '3' || timesheet.status == 3}">selected</c:if>>Rejected</option>
+                                                                </select>
+                                                            </div>
+                                                    </c:if>
+                                                    <c:if test="${role == 2 || role == 4 || role == 5 || role == 6}">
+                                                        <input type="hidden" name="status" value="${timesheet.status}">
+                                                    </c:if>
+                                                </div>
 
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-6">
-                                                            <label for="timeCreate"><strong>Time Created:</strong></label>
-                                                            <input type="date" id="timeCreate" name="timeCreate" class="form-control" value="${timesheet.timeCreated}">
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <label for="timeCreate"><strong>Time Created:</strong></label>
+                                                        <input type="date" id="timeCreate" name="timeCreate" class="form-control"
+                                                               value="${sessionScope.timeCreate != null ? sessionScope.timeCreate : timesheet.timeCreated}">
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label for="timeComplete"><strong>Time Completed:</strong></label>
-                                                        <input type="date" id="timeComplete" name="timeComplete" class="form-control" value="${timesheet.timeCompleted}">
+                                                        <input type="date" id="timeComplete" name="timeComplete" class="form-control"
+                                                               value="${sessionScope.timeComplete != null ? sessionScope.timeComplete : timesheet.timeCompleted}">
                                                     </div>
                                                 </div>
 
@@ -156,9 +196,21 @@
                                                     </div>
                                                 </div>
                                             </form>
+
+                                            <!-- Xóa các giá trị session sau khi sử dụng -->
+                                            <c:remove var="errorMessage" scope="session" />
+                                            <c:remove var="reporterId" scope="session" />
+                                            <c:remove var="reviewerId" scope="session" />
+                                            <c:remove var="projectId" scope="session" />
+                                            <c:remove var="requirementId" scope="session" />
+                                            <c:remove var="timeCreate" scope="session" />
+                                            <c:remove var="timeComplete" scope="session" />
+                                            <c:remove var="status" scope="session" />
+
                                         </div>
                                     </div>
                                 </c:if>
+
 
                             </div>
                         </div>
