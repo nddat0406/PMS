@@ -65,38 +65,38 @@
     <body>
         <div id="layout" class="theme-cyan">
             <jsp:include page="../../common/pageLoader.jsp"></jsp:include>
-            <div id="wrapper">
+                <div id="wrapper">
                 <jsp:include page="../../common/topNavbar.jsp"></jsp:include>
                 <jsp:include page="../../common/sidebar.jsp"></jsp:include>
-                <div id="main-content">
-                    <div class="container-fluid">
-                        <div class="block-header py-lg-4 py-3">
-                            <div class="row g-3">
-                                <div class="col-md-6 col-sm-12">
-                                    <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Issues</h2>
-                                    <ul class="breadcrumb mb-0">
-                                        <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
-                                        <li class="breadcrumb-item active">Issues</li>
-                                    </ul>
+                    <div id="main-content">
+                        <div class="container-fluid">
+                            <div class="block-header py-lg-4 py-3">
+                                <div class="row g-3">
+                                    <div class="col-md-6 col-sm-12">
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Issues</h2>
+                                        <ul class="breadcrumb mb-0">
+                                            <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                            <li class="breadcrumb-item active">Issues</li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row g-3">
-                            <div class="col-lg-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h6 class="card-title">Requirements List</h6>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="d-flex col-lg-1 justify-content-between align-items-center ms-auto">
-                                                <button class="btn btn-sm btn-primary add-requirement">
-                                                    <i class="fa fa-plus"></i> Add
-                                                </button>
-                                            </div>
-                                            <span style="color: red">${errorMessage}</span>
+                            <div class="row g-3">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="card-title">Requirements List</h6>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="d-flex col-lg-1 justify-content-between align-items-center ms-auto">
+                                                    <button class="btn btn-sm btn-primary add-requirement">
+                                                        <i class="fa fa-plus"></i> Add
+                                                    </button>
+                                                </div>
+                                                <span style="color: red">${errorMessage}</span>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Filter Section -->
                                     <div class="card-body">
                                         <form action="requirement" method="post">
@@ -168,468 +168,445 @@
                                                         </td>
                                                         <td>
                                                             <span class="badge bg-${
-                                                                req.status == 0 ? 'secondary' : 
-                                                                req.status == 1 ? 'primary' : 
-                                                                req.status == 2 ? 'info' : 
-                                                                req.status == 3 ? 'warning' :
-                                                                req.status == 4 ? 'success' :
-                                                                req.status == 5 ? 'dark' : 'danger'}">
-                                                                ${req.status == 0 ? 'Pending' : 
-                                                                  req.status == 1 ? 'Committed' : 
-                                                                  req.status == 2 ? 'Analyze' : 
-                                                                  req.status == 3 ? 'Design' :
-                                                                  req.status == 4 ? 'Accepted' :
-                                                                  req.status == 5 ? 'Coded' : 'Tested'}
-                                                            </span>
-                                                        </td>
-                                                        <td>${req.estimatedEffort}</td>
-                                                        <td>
-                                                            <button class="btn btn-sm btn-outline-secondary view-details" data-id="${req.id}">
-                                                                <i class="fa fa-eye"></i> View Details
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                </c:forEach>
-                                            </tbody>
-                                        </table>
-                                        
-                                        <!-- No Results Message -->
-                                        <c:if test="${empty tableData}">
-                                            <div class="card-body text-center">
-                                                <h4>No requirements found!</h4>
-                                            </div>
-                                        </c:if>
+                                                                  req.status == 0 ? 'secondary' : 
+                                                                      req.status == 1 ? 'primary' : 
+                                                                      req.status == 2 ? 'info' : 
+                                                                      req.status == 3 ? 'warning' :
+                                                                      req.status == 4 ? 'success' :
+                                                                      req.status == 5 ? 'dark' : 'danger'}">
+                                                                      ${req.status == 0 ? 'Pending' : 
+                                                                        req.status == 1 ? 'Committed' : 
+                                                                        req.status == 2 ? 'Analyze' : 
+                                                                        req.status == 3 ? 'Design' :
+                                                                        req.status == 4 ? 'Accepted' :
+                                                                        req.status == 5 ? 'Coded' : 'Tested'}
+                                                                  </span>
+                                                            </td>
+                                                            <td>${req.estimatedEffort}</td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-outline-secondary view-details" data-id="${req.id}">
+                                                                    <i class="fa fa-eye"></i> View Details
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </c:forEach>
+                                                </tbody>
+                                            </table>
 
-                                        <!-- Pagination -->
-                                        <nav aria-label="Page navigation" class="mt-3">
-                                            <ul class="pagination justify-content-center">
-                                                <li class="page-item ${page == 1 ? 'disabled' : ''}">
-                                                    <a class="page-link" href="${pageContext.request.contextPath}/requirement?page=${page-1}">Previous</a>
-                                                </li>
-                                                <c:forEach begin="1" end="${num}" var="i">
-                                                    <li class="page-item ${i == page ? 'active' : ''}">
-                                                        <a class="page-link" href="${pageContext.request.contextPath}/requirement?page=${i}">${i}</a>
+                                            <!-- No Results Message -->
+                                            <c:if test="${empty tableData}">
+                                                <div class="card-body text-center">
+                                                    <h4>No requirements found!</h4>
+                                                </div>
+                                            </c:if>
+
+                                            <!-- Pagination -->
+                                            <nav aria-label="Page navigation" class="mt-3">
+                                                <ul class="pagination justify-content-center">
+                                                    <li class="page-item ${page == 1 ? 'disabled' : ''}">
+                                                        <a class="page-link" href="${pageContext.request.contextPath}/requirement?page=${page-1}">Previous</a>
                                                     </li>
-                                                </c:forEach>
-                                                <li class="page-item ${page == num ? 'disabled' : ''}">
-                                                    <a class="page-link" href="${pageContext.request.contextPath}/requirement?page=${page+1}">Next</a>
-                                                </li>
-                                            </ul>
-                                        </nav>
+                                                    <c:forEach begin="1" end="${num}" var="i">
+                                                        <li class="page-item ${i == page ? 'active' : ''}">
+                                                            <a class="page-link" href="${pageContext.request.contextPath}/requirement?page=${i}">${i}</a>
+                                                        </li>
+                                                    </c:forEach>
+                                                    <li class="page-item ${page == num ? 'disabled' : ''}">
+                                                        <a class="page-link" href="${pageContext.request.contextPath}/requirement?page=${page+1}">Next</a>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Requirement Detail Modal -->
-<!-- Requirement Detail Modal -->
-<div class="modal fade" id="requirementDetailModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Requirement Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            
-            <form id="requirementForm" action="requirement" method="post">
-                <div class="modal-body">
-                    <input type="hidden" name="action" id="formAction" value="update">
-                    <input type="hidden" name="id" id="modalRequirementId">
-                    <input type="hidden" name="userId" id="modalRequirementId" value="${loginedUser.id}">
-            
-                    <div class="mb-3">
-                        <label class="form-label">Title <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="title" id="modalTitle" required>
-                    </div>
-            
-                    <div class="mb-3">
-                        <label class="form-label">Project <span class="text-danger">*</span></label>
-                        <select class="form-select" name="projectId" id="modalProject" required onchange="loadMilestones(this.value)">
-                            <option value="">Select Project</option>
-                            <c:forEach items="${requirementService.getAllProject()}" var="project">
-                                <option value="${project.id}">${project.name}</option>
-                            </c:forEach>
-                        </select>
-                    </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Milestone</label>
-                        <select class="form-select" name="milestoneId" id="modalMilestone">
-                            <option value="">Select Milestone</option>
-                        </select>
-                    </div>
+                <!-- Requirement Detail Modal -->
+                <!-- Requirement Detail Modal -->
+                <div class="modal fade" id="requirementDetailModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Requirement Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Details <span class="text-danger">*</span></label>
-                        <textarea class="form-control" name="details" id="modalDetails" rows="4" required></textarea>
-                    </div>
-            
-                    <div class="mb-3">
-                        <label class="form-label">Complexity <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="complexity" id="modalComplexity" required 
-                               placeholder="Enter Low, Medium, or High">
-                    </div>
-            
-                    <div class="mb-3">
-                        <label class="form-label">Status <span class="text-danger">*</span></label>
-                        <select class="form-select" name="status" id="modalStatus" required>
-                            <option value="0">Pending</option>
-                            <option value="1">Committed</option>
-                            <option value="2">Analyze</option>
-                            <option value="3">Design</option>
-                            <option value="4">Accepted</option>
-                            <option value="5">Coded</option>
-                            <option value="6">Tested</option>
-                        </select>
-                    </div>
-            
-                    <div class="mb-3">
-                        <label class="form-label">Estimated Effort (hours) <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" name="estimatedEffort" id="modalEstimatedEffort" 
-                               required min="1" max="20" placeholder="Enter value between 1-20">
+                            <form id="requirementForm" action="requirement" method="post">
+                                <div class="modal-body">
+                                    <input type="hidden" name="action" id="formAction" value="update">
+                                    <input type="hidden" name="id" id="modalRequirementId">
+                                    <input type="hidden" name="userId" id="modalRequirementId" value="${loginedUser.id}">
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Title <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="title" id="modalTitle" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Project <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="projectId" id="modalProject" required onchange="loadMilestones(this.value)">
+                                            <option value="">Select Project</option>
+                                            <c:forEach items="${requirementService.getAllProject()}" var="project">
+                                                <option value="${project.id}">${project.name}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Milestone</label>
+                                        <select class="form-select" name="milestoneId" id="modalMilestone">
+                                            <option value="">Select Milestone</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Details <span class="text-danger">*</span></label>
+                                        <textarea class="form-control" name="details" id="modalDetails" rows="4" required></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Complexity <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="complexity" id="modalComplexity" required 
+                                               placeholder="Enter Low, Medium, or High">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Status <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="status" id="modalStatus" required>
+                                            <option value="0">Pending</option>
+                                            <option value="1">Committed</option>
+                                            <option value="2">Analyze</option>
+                                            <option value="3">Design</option>
+                                            <option value="4">Accepted</option>
+                                            <option value="5">Coded</option>
+                                            <option value="6">Tested</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Estimated Effort (hours) <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" name="estimatedEffort" id="modalEstimatedEffort" 
+                                               required min="1" max="20" placeholder="Enter value between 1-20">
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" id="button-modal-submit" class="btn btn-primary">Save changes</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
+            </div>
+            <!-- Scripts -->
+            <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+            <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" id="button-modal-submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>  
-        <!-- Scripts -->
-        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-        
-        <script>
-            // Filter change handler
-            function ChangeFilter() {
-                var complexityFilter = document.getElementById("complexityFilter").value;
-                var projectFilter = document.getElementById("projectFilter").value;
-                var statusFilter = document.getElementById("statusFilter").value;
-                
-                $.ajax({
-                    url: "requirement<script>
-            // Filter change handler
-            function ChangeFilter() {
-                var complexityFilter = document.getElementById("complexityFilter").value;
-                var projectFilter = document.getElementById("projectFilter").value;
-                var statusFilter = document.getElementById("statusFilter").value;
-                
-                $.ajax({
-                    url: "requirement",
-                    type: 'post',
-                    data: {
-                        complexityFilter: complexityFilter,
-                        projectFilter: projectFilter,
-                        statusFilter: statusFilter,
-                        action: "filter"
-                    },
-                    success: function () {
-                        $('.tableBody').load("${pageContext.request.contextPath}/requirement?page=${page} .tableBody > *");
-                    }
-                });
-            }
-        
-            // Form submission handler
-            $('#button-modal-submit').on('click', function (e) {
-                e.preventDefault();
-                if (validateForm()) {
-                    var isEdit = $('#modalRequirementId').val() !== '';
+            <script>
+                                            // Filter change handler
+                                            function ChangeFilter() {
+                                            var complexityFilter = document.getElementById("complexityFilter").value;
+                                            var projectFilter = document.getElementById("projectFilter").value;
+                                            var statusFilter = document.getElementById("statusFilter").value;
+                                            $.ajax({
+                                            url: "requirement<script>
+                                                    // Filter change handler
+                                                            function ChangeFilter() {
+                                                            var complexityFilter = document.getElementById("complexityFilter").value;
+                                                            var projectFilter = document.getElementById("projectFilter").value;
+                                                            var statusFilter = document.getElementById("statusFilter").value;
+                                                            $.ajax({
+                                                            url: "requirement",
+                                                                    type: 'post',
+                                                                    data: {
+                                                                    complexityFilter: complexityFilter,
+                                                                            projectFilter: projectFilter,
+                                                                            statusFilter: statusFilter,
+                                                                            action: "filter"
+                                                                    },
+                                                                    success: function () {
+                                                                    $('.tableBody').load("${pageContext.request.contextPath}/requirement?page=${page} .tableBody > *");
+                                                                    }
+                                                            });
+                                                            }
 
-                    // Set action based on operation
-                    $('#requirementForm').attr('action',
-                        '${pageContext.request.contextPath}/requirement?action=' +
-                        (isEdit ? 'update' : 'add')
-                    );
+                                                    // Form submission handler
+                                                    $('#button-modal-submit').on('click', function (e) {
+                                                    e.preventDefault();
+                                                    if (validateForm()) {
+                                                    var isEdit = $('#modalRequirementId').val() !== '';
+                                                    // Set action based on operation
+                                                    $('#requirementForm').attr('action',
+                                                            '${pageContext.request.contextPath}/requirement?action=' +
+                                                            (isEdit ? 'update' : 'add')
+                                                            );
+                                                    $('#requirementForm').submit();
+                                                    }
+                                                    });
+                                                    // Error handling functions
+                                                    function showError(fieldId, message) {
+                                                    const field = $(`#${fieldId}`);
+                                                    field.addClass('is-invalid');
+                                                    field.after(`<div class="invalid-feedback">${message}</div>`);
+                                                    }
 
-                    $('#requirementForm').submit();
-                }
-            });
+                                                    function clearErrors() {
+                                                    $('.is-invalid').removeClass('is-invalid');
+                                                    $('.invalid-feedback').remove();
+                                                    }
 
+                                                    // Sorting handlers
+                                                    $(document).ready(function () {
+                                                    $('.sortTableHead').on('click', function () {
+                                                    var $th = $(this);
+                                                    var name = $th.attr('name');
+                                                    var sortBy = $th.attr('sortBy');
+                                                    $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+                                                    if (sortBy === 'asc') {
+                                                    sortBy = 'desc';
+                                                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
+                                                    } else {
+                                                    sortBy = 'asc';
+                                                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
+                                                    }
 
-            // Error handling functions
-            function showError(fieldId, message) {
-                const field = $(`#${fieldId}`);
-                field.addClass('is-invalid');
-                field.after(`<div class="invalid-feedback">${message}</div>`);
-            }
+                                                    $th.attr('sortBy', sortBy);
+                                                    $.ajax({
+                                                    url: "requirement",
+                                                            type: 'post',
+                                                            data: {
+                                                            sortBy: sortBy,
+                                                                    fieldName: name,
+                                                                    action: "sort"
+                                                            },
+                                                            success: function () {
+                                                            $('.tableBody').load("${pageContext.request.contextPath}/requirement?page=${page} .tableBody > *");
+                                                            }
+                                                    });
+                                                    });
+                                                    });
+                                                    // Show more/less for details
+                                                    $(document).on('click', '.content-wrapper', function() {
+                                                    $(this).toggleClass('expanded');
+                                                    });
+            </script>
 
-            function clearErrors() {
-                $('.is-invalid').removeClass('is-invalid');
-                $('.invalid-feedback').remove();
-            }
-
-            // Sorting handlers
-            $(document).ready(function () {
-                $('.sortTableHead').on('click', function () {
-                    var $th = $(this);
-                    var name = $th.attr('name');
-                    var sortBy = $th.attr('sortBy');
-                    
-                    $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
-                    
-                    if (sortBy === 'asc') {
-                        sortBy = 'desc';
-                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
-                    } else {
-                        sortBy = 'asc';
-                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
-                    }
-                    
-                    $th.attr('sortBy', sortBy);
-                    
-                    $.ajax({
-                        url: "requirement",
-                        type: 'post',
-                        data: {
-                            sortBy: sortBy,
-                            fieldName: name,
-                            action: "sort"
-                        },
-                        success: function () {
-                            $('.tableBody').load("${pageContext.request.contextPath}/requirement?page=${page} .tableBody > *");
+            <script>
+                        function showError(fieldId, message) {
+                        var field = $('#' + fieldId);
+                        field.addClass('is-invalid');
+                        field.after('<div class="invalid-feedback">' + message + '</div>');
                         }
-                    });
-                });
-            });
+            </script>
+            <script>
+                        function validateForm() {
+                        // Clear previous errors
+                        $('.is-invalid').removeClass('is-invalid');
+                        $('.invalid-feedback').remove();
+                        var isValid = true;
+                        // Validate title
+                        if ($('#modalTitle').val().trim() === '') {
+                        showError('modalTitle', 'Title is required');
+                        isValid = false;
+                        } else if ($('#modalTitle').val().length > 100) {
+                        showError('modalTitle', 'Title must be less than 100 characters');
+                        isValid = false;
+                        }
 
-            // Show more/less for details
-            $(document).on('click', '.content-wrapper', function() {
-                $(this).toggleClass('expanded');
-            });
-        </script>
+                        // Validate details
+                        if ($('#modalDetails').val().trim() === '') {
+                        showError('modalDetails', 'Details are required');
+                        isValid = false;
+                        } else if ($('#modalDetails').val().length > 1000) {
+                        showError('modalDetails', 'Details must be less than 1000 characters');
+                        isValid = false;
+                        }
 
-        <script>
-            function showError(fieldId, message) {
-                var field = $('#' + fieldId);
-                field.addClass('is-invalid');
-                field.after('<div class="invalid-feedback">' + message + '</div>');
-            }
-        </script>
-        <script>
-            function validateForm() {
-                // Clear previous errors
-                $('.is-invalid').removeClass('is-invalid');
-                $('.invalid-feedback').remove();
-            
-                var isValid = true;
-            
-                // Validate title
-                if ($('#modalTitle').val().trim() === '') {
-                    showError('modalTitle', 'Title is required');
-                    isValid = false;
-                } else if ($('#modalTitle').val().length > 100) {
-                    showError('modalTitle', 'Title must be less than 100 characters');
-                    isValid = false;
-                }
-            
-                // Validate details
-                if ($('#modalDetails').val().trim() === '') {
-                    showError('modalDetails', 'Details are required');
-                    isValid = false;
-                } else if ($('#modalDetails').val().length > 1000) {
-                    showError('modalDetails', 'Details must be less than 1000 characters');
-                    isValid = false;
-                }
-            
-                // Validate complexity
-                var complexity = $('#modalComplexity').val().trim();
-                var validComplexities = ['Low', 'Medium', 'High'];
-                if (!complexity) {
-                    showError('modalComplexity', 'Complexity is required');
-                    isValid = false;
-                } else if (!validComplexities.includes(complexity)) {
-                    showError('modalComplexity', 'Complexity must be Low, Medium, or High');
-                    isValid = false;
-                }
-            
-                // Validate project selection
-                if ($('#modalProject').val() === '') {
-                    showError('modalProject', 'Project selection is required');
-                    isValid = false;
-                }
-            
-                // Validate estimated effort
-                var effort = parseInt($('#modalEstimatedEffort').val());
-                if (isNaN(effort) || effort < 1 || effort > 20) {
-                    showError('modalEstimatedEffort', 'Effort must be between 1 and 20 hours');
-                    isValid = false;
-                }
-            
-                return isValid;
-            }
-            
-            // Update add requirement handler with complexity text
-            $('.add-requirement').on('click', function () {
-                // Reset form
-                $('#requirementForm')[0].reset();
-                $('#modalRequirementId').val('');
-            
-                // Change title and submit button text
-                $('.modal-title').text('Add New Requirement');
-                $('#button-modal-submit').text('Add Requirement');
-                $('#formAction').val('add');
-            
-                // Set default values
-                $('#modalStatus').val('0'); // Pending
-                $('#modalComplexity').val('Low'); // Default complexity
-                $('#modalEstimatedEffort').val('1'); // Minimum effort
-            
-                // Show the modal
-                var myModal = new bootstrap.Modal(document.getElementById('requirementDetailModal'));
-                myModal.show();
-            });
-            
+                        // Validate complexity
+                        var complexity = $('#modalComplexity').val().trim();
+                        var validComplexities = ['Low', 'Medium', 'High'];
+                        if (!complexity) {
+                        showError('modalComplexity', 'Complexity is required');
+                        isValid = false;
+                        } else if (!validComplexities.includes(complexity)) {
+                        showError('modalComplexity', 'Complexity must be Low, Medium, or High');
+                        isValid = false;
+                        }
 
-        </script>
+                        // Validate project selection
+                        if ($('#modalProject').val() === '') {
+                        showError('modalProject', 'Project selection is required');
+                        isValid = false;
+                        }
 
-        <script>
-            // Modify the loadMilestones function to return a Promise
-function loadMilestones(projectId) {
-    return new Promise((resolve, reject) => {
-        if (!projectId) {
-            $('#modalMilestone').html('<option value="">Select Milestone</option>');
-            resolve();
-            return;
-        }
+                        // Validate estimated effort
+                        var effort = parseInt($('#modalEstimatedEffort').val());
+                        if (isNaN(effort) || effort < 1 || effort > 20) {
+                        showError('modalEstimatedEffort', 'Effort must be between 1 and 20 hours');
+                        isValid = false;
+                        }
 
-        $.ajax({
-            url: 'requirement',
-            type: 'POST',
-            data: {
-                action: 'getMilestones',
-                projectId: projectId
-            },
-            success: function(response) {
-                var milestoneSelect = $('#modalMilestone');
-                milestoneSelect.empty();
-                milestoneSelect.append('<option value="">Select Milestone</option>');
-                
-                // Add new milestone options
-                if (Array.isArray(response)) {
-                    response.forEach(function(milestone) {
-                        milestoneSelect.append(
-                            '<option value="' + milestone.id + '">' + milestone.name + '</option>'
-                        );
-                    });
-                } else {
-                    // If response is a string (JSON string), parse it first
-                    try {
-                        var milestones = JSON.parse(response);
-                        milestones.forEach(function(milestone) {
-                            milestoneSelect.append(
-                                '<option value="' + milestone.id + '">' + milestone.name + '</option>'
-                            );
+                        return isValid;
+                        }
+
+                        // Update add requirement handler with complexity text
+                        $('.add-requirement').on('click', function () {
+                        // Reset form
+                        $('#requirementForm')[0].reset();
+                        $('#modalRequirementId').val('');
+                        // Change title and submit button text
+                        $('.modal-title').text('Add New Requirement');
+                        $('#button-modal-submit').text('Add Requirement');
+                        $('#formAction').val('add');
+                        // Set default values
+                        $('#modalStatus').val('0'); // Pending
+                        $('#modalComplexity').val('Low'); // Default complexity
+                        $('#modalEstimatedEffort').val('1'); // Minimum effort
+
+                        // Show the modal
+                        var myModal = new bootstrap.Modal(document.getElementById('requirementDetailModal'));
+                        myModal.show();
                         });
-                    } catch (e) {
-                        console.error('Error parsing milestone data:', e);
-                    }
-                }
-                resolve();
-            },
-            error: function(xhr, status, error) {
-                console.error('Error loading milestones:', error);
-                reject(error);
-            }
-        });
-    });
-}
+            </script>
 
-// Function to load requirement milestone
-function loadRequirementMilestone(requirementId) {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: 'requirement',
-            type: 'POST',
-            data: {
-                action: 'getMilestoneId',
-                requirementId: requirementId
-            },
-            success: function(milestoneId) {
-                if (milestoneId) {
-                    $('#modalMilestone').val(milestoneId);
-                }
-                resolve();
-            },
-            error: function(xhr, status, error) {
-                console.error('Error loading milestone for requirement:', error);
-                reject(error);
-            }
-        });
-    });
-}
+            <script>
+                        // Modify the loadMilestones function to return a Promise
+                        function loadMilestones(projectId) {
+                        return new Promise((resolve, reject) => {
+                        if (!projectId) {
+                        $('#modalMilestone').html('<option value="">Select Milestone</option>');
+                        resolve();
+                        return;
+                        }
 
-// Update the view-details click handler
-$(document).on('click', '.view-details', function() {
-    var row = $(this).closest('tr');
-    var id = row.find('td:eq(0)').text();
-    var title = row.find('td:eq(1)').text();
-    var projectName = row.find('td:eq(2)').text();
-    var details = row.find('td:eq(3) p').text().trim();
-    var complexity = row.find('td:eq(4)').text().trim();
-    var status = row.find('td:eq(5) .badge').text().trim();
-    var estimatedEffort = row.find('td:eq(6)').text();
+                        $.ajax({
+                        url: 'requirement',
+                                type: 'POST',
+                                data: {
+                                action: 'getMilestones',
+                                        projectId: projectId
+                                },
+                                success: function(response) {
+                                var milestoneSelect = $('#modalMilestone');
+                                milestoneSelect.empty();
+                                milestoneSelect.append('<option value="">Select Milestone</option>');
+                                // Add new milestone options
+                                if (Array.isArray(response)) {
+                                response.forEach(function(milestone) {
+                                milestoneSelect.append(
+                                        '<option value="' + milestone.id + '">' + milestone.name + '</option>'
+                                        );
+                                });
+                                } else {
+                                // If response is a string (JSON string), parse it first
+                                try {
+                                var milestones = JSON.parse(response);
+                                milestones.forEach(function(milestone) {
+                                milestoneSelect.append(
+                                        '<option value="' + milestone.id + '">' + milestone.name + '</option>'
+                                        );
+                                });
+                                } catch (e) {
+                                console.error('Error parsing milestone data:', e);
+                                }
+                                }
+                                resolve();
+                                },
+                                error: function(xhr, status, error) {
+                                console.error('Error loading milestones:', error);
+                                reject(error);
+                                }
+                        });
+                        });
+                        }
 
-    // Change title and submit button text
-    $('.modal-title').text('Edit Requirement');
-    $('#button-modal-submit').text('Save Changes');
-    $('#formAction').val('update');
+                        // Function to load requirement milestone
+                        function loadRequirementMilestone(requirementId) {
+                        return new Promise((resolve, reject) => {
+                        $.ajax({
+                        url: 'requirement',
+                                type: 'POST',
+                                data: {
+                                action: 'getMilestoneId',
+                                        requirementId: requirementId
+                                },
+                                success: function(milestoneId) {
+                                if (milestoneId) {
+                                $('#modalMilestone').val(milestoneId);
+                                }
+                                resolve();
+                                },
+                                error: function(xhr, status, error) {
+                                console.error('Error loading milestone for requirement:', error);
+                                reject(error);
+                                }
+                        });
+                        });
+                        }
 
-    // Populate modal fields
-    $('#modalRequirementId').val(id);
-    $('#modalTitle').val(title);
-    $('#modalDetails').val(details);
-    $('#modalComplexity').val(complexity);
-    $('#modalEstimatedEffort').val(estimatedEffort);
+                        // Update the view-details click handler
+                        $(document).on('click', '.view-details', function() {
+                        var row = $(this).closest('tr');
+                        var id = row.find('td:eq(0)').text();
+                        var title = row.find('td:eq(1)').text();
+                        var projectName = row.find('td:eq(2)').text();
+                        var details = row.find('td:eq(3) p').text().trim();
+                        var complexity = row.find('td:eq(4)').text().trim();
+                        var status = row.find('td:eq(5) .badge').text().trim();
+                        var estimatedEffort = row.find('td:eq(6)').text();
+                        // Change title and submit button text
+                        $('.modal-title').text('Edit Requirement');
+                        $('#button-modal-submit').text('Save Changes');
+                        $('#formAction').val('update');
+                        // Populate modal fields
+                        $('#modalRequirementId').val(id);
+                        $('#modalTitle').val(title);
+                        $('#modalDetails').val(details);
+                        $('#modalComplexity').val(complexity);
+                        $('#modalEstimatedEffort').val(estimatedEffort);
+                        // Set status value
+                        var statusMap = {
+                        'Pending': 0,
+                                'Committed': 1,
+                                'Analyze': 2,
+                                'Design': 3,
+                                'Accepted': 4,
+                                'Coded': 5,
+                                'Tested': 6
+                        };
+                        $('#modalStatus').val(statusMap[status.trim()]);
+                        // Find and select the matching project in the dropdown
+                        $('#modalProject option').each(function() {
+                        if ($(this).text() === projectName) {
+                        $(this).prop('selected', true);
+                        var projectId = $(this).val();
+                        // Chain the promises
+                        loadMilestones(projectId)
+                                .then(() => loadRequirementMilestone(id))
+                                .catch(error => {
+                                console.error('Error in loading data:', error);
+                                });
+                        }
+                        });
+                        // Show the modal
+                        var myModal = new bootstrap.Modal(document.getElementById('requirementDetailModal'));
+                        myModal.show();
+                        });
+                        // Update the onchange handler for project selection
+                        $('#modalProject').on('change', function() {
+                        var projectId = $(this).val();
+                        loadMilestones(projectId)
+                                .catch(error => {
+                                console.error('Error loading milestones:', error);
+                                });
+                        });
+            </script>
 
-    // Set status value
-    var statusMap = {
-        'Pending': 0,
-        'Committed': 1,
-        'Analyze': 2,
-        'Design': 3,
-        'Accepted': 4,
-        'Coded': 5,
-        'Tested': 6
-    };
-    $('#modalStatus').val(statusMap[status.trim()]);
 
-    // Find and select the matching project in the dropdown
-    $('#modalProject option').each(function() {
-        if ($(this).text() === projectName) {
-            $(this).prop('selected', true);
-            var projectId = $(this).val();
-            
-            // Chain the promises
-            loadMilestones(projectId)
-                .then(() => loadRequirementMilestone(id))
-                .catch(error => {
-                    console.error('Error in loading data:', error);
-                });
-        }
-    });
-
-    // Show the modal
-    var myModal = new bootstrap.Modal(document.getElementById('requirementDetailModal'));
-    myModal.show();
-});
-
-// Update the onchange handler for project selection
-$('#modalProject').on('change', function() {
-    var projectId = $(this).val();
-    loadMilestones(projectId)
-        .catch(error => {
-            console.error('Error loading milestones:', error);
-        });
-});
-        </script>
-
-        
-    </body>
-</html>
+        </body>
+    </html>

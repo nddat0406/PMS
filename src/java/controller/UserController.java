@@ -192,11 +192,11 @@ public class UserController extends HttpServlet {
             int id = loginedUser.getId();
             int role = loginedUser.getRole();
             List<Allocation> list = pService.getByUser(id, role);
-            request.setAttribute("listSize", list.size());
-            request.setAttribute("assignedReq", uService.countAssignedReq(id));
-            request.setAttribute("assignedIssue", uService.countAssignedIssue(id));
-            request.setAttribute("avgEffort", uService.getAvgEffort(list));
-            request.setAttribute("searchSize", list.size());
+            request.getSession().setAttribute("listSize", list.size());
+            request.getSession().setAttribute("assignedReq", uService.countAssignedReq(id));
+            request.getSession().setAttribute("assignedIssue", uService.countAssignedIssue(id));
+            request.getSession().setAttribute("avgEffort", uService.getAvgEffort(list));
+            request.getSession().setAttribute("searchSize", list.size());
             session.setAttribute("allocationList", list);
             session.setAttribute("myProjectList", pService.getProjectsInAllocation(list));
             session.setAttribute("deptList", gService.getAllDepartment());
