@@ -40,53 +40,52 @@ public class IssueDAO extends BaseDAO {
     public List<Issue> getAllByProjectId(int projectId) throws SQLException {
         String sql = "SELECT * FROM pms.issue WHERE projectId=?";
         List<Issue> list = new ArrayList<>();
-        try (PreparedStatement pre = getConnection().prepareStatement(sql)) {
-            pre.setInt(1, projectId);
-            ResultSet rs = pre.executeQuery();
-            while (rs.next()) {
-                list.add(mapIssue(rs));
-            }
-            return list;
+        PreparedStatement pre = getConnection().prepareStatement(sql);
+        pre.setInt(1, projectId);
+        ResultSet rs = pre.executeQuery();
+        while (rs.next()) {
+            list.add(mapIssue(rs));
         }
+        return list;
     }
 
     public void updateIssue(Issue issue) throws SQLException {
         String sql = "UPDATE pms.issue SET title=?, description=?, type=?, "
                 + "assignee_id=?, status=?, due_date=?, end_date=? WHERE id=?";
-        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
-            ps.setString(1, issue.getTitle());
-            ps.setString(2, issue.getDescription());
-            ps.setString(3, issue.getType());
-            ps.setInt(4, issue.getAssignee_id());
-            ps.setInt(5, issue.getStatus());
-            ps.setDate(6, issue.getDue_date());
-            ps.setDate(7, issue.getEnd_date());
-            ps.setInt(8, issue.getId());
-            ps.executeUpdate();
-        }
+        PreparedStatement ps = getConnection().prepareStatement(sql);
+        ps.setString(1, issue.getTitle());
+        ps.setString(2, issue.getDescription());
+        ps.setString(3, issue.getType());
+        ps.setInt(4, issue.getAssignee_id());
+        ps.setInt(5, issue.getStatus());
+        ps.setDate(6, issue.getDue_date());
+        ps.setDate(7, issue.getEnd_date());
+        ps.setInt(8, issue.getId());
+        ps.executeUpdate();
+
     }
 
     public void insertIssue(Issue issue) throws SQLException {
         String sql = "INSERT INTO pms.issue (requirementId, projectId, title, description, type, "
                 + "assignee_id, status, due_date, end_date) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, issue.getRequirementId());
-            ps.setInt(2, issue.getProjectId());
-            ps.setString(3, issue.getTitle());
-            ps.setString(4, issue.getDescription());
-            ps.setString(5, issue.getType());
-            ps.setInt(6, issue.getAssignee_id());
-            ps.setInt(7, issue.getStatus());
-            ps.setDate(8, issue.getDue_date());
-            ps.setDate(9, issue.getEnd_date());
-            ps.executeUpdate();
+        PreparedStatement ps = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setInt(1, issue.getRequirementId());
+        ps.setInt(2, issue.getProjectId());
+        ps.setString(3, issue.getTitle());
+        ps.setString(4, issue.getDescription());
+        ps.setString(5, issue.getType());
+        ps.setInt(6, issue.getAssignee_id());
+        ps.setInt(7, issue.getStatus());
+        ps.setDate(8, issue.getDue_date());
+        ps.setDate(9, issue.getEnd_date());
+        ps.executeUpdate();
 
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    issue.setId(generatedKeys.getInt(1));
-                }
+        try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                issue.setId(generatedKeys.getInt(1));
             }
+
         }
     }
 
@@ -112,16 +111,16 @@ public class IssueDAO extends BaseDAO {
             params.add(status);
         }
 
-        try (PreparedStatement ps = getConnection().prepareStatement(sql.toString())) {
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
-            }
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                result.add(mapIssue(rs));
-            }
+        PreparedStatement ps = getConnection().prepareStatement(sql.toString());
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
         }
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            result.add(mapIssue(rs));
+        }
+
         return result;
     }
 
@@ -138,34 +137,33 @@ public class IssueDAO extends BaseDAO {
     }
 
     // Additional helpful methods
-    
     public List<Issue> getIssuesByAssignee(int assigneeId) throws SQLException {
         String sql = "SELECT * FROM pms.issue WHERE assignee_id=?";
         List<Issue> list = new ArrayList<>();
-        try (PreparedStatement pre = getConnection().prepareStatement(sql)) {
-            pre.setInt(1, assigneeId);
-            ResultSet rs = pre.executeQuery();
-            while (rs.next()) {
-                list.add(mapIssue(rs));
-            }
-            return list;
+        PreparedStatement pre = getConnection().prepareStatement(sql);
+        pre.setInt(1, assigneeId);
+        ResultSet rs = pre.executeQuery();
+        while (rs.next()) {
+            list.add(mapIssue(rs));
         }
+        return list;
+
     }
 
     public List<Issue> getIssuesByType(String type) throws SQLException {
         String sql = "SELECT * FROM pms.issue WHERE type=?";
         List<Issue> list = new ArrayList<>();
-        try (PreparedStatement pre = getConnection().prepareStatement(sql)) {
-            pre.setString(1, type);
-            ResultSet rs = pre.executeQuery();
-            while (rs.next()) {
-                list.add(mapIssue(rs));
-            }
-            return list;
+        PreparedStatement pre = getConnection().prepareStatement(sql);
+        pre.setString(1, type);
+        ResultSet rs = pre.executeQuery();
+        while (rs.next()) {
+            list.add(mapIssue(rs));
         }
+        return list;
+
     }
 
-    public List<Issue> searchAdvanced(String searchKey, Integer projectId, String type, 
+    public List<Issue> searchAdvanced(String searchKey, Integer projectId, String type,
             Integer assigneeId, Integer status, Date startDate, Date endDate) throws SQLException {
         List<Issue> result = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM pms.issue WHERE 1=1");
@@ -207,17 +205,16 @@ public class IssueDAO extends BaseDAO {
             sql.append(" AND due_date <= ?");
             params.add(endDate);
         }
-
-        try (PreparedStatement ps = getConnection().prepareStatement(sql.toString())) {
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
-            }
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                result.add(mapIssue(rs));
-            }
+        PreparedStatement ps = getConnection().prepareStatement(sql.toString());
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
         }
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            result.add(mapIssue(rs));
+        }
+
         return result;
     }
 
@@ -235,10 +232,10 @@ public class IssueDAO extends BaseDAO {
     }
 
     public List<Issue> searchAdvancedForUser(
-            String searchKey, 
-            Integer projectId, 
+            String searchKey,
+            Integer projectId,
             String type,
-            Integer status, 
+            Integer status,
             int userId) throws SQLException {
         List<Issue> result = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM pms.issue WHERE assignee_id = ?");
@@ -267,23 +264,25 @@ public class IssueDAO extends BaseDAO {
             params.add(status);
         }
 
-        try (PreparedStatement ps = getConnection().prepareStatement(sql.toString())) {
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
-            }
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                result.add(mapIssue(rs));
-            }
+        PreparedStatement ps = getConnection().prepareStatement(sql.toString());
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
         }
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            result.add(mapIssue(rs));
+        }
+
         return result;
     }
-    
+
     public static void main(String[] args) {
         IssueDAO issueDAO = new IssueDAO();
         try {
-            issueDAO.getAll().stream().forEach(item -> {System.out.println(item);});
+            issueDAO.getAll().stream().forEach(item -> {
+                System.out.println(item);
+            });
         } catch (SQLException ex) {
             Logger.getLogger(IssueDAO.class.getName()).log(Level.SEVERE, null, ex);
         }

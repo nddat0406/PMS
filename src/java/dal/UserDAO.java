@@ -683,10 +683,6 @@ public class UserDAO extends BaseDAO {
         return false;
     }
 
-    public static void main(String[] args) throws SQLException {
-        System.out.println(new UserDAO().isOTP_Expired(3));
-    }
-
     public int countAssignedReq(int id) throws SQLException {
         String sql = "SELECT count(*) FROM pms.requirement where userId=?";
         PreparedStatement pstmt = getConnection().prepareStatement(sql);
@@ -708,4 +704,6 @@ public class UserDAO extends BaseDAO {
         }
         return 0;
     }
+
+ 
 }

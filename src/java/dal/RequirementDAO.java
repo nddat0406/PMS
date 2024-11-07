@@ -8,27 +8,27 @@ import java.util.List;
 import model.Requirement;
 
 public class RequirementDAO extends BaseDAO {
-    
+
     private Requirement mapRequirement(ResultSet rs) throws SQLException {
         return Requirement.builder()
-            .id(rs.getInt("id"))
-            .projectId(rs.getInt("projectId"))
-            .userId(rs.getInt("userId"))
-            .title(rs.getString("title"))
-            .details(rs.getString("details"))
-            .complexity(rs.getString("complexity"))
-            .status(rs.getInt("status"))
-            .estimatedEffort(rs.getInt("estimateEffort"))
-            .build();
+                .id(rs.getInt("id"))
+                .projectId(rs.getInt("projectId"))
+                .userId(rs.getInt("userId"))
+                .title(rs.getString("title"))
+                .details(rs.getString("details"))
+                .complexity(rs.getString("complexity"))
+                .status(rs.getInt("status"))
+                .estimatedEffort(rs.getInt("estimateEffort"))
+                .build();
     }
-    
+
     public Requirement getRequirementById(int id) throws SQLException {
         String sql = "SELECT * FROM pms.requirement WHERE id=?";
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
             pre.setInt(1, id);
             ResultSet rs = pre.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 return mapRequirement(rs);
             }
             return null;
@@ -55,7 +55,8 @@ public class RequirementDAO extends BaseDAO {
 
     public void updateRequirement(Requirement requirement) throws SQLException {
         String sql = "UPDATE pms.requirement SET title=?, details=?, complexity=?, status=?, estimateEffort=?, userId=? WHERE id=?";
-        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, requirement.getTitle());
             ps.setString(2, requirement.getDetails());
             ps.setString(3, requirement.getComplexity());
@@ -71,7 +72,8 @@ public class RequirementDAO extends BaseDAO {
 
     public void insertRequirement(Requirement requirement) throws SQLException {
         String sql = "INSERT INTO pms.requirement (projectId, userId, title, details, complexity, status, estimateEffort) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setInt(1, requirement.getProjectId());
             ps.setInt(2, requirement.getUserId());
             ps.setString(3, requirement.getTitle());
@@ -80,7 +82,7 @@ public class RequirementDAO extends BaseDAO {
             ps.setInt(6, requirement.getStatus());
             ps.setInt(7, requirement.getEstimatedEffort());
             ps.executeUpdate();
-            
+
             // Get and set the generated ID
             try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -105,12 +107,12 @@ public class RequirementDAO extends BaseDAO {
             params.add(searchPattern);
             params.add(searchPattern);
         }
-        
+
         if (complexity != null && !complexity.equals("0")) {
             sql.append(" AND complexity = ?");
             params.add(complexity);
         }
-        
+
         if (status != null && status != 0) {
             sql.append(" AND status = ?");
             params.add(status);
@@ -120,7 +122,7 @@ public class RequirementDAO extends BaseDAO {
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
             }
-            
+
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 result.add(mapRequirement(rs));
@@ -128,22 +130,24 @@ public class RequirementDAO extends BaseDAO {
         }
         return result;
     }
-    
+
     public List<Requirement> getAll() throws SQLException {
         String sql = "SELECT * FROM pms.requirement";
         List<Requirement> list = new ArrayList<>();
-        try (PreparedStatement ps = getConnection().prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(mapRequirement(rs));
-            }
+
+        PreparedStatement ps = getConnection().prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            list.add(mapRequirement(rs));
         }
+
         return list;
     }
 
     public void insertRequirementMilestone(int requirementId, int milestoneId) throws SQLException {
         String sql = "INSERT INTO requirement_milestone (requirementId, milestoneId) VALUES (?, ?)";
-        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, requirementId);
             ps.setInt(2, milestoneId);
             ps.executeUpdate();
@@ -166,28 +170,16 @@ public class RequirementDAO extends BaseDAO {
         }
     }
 
+
     public Integer getMilestoneIdForRequirement(int requirementId) throws SQLException {
         String sql = "SELECT milestoneId FROM requirement_milestone WHERE requirementId = ?";
-        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
-            ps.setInt(1, requirementId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("milestoneId");
-            }
-            return null;
-        }
-    }
 
-
-    public static void main(String[] args) {
-        try {
-            RequirementDAO dao = new RequirementDAO();
-            List<Requirement> list = dao.getAll();
-            for (Requirement r : list) {
-                System.out.println(r);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        PreparedStatement ps = getConnection().prepareStatement(sql);
+        ps.setInt(1, requirementId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("milestoneId");
         }
+        return null;
     }
 }

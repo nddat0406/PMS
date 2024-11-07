@@ -12,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -106,6 +107,7 @@ public class DomainConfigController extends HttpServlet {
         GroupService groupService = new GroupService();
         SettingService settingService = new SettingService();
         List<Group> groups = groupService.getAllDomains();
+        HttpSession session = request.getSession();
         switch (action) {
             case "add":
                 request.setAttribute("groups", groups);
@@ -134,12 +136,14 @@ public class DomainConfigController extends HttpServlet {
                 String searchName = request.getParameter("search");
                 String filterStatus = request.getParameter("status");
                 String type = request.getParameter("type");
+                String domainId = request.getParameter("domainId");
                 SettingService se = new SettingService();
                 searchName = searchName != null ? searchName.trim() : null;
                 type = type != null ? type.trim() : null;
                 filterStatus = filterStatus != null ? filterStatus.trim() : null;
                 List<Setting> domainSettings;
                 domainSettings = se.getFilteredDomainSettings(type, filterStatus, searchName);
+                session.setAttribute("domainId", domainId);
                 request.setAttribute("searchName", searchName);
                 request.setAttribute("filterStatus", filterStatus);
                 request.setAttribute("type", type);
@@ -153,6 +157,7 @@ public class DomainConfigController extends HttpServlet {
     }
 
     private void domainUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+        HttpSession session = request.getSession();
         String action = request.getParameter("action");
         action = action != null ? action : "";
         UserService userService = new UserService();
@@ -184,8 +189,9 @@ public class DomainConfigController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/domain/domainuser");
             }
             default -> {
+                String domainId = (String) session.getAttribute("domainId");
                 GroupService service = new GroupService();
-                List<Group> domainUsers = service.getDomainUser();
+                List<Group> domainUsers = service.getDomainUserByDomainId(domainId);
                 request.setAttribute("domainUsers", domainUsers);
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domainuser.jsp").forward(request, response);
             }

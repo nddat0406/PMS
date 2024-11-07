@@ -82,35 +82,10 @@
                                                 </form>
 
 
-                                                <!-- Modal Thêm Timesheet -->
-
-
-
-                                                <!-- Script to open modal if there's an error message -->
-                                                <script>
-                                                    $(document).ready(function () {
-                                                <c:if test="${not empty sessionScope.errorMessagee}">
-                                                        $('#AddTimesheetModal').modal('show');
-                                                </c:if>
-                                                    });
-                                            </script>
-
-                                            <!-- Xóa các giá trị session sau khi sử dụng -->
-                                            <c:remove var="errorMessagee" scope="session" />
-                                            <c:remove var="reporterId" scope="session" />
-                                            <c:remove var="reviewerId" scope="session" />
-                                            <c:remove var="projectId" scope="session" />
-                                            <c:remove var="requirementId" scope="session" />
-                                            <c:remove var="timeCreate" scope="session" />
-                                            <c:remove var="timeComplete" scope="session" />
-                                            <c:remove var="status" scope="session" />
-
-
-
-                                            <!-- Form tìm kiếm -->
-                                            <div style="display: flex; justify-content: end">
-                                                <form id="navbar-search" class="navbar-form search-form position-relative d-none d-md-block" method="get" style="width: 500px;margin: 10px"
-                                                      action="${pageContext.request.contextPath}/timesheet">
+                                                <!-- Form tìm kiếm -->
+                                                <div style="display: flex; justify-content: end">
+                                                    <form id="navbar-search" class="navbar-form search-form position-relative d-none d-md-block" method="get" style="width: 500px;margin: 10px"
+                                                          action="${pageContext.request.contextPath}/timesheet">
                                                     <input type="hidden" name="action" value="list">
                                                     <input name="searchKeyword" value="${param.searchKeyword}" class="form-control"
                                                            placeholder="Search here..." type="text">
@@ -177,7 +152,7 @@
                                                                     </button>
                                                                 </form>
                                                                 <!-- Nút Submit chỉ hiển thị khi status là DRAFT hoặc REJECTED và role là MEMBER_ROLE -->                                              
-                                                                <c:if test="${(timesheet.status == 0 || timesheet.status == 3) && role == 2}">
+                                                                <c:if test="${(timesheet.status == 0 || timesheet.status == 3) && (role == 2 || role == 3)}">
                                                                     <form action="${pageContext.request.contextPath}/timesheet" method="POST" style="display:inline;">
                                                                         <input type="hidden" name="action" value="changestatus">
                                                                         <input type="hidden" name="timesheetId" value="${timesheet.id}">
@@ -188,7 +163,7 @@
                                                                     </form>
                                                                 </c:if>
                                                                 <!-- Nút Cancel Submission chỉ hiển thị khi status là SUBMITTED và role là MEMBER_ROLE -->
-                                                                <c:if test="${timesheet.status == 1 && role == 2}">
+                                                                <c:if test="${timesheet.status == 1 && (role == 2 || role == 3)}">
                                                                     <form action="${pageContext.request.contextPath}/timesheet" method="POST" style="display:inline;">
                                                                         <input type="hidden" name="action" value="changestatus">
                                                                         <input type="hidden" name="timesheetId" value="${timesheet.id}">
@@ -278,7 +253,7 @@
                                     <!-- Reporter Selector -->
                                     <div class="col-md-6">
                                         <label for="reporter" class="form-label">Reporter</label>
-                                        <c:if test="${role == 2}">
+                                        <c:if test="${role == 2|| role == 3}">
                                             <input type="text" id="reporterName" name="reporterName" class="form-control" value="${sessionScope.loginedUser.fullname}" readonly>
                                             <input type="hidden" name="reporter" value="${sessionScope.loginedUser.id}">
                                         </c:if>
@@ -299,7 +274,7 @@
                                             <input type="text" id="reviewerName" name="reviewerName" class="form-control" value="${sessionScope.loginedUser.fullname}" readonly>
                                             <input type="hidden" name="reviewer" value="${sessionScope.loginedUser.id}">
                                         </c:if>
-                                        <c:if test="${role == 1 || role == 2}">
+                                        <c:if test="${role == 1 || role == 2|| role == 3}">
                                             <select id="reviewer" name="reviewer" class="form-select">
                                                 <option value="">Select Reviewer</option>
                                                 <c:forEach var="reviewer" items="${reviewers}">
@@ -357,7 +332,7 @@
                                                 <option value="3" <c:if test="${sessionScope.status == '3'}">selected</c:if>>Rejected</option>
                                                 </select>
                                         </c:if>
-                                        <c:if test="${role == 2}">
+                                        <c:if test="${role == 2|| role == 3}">
                                             <input type="text" id="status" name="statusDisplay" class="form-control" value="Draft" readonly>
                                             <input type="hidden" name="status" value="0">
                                         </c:if>
@@ -374,7 +349,23 @@
                         </div>
                     </div>
                 </div>
+                <script>
+                    $(document).ready(function () {
+                    <c:if test="${not empty sessionScope.errorMessagee}">
+                        $('#AddTimesheetModal').modal('show');
+                    </c:if>
+                    });
+                </script>
             </div>
+            <!-- Xóa các giá trị session sau khi sử dụng -->
+            <c:remove var="errorMessagee" scope="session" />
+            <c:remove var="reporterId" scope="session" />
+            <c:remove var="reviewerId" scope="session" />
+            <c:remove var="projectId" scope="session" />
+            <c:remove var="requirementId" scope="session" />
+            <c:remove var="timeCreate" scope="session" />
+            <c:remove var="timeComplete" scope="session" />
+            <c:remove var="status" scope="session" />
         </div>
         <script>
             $(document).ready(function () {

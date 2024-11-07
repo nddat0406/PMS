@@ -36,39 +36,43 @@
                     <!-- Content -->
                     <div class="content">
                         <div class="form-container">
-                        <c:if test="${not empty errorMessage}">
+                        <c:if test="${not empty sessionScope.errorMessage}">
                             <div class="alert alert-danger">
-                                ${errorMessage}
+                                ${sessionScope.errorMessage}
                             </div>
+                            <c:remove var="errorMessage" scope="session"/>
                         </c:if>
                         <form action="domain?action=add" method="post">
                             <div class="form-group">
                                 <label for="code">Code:</label>
-                                <input type="text" id="code" name="code" class="form-control" >
+                                <input type="text" id="code" name="code" class="form-control" value="${sessionScope.code != null ? sessionScope.code : ''}">
+                                <c:remove var="code" scope="session"/>
                             </div>
                             <div class="form-group">
                                 <label for="name">Name:</label>
-                                <input type="text" id="name" name="name" class="form-control" >
+                                <input type="text" id="name" name="name" class="form-control" value="${sessionScope.name != null ? sessionScope.name : ''}">
+                                <c:remove var="name" scope="session"/>
                             </div>
                             <div class="form-group">
                                 <label for="details">Detail:</label>
-                                <textarea id="details" name="details" class="form-control" ></textarea>
+                                <textarea id="details" name="details" class="form-control">${sessionScope.details != null ? sessionScope.details : ''}</textarea>
+                                <c:remove var="details" scope="session"/>
                             </div>
                             <div class="form-group">
                                 <label for="status">Status:</label><br>
-                                <!-- Checkbox 'Active' sẽ được chọn mặc định -->
-                                <input type="checkbox" id="active" name="status" value="1" checked>
+                                <!-- Checkbox 'Activate' sẽ được chọn mặc định nếu sessionScope.status chưa được đặt -->
+                                <input type="checkbox" id="active" name="status" value="1" ${sessionScope.status == null || sessionScope.status == 1 ? 'checked' : ''}>
                                 <label for="active">Activate</label><br>
-                                <input type="checkbox" id="inactive" name="status" value="0">
+                                <input type="checkbox" id="inactive" name="status" value="0" ${sessionScope.status != null && sessionScope.status == 0 ? 'checked' : ''}>
                                 <label for="inactive">Deactivate</label>
+                                <c:remove var="status" scope="session"/>
                             </div>
-
 
 
                             <!-- Các nút hành động -->
                             <div class="form-actions text-center">
                                 <button type="submit" class="btn btn-success">Add Domain</button>
-                                <a href="${pageContext.request.contextPath}/admin/domain" class="btn btn-secondary ">Back</a>
+                                <a href="${pageContext.request.contextPath}/admin/domain" class="btn btn-secondary">Back</a>
                             </div>
                         </form>
                     </div>

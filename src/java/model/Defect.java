@@ -5,16 +5,23 @@
 package model;
 
 import java.sql.Date;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 /**
  *
  * @author HP
  */
+@Data 
+@NoArgsConstructor 
+@AllArgsConstructor 
+@Builder 
 public class Defect {
 
     private int id;
     private Requirement requirement;
-    private Milestone milestone;
+    private Project project;
     private Setting serverity;
     private String title;
     private boolean leakage;
@@ -23,7 +30,6 @@ public class Defect {
     private int status;
     private User assignee;
     private String attachFile;
-    
     
     public int getId() {
         return id;
@@ -41,13 +47,15 @@ public class Defect {
         this.requirement = requirement;
     }
 
-    public Milestone getMilestone() {
-        return milestone;
+    public Project getProject() {
+        return project;
     }
 
-    public void setMilestone(Milestone milestone) {
-        this.milestone = milestone;
+    public void setProject(Project project) {
+        this.project = project;
     }
+
+
 
     public String getTitle() {
         return title;
@@ -112,5 +120,4 @@ public class Defect {
     public void setAttachFile(String attachFile) {
         this.attachFile = attachFile;
     }
-    
 }

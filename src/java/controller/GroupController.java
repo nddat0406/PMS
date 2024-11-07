@@ -154,8 +154,19 @@ public class GroupController extends HttpServlet {
         String addDetails = request.getParameter("details");
         int addStatus = Integer.parseInt(request.getParameter("status"));
 
-        Domain.addGroup(addCode, addName, addDetails, addStatus);
-        paginateList(request, response);
+        try {
+            Domain.addGroup(addCode, addName, addDetails, addStatus);
+            paginateList(request, response);
+        } catch (IllegalArgumentException e) {
+            // Gửi thông báo lỗi lại giao diện người dùng
+            request.getSession().setAttribute("errorMessage", e.getMessage());
+            request.getSession().setAttribute("code", addCode);
+            request.getSession().setAttribute("name", addName);
+            request.getSession().setAttribute("details", addDetails);
+            request.getSession().setAttribute("status", addStatus);
+            // Chuyển tiếp lại trang thêm nhóm (thay đổi trang nếu cần)
+            request.getRequestDispatcher("/WEB-INF/view/admin/AddDomain.jsp").forward(request, response);
+        }
     }
 
     private int getPageNumber(HttpServletRequest request) {
