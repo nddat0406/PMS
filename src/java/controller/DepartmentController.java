@@ -153,19 +153,18 @@ public class DepartmentController extends HttpServlet {
         Integer addParent = getParentId(request, "parent_department");
 
         try {
-            // Kiểm tra trùng lặp code hoặc name
-            if (departmentService.isCodeOrNameDuplicate(addCode, addName)) {
-                request.setAttribute("errorMessage", "Code hoặc Name đã tồn tại!");
-                prepareAddRequest(request, addCode, addName, addDetails, addStatus, addParent);
-                request.getRequestDispatcher("/WEB-INF/view/admin/AddDepartment.jsp").forward(request, response);
-            } else {
-                // Gọi phương thức thêm phòng ban
-                departmentService.addDepartment(addCode, addName, addDetails, addParent, addStatus);
-                paginateList(request, response);
-            }
+            // Gọi phương thức thêm phòng ban
+            departmentService.addDepartment(addCode, addName, addDetails, addParent, addStatus);
+            paginateList(request, response);
+
         } catch (IllegalArgumentException e) {
-            request.setAttribute("errorMessage", e.getMessage());
-            prepareAddRequest(request, addCode, addName, addDetails, addStatus, addParent);
+            // Lưu thông tin vào session
+            request.getSession().setAttribute("errorMessage", e.getMessage());
+            request.getSession().setAttribute("code", addCode);
+            request.getSession().setAttribute("name", addName);
+            request.getSession().setAttribute("details", addDetails);
+            request.getSession().setAttribute("status", addStatus);
+            request.getSession().setAttribute("parent_department", addParent);
             request.getRequestDispatcher("/WEB-INF/view/admin/AddDepartment.jsp").forward(request, response);
         }
     }
@@ -173,14 +172,6 @@ public class DepartmentController extends HttpServlet {
     private Integer getParentId(HttpServletRequest request, String paramName) {
         String parentParam = request.getParameter(paramName);
         return (parentParam != null && !parentParam.isEmpty()) ? Integer.parseInt(parentParam) : null;
-    }
-
-    private void prepareAddRequest(HttpServletRequest request, String code, String name, String details, int status, Integer parent) {
-        request.setAttribute("code", code);
-        request.setAttribute("name", name);
-        request.setAttribute("details", details);
-        request.setAttribute("status", status);
-        request.setAttribute("parent_department", parent);
     }
 
     private void handleUpdateError(HttpServletRequest request, HttpServletResponse response, int updateId, String errorMessage) throws ServletException, IOException, SQLException {

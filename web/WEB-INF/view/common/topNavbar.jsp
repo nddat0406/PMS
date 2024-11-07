@@ -39,7 +39,7 @@
                 <ul class="nav navbar-nav flex-row justify-content-end align-items-center" >
                     <li><a href="${pageContext.request.contextPath}/dashboard" class="icon-menu">Dashboard</a></li>
                     <li><a href="${pageContext.request.contextPath}/user-requirements" class="icon-menu">Requirement</a></li>
-                    <li><a href="#" class="icon-menu">Timesheets</a></li>
+                    <li><a href="${pageContext.request.contextPath}/timesheet" class="icon-menu">Timesheets</a></li>
                     <c:if test="${loginedUser.role == '3' || loginedUser.role == '4'}">
                         <li><a href="${pageContext.request.contextPath}/issue" class="icon-menu">Issues</a></li>
                     </c:if>

@@ -117,10 +117,10 @@
                                                             </select>
                                                         </div>
                                                     </c:if>
-                                                    <c:if test="${role == 2}">
+                                                    <c:if test="${role == 2||role == 3}">
                                                         <input type="hidden" name="reporter" value="${sessionScope.loginedUser.id}">
                                                     </c:if>
-                                                    <c:if test="${role == 2|| role == 1}">
+                                                    <c:if test="${role == 2|| role == 1|| role == 3}">
                                                         <div class="col-md-6">
                                                             <label for="reviewer"><strong>Reviewer:</strong></label>
                                                             <select id="reviewer" name="reviewer" class="form-control">
@@ -177,7 +177,7 @@
                                                                 </select>
                                                             </div>
                                                     </c:if>
-                                                    <c:if test="${role == 2 || role == 4 || role == 5 || role == 6}">
+                                                    <c:if test="${role == 3 ||role == 2 || role == 4 || role == 5 || role == 6}">
                                                         <input type="hidden" name="status" value="${timesheet.status}">
                                                     </c:if>
                                                 </div>
