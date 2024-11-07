@@ -16,7 +16,7 @@ import service.RequirementService;
 import service.BaseService;
 import service.ProjectService;
 
-@WebServlet(name = "userRequirements", urlPatterns = {"/user-requirements"})
+@WebServlet(name = "UserRequirementsServlet", urlPatterns = {"/user-requirements"})
 public class UserRequirementsServlet extends HttpServlet {
 
     private final RequirementService requirementService = new RequirementService();

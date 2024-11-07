@@ -42,7 +42,7 @@
                     <li><a href="${pageContext.request.contextPath}/requirement" class="icon-menu">Requirement</a></li>
                 </c:if>
                 <c:if test="${loginedUser.role != '3' && loginedUser.role != '4'}">
-                    <li><a href="${pageContext.request.contextPath}/user-requirements" class="icon-menu">Requirement</a></li>
+                    <li><a href="${pageContext.request.contextPath}/requirement" class="icon-menu">Requirement</a></li>
                 </c:if>
                     <li><a href="#" class="icon-menu">Timesheets</a></li>
                     <c:if test="${loginedUser.role == '3' || loginedUser.role == '4'}">
