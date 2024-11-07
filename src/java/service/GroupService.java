@@ -128,9 +128,17 @@ public class GroupService {
     // Thêm phòng ban mới
     public boolean addDepartment(String code, String name, String details, Integer parent, int status) {
         validateGroup(code, name, details, status);
+                if (gdao.isCodeExists(code)) {
+            throw new IllegalArgumentException("Code already exists.");
+        }
+        if (gdao.isNameExists(name)) {
+            throw new IllegalArgumentException("Name already exists.");
+        }
         int rowsAffected = gdao.Add(code, name, details, parent, status);
         return rowsAffected > 0;
     }
+      
+    
 
 // Cập nhật thông tin phòng ban
     public boolean updateDepartment(int departmentID, String code, String name, String details, Integer parent, int status) {

@@ -117,14 +117,14 @@ public class TimesheetService {
 
     private void validateTimesheet(Timesheet timesheet) throws IllegalArgumentException {
         // Kiểm tra chung nếu bất kỳ trường nào không có giá trị
-        if (timesheet.getReporter() == null || timesheet.getReporter().getId() <= 0
-                || timesheet.getReviewer() == null || timesheet.getReviewer().getId() <= 0
-                || timesheet.getProject() == null || timesheet.getProject().getId() <= 0
-                || timesheet.getRequirement() == null || timesheet.getRequirement().getId() <= 0
-                || timesheet.getTimeCreated() == null) {
-
-            throw new IllegalArgumentException("Please fill out all required information.");
-        }
+//        if (timesheet.getReporter() == null || timesheet.getReporter().getId() <= 0
+//                || timesheet.getReviewer() == null || timesheet.getReviewer().getId() <= 0
+//                || timesheet.getProject() == null || timesheet.getProject().getId() <= 0
+//                || timesheet.getRequirement() == null || timesheet.getRequirement().getId() <= 0
+//                || timesheet.getTimeCreated() == null) {
+//
+//            throw new IllegalArgumentException("Please fill out all required information.");
+//        }
         // Kiểm tra các trường bắt buộc
         if (timesheet.getReporter() == null || timesheet.getReporter().getId() <= 0) {
             throw new IllegalArgumentException("Reporter is required.");
