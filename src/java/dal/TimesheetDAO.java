@@ -54,7 +54,8 @@ public class TimesheetDAO extends BaseDAO {
 
         query.append("ORDER BY t.id LIMIT ? OFFSET ?");
 
-        try (PreparedStatement pre = getConnection().prepareStatement(query.toString())) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(query.toString());
             int index = 1;
             pre.setInt(index++, userId);
             pre.setInt(index++, userId);
@@ -151,7 +152,8 @@ public class TimesheetDAO extends BaseDAO {
 
         query.append("ORDER BY t.id LIMIT ? OFFSET ?");
 
-        try (PreparedStatement pre = getConnection().prepareStatement(query.toString())) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(query.toString());
             int index = 1;
 
             if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
@@ -228,7 +230,8 @@ public class TimesheetDAO extends BaseDAO {
             sql.append(" AND t.status = ?");
         }
 
-        try (PreparedStatement pre = getConnection().prepareStatement(sql.toString())) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql.toString());
             int index = 1;
 
             if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
@@ -275,7 +278,8 @@ public class TimesheetDAO extends BaseDAO {
             sql.append(" AND t.status = ?");
         }
 
-        try (PreparedStatement pre = getConnection().prepareStatement(sql.toString())) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql.toString());
             int index = 1;
             pre.setInt(index++, userId);
             pre.setInt(index++, userId);
@@ -345,7 +349,8 @@ public class TimesheetDAO extends BaseDAO {
             query.append("WHERE t.reporter = ? OR t.reviewer = ?  ");
         }
 
-        try (PreparedStatement pre = getConnection().prepareStatement(query.toString())) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(query.toString());
             if (role == MEMBER_ROLE) {
                 pre.setInt(1, userId);
                 pre.setInt(2, userId);
@@ -412,7 +417,8 @@ public class TimesheetDAO extends BaseDAO {
             t.id = ?
     """;
 
-        try (PreparedStatement pre = getConnection().prepareStatement(query)) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(query);
             pre.setInt(1, timesheetId);
             try (ResultSet rs = pre.executeQuery()) {
                 if (rs.next()) {
@@ -456,7 +462,8 @@ public class TimesheetDAO extends BaseDAO {
         WHERE id = ?
     """;
 
-        try (PreparedStatement pre = getConnection().prepareStatement(query)) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(query);
             pre.setInt(1, timesheet.getReporter().getId());
             pre.setInt(2, timesheet.getReviewer() != null ? timesheet.getReviewer().getId() : null);
             pre.setInt(3, timesheet.getProject().getId());
@@ -488,7 +495,8 @@ public class TimesheetDAO extends BaseDAO {
         """;
         }
 
-        try (PreparedStatement pre = getConnection().prepareStatement(query)) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(query);
             if (role != ADMIN_ROLE) {
                 pre.setInt(1, userId);
                 pre.setInt(2, userId);
@@ -561,7 +569,8 @@ public class TimesheetDAO extends BaseDAO {
         """;
         }
 
-        try (PreparedStatement pre = getConnection().prepareStatement(query)) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(query);
             if (role != ADMIN_ROLE) {
                 pre.setInt(1, userId);
                 pre.setInt(2, userId);
@@ -607,7 +616,8 @@ public class TimesheetDAO extends BaseDAO {
     public boolean updateTimesheetStatus(int timesheetId, int newStatus) {
         String query = "UPDATE timesheet SET status = ? WHERE id = ?";
 
-        try (PreparedStatement pre = getConnection().prepareStatement(query)) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(query);
             pre.setInt(1, newStatus);
             pre.setInt(2, timesheetId);
 

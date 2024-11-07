@@ -140,7 +140,8 @@ public class ProjectDAO extends BaseDAO {
         query.append("LIMIT ? OFFSET ?");
         int offset = (page - 1) * pageSize;
 
-        try (PreparedStatement pre = getConnection().prepareStatement(query.toString())) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(query.toString());
             int index = 1;
 
             // Thiết lập tham số userId
@@ -220,7 +221,8 @@ public class ProjectDAO extends BaseDAO {
             query.append("AND p.status = ? ");
         }
 
-        try (PreparedStatement pre = getConnection().prepareStatement(query.toString())) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(query.toString());
             int index = 1;
 
             // Thiết lập tham số userId
@@ -327,7 +329,8 @@ public class ProjectDAO extends BaseDAO {
     public boolean isCodeExists(String code) throws SQLException {
         String query = "SELECT COUNT(*) FROM project WHERE code = ?";
 
-        try (PreparedStatement statement = getConnection().prepareStatement(query)) {
+        try {
+            PreparedStatement statement = getConnection().prepareStatement(query);
             statement.setString(1, code);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -344,7 +347,8 @@ public class ProjectDAO extends BaseDAO {
     public boolean isNameExists(String name) throws SQLException {
         String query = "SELECT COUNT(*) FROM project WHERE name = ?";
 
-        try (PreparedStatement statement = getConnection().prepareStatement(query)) {
+        try {
+            PreparedStatement statement = getConnection().prepareStatement(query);
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -374,7 +378,7 @@ public class ProjectDAO extends BaseDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new SQLException(e);
         }
         return phases;
     }
@@ -394,7 +398,8 @@ public class ProjectDAO extends BaseDAO {
             statement.setInt(8, milestone.getPhase().getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new SQLException(e);
+
         }
     }
 
@@ -518,7 +523,8 @@ public class ProjectDAO extends BaseDAO {
         query.append("LIMIT ? OFFSET ?");
         int offset = (page - 1) * pageSize;
 
-        try (PreparedStatement pre = getConnection().prepareStatement(query.toString())) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(query.toString());
             int index = 1;
 
             // Thiết lập tham số tìm kiếm
@@ -580,6 +586,7 @@ public class ProjectDAO extends BaseDAO {
 
         return projects;
     }
+
     public List<Project> getAllProject() throws SQLException {
         String str = "select * from project";
         PreparedStatement pre = getConnection().prepareStatement(str);
