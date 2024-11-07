@@ -170,6 +170,7 @@ public class RequirementDAO extends BaseDAO {
         }
     }
 
+
     public Integer getMilestoneIdForRequirement(int requirementId) throws SQLException {
         String sql = "SELECT milestoneId FROM requirement_milestone WHERE requirementId = ?";
 
@@ -180,6 +181,5 @@ public class RequirementDAO extends BaseDAO {
             return rs.getInt("milestoneId");
         }
         return null;
-
     }
 }
