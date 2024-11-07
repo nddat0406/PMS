@@ -253,7 +253,7 @@ public class ProjectDAO extends BaseDAO {
     public Project getProjectById(int id) {
         Project project = null;
         String query = "SELECT p.id, p.bizTerm, p.code, p.name, p.details, p.startDate, p.status, "
-                + "g1.id AS domainId, g1.name AS domainName, "
+                + "g1.id AS domainId, g1.name AS    domainName, "
                 + "g2.id AS departmentId, g2.name AS departmentName "
                 + "FROM project p "
                 + "JOIN `group` g1 ON p.domainId = g1.id AND g1.type = 1 " // Lấy thông tin domain từ group (type = 1)

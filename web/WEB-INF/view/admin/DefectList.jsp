@@ -101,11 +101,11 @@
 
                                         <!-- Milestone Filter -->
                                         <div class="col-md-2">
-                                            <select name="milestoneId" class="form-select">
-                                                <option value="">All Milestones</option>
-                                                <c:forEach items="${milestones}" var="mile">
-                                                    <option value="${mile.id}" ${param.milestoneId == mile.id ? 'selected' : ''}>
-                                                        ${mile.name}
+                                            <select name="projectId" class="form-select">
+                                                <option value="">All Project </option>
+                                                <c:forEach items="${project}" var="pro">
+                                                    <option value="${pro.id}" ${param.projectId == pro.id ? 'selected' : ''}>
+                                                        ${pro.name}
                                                     </option>
                                                 </c:forEach>
                                             </select>
@@ -156,28 +156,34 @@
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
-                                                <th>Title</th>
                                                 <th>Requirement</th>
-                                                <th>Milestone</th>
+                                                <th>Project</th>
                                                 <th>Severity</th>
+                                                <th>Title</th>
+                                                <th>Leakage</th>
                                                 <th>Due Date</th>
                                                 <th>Status</th>
-                                                <th>Leakage</th>
+                                                <th>Assignee</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <c:forEach items="${defects}" var="defect">
                                                 <tr>
-                                                    <td>${defect.id}</td>
-                                                    <td>${defect.title}</td>
+                                                    <td>${defect.id}</td>                                                  
                                                     <td>${defect.requirement.title}</td>
-                                                    <td>${defect.milestone.name}</td>
+                                                    <td>${defect.project.name}</td>
                                                     <td>
                                                         <span class="badge bg-${defect.serverity.id == 1 ? 'danger' : defect.serverity.id == 2 ? 'warning' : 'info'}">
                                                             ${defect.serverity.name}
                                                         </span>
                                                     </td>
+                                                    <td>${defect.title}</td>
+                                                    <td>
+                                                            <span class="badge ${defect.leakage ? 'bg-danger' : 'bg-secondary'}">
+                                                                ${defect.leakage ? 'Yes' : 'No'}
+                                                            </span>
+                                                        </td>
                                                     <td>${defect.duedate}</td>
                                                     <td>
                                                         <span class="badge ${defect.status == 1 ? 'bg-primary' : 
@@ -188,11 +194,7 @@
                                                                     defect.status == 3 ? 'Fixed' : 'Closed'}
                                                               </span>
                                                         </td>
-                                                        <td>
-                                                            <span class="badge ${defect.leakage ? 'bg-danger' : 'bg-secondary'}">
-                                                                ${defect.leakage ? 'Yes' : 'No'}
-                                                            </span>
-                                                        </td>
+                                                        <td></td>   
                                                         <td>
                                                             <!-- Edit Button -->
                                                             <a href="${pageContext.request.contextPath}/defectdetail?id=${defect.id}" 
@@ -263,11 +265,11 @@
 
                                         <!-- Milestone -->
                                         <div class="col-md-6">
-                                            <label for="milestoneId" class="form-label">Milestone *</label>
-                                            <select class="form-select" id="milestoneId" name="milestoneId" required>
-                                                <option value="">Select Milestone</option>
-                                                <c:forEach items="${milestones}" var="mile">
-                                                    <option value="${mile.id}">${mile.name}</option>
+                                            <label for="projectId" class="form-label">Project *</label>
+                                            <select class="form-select" id="projectId" name="projectId" required>
+                                                <option value="">Select Project</option>
+                                                <c:forEach items="${project}" var="mile">
+                                                    <option value="${pro.id}">${pro.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
@@ -279,6 +281,15 @@
                                                 <option value="">Select Severity</option>
                                                 <c:forEach items="${serverities}" var="sev">
                                                     <option value="${sev.id}">${sev.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="assgneeId" class="form-label">Assignee *</label>
+                                            <select class="form-select" id="assgneeId" name="projectId" required>
+                                                <option value="">Select Assignee</option>
+                                                <c:forEach items="${assignee}" var="mile">
+                                                    <option value="${ass.id}">${ass.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
@@ -342,20 +353,20 @@
                                                                                 document.getElementById('deleteForm').submit();
                                                                             }
 
-                                                                            // Requirement change handler to load related milestones
+                                                                            // Requirement change handler to load related project
                                                                             $('#requirementId').change(function () {
                                                                                 const reqId = $(this).val();
                                                                                 if (reqId) {
-                                                                                    // Clear current milestone options
-                                                                                    $('#milestoneId').html('<option value="">Select Milestone</option>');
+                                                                                    // Clear current project options
+                                                                                    $('#projectId').html('<option value="">Select Project</option>');
 
-                                                                                    // Load milestones for selected requirement's project
-                                                                                    $.get('${pageContext.request.contextPath}/admin/getMilestones',
+                                                                                    // Load project for selected requirement's project
+                                                                                    $.get('${pageContext.request.contextPath}/getProject',
                                                                                             {requirementId: reqId},
-                                                                                            function (milestones) {
-                                                                                                milestones.forEach(function (milestone) {
-                                                                                                    $('#milestoneId').append(
-                                                                                                            `<option value="${milestone.id}">${milestone.name}</option>`
+                                                                                            function (project) {
+                                                                                                project.forEach(function (project) {
+                                                                                                    $('#projectId').append(
+                                                                                                            `<option value="${project.id}">${project.name}</option>`
                                                                                                             );
                                                                                                 });
                                                                                             }

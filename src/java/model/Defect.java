@@ -14,14 +14,14 @@ public class Defect {
 
     private int id;
     private Requirement requirement;
-    private Milestone milestone;
+    private Project project;
     private Setting serverity;
     private String title;
     private boolean leakage;
     private String details;
     private Date duedate;
     private int status;
-
+    private User assignee;
     public int getId() {
         return id;
     }
@@ -38,13 +38,15 @@ public class Defect {
         this.requirement = requirement;
     }
 
-    public Milestone getMilestone() {
-        return milestone;
+    public Project getProject() {
+        return project;
     }
 
-    public void setMilestone(Milestone milestone) {
-        this.milestone = milestone;
+    public void setProject(Project project) {
+        this.project = project;
     }
+
+
 
     public String getTitle() {
         return title;
@@ -94,4 +96,13 @@ public class Defect {
         this.serverity = serverity;
     }
 
+    public User getAssignee() {
+        return assignee;
+    }
+
+    public void setAssignee(User assignee) {
+        this.assignee = assignee;
+    }
+
+     
 }

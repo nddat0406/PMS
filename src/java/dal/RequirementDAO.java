@@ -160,12 +160,12 @@ public class RequirementDAO extends BaseDAO {
         Requirement requirement = new Requirement();
         requirement.setId(rs.getInt("id"));
         requirement.setProject(projectDAO.getProjectById(rs.getInt("projectId")));
-        requirement.setOwner(userDAO.getUserById(rs.getInt("ownerId")));
+        requirement.setOwner(userDAO.getUserById(rs.getInt("userId")));
         requirement.setTitle(rs.getString("title"));
         requirement.setDetails(rs.getString("details"));
         requirement.setComplexity(rs.getString("complexity"));
-        requirement.setStatus(settingDAO.getSettingById(rs.getInt("statusId")));
-        requirement.setEstimatedEffort(rs.getInt("estimatedEffort"));
+        requirement.setStatus(settingDAO.getSettingById(rs.getInt("status")));
+        requirement.setEstimatedEffort(rs.getInt("estimateEffort"));
         return requirement;
     }
     

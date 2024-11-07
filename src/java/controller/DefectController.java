@@ -14,29 +14,32 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Defect;
+import model.Project;
 import model.User;
 import model.Requirement;
-import model.Milestone;
 import model.Setting;
+import service.ProjectService;
 import service.RequirementService;
-import service.MilestoneService;
 import service.SettingService;
+import service.UserService;
 
 @WebServlet(name = "DefectController", 
-           urlPatterns = {"/defectlist", "/defectdetail"})
+           urlPatterns = {"/defectlist", "/defectdetail", "/getProject"})
 public class DefectController extends HttpServlet {
     
     private DefectDAO defectDAO;
     private RequirementService requirementService;
-    private MilestoneService milestoneService;
+    private ProjectService projectService;
     private SettingService settingService;
+    private UserService assigneeService;
     
     @Override
     public void init() throws ServletException {
         defectDAO = new DefectDAO();
         requirementService = new RequirementService();
-        milestoneService = new MilestoneService();
+        projectService = new ProjectService();
         settingService = new SettingService();
+        assigneeService = new UserService();
     }
     
     @Override
@@ -84,11 +87,19 @@ public class DefectController extends HttpServlet {
         
         // Get all defects for logged user's projects
         List<Defect> defects = defectDAO.getAll();
-        
+//             List<Defect> defects;
+//    if (loginUser.equals("1")) { // Assuming isAdmin() checks if the user has admin privileges
+//        // Admins get all defects
+//        defects = defectDAO.getAll();
+//    } else {
+//        // Members get defects only for the projects they participate in
+//        defects = defectDAO.getDefectsByUserProjects(loginUser.getId());
+//    }
         // Get data for filters
         request.setAttribute("defects", defects);
         request.setAttribute("requirements", requirementService.getAllRequirements());
-        request.setAttribute("milestones", milestoneService.getAllMilestone(loginUser.getId()));
+        //request.setAttribute("project", projectService.getAllProject(loginUser.getId()));
+        request.setAttribute("project", projectService.getAllProject());
         request.setAttribute("serverities", settingService.getAllSettings());
         
         request.getRequestDispatcher("/WEB-INF/view/admin/DefectList.jsp")
@@ -104,9 +115,8 @@ public class DefectController extends HttpServlet {
             // Load related data
             request.setAttribute("defect", defect);
             request.setAttribute("requirements", requirementService.getAllRequirements());
-            request.setAttribute("milestones", milestoneService.getAllMilestone(
-                defect.getRequirement().getProject().getId()
-            ));
+            request.setAttribute("project", projectService.getAllProject(
+                ((User)request.getSession().getAttribute("loginedUser")).getId()));
             request.setAttribute("serverities", settingService.getAllSettings());
             
             request.getRequestDispatcher("/WEB-INF/view/admin/DefectDetails.jsp")
@@ -120,19 +130,20 @@ public class DefectController extends HttpServlet {
             throws ServletException, IOException, SQLException {
         String keyword = request.getParameter("keyword");
         Integer requirementId = parseIntParameter(request.getParameter("requirementId"));
-        Integer milestoneId = parseIntParameter(request.getParameter("milestoneId"));
+        Integer projectId = parseIntParameter(request.getParameter("projectId"));
         Integer serverityId = parseIntParameter(request.getParameter("serverityId"));
         Integer status = parseIntParameter(request.getParameter("status"));
         
         List<Defect> defects = defectDAO.getAll();
-        defects = defectDAO.searchFilter(defects, requirementId, milestoneId, 
+        defects = defectDAO.searchFilter(defects, requirementId, projectId, 
                                        serverityId, status, keyword);
         
         request.setAttribute("defects", defects);
         request.setAttribute("requirements", requirementService.getAllRequirements());
-        request.setAttribute("milestones", milestoneService.getAllMilestone(
+        request.setAttribute("project", projectService.getAllProject(
             ((User)request.getSession().getAttribute("loginedUser")).getId()
         ));
+        
         request.setAttribute("serverities", settingService.getAllSettings());
         
         request.getRequestDispatcher("/WEB-INF/view/admin/DefectList.jsp")
@@ -208,10 +219,10 @@ public class DefectController extends HttpServlet {
         );
         defect.setRequirement(requirement);
         
-        Milestone milestone = milestoneService.getMilestoneById(
-            Integer.parseInt(request.getParameter("milestoneId"))
+        Project project = projectService.getProjectById(
+            Integer.parseInt(request.getParameter("projectId"))
         );
-        defect.setMilestone(milestone);
+        defect.setProject(project);
         
         Setting serverity = settingService.getSettingDetail(
             Integer.parseInt(request.getParameter("serverityId"))
@@ -229,8 +240,8 @@ public class DefectController extends HttpServlet {
         if (defect.getRequirement() == null) {
             throw new SQLException("Requirement is required");
         }
-        if (defect.getMilestone() == null) {
-            throw new SQLException("Milestone is required");
+        if (defect.getProject()== null) {
+            throw new SQLException("Project is required");
         }
         if (defect.getServerity() == null) {
             throw new SQLException("Serverity is required");

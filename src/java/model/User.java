@@ -200,4 +200,6 @@ public class User {
         return "User{" + "id=" + id + ", email=" + email + ", fullname=" + fullname + ", mobile=" + mobile + ", password=" + password + ", note=" + note + ", department=" + department + ", role=" + role + ", status=" + status + ", image=" + image + ", gender=" + gender + ", address=" + address + ", birthdate=" + birthdate + ", otp=" + otp + ", otp_expiry=" + otp_expiry + '}';
     }
 
+    
+
 }

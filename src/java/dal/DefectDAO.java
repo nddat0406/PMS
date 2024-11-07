@@ -12,8 +12,9 @@ import model.Setting;
 public class DefectDAO extends BaseDAO {
     
     private final RequirementDAO requirementDAO = new RequirementDAO();
-    private final MilestoneDAO milestoneDAO = new MilestoneDAO();
+    private final ProjectDAO projectDAO = new ProjectDAO();
     private final SettingDAO settingDAO = new SettingDAO();
+    private final UserDAO userDAO = new UserDAO();
     
     public List<Defect> getAll() throws SQLException {
         List<Defect> list = new ArrayList<>();
@@ -46,8 +47,8 @@ public class DefectDAO extends BaseDAO {
     }
     
     public void insert(Defect defect) throws SQLException {
-        String sql = "INSERT INTO pms.defect (requirementId, milestoneId, serverityId, title, " +
-                    "leakage, details, duedate, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO `defect` (`requirementId`, `projectId`, `serverityId`, `title`, `leakage`," +  
+                    " `details`, `duedate`, `status`, `assignee`) VALUES(?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement st = getConnection().prepareStatement(sql);
             setDefectParameters(st, defect);
@@ -58,12 +59,12 @@ public class DefectDAO extends BaseDAO {
     }
     
     public void update(Defect defect) throws SQLException {
-        String sql = "UPDATE pms.defect SET requirementId=?, milestoneId=?, serverityId=?, " +
-                    "title=?, leakage=?, details=?, duedate=?, status=? WHERE id=?";
+        String sql = "UPDATE pms.defect SET requirementId=?, projectId=?, serverityId=?, " +
+                    "title=?, leakage=?, details=?, duedate=?, status=?, assignee=? WHERE id=?";
         try {
             PreparedStatement st = getConnection().prepareStatement(sql);
             setDefectParameters(st, defect);
-            st.setInt(9, defect.getId());
+            st.setInt(10, defect.getId());
             st.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error updating defect: " + e.getMessage());
@@ -93,7 +94,7 @@ public class DefectDAO extends BaseDAO {
         }
     }
     
-    public List<Defect> searchFilter(List<Defect> list, Integer requirementId, Integer milestoneId, 
+    public List<Defect> searchFilter(List<Defect> list, Integer requirementId, Integer projectId, 
                                    Integer serverityId, Integer status, String keyword) {
         List<Defect> filteredList = new ArrayList<>();
         
@@ -101,9 +102,9 @@ public class DefectDAO extends BaseDAO {
             boolean matchesRequirement = (requirementId == null || 
                                        requirementId == 0 || 
                                        defect.getRequirement().getId() == requirementId);
-            boolean matchesMilestone = (milestoneId == null || 
-                                     milestoneId == 0 || 
-                                     defect.getMilestone().getId() == milestoneId);
+            boolean matchesProject = (projectId == null || 
+                                     projectId == 0 || 
+                                     defect.getProject().getId() == projectId);
             boolean matchesServerity = (serverityId == null || 
                                      serverityId == 0 || 
                                      defect.getServerity().getId() == serverityId);
@@ -115,7 +116,7 @@ public class DefectDAO extends BaseDAO {
                                    defect.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
                                    defect.getDetails().toLowerCase().contains(keyword.toLowerCase()));
             
-            if (matchesRequirement && matchesMilestone && matchesServerity && 
+            if (matchesRequirement && matchesProject && matchesServerity && 
                 matchesStatus && matchesKeyword) {
                 filteredList.add(defect);
             }
@@ -127,24 +128,28 @@ public class DefectDAO extends BaseDAO {
         Defect defect = new Defect();
         defect.setId(rs.getInt("id"));
         defect.setRequirement(requirementDAO.getById(rs.getInt("requirementId")));
-        defect.setMilestone(milestoneDAO.getMilestoneById(rs.getInt("milestoneId")));
+        defect.setProject(projectDAO.getProjectById(rs.getInt("projectId")));
         defect.setServerity(settingDAO.getSettingById(rs.getInt("serverityId")));
         defect.setTitle(rs.getString("title"));
         defect.setLeakage(rs.getBoolean("leakage"));
         defect.setDetails(rs.getString("details"));
         defect.setDuedate(rs.getDate("duedate"));
         defect.setStatus(rs.getInt("status"));
+        defect.setAssignee(userDAO.getUserById(rs.getInt("assignee")));
         return defect;
     }
     
     private void setDefectParameters(PreparedStatement st, Defect defect) throws SQLException {
         st.setInt(1, defect.getRequirement().getId());
-        st.setInt(2, defect.getMilestone().getId());
+        st.setInt(2, defect.getProject().getId());
         st.setInt(3, defect.getServerity().getId());
         st.setString(4, defect.getTitle());
         st.setBoolean(5, defect.isLeakage());
         st.setString(6, defect.getDetails());
         st.setDate(7, defect.getDuedate());
         st.setInt(8, defect.getStatus());
+        st.setInt(9, defect.getAssignee().getId());
     }
+
+    
 }

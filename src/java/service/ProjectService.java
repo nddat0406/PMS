@@ -280,5 +280,9 @@ public class ProjectService {
         return pdao.getAllProject();
     }
 
+    public List<Project> getAllProject(int id) throws SQLException {
+        return pdao.getAllByUser(id);
+    }
+
 
 }
