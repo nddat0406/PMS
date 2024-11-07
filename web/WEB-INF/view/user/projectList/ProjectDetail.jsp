@@ -56,11 +56,9 @@
                                         <p class="status-label">Detail: ${project.details}</p>
 
                                         <!-- Phần này chỉ hiển thị nếu role là Project Manager -->
-<<<<<<< HEAD
-                                        <c:if test="${role == 1}">
-=======
+
                                         <c:if test="${role == 1 || role == 3 || role == 4}">
->>>>>>> 134bd96f1db29a34a13e6d596deaee75d8a872c3
+
                                             <form action="${pageContext.request.contextPath}/projectlist?action=update" method="post">
                                                 <label for="status">Update Project Status:</label>
                                                 <div class="form-check">

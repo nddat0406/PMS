@@ -36,24 +36,36 @@
                 width: 10px;
                 height: 20px;
             }
-        </style>
-        <script>
-            function changeSort(name, sortBy) {
-                $.ajax({
-                    url: "dashboard",
-                    type: 'post',
-                    data: {
-                        sortBy: sortBy,
-                        fieldName: name,
-                        action: "sort"
-                    },
-                    success: function () {
-                        $('.tableBody').load("${pageContext.request.contextPath}/dashboard?page=${page} .tableBody > *");
-                    }
-                });
+            #screen{
+                display:block;
+                background:#41444b;
+                
             }
-            ;
-        </script>
+            #timeZone{
+                display:inline-block;
+                left:45%;
+                top:30%;
+                margin:auto;
+                border-bottom: #ffd31d solid 3px;
+            }
+            .clockP{
+                text-align:center;
+                color:#fddb3a;
+                text-shadow: 0px 0px 100px rgba(255,211,29,1);
+                
+            }
+            #time{
+                font-size:43px;
+                font-weight:bold;
+            }
+            #date{
+                font-size:18px;
+                font-weight:bold;
+            }
+
+
+
+        </style>
 
     </head>
 
@@ -116,11 +128,13 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-sm-6 text-center">
-                                            <div class="card chart-color4">
-                                                <div class="card-body p-lg-4 text-light">
-                                                    <h3>0</h3>
-                                                    <span>Analytics</span>
-                                                </div>
+                                            <div class="card chart-color2">
+                                                <div id="screen" style="height: 110.6px">
+                                                    <div id="timeZone">
+                                                        <p class="clockP" id="time" style="margin-bottom: 0px"> Check your watch</p>
+                                                        <p class="clockP" id="date" style="margin-bottom: 10px;">Never be late</p>
+                                                    </div>
+                                                </div>                                            
                                             </div>
                                         </div>
                                     </div>
@@ -367,8 +381,8 @@
                                                                 stroke: {
                                                                     lineCap: 'round'
                                                                 },
-                                                                labels: ['Avg Effort'],
-                                                            }
+                                                                labels: ['Avg Effort']
+                                                            };
 
                                                             var chart = new ApexCharts(
                                                                     document.querySelector("#apex-circle-gradient"),
@@ -377,6 +391,53 @@
 
                                                             chart.render();
                                                         });
+                                                        function changeSort(name, sortBy) {
+                                                            $.ajax({
+                                                                url: "dashboard",
+                                                                type: 'post',
+                                                                data: {
+                                                                    sortBy: sortBy,
+                                                                    fieldName: name,
+                                                                    action: "sort"
+                                                                },
+                                                                success: function () {
+                                                                    $('.tableBody').load("${pageContext.request.contextPath}/dashboard?page=${page} .tableBody > *");
+                                                                }
+                                                            });
+                                                        }
+                                                        ;
+                                                        function WhatTimeIsIt() {
+                                                            //FOR TIME
+                                                            let clock = new Date();
+                                                            let hour = clock.getHours();
+                                                            if (hour < 10) {
+                                                                hour = "0" + hour
+                                                            }
+                                                            let mn = clock.getMinutes();
+                                                            if (mn < 10) {
+                                                                mn = "0" + mn
+                                                            }
+                                                            let sec = clock.getSeconds();
+                                                            if (sec < 10) {
+                                                                sec = "0" + sec
+                                                            }
+                                                            let timeIs = hour + " : " + mn + " : " + sec;
+                                                            document.getElementById("time").innerText = timeIs;
+                                                            //For date
+                                                            let day = clock.getDate();
+                                                            if (day < 10) {
+                                                                day = "0" + day;
+                                                            }
+                                                            let month = (clock.getMonth()) + 1;
+                                                            if (month < 10) {
+                                                                month = "0" + month;
+                                                            }
+                                                            let year = clock.getFullYear();
+                                                            let date = day + " - " + month + " - " + year;
+                                                            document.getElementById("date").innerText = date;
+                                                        }
+                                                        setInterval(WhatTimeIsIt, 1000);
+
 
         </script>
     </body>

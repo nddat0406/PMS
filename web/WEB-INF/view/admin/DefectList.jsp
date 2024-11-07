@@ -180,10 +180,10 @@
                                                     </td>
                                                     <td>${defect.title}</td>
                                                     <td>
-                                                            <span class="badge ${defect.leakage ? 'bg-danger' : 'bg-secondary'}">
-                                                                ${defect.leakage ? 'Yes' : 'No'}
-                                                            </span>
-                                                        </td>
+                                                        <span class="badge ${defect.leakage ? 'bg-danger' : 'bg-secondary'}">
+                                                            ${defect.leakage ? 'Yes' : 'No'}
+                                                        </span>
+                                                    </td>
                                                     <td>${defect.duedate}</td>
                                                     <td>
                                                         <span class="badge ${defect.status == 1 ? 'bg-primary' : 
@@ -194,7 +194,7 @@
                                                                     defect.status == 3 ? 'Fixed' : 'Closed'}
                                                               </span>
                                                         </td>
-                                                        <td></td>   
+                                                        <td>${defect.assignee.fullname}</td>   
                                                         <td>
                                                             <!-- Edit Button -->
                                                             <a href="${pageContext.request.contextPath}/defectdetail?id=${defect.id}" 
@@ -251,7 +251,15 @@
                                             <label for="title" class="form-label">Title *</label>
                                             <input type="text" class="form-control" id="title" name="title" required>
                                         </div>
-
+                                        <div class="col-md-6">
+                                            <label for="projectId" class="form-label">Project *</label>
+                                            <select class="form-select" id="projectId" name="projectId" required>
+                                                <option value="">Select Project</option>
+                                                <c:forEach items="${project}" var="pro">
+                                                    <option value="${pro.id}">${pro.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
                                         <!-- Requirement -->
                                         <div class="col-md-6">
                                             <label for="requirementId" class="form-label">Requirement *</label>
@@ -264,15 +272,7 @@
                                         </div>
 
                                         <!-- Milestone -->
-                                        <div class="col-md-6">
-                                            <label for="projectId" class="form-label">Project *</label>
-                                            <select class="form-select" id="projectId" name="projectId" required>
-                                                <option value="">Select Project</option>
-                                                <c:forEach items="${project}" var="mile">
-                                                    <option value="${pro.id}">${pro.name}</option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
+
 
                                         <!-- Severity -->
                                         <div class="col-md-6">
@@ -285,11 +285,11 @@
                                             </select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="assgneeId" class="form-label">Assignee *</label>
-                                            <select class="form-select" id="assgneeId" name="projectId" required>
+                                            <label for="assignee" class="form-label">Assignee *</label>
+                                            <select class="form-select" id="assignee" name="assignee" required>
                                                 <option value="">Select Assignee</option>
-                                                <c:forEach items="${assignee}" var="mile">
-                                                    <option value="${ass.id}">${ass.name}</option>
+                                                <c:forEach items="${assignee}" var="ass">   
+                                                    <option value="${ass.id}">${ass.fullname}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
@@ -331,10 +331,6 @@
                     <input type="hidden" name="id" id="deleteId">
                 </form>
             </div>
-
-            <!-- Add Defect Modal -->
-
-
             <!-- Core JS -->
             <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
             <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
@@ -351,7 +347,7 @@
                                                                             window.submitDeleteForm = function (id) {
                                                                                 document.getElementById('deleteId').value = id;
                                                                                 document.getElementById('deleteForm').submit();
-                                                                            }
+                                                                            };
 
                                                                             // Requirement change handler to load related project
                                                                             $('#requirementId').change(function () {
@@ -364,13 +360,10 @@
                                                                                     $.get('${pageContext.request.contextPath}/getProject',
                                                                                             {requirementId: reqId},
                                                                                             function (project) {
-                                                                                                project.forEach(function (project) {
-                                                                                                    $('#projectId').append(
-                                                                                                            `<option value="${project.id}">${project.name}</option>`
-                                                                                                            );
-                                                                                                });
-                                                                                            }
-                                                                                    );
+                                                                                                console.log(project.name);
+                                                                                                $('#projectId').empty();
+                                                                                                $('#projectId').append(new Option(project.name, project.id));
+                                                                                            });
                                                                                 }
                                                                             });
 

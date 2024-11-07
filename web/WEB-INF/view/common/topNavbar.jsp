@@ -4,6 +4,7 @@
     Author     : HP
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!-- top navbar -->
 <nav class="navbar navbar-fixed-top">
@@ -37,9 +38,14 @@
             <div class="align-items-center">
                 <ul class="nav navbar-nav flex-row justify-content-end align-items-center" >
                     <li><a href="${pageContext.request.contextPath}/dashboard" class="icon-menu">Dashboard</a></li>
-                    <li><a href="#" class="icon-menu">Requirement</a></li>
-                    <li><a href="${pageContext.request.contextPath}/timesheet" class="icon-menu">Timesheets</a></li>
-                    <li><a href="#" class="icon-menu">Issues</a></li>
+                    <li><a href="${pageContext.request.contextPath}/user-requirements" class="icon-menu">Requirement</a></li>
+                    <li><a href="#" class="icon-menu">Timesheets</a></li>
+                    <c:if test="${loginedUser.role == '3' || loginedUser.role == '4'}">
+                        <li><a href="${pageContext.request.contextPath}/issue" class="icon-menu">Issues</a></li>
+                    </c:if>
+                    <c:if test="${loginedUser.role != '3' && loginedUser.role != '4'}">
+                        <li><a href="${pageContext.request.contextPath}/user-issues" class="icon-menu">Issues</a></li>
+                    </c:if>
                 </ul>
             </div>
             <div class="flex-grow-1">

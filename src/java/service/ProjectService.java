@@ -279,7 +279,12 @@ public class ProjectService {
     public List<Project> getAllProject() throws SQLException{
         return pdao.getAllProject();
     }
-
+    public static void main(String[] args) throws SQLException {
+        List<Project> temp = new ProjectService().getAllProject();
+        for (Project project : temp) {
+            System.out.println(project.getId());
+        }
+    }
     public List<Project> getAllProject(int id) throws SQLException {
         return pdao.getAllByUser(id);
     }

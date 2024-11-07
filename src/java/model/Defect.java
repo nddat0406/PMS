@@ -5,11 +5,18 @@
 package model;
 
 import java.sql.Date;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 /**
  *
  * @author HP
  */
+@Data 
+@NoArgsConstructor 
+@AllArgsConstructor 
+@Builder 
 public class Defect {
 
     private int id;
@@ -22,6 +29,8 @@ public class Defect {
     private Date duedate;
     private int status;
     private User assignee;
+    private String attachFile;
+    
     public int getId() {
         return id;
     }
@@ -104,5 +113,11 @@ public class Defect {
         this.assignee = assignee;
     }
 
-     
+    public String getAttachFile() {
+        return attachFile;
+    }
+
+    public void setAttachFile(String attachFile) {
+        this.attachFile = attachFile;
+    }
 }
