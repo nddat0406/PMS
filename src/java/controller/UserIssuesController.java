@@ -6,26 +6,26 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.Allocation;
 import model.Issue;
 import model.Project;
 import model.User;
 import service.BaseService;
 import service.IssueService;
-import service.ProjectService;
-import service.UserService;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.util.List;
+import service.ProjectService;
 
-@WebServlet(name = "IssueController", urlPatterns = {"/issue"})
-public class IssueController extends HttpServlet {
+@WebServlet(name = "UserIssuesController", urlPatterns = {"/user-issues"})
+public class UserIssuesController extends HttpServlet {
 
     private final IssueService issueService = new IssueService();
     private final BaseService baseService = new BaseService();
+    private final String USER_ISSUES_PAGE = "/WEB-INF/view/user/issues/user-issues.jsp";
     private final ProjectService projectService = new ProjectService();
-    private final String ISSUE_PAGE = "/WEB-INF/view/user/issues/issue-manage.jsp";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -34,12 +34,16 @@ public class IssueController extends HttpServlet {
             HttpSession session = request.getSession();
             User loginedUser = (User) session.getAttribute("loginedUser");
 
-            // Get all projects
-            List<Project> allProjects = projectService.getAllProject();
-            request.setAttribute("projects", allProjects);
-            UserService userService = new UserService();
-            List<User> users = userService.getAll();
-            request.setAttribute("users", users);
+            // Redirect to login if user not logged in
+            if (loginedUser == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            // Get all projects associated with the user
+            List<Allocation> userAllocations = projectService.getByUser(loginedUser.getId(), loginedUser.getRole());
+            List<Project> userProjects = projectService.getProjectsInAllocation(userAllocations);
+            request.setAttribute("projects", userProjects);
 
             if (request.getParameter("page") == null) {
                 // Clear existing filters
@@ -50,13 +54,15 @@ public class IssueController extends HttpServlet {
                 session.removeAttribute("sortFieldName");
                 session.removeAttribute("sortOrder");
 
-                List<Issue> list = issueService.getAll();
+                // Get issues for logged in user
+                List<Issue> list = issueService.getIssuesByUserId(loginedUser.getId());
                 session.setAttribute("issueList", list);
 
                 // Add type and status lists for dropdowns
                 request.setAttribute("typeList", issueService.getAllTypes());
                 request.setAttribute("statusList", List.of(
-                        "Open", "To Do", "Doing", "Done", "Closed"));
+                        "Open", "To Do", "Doing", "Done", "Closed"
+                ));
 
                 pagination(request, response, list);
             } else {
@@ -64,7 +70,11 @@ public class IssueController extends HttpServlet {
                 String modalItemIDRaw = request.getParameter("modalItemID");
                 if (modalItemIDRaw != null) {
                     int modalItemID = Integer.parseInt(modalItemIDRaw);
-                    request.setAttribute("modalItem", issueService.getIssueById(modalItemID));
+                    Issue issue = issueService.getIssueById(modalItemID);
+                    // Only show issue details if it belongs to the logged-in user
+                    if (issue != null && issue.getAssignee_id() == loginedUser.getId()) {
+                        request.setAttribute("modalItem", issue);
+                    }
                 }
                 pagination(request, response, list);
             }
@@ -76,6 +86,15 @@ public class IssueController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User loginedUser = (User) session.getAttribute("loginedUser");
+
+        // Redirect to login if user not logged in
+        if (loginedUser == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
         String action = request.getParameter("action");
         if (action == null) {
             doGet(request, response);
@@ -85,13 +104,11 @@ public class IssueController extends HttpServlet {
         try {
             switch (action) {
                 case "filter" ->
-                    postFilter(request, response);
+                    postFilter(request, response, loginedUser.getId());
                 case "sort" ->
                     postSort(request, response);
-                case "add" ->
-                    postAdd(request, response);
                 case "update" ->
-                    postUpdate(request, response);
+                    postUpdate(request, response, loginedUser.getId());
                 default ->
                     doGet(request, response);
             }
@@ -122,21 +139,17 @@ public class IssueController extends HttpServlet {
         request.setAttribute("num", num);
         request.getSession().setAttribute("numberPage", numperpage);
         request.setAttribute("tableData", baseService.getListByPage(list, start, end));
-        request.getRequestDispatcher(ISSUE_PAGE).forward(request, response);
+        request.getRequestDispatcher(USER_ISSUES_PAGE).forward(request, response);
     }
 
-    private void postFilter(HttpServletRequest request, HttpServletResponse response)
+    private void postFilter(HttpServletRequest request, HttpServletResponse response, int userId)
             throws ServletException, IOException, SQLException {
         HttpSession session = request.getSession();
         User loginedUser = (User) session.getAttribute("loginedUser");
-
-        // Get all projects
-        // Get all projects
-        List<Project> allProjects = projectService.getAllProject();
-        request.setAttribute("projects", allProjects);
-        UserService userService = new UserService();
-        List<User> users = userService.getAll();
-        request.setAttribute("users", users);
+        // Get all projects associated with the user
+        List<Allocation> userAllocations = projectService.getByUser(loginedUser.getId(), loginedUser.getRole());
+        List<Project> userProjects = projectService.getProjectsInAllocation(userAllocations);
+        request.setAttribute("projects", userProjects);
         String projectFilterRaw = request.getParameter("projectFilter");
         String statusFilterRaw = request.getParameter("statusFilter");
         String typeFilter = request.getParameter("typeFilter");
@@ -145,8 +158,10 @@ public class IssueController extends HttpServlet {
         int projectFilter = baseService.TryParseInt(projectFilterRaw);
         int statusFilter = baseService.TryParseInt(statusFilterRaw);
 
-        List<Issue> list = issueService.searchAdvanced(
-                searchKey, projectFilter, typeFilter, null, statusFilter, null, null);
+        // Include userId in search to ensure user only sees their issues
+        List<Issue> list = issueService.searchAdvancedForUser(
+                searchKey, projectFilter, typeFilter, statusFilter, userId
+        );
 
         session.setAttribute("searchKey", searchKey);
         session.setAttribute("projectFilter", projectFilter);
@@ -159,19 +174,6 @@ public class IssueController extends HttpServlet {
 
     private void postSort(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            HttpSession session = request.getSession();
-            User loginedUser = (User) session.getAttribute("loginedUser");
-
-            // Get all projects
-            List<Project> allProjects = projectService.getAllProject();
-            request.setAttribute("projects", allProjects);
-            UserService userService = new UserService();
-            List<User> users = userService.getAll();
-            request.setAttribute("users", users);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         String fieldName = request.getParameter("fieldName");
         String order = request.getParameter("sortBy");
         List<Issue> list = (List<Issue>) request.getSession().getAttribute("issueList");
@@ -184,62 +186,41 @@ public class IssueController extends HttpServlet {
         pagination(request, response, list);
     }
 
-    private void postAdd(HttpServletRequest request, HttpServletResponse response)
+    private void postUpdate(HttpServletRequest request, HttpServletResponse response, int userId)
             throws ServletException, IOException, SQLException {
         try {
+            int issueId = Integer.parseInt(request.getParameter("id"));
+            // Verify issue belongs to user before updating
+            Issue existingIssue = issueService.getIssueById(issueId);
+            if (existingIssue == null || existingIssue.getAssignee_id() != userId) {
+                throw new ServletException("Unauthorized access to issue");
+            }
+
             Issue issue = Issue.builder()
-                    .requirementId(Integer.parseInt(request.getParameter("requirementId")))
-                    .projectId(Integer.parseInt(request.getParameter("projectId")))
+                    .id(issueId)
                     .title(request.getParameter("title"))
                     .description(request.getParameter("description"))
                     .type(request.getParameter("type"))
-                    .assignee_id(Integer.parseInt(request.getParameter("assigneeId")))
                     .status(Integer.parseInt(request.getParameter("status")))
                     .due_date(Date.valueOf(request.getParameter("dueDate")))
                     .end_date(Date.valueOf(request.getParameter("endDate")))
-                    .build();
-
-            issueService.insertIssue(issue);
-
-            List<Issue> list = refreshList(request);
-            request.setAttribute("successMess", "Add successful");
-            doGet(request, response);
-        } catch (SQLException | NumberFormatException ex) {
-            request.setAttribute("AddErrorMess", ex.getMessage());
-            request.setAttribute("isAdd", "true");
-            List<Issue> list = (List<Issue>) request.getSession().getAttribute("issueList");
-            doGet(request, response);
-        }
-    }
-
-    private void postUpdate(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, SQLException {
-        try {
-            Issue issue = Issue.builder()
-                    .id(Integer.parseInt(request.getParameter("id")))
-                    .title(request.getParameter("title"))
-                    .description(request.getParameter("description"))
-                    .type(request.getParameter("type"))
-                    .assignee_id(Integer.parseInt(request.getParameter("assigneeId")))
-                    .status(Integer.parseInt(request.getParameter("status")))
-                    .due_date(Date.valueOf(request.getParameter("dueDate")))
-                    .end_date(Date.valueOf(request.getParameter("endDate")))
+                    .assignee_id(userId) // Ensure assignee remains the same
                     .build();
 
             issueService.updateIssue(issue);
 
-            List<Issue> list = refreshList(request);
+            List<Issue> list = refreshList(request, userId);
             request.setAttribute("successMess", "Update successful");
-            doGet(request, response);
+            pagination(request, response, list);
         } catch (SQLException | NumberFormatException ex) {
             request.setAttribute("UpdateErrorMess", ex.getMessage());
             request.setAttribute("isUpdate", "true");
             List<Issue> list = (List<Issue>) request.getSession().getAttribute("issueList");
-            doGet(request, response);
+            pagination(request, response, list);
         }
     }
 
-    private List<Issue> refreshList(HttpServletRequest request) throws SQLException {
+    private List<Issue> refreshList(HttpServletRequest request, int userId) throws SQLException {
         HttpSession session = request.getSession();
         String searchKey = (String) session.getAttribute("searchKey");
         Integer projectFilter = (Integer) session.getAttribute("projectFilter");
@@ -248,8 +229,9 @@ public class IssueController extends HttpServlet {
         String fieldName = (String) session.getAttribute("sortFieldName");
         String order = (String) session.getAttribute("sortOrder");
 
-        List<Issue> list = issueService.searchAdvanced(
-                searchKey, projectFilter, typeFilter, null, statusFilter, null, null);
+        List<Issue> list = issueService.searchAdvancedForUser(
+                searchKey, projectFilter, typeFilter, statusFilter, userId
+        );
 
         if (fieldName != null && order != null) {
             baseService.sortListByField(list, fieldName, order);

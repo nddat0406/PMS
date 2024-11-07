@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package service;
 
 import dal.IssueDAO;
@@ -129,7 +125,7 @@ public class IssueService extends BaseService {
             errors.add("End date is required");
         }
         if (issue.getDue_date() != null && issue.getEnd_date() != null
-                && issue.getDue_date().before(issue.getEnd_date())) {
+                && issue.getDue_date().after(issue.getEnd_date())) {
             errors.add("Due date cannot be earlier than end date");
         }
 
@@ -260,6 +256,41 @@ public class IssueService extends BaseService {
             return issueDAO.searchAdvanced(searchKey, projectId, type, assigneeId, status, startDate, endDate);
         } catch (SQLException e) {
             throw new SQLException("Error performing advanced search: " + e.getMessage());
+        }
+    }
+
+    public List<Issue> getIssuesByUserId(int userId) throws SQLException {
+        try {
+            return issueDAO.getIssuesByUserId(userId);
+        } catch (SQLException e) {
+            throw new SQLException("Error getting issues for user " + userId + ": " + e.getMessage());
+        }
+    }
+
+    public List<Issue> searchAdvancedForUser(
+            String searchKey, 
+            Integer projectId, 
+            String type,
+            Integer status, 
+            int userId) throws SQLException {
+        try {
+            // Normalize parameters
+            if (projectId != null && projectId == 0) {
+                projectId = null;
+            }
+            if (status != null && status == 0) {
+                status = null;
+            }
+            if (searchKey != null && searchKey.trim().isEmpty()) {
+                searchKey = null;
+            }
+            if (type != null && !isValidType(type)) {
+                type = null;
+            }
+
+            return issueDAO.searchAdvancedForUser(searchKey, projectId, type, status, userId);
+        } catch (SQLException e) {
+            throw new SQLException("Error performing advanced search for user " + userId + ": " + e.getMessage());
         }
     }
 

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
 import dal.BaseDAO;
@@ -222,4 +218,73 @@ public class IssueDAO extends BaseDAO {
         return result;
     }
 
+    public List<Issue> getIssuesByUserId(int userId) throws SQLException {
+        String sql = "SELECT * FROM pms.issue WHERE assignee_id = ?";
+        List<Issue> list = new ArrayList<>();
+        try (PreparedStatement pre = getConnection().prepareStatement(sql)) {
+            pre.setInt(1, userId);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                list.add(mapIssue(rs));
+            }
+            return list;
+        }
+    }
+
+    public List<Issue> searchAdvancedForUser(
+            String searchKey,
+            Integer projectId,
+            String type,
+            Integer status,
+            int userId) throws SQLException {
+        List<Issue> result = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM pms.issue WHERE assignee_id = ?");
+        ArrayList<Object> params = new ArrayList<>();
+        params.add(userId);
+
+        if (searchKey != null && !searchKey.trim().isEmpty()) {
+            sql.append(" AND (title LIKE ? OR description LIKE ?)");
+            String searchPattern = "%" + searchKey.trim() + "%";
+            params.add(searchPattern);
+            params.add(searchPattern);
+        }
+
+        if (projectId != null && projectId != 0) {
+            sql.append(" AND projectId = ?");
+            params.add(projectId);
+        }
+
+        if (type != null && !type.trim().isEmpty()) {
+            sql.append(" AND type = ?");
+            params.add(type);
+        }
+
+        if (status != null && status != 0) {
+            sql.append(" AND status = ?");
+            params.add(status);
+        }
+
+        PreparedStatement ps = getConnection().prepareStatement(sql.toString());
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
+        }
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            result.add(mapIssue(rs));
+        }
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+        IssueDAO issueDAO = new IssueDAO();
+        try {
+            issueDAO.getAll().stream().forEach(item -> {
+                System.out.println(item);
+            });
+        } catch (SQLException ex) {
+            Logger.getLogger(IssueDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
