@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -50,11 +51,13 @@
                         <p>Please enter your email address below to receive instructions for resetting password.</p>
                         <form action="${pageContext.request.contextPath}/forgot-password?contain=verify" method="POST">
                             <div class="form-floating mb-1">
+                                <input type="hidden" name="email" value="${email}">
                                 <input type="text" name="otp" class="form-control" placeholder="OTP">
                                 <label>OTP</label>
                             </div>
                             <input type="hidden" name="email" value="${requestScope.email}">
                             <button type="submit" class="btn btn-primary w-100 px-3 py-2">Confirm</button>
+                            <a href="login" class="btn btn-common w-100 px-3 py-2">Cancel</a>
                             <c:if test="${not empty requestScope.error}">
                                 <div style="color: red; margin-top: 10px;">
                                 ${requestScope.error}

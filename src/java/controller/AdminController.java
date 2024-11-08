@@ -204,8 +204,9 @@ public class AdminController extends HttpServlet {
     }// </editor-fold>
 
     public List<User> searchUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+
         String keyword = request.getParameter("keyword");
-        
+
         String status = request.getParameter("status");
 
         UserDAO dao = new UserDAO();
@@ -217,16 +218,19 @@ public class AdminController extends HttpServlet {
         // Tìm kiếm người dùng theo từ khóa
         listUser = dao.findByName(keyword);
 
-       
-
         if (status != null && !status.isEmpty()) {
             int statusValue = Integer.parseInt(status); // Chuyển đổi status sang số nguyên
             listUser = listUser.stream()
                     .filter(user -> user.getStatus() == statusValue)
                     .collect(Collectors.toList());
         }
+  request.setAttribute("data", listUser);
+        request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
 
         return listUser; // Trả về danh sách người dùng đã lọc
+
+        
+      
     }
 
     private void addUser(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, ServletException, IOException {

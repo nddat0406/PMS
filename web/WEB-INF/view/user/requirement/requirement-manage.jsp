@@ -73,10 +73,10 @@
                             <div class="block-header py-lg-4 py-3">
                                 <div class="row g-3">
                                     <div class="col-md-6 col-sm-12">
-                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Requirement</h2>
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Issues</h2>
                                         <ul class="breadcrumb mb-0">
                                             <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
-                                            <li class="breadcrumb-item active">Requirement</li>
+                                            <li class="breadcrumb-item active">Issues</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -102,7 +102,6 @@
                                         <form action="requirement" method="post">
                                             <input hidden type="text" value="filter" name="action">
                                             <div style="display: flex; justify-content: space-between">
-                                           
                                                 <div class="input-group mb-3" style="width: 25%">
                                                     <span class="input-group-text">Project</span>
                                                     <select class="form-select" name="projectFilter" id="projectFilter" onchange="ChangeFilter()">
@@ -215,177 +214,184 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <!-- Requirement Detail Modal -->
+            <!-- Requirement Detail Modal -->
+            <div class="modal fade" id="requirementDetailModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Requirement Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
 
-                <!-- Requirement Detail Modal -->
-                <!-- Requirement Detail Modal -->
-                <div class="modal fade" id="requirementDetailModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Requirement Details</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <form id="requirementForm" action="requirement" method="post">
+                            <div class="modal-body">
+                                <input type="hidden" name="action" id="formAction" value="update">
+                                <input type="hidden" name="id" id="modalRequirementId">
+                                <!--<input type="hidden" name="userId" id="modalRequirementId" value="${loginedUser.id}">-->
+
+                                <div class="mb-3">
+                                    <label class="form-label">Title <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="title" id="modalTitle" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Project <span class="text-danger">*</span></label>
+                                    <select class="form-select" name="projectId" id="modalProject" required>
+                                        <option value="">Select Project</option>
+                                        <c:forEach items="${requirementService.getAllProject()}" var="project">
+                                            <option value="${project.id}">${project.name}</option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Milestone</label>
+                                    <select class="form-select" name="milestoneId" id="modalMilestone">
+                                        <option value="">Select Milestone</option>
+                                    </select>
+                                </div>
+
+                                <!-- Add this after the milestone select in the modal -->
+                                <div class="mb-3">
+                                    <label class="form-label">Assignee</label>
+                                    <select class="form-select" name="assigneeId" id="modalAssignee">
+                                        <option value="">Select Assignee</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Details <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" name="details" id="modalDetails" rows="4" required></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Complexity <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="complexity" id="modalComplexity" required 
+                                           placeholder="Enter Low, Medium, or High">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Status <span class="text-danger">*</span></label>
+                                    <select class="form-select" name="status" id="modalStatus" required>
+                                        <option value="0">Pending</option>
+                                        <option value="1">Committed</option>
+                                        <option value="2">Analyze</option>
+                                        <option value="3">Design</option>
+                                        <option value="4">Accepted</option>
+                                        <option value="5">Coded</option>
+                                        <option value="6">Tested</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Estimated Effort (hours) <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" name="estimatedEffort" id="modalEstimatedEffort" 
+                                           required min="1" max="20" placeholder="Enter value between 1-20">
+                                </div>
                             </div>
 
-                            <form id="requirementForm" action="requirement" method="post">
-                                <div class="modal-body">
-                                    <input type="hidden" name="action" id="formAction" value="update">
-                                    <input type="hidden" name="id" id="modalRequirementId">
-                                    <input type="hidden" name="userId" id="modalRequirementId" value="${loginedUser.id}">
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Title <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" name="title" id="modalTitle" required>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Project <span class="text-danger">*</span></label>
-                                        <select class="form-select" name="projectId" id="modalProject" required onchange="loadMilestones(this.value)">
-                                            <option value="">Select Project</option>
-                                            <c:forEach items="${requirementService.getAllProject()}" var="project">
-                                                <option value="${project.id}">${project.name}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Milestone</label>
-                                        <select class="form-select" name="milestoneId" id="modalMilestone">
-                                            <option value="">Select Milestone</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Details <span class="text-danger">*</span></label>
-                                        <textarea class="form-control" name="details" id="modalDetails" rows="4" required></textarea>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Complexity <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" name="complexity" id="modalComplexity" required 
-                                               placeholder="Enter Low, Medium, or High">
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Status <span class="text-danger">*</span></label>
-                                        <select class="form-select" name="status" id="modalStatus" required>
-                                            <option value="0">Pending</option>
-                                            <option value="1">Committed</option>
-                                            <option value="2">Analyze</option>
-                                            <option value="3">Design</option>
-                                            <option value="4">Accepted</option>
-                                            <option value="5">Coded</option>
-                                            <option value="6">Tested</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Estimated Effort (hours) <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" name="estimatedEffort" id="modalEstimatedEffort" 
-                                               required min="1" max="20" placeholder="Enter value between 1-20">
-                                    </div>
-                                </div>
-
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" id="button-modal-submit" class="btn btn-primary">Save changes</button>
-                                </div>
-                            </form>
-                        </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" id="button-modal-submit" style="color: blue" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </div>
+            </div>  
             <!-- Scripts -->
             <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
             <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
 
             <script>
-                                            // Filter change handler
-                                            function ChangeFilter() {
-                                            var complexityFilter = document.getElementById("complexityFilter").value;
-                                            var projectFilter = document.getElementById("projectFilter").value;
-                                            var statusFilter = document.getElementById("statusFilter").value;
-                                            $.ajax({
-                                            url: "requirement<script>
-                                                    // Filter change handler
+                                                            // Filter change handler
                                                             function ChangeFilter() {
                                                             var complexityFilter = document.getElementById("complexityFilter").value;
                                                             var projectFilter = document.getElementById("projectFilter").value;
                                                             var statusFilter = document.getElementById("statusFilter").value;
                                                             $.ajax({
-                                                            url: "requirement",
-                                                                    type: 'post',
-                                                                    data: {
-                                                                    complexityFilter: complexityFilter,
-                                                                            projectFilter: projectFilter,
-                                                                            statusFilter: statusFilter,
-                                                                            action: "filter"
-                                                                    },
-                                                                    success: function () {
-                                                                    $('.tableBody').load("${pageContext.request.contextPath}/requirement?page=${page} .tableBody > *");
+                                                            url: "requirement<script>
+                                                                    // Filter change handler
+                                                                            function ChangeFilter() {
+                                                                            var complexityFilter = document.getElementById("complexityFilter").value;
+                                                                            var projectFilter = document.getElementById("projectFilter").value;
+                                                                            var statusFilter = document.getElementById("statusFilter").value;
+                                                                            $.ajax({
+                                                                            url: "requirement",
+                                                                                    type: 'post',
+                                                                                    data: {
+                                                                                    complexityFilter: complexityFilter,
+                                                                                            projectFilter: projectFilter,
+                                                                                            statusFilter: statusFilter,
+                                                                                            action: "filter"
+                                                                                    },
+                                                                                    success: function () {
+                                                                                    $('.tableBody').load("${pageContext.request.contextPath}/requirement?page=${page} .tableBody > *");
+                                                                                    }
+                                                                            });
+                                                                            }
+
+                                                                    // Form submission handler
+                                                                    $('#button-modal-submit').on('click', function (e) {
+                                                                    e.preventDefault();
+                                                                    if (validateForm()) {
+                                                                    var isEdit = $('#modalRequirementId').val() !== '';
+                                                                    // Set action based on operation
+                                                                    $('#requirementForm').attr('action',
+                                                                            '${pageContext.request.contextPath}/requirement?action=' +
+                                                                            (isEdit ? 'update' : 'add')
+                                                                            );
+                                                                    $('#requirementForm').submit();
                                                                     }
-                                                            });
-                                                            }
+                                                                    });
+                                                                    // Error handling functions
+                                                                    function showError(fieldId, message) {
+                                                                    const field = $(`#${fieldId}`);
+                                                                    field.addClass('is-invalid');
+                                                                    field.after(`<div class="invalid-feedback">${message}</div>`);
+                                                                    }
 
-                                                    // Form submission handler
-                                                    $('#button-modal-submit').on('click', function (e) {
-                                                    e.preventDefault();
-                                                    if (validateForm()) {
-                                                    var isEdit = $('#modalRequirementId').val() !== '';
-                                                    // Set action based on operation
-                                                    $('#requirementForm').attr('action',
-                                                            '${pageContext.request.contextPath}/requirement?action=' +
-                                                            (isEdit ? 'update' : 'add')
-                                                            );
-                                                    $('#requirementForm').submit();
-                                                    }
-                                                    });
-                                                    // Error handling functions
-                                                    function showError(fieldId, message) {
-                                                    const field = $(`#${fieldId}`);
-                                                    field.addClass('is-invalid');
-                                                    field.after(`<div class="invalid-feedback">${message}</div>`);
-                                                    }
+                                                                    function clearErrors() {
+                                                                    $('.is-invalid').removeClass('is-invalid');
+                                                                    $('.invalid-feedback').remove();
+                                                                    }
 
-                                                    function clearErrors() {
-                                                    $('.is-invalid').removeClass('is-invalid');
-                                                    $('.invalid-feedback').remove();
-                                                    }
+                                                                    // Sorting handlers
+                                                                    $(document).ready(function () {
+                                                                    $('.sortTableHead').on('click', function () {
+                                                                    var $th = $(this);
+                                                                    var name = $th.attr('name');
+                                                                    var sortBy = $th.attr('sortBy');
+                                                                    $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+                                                                    if (sortBy === 'asc') {
+                                                                    sortBy = 'desc';
+                                                                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
+                                                                    } else {
+                                                                    sortBy = 'asc';
+                                                                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
+                                                                    }
 
-                                                    // Sorting handlers
-                                                    $(document).ready(function () {
-                                                    $('.sortTableHead').on('click', function () {
-                                                    var $th = $(this);
-                                                    var name = $th.attr('name');
-                                                    var sortBy = $th.attr('sortBy');
-                                                    $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
-                                                    if (sortBy === 'asc') {
-                                                    sortBy = 'desc';
-                                                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
-                                                    } else {
-                                                    sortBy = 'asc';
-                                                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
-                                                    }
-
-                                                    $th.attr('sortBy', sortBy);
-                                                    $.ajax({
-                                                    url: "requirement",
-                                                            type: 'post',
-                                                            data: {
-                                                            sortBy: sortBy,
-                                                                    fieldName: name,
-                                                                    action: "sort"
-                                                            },
-                                                            success: function () {
-                                                            $('.tableBody').load("${pageContext.request.contextPath}/requirement?page=${page} .tableBody > *");
-                                                            }
-                                                    });
-                                                    });
-                                                    });
-                                                    // Show more/less for details
-                                                    $(document).on('click', '.content-wrapper', function() {
-                                                    $(this).toggleClass('expanded');
-                                                    });
+                                                                    $th.attr('sortBy', sortBy);
+                                                                    $.ajax({
+                                                                    url: "requirement",
+                                                                            type: 'post',
+                                                                            data: {
+                                                                            sortBy: sortBy,
+                                                                                    fieldName: name,
+                                                                                    action: "sort"
+                                                                            },
+                                                                            success: function () {
+                                                                            $('.tableBody').load("${pageContext.request.contextPath}/requirement?page=${page} .tableBody > *");
+                                                                            }
+                                                                    });
+                                                                    });
+                                                                    });
+                                                                    // Show more/less for details
+                                                                    $(document).on('click', '.content-wrapper', function() {
+                                                                    $(this).toggleClass('expanded');
+                                                                    });
             </script>
 
             <script>
@@ -517,7 +523,7 @@
                         });
                         }
 
-                        // Function to load requirement milestone
+    // Function to load requirement milestone
                         function loadRequirementMilestone(requirementId) {
                         return new Promise((resolve, reject) => {
                         $.ajax({
@@ -541,7 +547,7 @@
                         });
                         }
 
-                        // Update the view-details click handler
+    // Update the view-details click handler
                         $(document).on('click', '.view-details', function() {
                         var row = $(this).closest('tr');
                         var id = row.find('td:eq(0)').text();
@@ -572,33 +578,126 @@
                                 'Tested': 6
                         };
                         $('#modalStatus').val(statusMap[status.trim()]);
-                        // Find and select the matching project in the dropdown
+                        // Find and select the matching project first
                         $('#modalProject option').each(function() {
                         if ($(this).text() === projectName) {
                         $(this).prop('selected', true);
                         var projectId = $(this).val();
-                        // Chain the promises
-                        loadMilestones(projectId)
-                                .then(() => loadRequirementMilestone(id))
-                                .catch(error => {
-                                console.error('Error in loading data:', error);
-                                });
+                        // First load both milestone and assignee options
+                        loadMilestones(projectId);
+                        loadAssignees(projectId);
+                        // Then after a small delay, load the selected values
+                        setTimeout(() => {
+                        loadRequirementMilestone(id);
+                        loadRequirementAssignee(id);
+                        }, 500);
                         }
                         });
                         // Show the modal
                         var myModal = new bootstrap.Modal(document.getElementById('requirementDetailModal'));
                         myModal.show();
                         });
-                        // Update the onchange handler for project selection
+                        function loadAssignees(projectId) {
+                        console.log('Loading assignees for project:', projectId); // Debug log
+
+                        if (!projectId) {
+                        $('#modalAssignee').html('<option value="">Select Assignee</option>');
+                        return;
+                        }
+
+                        $.ajax({
+                        url: 'requirement',
+                                type: 'POST',
+                                data: {
+                                action: 'getAssignees',
+                                        projectId: projectId
+                                },
+                                success: function(response) {
+                                console.log('Received response:', response); // Debug log
+
+                                var assigneeSelect = $('#modalAssignee');
+                                assigneeSelect.empty();
+                                assigneeSelect.append('<option value="">Select Assignee</option>');
+                                try {
+                                // Handle if response is already an object
+                                var users = typeof response === 'string' ? JSON.parse(response) : response;
+                                if (Array.isArray(users)) {
+                                users.forEach(function(user) {
+                                assigneeSelect.append(
+                                        $('<option>', {
+                                        value: user.id,
+                                                text: user.name
+                                        })
+                                        );
+                                });
+                                } else {
+                                console.error('Invalid response format:', users);
+                                }
+                                } catch (e) {
+                                console.error('Error parsing assignee data:', e);
+                                console.error('Raw response:', response);
+                                }
+                                },
+                                error: function(xhr, status, error) {
+                                console.error('Error loading assignees:', error);
+                                console.error('Status:', status);
+                                console.error('Response:', xhr.responseText);
+                                }
+                        });
+                        }
+
+                        function loadRequirementAssignee(requirementId) {
+                        return new Promise((resolve, reject) => {
+                        $.ajax({
+                        url: 'requirement',
+                                type: 'POST',
+                                data: {
+                                action: 'getAssigneeId',
+                                        requirementId: requirementId
+                                },
+                                success: function(assigneeId) {
+                                console.log('Got assignee ID:', assigneeId); // Debug log
+                                if (assigneeId) {
+                                $('#modalAssignee').val(assigneeId);
+                                }
+                                resolve();
+                                },
+                                error: function(xhr, status, error) {
+                                console.error('Error loading assignee for requirement:', error);
+                                reject(error);
+                                }
+                        });
+                        });
+                        }
+
                         $('#modalProject').on('change', function() {
                         var projectId = $(this).val();
-                        loadMilestones(projectId)
-                                .catch(error => {
-                                console.error('Error loading milestones:', error);
-                                });
+                        console.log('Project changed to:', projectId); // Debug log
+
+                        // Handle both milestone and assignee loading
+                        if (projectId) {
+                        Promise.all([
+                                new Promise((resolve) => {
+                                loadMilestones(projectId)
+                                        .then(resolve)
+                                        .catch(error => {
+                                        console.error('Error loading milestones:', error);
+                                        resolve(); // Continue even if there's an error
+                                        });
+                                }),
+                                new Promise((resolve) => {
+                                loadAssignees(projectId);
+                                resolve();
+                                })
+                        ]).catch(error => {
+                        console.error('Error in loading data:', error);
+                        });
+                        } else {
+                        // Clear both dropdowns if no project selected
+                        $('#modalMilestone').html('<option value="">Select Milestone</option>');
+                        $('#modalAssignee').html('<option value="">Select Assignee</option>');
+                        }
                         });
             </script>
-
-
         </body>
     </html>

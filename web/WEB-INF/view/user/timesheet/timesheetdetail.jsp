@@ -194,15 +194,16 @@
                                                     <!-- Time Fields -->
                                                     <div class="col-md-6">
                                                         <label for="timeCreate"><strong>Time Created:</strong></label>
-                                                        <input type="date" id="timeCreate" name="timeCreate" class="form-control"
-                                                               value="${sessionScope.timeCreate != null ? sessionScope.timeCreate : timesheet.timeCreated}">
+                                                        <input type="date" id="timeCreate" name="timeCreate" class="form-control" 
+                                                               value="${sessionScope.timeCreate != null ? sessionScope.timeCreate : timesheet.timeCreated}" readonly>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label for="timeComplete"><strong>Time Completed:</strong></label>
-                                                        <input type="date" id="timeComplete" name="timeComplete" class="form-control"
+                                                        <input type="date" id="timeComplete" name="timeComplete" class="form-control" 
                                                                value="${sessionScope.timeComplete != null ? sessionScope.timeComplete : timesheet.timeCompleted}">
                                                     </div>
                                                 </div>
+
 
                                                 <div class="row">
                                                     <div class="col-md-12">

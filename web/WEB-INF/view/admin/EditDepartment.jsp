@@ -1,101 +1,145 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
+        <meta charset="UTF-8">
         <title>Edit Department</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/dataTables.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
         <style>
-            /* CSS tùy ch?nh */
-            .custom-select {
-                width: 150px; /* Chi?u r?ng tùy ch?nh cho select */
+            .card {
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
             }
             .form-container {
-                max-width: 600px; /* Gi?i h?n chi?u r?ng form */
-                margin: 50px auto; /* C?n gi?a form v?i kho?ng cách trên */
+                padding: 20px;
             }
-            .content {
-                padding-top: 100px; /* Cách ??u t? sidebar */
+            .form-group {
+                margin-bottom: 15px;
+            }
+            .btn {
+                margin-top: 10px;
+            }
+            .status-label {
+                font-weight: bold;
+            }
+            .form-group label {
+                font-weight: bold;
+            }
+            .form-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+            .form-col {
+                flex: 1;
+                min-width: 200px;
             }
         </style>
     </head>
     <body>
-        <div class="container-fluid">
-            <div class="sidebar">
-                <jsp:include page="/WEB-INF/view/common/topNavbar.jsp" />
-                <jsp:include page="/WEB-INF/view/common/sidebar.jsp" />
-                <jsp:include page="/WEB-INF/view/common/pageLoader.jsp" />
-            </div>
-            <div class="content">
-                <div class="form-container">
-                    <c:if test="${not empty errorMessage}">
-                        <div class="alert alert-danger">
-                            ${errorMessage}
+        <div id="layout" class="theme-cyan">
+            <jsp:include page="../common/pageLoader.jsp"></jsp:include>
+                <div id="wrapper">
+                <jsp:include page="../common/topNavbar.jsp"></jsp:include>
+                <jsp:include page="../common/sidebar.jsp"></jsp:include>
+
+                    <div id="main-content">
+                        <div class="container-fluid">
+
+                            <div class="block-header py-lg-4 py-3">
+                                <div class="row g-3">
+                                    <div class="col-md-6 col-sm-12">
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Edit Department</h2>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row clearfix">
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="card">
+                                        <div class="card-body form-container">
+                                        <c:if test="${not empty errorMessage}">
+                                            <div class="alert alert-danger">
+                                                ${errorMessage}
+                                            </div>
+                                        </c:if>
+                                        <form action="department?action=update" method="post" onsubmit="return validateForm();">
+
+                                            <input type="hidden" name="id" value="${departmentDetail.id}"> <!-- Department ID -->
+
+                                            <div class="form-row">
+                                                <div class="form-group form-col">
+                                                    <label for="code">Code:</label>
+                                                    <input type="text" id="code" name="code" class="form-control" value="${departmentDetail.code}" required>
+                                                </div>
+
+                                                <div class="form-group form-col">
+                                                    <label for="name">Name:</label>
+                                                    <input type="text" id="name" name="name" class="form-control" value="${departmentDetail.name}" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="details">Details:</label>
+
+                                                <textarea id="details" name="details" class="form-control" rows="4" required>${departmentDetail.details}</textarea>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="status" class="status-label">Status:</label><br>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" id="active" name="status" value="1" class="form-check-input" ${departmentDetail.status == 1 ? 'checked' : ''}>
+                                                    <label for="active" class="form-check-label">Activate</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" id="inactive" name="status" value="0" class="form-check-input" ${departmentDetail.status == 0 ? 'checked' : ''}>
+                                                    <label for="inactive" class="form-check-label">Deactivate</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="parent_department">Parent Department:</label>
+                                                <select id="parent_department" name="parent_department" class="form-control">
+                                                    <option value="">Choose parent</option>
+                                                    <c:forEach var="parent" items="${listParentDepartments}">
+                                                        <option value="${parent.id}" ${departmentDetail.parent != null && departmentDetail.parent.id == parent.id ? 'selected' : ''}>${parent.name}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+
+
+                                            <button type="submit" class="btn btn-primary">Update</button>
+                                            <a href="${pageContext.request.contextPath}/admin/department" class="btn btn-secondary">Back</a>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
-                    </c:if>
-                    <form action="department?action=update" method="post" onsubmit="return validateForm();">
-                        <input type="hidden" name="id" value="${departmentDetail.id}"> <!-- ID c?a phòng ban ?? c?p nh?t -->
-
-                        <div class="form-group">
-                            <label for="code">Code:</label>
-                            <input type="text" id="code" name="code" class="form-control" value="${departmentDetail.code}" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="name">Name:</label>
-                            <input type="text" id="name" name="name" class="form-control" value="${departmentDetail.name}" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="details">Details:</label>
-                            <textarea id="details" name="details" class="form-control" required>${departmentDetail.details}</textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="status">Status:</label><br>
-                            <input type="checkbox" id="active" name="status" value="1" ${departmentDetail.status == 1 ? 'checked' : ''}>
-                            <label for="active">Activate</label><br>
-
-                            <input type="checkbox" id="inactive" name="status" value="0" ${departmentDetail.status == 0 ? 'checked' : ''}>
-                            <label for="inactive">Deactivate</label>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="parent_department">Phòng ban cha:</label>
-                            <select id="parent_department" name="parent_department" class="form-control custom-select">
-                                <option value="">chose parent</option>
-                                <c:forEach var="parent" items="${listParentDepartments}">
-                                    <option value="${parent.id}" ${departmentDetail.parent != null && departmentDetail.parent.id == parent.id ? 'selected' : ''}>${parent.name}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="btn btn-success">Update</button>
-                        <a href="${pageContext.request.contextPath}/admin/department" class="btn btn-secondary">Back</a>
-
-                    </form>
-                </div>
+                    </div>
+                </div>            
             </div>
         </div>
+        <script>
+            document.getElementById("active").addEventListener('change', function () {
+                if (this.checked) {
+                    document.getElementById("inactive").checked = false;
+                }
+            });
 
-
-
-        <!-- Thêm jQuery và Bootstrap JS n?u c?n -->
+            document.getElementById("inactive").addEventListener('change', function () {
+                if (this.checked) {
+                    document.getElementById("active").checked = false;
+                }
+            });
+        </script>
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-        <script>
-                        document.getElementById("active").addEventListener('change', function () {
-                            if (this.checked) {
-                                document.getElementById("inactive").checked = false;
-                            }
-                        });
-
-                        document.getElementById("inactive").addEventListener('change', function () {
-                            if (this.checked) {
-                                document.getElementById("active").checked = false;
-                            }
-                        });
-        </script>
     </body>
 </html>

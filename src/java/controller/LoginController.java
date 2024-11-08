@@ -181,12 +181,18 @@ public class LoginController extends HttpServlet {
     private void forgotPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             String email = request.getParameter("email");
-            String otp = BaseService.getRandom();
-            uService.saveOtp(email, otp);
-            boolean result = BaseService.sendEmail(email, "Forgot password OTP", "Here is OTP to reset your password: " + otp);
-            if (result) {
-                request.setAttribute("email", email);
-                request.getRequestDispatcher("/WEB-INF/view/user/verify.jsp").forward(request, response);
+            request.setAttribute("oldEmail", email);
+            if (uService.isEmailExists(email)) {
+                String otp = BaseService.getRandom();
+                uService.saveOtp(email, otp);
+                boolean result = BaseService.sendEmail(email, "Forgot password OTP", "Here is OTP to reset your password: " + otp);
+                if (result) {
+                    request.setAttribute("email", email);
+                    request.getRequestDispatcher("/WEB-INF/view/user/verify.jsp").forward(request, response);
+                }
+            }else{
+                request.setAttribute("errorMess", "Email not found!");
+                request.getRequestDispatcher("/WEB-INF/view/user/fogotpassword.jsp").forward(request, response);
             }
         } catch (MessagingException ex) {
             throw new ServletException(ex);
@@ -196,6 +202,7 @@ public class LoginController extends HttpServlet {
     private void verifyPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String otp = request.getParameter("otp");
         String email = request.getParameter("email");
+        request.setAttribute("email", email);
         User user = null;
         try {
             user = uService.getUserByEmail(email);

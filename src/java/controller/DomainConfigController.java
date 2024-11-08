@@ -157,8 +157,11 @@ public class DomainConfigController extends HttpServlet {
                 searchName = searchName != null ? searchName.trim() : null;
                 type = type != null ? type.trim() : null;
                 filterStatus = filterStatus != null ? filterStatus.trim() : null;
+               
+
                 List<Setting> domainSettings;
                 domainSettings = se.getDomainSettingByDomainId(dID);
+                domainSettings=se.filterSettings(filterStatus, filterStatus, type);
 
                 session.setAttribute("domainId", dID);
                 request.setAttribute("searchName", searchName);

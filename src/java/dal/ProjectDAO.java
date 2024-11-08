@@ -115,7 +115,7 @@ public class ProjectDAO extends BaseDAO {
                 + "JOIN allocation a ON p.id = a.projectId "
                 + "JOIN `group` g1 ON p.domainId = g1.id AND g1.type = 1 " // Join với group để lấy thông tin domain (type = 1)
                 + "JOIN `group` g2 ON p.departmentId = g2.id AND g2.type = 0 " // Join với group để lấy thông tin department (type = 0)
-                + "WHERE a.userId = ? "); // Điều kiện để chỉ lấy các dự án của người dùng
+                + "WHERE a.userId = ? and a.status=1 "); // Điều kiện để chỉ lấy các dự án của người dùng
 
         // Thêm điều kiện tìm kiếm theo keyword nếu có
         if (keyword != null && !keyword.trim().isEmpty()) {

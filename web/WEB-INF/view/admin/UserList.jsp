@@ -257,24 +257,18 @@
                                                     <div class="modal-body">
                                                         <form action="${pageContext.request.contextPath}/admin/userlist?action=add" method="POST" id="addUserForm">
                                                             <div class="row g-2">
-
                                                                 <div class="col-md-4 col-sm-12">
                                                                     <input type="email" class="form-control" placeholder="Email" name="email" required>
                                                                 </div>
                                                                 <div class="col-md-4 col-sm-12">
                                                                     <input type="text" class="form-control" placeholder="Mobile" name="mobile" required>
                                                                 </div>
-
-
                                                                 <div class="col-md-4 col-sm-12">
                                                                     <input type="text" class="form-control" placeholder="Name" name="fullname" required>
                                                                 </div>
-
-
                                                                 <div class="col-md-4 col-sm-12">
                                                                     <input type="password" class="form-control" placeholder="Password" name="password" required>
                                                                 </div>
-
                                                                 <div class="col-md-4 col-sm-12">
                                                                     <label for="role">Role:</label>
                                                                     <select class="form-control" name="role" id="role" required>
@@ -287,10 +281,6 @@
                                                                         <option value="6" <c:if test="${param.role == '6'}">selected</c:if>>PMO</option>
                                                                         </select>
                                                                     </div>
-
-
-
-
                                                                     <div class="col-md-4 col-sm-12">
                                                                         <label for="status">Status:</label>
                                                                         <select class="form-control" id="status" name="status" required>
@@ -300,9 +290,6 @@
 
                                                                         </select>
                                                                     </div>
-
-
-
                                                                     <div class="col-md-4 col-sm-12">
                                                                         <label for="departmentId">Department:</label>
                                                                         <select class="form-control" id="departmentId" name="departmentId" required>
@@ -329,18 +316,11 @@
                                                             </div>
                                                         </form>
                                                     </div>
-
-
-
                                                 </div>
                                             </div>
                                         </div>
-
-
-
                                     </div>
                                 </div>
-
                             </div>
                             <!-- core js file -->
                             <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>

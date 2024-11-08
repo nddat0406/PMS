@@ -3,6 +3,7 @@ package service;
 import dal.MilestoneDAO;
 import dal.ProjectDAO;
 import dal.RequirementDAO;
+import dal.UserDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +12,14 @@ import java.util.logging.Logger;
 import model.Milestone;
 import model.Project;
 import model.Requirement;
+import model.User;
 
 public class RequirementService extends BaseService {
 
     private final RequirementDAO requirementDAO = new RequirementDAO();
     private final ProjectDAO projectDAO = new ProjectDAO();
     private final MilestoneDAO mileStoneDAO = new MilestoneDAO();
+    private final UserDAO userDAO=new UserDAO();
     
 
     public List<Requirement> getRequirementsByProject(int projectId) throws SQLException {
@@ -238,5 +241,19 @@ public class RequirementService extends BaseService {
 
     public Integer getMilestoneIdForRequirement(int requirementId) throws SQLException {
         return requirementDAO.getMilestoneIdForRequirement(requirementId);
+    }
+
+    public List<User> getListUsersByProjectId(int projectId) {
+        return userDAO.getUsersByProjectId(projectId);
+    }
+
+    public Integer getAssigneeIdForRequirement(int requirementId) {
+        try {
+            Requirement requirement = requirementDAO.getRequirementById(requirementId);
+            return requirement != null ? requirement.getUserId() : null;
+        } catch (SQLException e) {
+            Logger.getLogger(RequirementService.class.getName()).log(Level.SEVERE, null, e);
+            return null;
+        }
     }
 }

@@ -611,7 +611,7 @@ public class GroupDAO extends BaseDAO {
     // Tìm kiếm phòng ban theo từ khóa
     public List<Group> searchDepartments(String keyword) {
         List<Group> list = new ArrayList<>();
-        String sql = "SELECT * FROM pms.group  where type=0 and code LIKE ? OR name LIKE ? OR details LIKE ?";
+        String sql = "SELECT * FROM pms.group  where type=0 and code LIKE ? OR name LIKE ?";
 
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
@@ -621,7 +621,6 @@ public class GroupDAO extends BaseDAO {
 
             pre.setString(1, searchKeyword);
             pre.setString(2, searchKeyword);
-            pre.setString(3, searchKeyword);
 
             ResultSet rs = pre.executeQuery();
 
