@@ -26,9 +26,9 @@
 
             <!-- Page Loader -->
             <%--<jsp:include page="../common/pageLoader.jsp"></jsp:include>--%>
-                <div id="wrapper">
+            <div id="wrapper">
 
-                    <!-- top navbar -->
+                <!-- top navbar -->
                 <jsp:include page="../common/topNavbar.jsp"></jsp:include>
 
                     <!-- Sidbar menu -->
@@ -89,14 +89,7 @@
                                                 <!-- Keyword Search -->
                                                 <input value="${param.keyword}" class="form-control" name="keyword" placeholder="Search here..." type="text" style="width: 20%">
 
-                                                <!-- Department Filter -->
-                                                <label for="department" class="input-group-text">Department:</label>
-                                                <select name="departmentId" id="department" class="form-select" style="width: 15%;">
-                                                    <option value="">All Departments</option>
-                                                    <c:forEach items="${departments}" var="d">
-                                                        <option value="${d.id}" <c:if test="${param.departmentId == d.id}">selected</c:if>>${d.name}</option>
-                                                    </c:forEach>
-                                                </select>
+
                                                 <!-- Status Filter -->
                                                 <label for="status" class="input-group-text">Status:</label>
                                                 <select name="status" id="status" class="form-select" style="width: 10%;">
@@ -159,7 +152,34 @@
                                                         <td>${d.email}</td>
                                                         <td>${d.department.name}</td>
                                                         <td>${d.address}</td>
-                                                        <td>${d.role}</td>
+                                                        <td>
+                                                            <div class="input-group mb-3" style="width: 25%">
+                                                                <c:choose >
+                                                                    <c:when test="${d.role == 1}">
+                                                                        <span>Admin</span><br>
+
+                                                                    </c:when>
+                                                                    <c:when test="${d.role == 2}">
+                                                                        <span>User</span><br>
+                                                                    </c:when>
+                                                                    <c:when test="${d.role == 3}">
+                                                                        <span>QA</span><br>
+                                                                    </c:when>
+                                                                    <c:when test="${d.role == 4}">
+                                                                        <span>PM</span><br>
+                                                                    </c:when>
+                                                                    <c:when test="${d.role == 5}">
+                                                                        <span>Dept Manager</span><br>
+                                                                    </c:when>
+                                                                    <c:when test="${d.role == 6}">
+                                                                        <span>PMO</span><br>
+                                                                    </c:when>
+
+
+
+                                                                </c:choose>
+                                                            </div>
+                                                        </td>
                                                         <td>
                                                             <div class="input-group mb-3" style="width: 25%">
                                                                 <c:choose >
@@ -255,32 +275,45 @@
                                                                     <input type="password" class="form-control" placeholder="Password" name="password" required>
                                                                 </div>
 
-
                                                                 <div class="col-md-4 col-sm-12">
-                                                                    <label for="role">Role:</label><br>
-                                                                    <input type="radio" id="role1" name="role" value="1" required>
-                                                                    <label for="role1">1</label><br>
-                                                                    <input type="radio" id="role2" name="role" value="2" required>
-                                                                    <label for="role2">2</label>
-                                                                </div>
+                                                                    <label for="role">Role:</label>
+                                                                    <select class="form-control" name="role" id="role" required>
+                                                                        <option value="">-- Select Role --</option>
+                                                                        <option value="1" <c:if test="${param.role == '1'}">selected</c:if>>Admin</option>
+                                                                        <option value="2" <c:if test="${param.role == '2'}">selected</c:if>>User</option>
+                                                                        <option value="3" <c:if test="${param.role == '3'}">selected</c:if>>QA</option>
+                                                                        <option value="4" <c:if test="${param.role == '4'}">selected</c:if>>PM</option>
+                                                                        <option value="5" <c:if test="${param.role == '5'}">selected</c:if>>Dept Manager</option>
+                                                                        <option value="6" <c:if test="${param.role == '6'}">selected</c:if>>PMO</option>
+                                                                        </select>
+                                                                    </div>
 
 
 
 
-                                                                <div class="col-md-4 col-sm-12">
-                                                                    <label for="status">Status:</label>
-                                                                    <select class="form-control" id="status" name="status" required>
-                                                                        <option value="">-- Select Status --</option>
-                                                                        <option value="1">Active</option>
-                                                                        <option value="0">Inactive</option>
+                                                                    <div class="col-md-4 col-sm-12">
+                                                                        <label for="status">Status:</label>
+                                                                        <select class="form-control" id="status" name="status" required>
+                                                                            <option value="">-- Select Status --</option>
+                                                                            <option value="1">Active</option>
+                                                                            <option value="0">Inactive</option>
 
+                                                                        </select>
+                                                                    </div>
+
+
+
+                                                                    <div class="col-md-4 col-sm-12">
+                                                                        <label for="departmentId">Department:</label>
+                                                                        <select class="form-control" id="departmentId" name="departmentId" required>
+                                                                            <option value="">-- Select Department --</option>
+                                                                        <c:forEach var="department" items="${departments}">
+                                                                            <option value="${department.id}" 
+                                                                                    <c:if test="${department.id == param.departmentId}">selected</c:if>>
+                                                                                ${department.name}
+                                                                            </option>
+                                                                        </c:forEach>
                                                                     </select>
-                                                                </div>
-
-
-
-                                                                <div class="col-md-4 col-sm-12">
-                                                                    <input type="text" class="form-control" placeholder="Dept ID *" name="departmentId" required>
                                                                 </div>
 
 

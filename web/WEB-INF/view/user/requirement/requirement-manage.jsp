@@ -102,15 +102,7 @@
                                         <form action="requirement" method="post">
                                             <input hidden type="text" value="filter" name="action">
                                             <div style="display: flex; justify-content: space-between">
-                                                <div class="input-group mb-3" style="width: 25%">
-                                                    <span class="input-group-text">Complexity</span>
-                                                    <select class="form-select" name="complexityFilter" id="complexityFilter" onchange="ChangeFilter()">
-                                                        <option value="0" ${complexityFilter==0?'selected':''}>All Complexity</option>
-                                                        <option value="Low" ${complexityFilter=='Low'?'selected':''}>Low</option>
-                                                        <option value="Medium" ${complexityFilter=='Medium'?'selected':''}>Medium</option>
-                                                        <option value="High" ${complexityFilter=='High'?'selected':''}>High</option>
-                                                    </select>
-                                                </div>
+                                           
                                                 <div class="input-group mb-3" style="width: 25%">
                                                     <span class="input-group-text">Project</span>
                                                     <select class="form-select" name="projectFilter" id="projectFilter" onchange="ChangeFilter()">

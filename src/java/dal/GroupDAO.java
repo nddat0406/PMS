@@ -19,18 +19,27 @@ import model.Group;
 public class GroupDAO extends BaseDAO {
 
     public String getDeptNameById(int id) throws SQLException {
-        String str = "SELECT name FROM pms.group  where type=0 and id=? ";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(str);
-            pre.setInt(1, id);
-            ResultSet rs = pre.executeQuery();
-            rs.next();
-            return rs.getString(1);
-        } catch (SQLException e) {
-            throw new SQLException(e);
+    String str = "SELECT name FROM pms.group WHERE type=0 AND id=?";
+    try (PreparedStatement pre = getConnection().prepareStatement(str)) {
+        pre.setInt(1, id);
+        
+        try (ResultSet rs = pre.executeQuery()) {
+            if (rs.next()) {
+                return rs.getString("name");
+            } else {
+                // Return null or a default value if no matching department is found
+                System.out.println("No department found for ID: " + id);
+                return null;
+            }
         }
-
+    } catch (SQLException e) {
+        throw new SQLException("Error retrieving department name for ID: " + id, e);
     }
+}
+    public static void main(String[] args) throws SQLException {
+        System.out.println(new GroupDAO().getAllDepartment());
+    }
+   
 
     public String getDomainName(int id) throws SQLException {
         String str = "SELECT name FROM pms.group  where type=1 and id=? ";
@@ -362,6 +371,7 @@ public class GroupDAO extends BaseDAO {
 
         return listD;
     }
+   
 
     public Group getParentDepartmentById(int id) {
         String sql = "SELECT * FROM pms.group  where type=0 and id = ?";
@@ -377,6 +387,7 @@ public class GroupDAO extends BaseDAO {
                 department.setName(rs.getString("name"));
                 department.setDetails(rs.getString("details"));
                 department.setStatus(rs.getInt("status"));
+                department.setType(rs.getInt("type"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

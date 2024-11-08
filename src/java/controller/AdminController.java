@@ -122,12 +122,13 @@ public class AdminController extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
             }
 
-
             case "userdetail" -> {
                 try {
                     int id = Integer.parseInt(request.getParameter("id"));
                     User user = uService.getUserById(id); // Get user by ID
                     List<Group> departments = uService.getAllDepartments(); // Get departments list
+                    Group userDepartment = uService.getDepartmentById(id);
+                    request.setAttribute("userDepartment", userDepartment);
                     request.setAttribute("updateUser", user);
                     request.setAttribute("departments", departments);
                     request.getRequestDispatcher("/WEB-INF/view/admin/UserDetails.jsp").forward(request, response);
@@ -204,32 +205,28 @@ public class AdminController extends HttpServlet {
 
     public List<User> searchUser(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
         String keyword = request.getParameter("keyword");
-    String departmentId = request.getParameter("departmentId");
-    String status = request.getParameter("status");
-    
-    UserDAO dao = new UserDAO();
-    List<User> listUser = new ArrayList<>(); // Khởi tạo danh sách rỗng
+        
+        String status = request.getParameter("status");
 
-    if (keyword == null) keyword = ""; // Nếu từ khóa null, gán giá trị rỗng
+        UserDAO dao = new UserDAO();
+        List<User> listUser = new ArrayList<>(); // Khởi tạo danh sách rỗng
 
-    // Tìm kiếm người dùng theo từ khóa
-    listUser = dao.findByName(keyword);
+        if (keyword == null) {
+            keyword = ""; // Nếu từ khóa null, gán giá trị rỗng
+        }
+        // Tìm kiếm người dùng theo từ khóa
+        listUser = dao.findByName(keyword);
 
-    // Nếu có departmentId hoặc status, lọc danh sách
-    if (departmentId != null && !departmentId.isEmpty()) {
-        listUser = listUser.stream()
-            .filter(user -> String.valueOf(user.getDepartment().getId()).equals(departmentId))
-            .collect(Collectors.toList());
-    }
+       
 
-    if (status != null && !status.isEmpty()) {
-        int statusValue = Integer.parseInt(status); // Chuyển đổi status sang số nguyên
-        listUser = listUser.stream()
-            .filter(user -> user.getStatus() == statusValue)
-            .collect(Collectors.toList());
-    }
+        if (status != null && !status.isEmpty()) {
+            int statusValue = Integer.parseInt(status); // Chuyển đổi status sang số nguyên
+            listUser = listUser.stream()
+                    .filter(user -> user.getStatus() == statusValue)
+                    .collect(Collectors.toList());
+        }
 
-    return listUser; // Trả về danh sách người dùng đã lọc
+        return listUser; // Trả về danh sách người dùng đã lọc
     }
 
     private void addUser(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, ServletException, IOException {
@@ -244,13 +241,7 @@ public class AdminController extends HttpServlet {
         String password = request.getParameter("password");
 
         try {
-            if (uService.isMobileExistss(mobile)) {
-                // Nếu số điện thoại đã tồn tại, gửi thông báo lỗi
-                request.setAttribute("error", "Mobile number already exists.");
-                // Điều hướng tới trang thêm người dùng (có thể là trang UserList.jsp hoặc trang AddUser.jsp)
-                request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
-                return; // Dừng lại nếu mobile trùng
-            }
+
             if (uService.isEmailExists(email)) {
                 request.setAttribute("error", "Mobile number already exists.");
                 // Điều hướng tới trang thêm người dùng (có thể là trang UserList.jsp hoặc trang AddUser.jsp)
