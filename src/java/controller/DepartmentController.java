@@ -96,6 +96,15 @@ public class DepartmentController extends HttpServlet {
 
     private void handleSearch(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
         String keyword = request.getParameter("keyword");
+
+        // Nếu từ khóa tìm kiếm trống hoặc không có
+        if (keyword == null || keyword.trim().isEmpty()) {
+            // Sử dụng logic phân trang mặc định
+            paginateList(request, response);
+            return;
+        }
+
+        // Nếu có từ khóa tìm kiếm, tiến hành tìm kiếm
         List<Group> searchResults = departmentService.searchDepartments(keyword);
         request.setAttribute("listD", searchResults);
         request.getRequestDispatcher("/WEB-INF/view/admin/Department.jsp").forward(request, response);
@@ -149,16 +158,17 @@ public class DepartmentController extends HttpServlet {
         String statusParam = request.getParameter("status");
         int addStatus = (statusParam != null && !statusParam.isEmpty()) ? Integer.parseInt(statusParam) : 0; // Mặc định là 0 nếu không có giá trị
 
-        // Lấy giá trị parent có thể null
+        // Lấy giá trị parent department (có thể là null)
         Integer addParent = getParentId(request, "parent_department");
 
         try {
-            // Gọi phương thức thêm phòng ban
+            // Thêm department mới
             departmentService.addDepartment(addCode, addName, addDetails, addParent, addStatus);
-            paginateList(request, response);
+
+            response.sendRedirect(request.getContextPath() + "/admin/department?action=list");
 
         } catch (IllegalArgumentException e) {
-            // Lưu thông tin vào session
+            // Lưu thông tin vào session để điền lại form nếu có lỗi
             request.getSession().setAttribute("errorMessage", e.getMessage());
             request.getSession().setAttribute("code", addCode);
             request.getSession().setAttribute("name", addName);
@@ -217,7 +227,8 @@ public class DepartmentController extends HttpServlet {
 
     private int getPageNumber(HttpServletRequest request) {
         String pageParam = request.getParameter("page");
-        return (pageParam != null) ? Integer.parseInt(pageParam) : 1;
+        int pageNumber = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
+        return (pageNumber < 1) ? 1 : pageNumber; // Đảm bảo pageNumber tối thiểu là 1
     }
 
     private Integer getFilterStatus(HttpServletRequest request) {

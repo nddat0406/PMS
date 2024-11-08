@@ -58,12 +58,12 @@
                                 <form action="${pageContext.request.contextPath}/login" method="POST">
                                     <div class="form-floating mb-1">
                                         <input type="email" name="email" class="form-control" placeholder="name@example.com"
-                                               value="Admin@gmail.com"/>
+                                               />
                                         <label>Email address</label>
                                     </div>
                                     <div class="form-floating">
                                         <input type="password" name="password" class="form-control" placeholder="Password"
-                                               value="123456"/>
+                                              />
                                         <label>Password</label>
                                     </div>
                                     <div class="form-check my-3">
