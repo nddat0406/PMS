@@ -344,7 +344,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-12">
                                             <label class="form-label">Effort rate</label>
-                                            <input type="number" class="form-control" placeholder="Effort Rate" max="100" min="0" value="0" name="effoRate" ${modalItem.effortRate}>
+                                            <input type="number" class="form-control" placeholder="Effort Rate" max="100" min="0" value="${modalItem.effortRate}" name="effoRate" >
                                         </div>
                                     </div>
                                 </div>

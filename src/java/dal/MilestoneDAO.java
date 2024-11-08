@@ -38,6 +38,7 @@ public class MilestoneDAO extends BaseDAO {
             temp.setStatus(rs.getInt("status"));
             temp.setDeliver(rs.getString("deliver"));
             temp.setPhase(phaseDAO.getPhaseById(rs.getInt("phaseId")));
+            temp.setTotalEvalWeight(this.getTotalWeight(rs.getInt("id")));
 
             return temp;
         } catch (SQLException e) {
@@ -46,7 +47,6 @@ public class MilestoneDAO extends BaseDAO {
     }
 
     public List<Milestone> getAllByProjectId(int id) throws SQLException {
-        System.out.println(id);
         String str = "SELECT * FROM pms.milestone where projectId=?";
         try {
             List<Milestone> list = new ArrayList<>();
@@ -63,6 +63,7 @@ public class MilestoneDAO extends BaseDAO {
                 temp.setStatus(rs.getInt("status"));
                 temp.setDeliver(rs.getString("deliver"));
                 temp.setPhase(phaseDAO.getPhaseById(rs.getInt("phaseId")));
+                temp.setTotalEvalWeight(this.getTotalWeight(rs.getInt("id")));
                 list.add(temp);
             }
             return list;
