@@ -301,7 +301,7 @@ public class GroupDAO extends BaseDAO {
         return list;
     }
 
-    public List<Group> getDomainUserByDomainId(String domainId) {
+    public List<Group> getDomainUserByDomainId(int domainId) {
         List<Group> list = new ArrayList<>();
         String sql = "select du.* \n"
                 + "from pms.group as g,\n"
@@ -311,7 +311,7 @@ public class GroupDAO extends BaseDAO {
 
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
-            pre.setObject(1, domainId);
+            pre.setInt(1, domainId);
             ResultSet rs = pre.executeQuery();
             UserDAO userDao = new UserDAO();
             while (rs.next()) {
@@ -319,7 +319,6 @@ public class GroupDAO extends BaseDAO {
                 domain.setId(rs.getInt("id"));
                 domain.setStatus(rs.getInt("status"));
                 domain.setUser(userDao.getActiveUserById(rs.getInt("userId")));
-//                domain.setParent(new Group(getDeptNameById(rs.getInt("domainId"))));
                 list.add(domain);
             }
         } catch (SQLException e) {
@@ -842,4 +841,27 @@ public class GroupDAO extends BaseDAO {
         }
     }
 
+    public Group getDomainByDomainId(int domainID) {
+        Group domain = null;
+        String sql = "SELECT * FROM pms.group  where ";
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            pre.setInt(1, domainID);
+            ResultSet rs = pre.executeQuery();
+
+            if (rs.next()) {
+                domain = new Group();
+                domain.setId(rs.getInt("id"));
+                domain.setCode(rs.getString("code"));
+                domain.setName(rs.getString("name"));
+                domain.setDetails(rs.getString("details"));
+                domain.setStatus(rs.getInt("status"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return domain;
+    }
 }

@@ -78,7 +78,7 @@
                                             <form action="${baseUrl}/domain/domainsetting" method="post">
                                                 <input type="hidden" name="action" value="adddomainsetting" />
                                                 <div class="mb-3">
-                                                    <label for="name" class="form-label">Domain Name</label>
+                                                    <label for="name" class="form-label">Setting Name</label>
                                                     <input type="text" class="form-control" id="name" name="name" required minlength="3">
                                                     <div class="invalid-feedback">Name must be at least 3 characters long.</div>
                                                 </div>
@@ -104,14 +104,7 @@
                                                     <textarea class="form-control" id="description" name="description" required></textarea>
                                                     <div class="invalid-feedback">Description is required.</div>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="domain" class="form-label">Group Domain</label>
-                                                    <select class="form-select" id="domain" name="domain">
-                                                        <c:forEach var="group" items="${groups}">
-                                                            <option value="${group.id}">${group.name}</option>
-                                                        </c:forEach>
-                                                    </select>
-                                                </div>
+                                                
                                                 <button type="submit" class="btn btn-primary">Submit</button>
                                             </form>
                                         </div>

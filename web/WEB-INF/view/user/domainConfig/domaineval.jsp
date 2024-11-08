@@ -133,12 +133,18 @@
                                             </table>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+
+            </div>            
+        </div>
+
+                                            
+
 
             <!-- Core JS files -->
             <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
@@ -147,14 +153,7 @@
 
             <script>
                 $(document).ready(function () {
-                    $('#domainSettingsTable').DataTable({
-                        "paging": true,
-                        "lengthChange": true,
-                        "searching": true,
-                        "ordering": true,
-                        "info": true,
-                        "autoWidth": false
-                    });
+                    $('#domainSettingsTable').DataTable();
                 });
 
             </script>

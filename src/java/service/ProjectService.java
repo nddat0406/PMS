@@ -5,6 +5,7 @@
 package service;
 
 import dal.AllocationDAO;
+import dal.PhaseDAO;
 import dal.ProjectDAO;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -32,6 +33,7 @@ public class ProjectService {
     private ProjectDAO pdao = new ProjectDAO();
     private BaseService baseService = new BaseService();
     private AllocationDAO adao = new AllocationDAO();
+    private PhaseDAO hdao=new PhaseDAO();
 
     public List<Allocation> getByUser(int id, int role) throws SQLException {
         try {
@@ -289,6 +291,10 @@ public class ProjectService {
 
     public List<Project> getAllProject(int id) throws SQLException {
         return pdao.getAllByUser(id);
+    }
+
+    public List<ProjectPhase> getAllProjectPharseByDomainId(Integer dID) throws SQLException {
+        return hdao.getProjectPhaseByDomainId(dID);
     }
 
 }

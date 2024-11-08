@@ -102,14 +102,7 @@
                                                     <textarea class="form-control" id="description" name="description" required>${setting.description}</textarea>
                                                     <div class="invalid-feedback">Description is required.</div>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="domain" class="form-label">Group Domain</label>
-                                                    <select class="form-select" id="domain" name="domain">
-                                                        <c:forEach var="group" items="${groups}">
-                                                            <option value="${group.id}" ${setting.domain.id == group.id ? "selected" : ""}>${group.name}</option>
-                                                        </c:forEach>
-                                                    </select>
-                                                </div>
+                                                
                                                 <button type="submit" class="btn btn-primary">Submit</button>
                                             </form>
                                         </div>

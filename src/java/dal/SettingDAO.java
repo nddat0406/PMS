@@ -188,16 +188,6 @@ public class SettingDAO extends BaseDAO {
         return settings;
     }
 
-    public static void main(String[] args) {
-        SettingDAO d = new SettingDAO();
-        try {
-            System.out.println(d.getSearchSettings("ROI"));
-
-        } catch (SQLException ex) {
-            Logger.getLogger(SettingDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     public List<Setting> getSearchSettings(String keyword) throws SQLException {
         List<Setting> settings = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM setting WHERE 1=1");
@@ -229,6 +219,37 @@ public class SettingDAO extends BaseDAO {
             throw new SQLException(e);
         }
         return settings;
+    }
+
+    public List<Setting> getDomainSettingByDomainId(int domainId) {
+        List<Setting> list = new ArrayList<>();
+        String sql = "SELECT * FROM pms.domain_setting WHERE domainId = ?";
+
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            pre.setInt(1, domainId);
+            ResultSet rs = pre.executeQuery();
+
+            while (rs.next()) {
+                Setting setting = new Setting();
+                setting.setId(rs.getInt("id"));
+                setting.setName(rs.getString("name"));
+                setting.setType(rs.getInt("type"));
+                setting.setPriority(rs.getInt("priority"));
+                setting.setStatus(rs.getBoolean("status"));
+                setting.setDescription(rs.getString("details"));
+
+                list.add(setting);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        return list;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new SettingDAO().getDomainSettingByDomainId(6));
     }
 
     public List<Setting> getFilteredDomainSettings(String filterType, String filterStatus, String keyword) throws SQLException {
@@ -308,7 +329,7 @@ public class SettingDAO extends BaseDAO {
 
         try {
             PreparedStatement stmt = getConnection().prepareStatement(sql);
-               
+
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
@@ -352,23 +373,39 @@ public class SettingDAO extends BaseDAO {
         }
     }
 
-  public void addDomain(Setting domain) throws SQLException {
-        String sql = "INSERT INTO domain_setting (name, type, priority, status, details, domainId, id) VALUES (?,?, ?, ?, ?, ?, ?)";
-        int newId = getMaxId() + 1;
+   public void addDomain(Setting domain) throws SQLException {
+    String sql = "INSERT INTO domain_setting (name, type, priority, status, details, domainId, id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    int newId = getMaxId() + 1;
+    Connection connection = null;
+    PreparedStatement statement = null;
+    
+    try {
+        connection = new SettingDAO().getConnection();
+        statement = connection.prepareStatement(sql);
+        statement.setString(1, domain.getName());
+        statement.setInt(2, domain.getType());
+        statement.setInt(3, domain.getPriority());
+        statement.setBoolean(4, domain.isStatus());
+        statement.setString(5, domain.getDescription());
+        statement.setInt(6, domain.getDomain().getId());
+        statement.setInt(7, newId);
+        statement.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+        throw e;
+    } finally {
         try {
-            PreparedStatement statement = getConnection().prepareStatement(sql);
-            statement.setString(1, domain.getName());
-            statement.setInt(2, domain.getType());
-            statement.setInt(3, domain.getPriority());
-            statement.setBoolean(4, domain.isStatus());
-            statement.setString(5, domain.getDescription());
-            statement.setInt(6, domain.getDomain().getId());
-            statement.setInt(7, newId);
-            statement.executeUpdate();
-        }catch(SQLException e){
-            
+            if (statement != null) {
+                statement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
+}
 
     public void updateDomain(Setting domain) throws SQLException {
         String sql = "UPDATE domain_setting SET name = ?, type = ?, priority = ?, status = ?, details = ?, domainId = ? WHERE id = ?";
@@ -382,22 +419,22 @@ public class SettingDAO extends BaseDAO {
             statement.setInt(6, domain.getDomain().getId());
             statement.setInt(7, domain.getId());
             statement.executeUpdate();
-        }catch(SQLException e){
-            
+        } catch (SQLException e) {
+
         }
     }
 
-     public int getMaxId() throws SQLException {
+    public int getMaxId() throws SQLException {
         String sql = "SELECT MAX(id) FROM domain_setting";
         try {
             PreparedStatement statement = getConnection().prepareStatement(sql);
-               
+
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getInt(1);
             }
-        }catch(SQLException e){
-            
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return 0;
     }
