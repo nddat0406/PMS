@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context path="/PMS">
-    <Resources>
+<!--    <Resources>
         <PreResources base="D:\Fall2024 Study\SWP\Iter2\team6\images"
             className="org.apache.catalina.webresources.DirResourceSet"
             webAppMount="/images"/>
-    </Resources>
+    </Resources>-->
 </Context>
