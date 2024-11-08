@@ -317,114 +317,115 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Issue Modal -->
-        <div class="modal fade" id="issueModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Issue Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="issueForm" action="${pageContext.request.contextPath}/issue" method="post">
-                            <input type="hidden" name="action" value="add">
-                            <input type="hidden" name="id" id="modalIssueId">
 
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Requirement ID <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" name="requirementId" id="modalRequirementId" required>
+            <!-- Issue Modal -->
+            <div class="modal fade" id="issueModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Issue Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="issueForm" action="${pageContext.request.contextPath}/issue" method="post">
+                                <input type="hidden" name="action" value="add">
+                                <input type="hidden" name="id" id="modalIssueId">
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Requirement ID <span class="text-danger">*</span></label>
+                                            <input type="number" class="form-control" name="requirementId" id="modalRequirementId" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Project <span class="text-danger">*</span></label>
+                                            <select class="form-select" name="projectId" id="modalProjectId" required>
+                                                <option value="">Select Project</option>
+                                                <c:forEach items="${projects}" var="project">
+                                                    <option value="${project.id}">${project.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Project <span class="text-danger">*</span></label>
-                                        <select class="form-select" name="projectId" id="modalProjectId" required>
-                                            <option value="">Select Project</option>
-                                            <c:forEach items="${projects}" var="project">
-                                                <option value="${project.id}">${project.name}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Title <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="title" id="modalTitle" required 
-                                       maxlength="100" placeholder="Enter issue title">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Description <span class="text-danger">*</span></label>
-                                <textarea class="form-control" name="description" id="modalDescription" 
-                                          rows="4" required maxlength="1000" 
-                                          placeholder="Enter issue description"></textarea>
-                                <div class="form-text">Maximum 1000 characters</div>
-                            </div>
-
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Type <span class="text-danger">*</span></label>
-                                        <select class="form-select" name="type" id="modalType" required>
-                                            <option value="">Select Type</option>
-                                            <option value="Q&A">Q&A</option>
-                                            <option value="Task">Task</option>
-                                            <option value="Issue">Issue</option>
-                                            <option value="Complaint">Complaint</option>
-                                        </select>
-                                    </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Title <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="title" id="modalTitle" required 
+                                           maxlength="100" placeholder="Enter issue title">
                                 </div>
 
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Assignee <span class="text-danger">*</span></label>
-                                        <select class="form-select" name="assigneeId" id="modalAssigneeId" required>
-                                            <option value="">Select Assignee</option>
-                                            <c:forEach items="${users}" var="user">
-                                                <option value="${user.id}">${user.fullname}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" name="description" id="modalDescription" 
+                                              rows="4" required maxlength="1000" 
+                                              placeholder="Enter issue description"></textarea>
+                                    <div class="form-text">Maximum 1000 characters</div>
                                 </div>
-                            </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Status <span class="text-danger">*</span></label>
-                                <select class="form-select" name="status" id="modalStatus" required>
-                                    <option value="0">Open</option>
-                                    <option value="1">To Do</option>
-                                    <option value="2">Doing</option>
-                                    <option value="3">Done</option>
-                                    <option value="4">Closed</option>
-                                </select>
-                            </div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Type <span class="text-danger">*</span></label>
+                                            <select class="form-select" name="type" id="modalType" required>
+                                                <option value="">Select Type</option>
+                                                <option value="Q&A">Q&A</option>
+                                                <option value="Task">Task</option>
+                                                <option value="Issue">Issue</option>
+                                                <option value="Complaint">Complaint</option>
+                                            </select>
+                                        </div>
+                                    </div>
 
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Due Date <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control" name="dueDate" id="modalDueDate" required>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Assignee <span class="text-danger">*</span></label>
+                                            <select class="form-select" name="assigneeId" id="modalAssigneeId" required>
+                                                <option value="">Select Assignee</option>
+                                                <c:forEach items="${users}" var="user">
+                                                    <option value="${user.id}">${user.fullname}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">End Date <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control" name="endDate" id="modalEndDate" required>
+                                <div class="mb-3">
+                                    <label class="form-label">Status <span class="text-danger">*</span></label>
+                                    <select class="form-select" name="status" id="modalStatus" required>
+                                        <option value="0">Open</option>
+                                        <option value="1">To Do</option>
+                                        <option value="2">Doing</option>
+                                        <option value="3">Done</option>
+                                        <option value="4">Closed</option>
+                                    </select>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Due Date <span class="text-danger">*</span></label>
+                                            <input type="date" class="form-control" name="dueDate" id="modalDueDate" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">End Date <span class="text-danger">*</span></label>
+                                            <input type="date" class="form-control" name="endDate" id="modalEndDate" required>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" style="background-color: blue"  id="saveIssue">Save</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary"  id="saveIssue">Save</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -446,35 +447,35 @@
 
                 // Handle Add Issue button
                 // Update the add issue handler
-$('.add-issue').click(function () {
-    $('#issueForm')[0].reset();
-    $('#modalIssueId').val('');
-    $('input[name="action"]').val('add');
-    $('.modal-title').text('Add New Issue');
-    $('#saveIssue').text('Add Issue');
-    
-    // Reset select fields
-    $('#modalProjectId').val(''); // Make sure it's empty, not '0'
-    $('#modalAssigneeId').val('');
-    $('#modalType').val('');
-    $('#modalStatus').val('0');
-    
-    // Set default dates
-    const today = new Date().toISOString().split('T')[0];
-    $('#modalDueDate').val(today);
-    $('#modalEndDate').val(today);
-    
-    clearErrors();
-    $('#issueModal').modal('show');
-});
+                $('.add-issue').click(function () {
+                    $('#issueForm')[0].reset();
+                    $('#modalIssueId').val('');
+                    $('input[name="action"]').val('add');
+                    $('.modal-title').text('Add New Issue');
+                    $('#saveIssue').text('Add Issue');
+
+                    // Reset select fields
+                    $('#modalProjectId').val(''); // Make sure it's empty, not '0'
+                    $('#modalAssigneeId').val('');
+                    $('#modalType').val('');
+                    $('#modalStatus').val('0');
+
+                    // Set default dates
+                    const today = new Date().toISOString().split('T')[0];
+                    $('#modalDueDate').val(today);
+                    $('#modalEndDate').val(today);
+
+                    clearErrors();
+                    $('#issueModal').modal('show');
+                });
 
                 // Handle Edit Issue button
                 $('.edit-issue').click(function () {
                     const row = $(this).closest('tr');
-                
+
                     // Set form action to update
                     $('input[name="action"]').val('update');
-                
+
                     // Populate form with row data
                     $('#modalIssueId').val(row.find('td:eq(0)').text());
                     $('#modalRequirementId').val(row.find('td:eq(1)').text());
@@ -486,7 +487,7 @@ $('.add-issue').click(function () {
                     $('#modalStatus').val(getStatusValue(row.find('td:eq(7) span').text().trim()));
                     $('#modalDueDate').val(row.find('td:eq(8)').text());
                     $('#modalEndDate').val(row.find('td:eq(9)').text());
-                
+
                     $('.modal-title').text('Edit Issue');
                     $('#saveIssue').text('Save Changes');
                     $('#issueModal').modal('show');
@@ -541,105 +542,105 @@ $('.add-issue').click(function () {
 
             // Form validation
             // Form validation with debugging
-function validateForm() {
-    clearErrors();
-    let isValid = true;
+            function validateForm() {
+                clearErrors();
+                let isValid = true;
 
-    // Debug logging
-    console.log('Starting form validation');
-    console.log('Type value:', $('#modalType').val());
-    console.log('Project value:', $('#modalProjectId').val());
-    console.log('Assignee value:', $('#modalAssigneeId').val());
+                // Debug logging
+                console.log('Starting form validation');
+                console.log('Type value:', $('#modalType').val());
+                console.log('Project value:', $('#modalProjectId').val());
+                console.log('Assignee value:', $('#modalAssigneeId').val());
 
-    // Required fields validation
-    const requiredFields = {
-        'modalTitle': 'Title is required',
-        'modalDescription': 'Description is required',
-        'modalRequirementId': 'Requirement ID is required',
-        'modalProjectId': 'Project is required',
-        'modalType': 'Type is required',
-        'modalAssigneeId': 'Assignee is required',
-        'modalDueDate': 'Due Date is required',
-        'modalEndDate': 'End Date is required'
-    };
+                // Required fields validation
+                const requiredFields = {
+                    'modalTitle': 'Title is required',
+                    'modalDescription': 'Description is required',
+                    'modalRequirementId': 'Requirement ID is required',
+                    'modalProjectId': 'Project is required',
+                    'modalType': 'Type is required',
+                    'modalAssigneeId': 'Assignee is required',
+                    'modalDueDate': 'Due Date is required',
+                    'modalEndDate': 'End Date is required'
+                };
 
-    // Check each required field
-    for (const [fieldId, message] of Object.entries(requiredFields)) {
-        const field = $('#' + fieldId);
-        const value = field.val();
-        
-        console.log(`Checking ${fieldId}:`, value); // Debug logging
+                // Check each required field
+                for (const [fieldId, message] of Object.entries(requiredFields)) {
+                    const field = $('#' + fieldId);
+                    const value = field.val();
 
-        // Special handling for select fields
-        if (field.is('select')) {
-            if (!value || value === '' || value === '0' || value === null) { // Added check for '0'
-                console.log(`Invalid select value for ${fieldId}`);
-                showError(fieldId, message);
-                isValid = false;
+                    console.log(`Checking ${fieldId}:`, value); // Debug logging
+
+                    // Special handling for select fields
+                    if (field.is('select')) {
+                        if (!value || value === '' || value === '0' || value === null) { // Added check for '0'
+                            console.log(`Invalid select value for ${fieldId}`);
+                            showError(fieldId, message);
+                            isValid = false;
+                        }
+                    } else {
+                        // Text input validation
+                        if (!value || !value.trim()) {
+                            console.log(`Empty value for ${fieldId}`);
+                            showError(fieldId, message);
+                            isValid = false;
+                        }
+                    }
+                }
+
+                // Length validations
+                const titleLength = $('#modalTitle').val().length;
+                const descLength = $('#modalDescription').val().length;
+                console.log('Title length:', titleLength);
+                console.log('Description length:', descLength);
+
+                if (titleLength > 100) {
+                    showError('modalTitle', 'Title must be less than 100 characters');
+                    isValid = false;
+                }
+
+                if (descLength > 1000) {
+                    showError('modalDescription', 'Description must be less than 1000 characters');
+                    isValid = false;
+                }
+
+                // Date validation
+                const dueDate = new Date($('#modalDueDate').val());
+                const endDate = new Date($('#modalEndDate').val());
+                console.log('Due date:', dueDate);
+                console.log('End date:', endDate);
+
+                if (dueDate > endDate) { // Fixed the comparison
+                    showError('modalDueDate', 'Due date cannot be later than end date');
+                    isValid = false;
+                }
+
+                console.log('Form validation result:', isValid);
+                return isValid;
             }
-        } else {
-            // Text input validation
-            if (!value || !value.trim()) {
-                console.log(`Empty value for ${fieldId}`);
-                showError(fieldId, message);
-                isValid = false;
+
+            function showError(fieldId, message) {
+                const field = $('#' + fieldId);
+                field.addClass('is-invalid');
+
+                // Remove any existing error message first
+                field.next('.invalid-feedback').remove();
+
+                // Add new error message
+                field.after('<div class="invalid-feedback">' + message + '</div>');
+
+                // For select elements, also add a red border
+                if (field.is('select')) {
+                    field.css('border-color', '#dc3545');
+                }
             }
-        }
-    }
 
-    // Length validations
-    const titleLength = $('#modalTitle').val().length;
-    const descLength = $('#modalDescription').val().length;
-    console.log('Title length:', titleLength);
-    console.log('Description length:', descLength);
-
-    if (titleLength > 100) {
-        showError('modalTitle', 'Title must be less than 100 characters');
-        isValid = false;
-    }
-
-    if (descLength > 1000) {
-        showError('modalDescription', 'Description must be less than 1000 characters');
-        isValid = false;
-    }
-
-    // Date validation
-    const dueDate = new Date($('#modalDueDate').val());
-    const endDate = new Date($('#modalEndDate').val());
-    console.log('Due date:', dueDate);
-    console.log('End date:', endDate);
-
-    if (dueDate > endDate) { // Fixed the comparison
-        showError('modalDueDate', 'Due date cannot be later than end date');
-        isValid = false;
-    }
-
-    console.log('Form validation result:', isValid);
-    return isValid;
-}
-
-function showError(fieldId, message) {
-    const field = $('#' + fieldId);
-    field.addClass('is-invalid');
-    
-    // Remove any existing error message first
-    field.next('.invalid-feedback').remove();
-    
-    // Add new error message
-    field.after('<div class="invalid-feedback">' + message + '</div>');
-    
-    // For select elements, also add a red border
-    if (field.is('select')) {
-        field.css('border-color', '#dc3545');
-    }
-}
-
-function clearErrors() {
-    $('.is-invalid').removeClass('is-invalid');
-    $('.invalid-feedback').remove();
-    // Reset select borders
-    $('select').css('border-color', '');
-}
+            function clearErrors() {
+                $('.is-invalid').removeClass('is-invalid');
+                $('.invalid-feedback').remove();
+                // Reset select borders
+                $('select').css('border-color', '');
+            }
 
             function getStatusValue(statusText) {
                 const statusMap = {
