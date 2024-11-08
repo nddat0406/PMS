@@ -239,7 +239,7 @@ public class DefectController extends HttpServlet {
     
     private Integer parseIntParameter(String param) {
         try {
-            return param != null && !param.isEmpty() ? Integer.parseInt(param) : null;
+            return param != null && !param.isEmpty() ? Integer.valueOf(param) : null;
         } catch (NumberFormatException e) {
             return null;
         }
