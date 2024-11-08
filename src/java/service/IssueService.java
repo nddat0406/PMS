@@ -293,5 +293,4 @@ public class IssueService extends BaseService {
             throw new SQLException("Error performing advanced search for user " + userId + ": " + e.getMessage());
         }
     }
-
 }

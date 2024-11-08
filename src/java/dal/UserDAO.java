@@ -564,7 +564,7 @@ public class UserDAO extends BaseDAO {
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;

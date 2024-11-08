@@ -63,7 +63,8 @@
                                 <li><a href="emp-all.html">Project issue</a></li>
                                 <li><a href="${pageContext.request.contextPath}/timesheet">Timesheet</a></li>
                                 <li><a href="${pageContext.request.contextPath}/requirement">Requirement</a></li>
-                                <li><a href="emp-leave.html">Milestone</a></li>
+                                <li><a href="${pageContext.request.contextPath}/defectlist"><span>Defect</span></a></li> 
+
                             </ul>
                         </li>
                         <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-tasks"></i><span>Project</span></a></li> 

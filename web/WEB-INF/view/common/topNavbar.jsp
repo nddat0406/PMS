@@ -38,6 +38,7 @@
             <div class="align-items-center">
                 <ul class="nav navbar-nav flex-row justify-content-end align-items-center" >
                     <li><a href="${pageContext.request.contextPath}/dashboard" class="icon-menu">Dashboard</a></li>
+
                         <c:if test="${loginedUser.role == '3' || loginedUser.role == '4'}">
                         <li><a href="${pageContext.request.contextPath}/requirement" class="icon-menu">Requirement</a></li>
                         </c:if>

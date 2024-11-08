@@ -19,7 +19,16 @@ public class Timesheet {
     private Date timeCreated;
     private Date timeCompleted;
     private int status;
+    private String reasonReject;
 
+    public String getReasonReject() {
+        return reasonReject;
+    }
+
+    public void setReasonReject(String reasonReject) {
+        this.reasonReject = reasonReject;
+    }
+    
     public int getId() {
         return id;
     }
