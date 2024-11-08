@@ -1,30 +1,43 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="model.Group" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
-<html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html lang="en">
     <head>
-        <title>Chỉnh sửa nhóm</title>
-        <!-- Thêm Bootstrap CSS -->
+        <meta charset="UTF-8">
+        <title>Edit Department</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/dataTables.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
         <style>
-            .custom-select {
-                width: 150px; /* Chiều rộng tùy chỉnh cho select */
+            .card {
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
             }
-
             .form-container {
-                max-width: 600px; /* Giới hạn chiều rộng form */
-                margin: 50px auto; /* Căn giữa form với khoảng cách trên */
-                padding-top: 100px; /* Khoảng cách từ trên cho form */
+                padding: 20px;
             }
-
-            /* Đảm bảo sidebar không che nội dung */
-            .sidebar {
-                height: 100vh; /* Đảm bảo sidebar đầy chiều cao màn hình */
-                overflow: auto; /* Thêm thanh cuộn nếu cần */
+            .form-group {
+                margin-bottom: 15px;
             }
-            .content {
-                padding-top: 100px; /* Cách đều từ sidebar */
+            .btn {
+                margin-top: 10px;
+            }
+            .status-label {
+                font-weight: bold;
+            }
+            .form-group label {
+                font-weight: bold;
+            }
+            .form-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+            .form-col {
+                flex: 1;
+                min-width: 200px;
             }
         </style>
     </head>
@@ -37,61 +50,64 @@
 
                     <div id="main-content">
                         <div class="container-fluid">
+
+                            <div class="block-header py-lg-4 py-3">
+                                <div class="row g-3">
+                                    <div class="col-md-6 col-sm-12">
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Edit Department</h2>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="row clearfix">
                                 <div class="col-lg-12 col-md-12">
-                                    <div class="card mb-4">
-                                        <div class="card-body">
+                                    <div class="card">
+                                        <div class="card-body form-container">
                                         <c:if test="${not empty errorMessage}">
                                             <div class="alert alert-danger">
                                                 ${errorMessage}
                                             </div>
                                         </c:if>
-                                        <c:if test="${not empty groupDetail}">
-                                            <form action="domain?action=update" method="post">
-                                                <input type="hidden" name="id" value="${groupDetail.id}">
 
-                                                <div class="form-group">
+                                        <form action="domain?action=update" method="post"">
+                                            <input type="hidden" name="id" value="${groupDetail.id}"> 
+                                            <div class="form-row">
+                                                <div class="form-group form-col">
                                                     <label for="code">Code:</label>
                                                     <input type="text" id="code" name="code" class="form-control" value="${groupDetail.code}" required>
                                                 </div>
-
-                                                <div class="form-group">
+                                                <div class="form-group form-col">
                                                     <label for="name">Name:</label>
                                                     <input type="text" id="name" name="name" class="form-control" value="${groupDetail.name}" required>
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="details">Details:</label>
+                                                <textarea id="details" name="details" class="form-control" rows="4">${groupDetail.details}</textarea>
+                                            </div>
 
-                                                <div class="form-group">
-                                                    <label for="details">Detail:</label>
-                                                    <textarea id="details" name="details" class="form-control">${groupDetail.details}</textarea>
+                                            <div class="form-group">
+                                                <label for="status" class="status-label">Status:</label><br>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" id="active" name="status" value="1" class="form-check-input" ${groupDetail.status == 1 ? 'checked' : ''}>
+                                                    <label for="active" class="form-check-label">Activate</label>
                                                 </div>
-
-                                                <div class="form-group">
-                                                    <label for="status">Status:</label><br>
-                                                    <input type="checkbox" id="active" name="status" value="1" ${groupDetail.status == 1 ? 'checked' : ''}>
-                                                    <label for="active">Activate</label><br>
-
-                                                    <input type="checkbox" id="inactive" name="status" value="0" ${groupDetail.status == 0 ? 'checked' : ''}>
-                                                    <label for="inactive">Deactivate</label>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" id="inactive" name="status" value="0" class="form-check-input" ${groupDetail.status == 0 ? 'checked' : ''}>
+                                                    <label for="inactive" class="form-check-label">Deactivate</label>
                                                 </div>
-
-                                                <!-- Các nút hành động -->
-                                                <div class="form-actions text-center">
-                                                    <button type="submit" class="btn btn-success">Update</button>
-                                                    <a href="${pageContext.request.contextPath}/admin/domain" class="btn btn-secondary">Back</a>
-                                                </div>
-                                            </form>
-
-
-                                        </c:if>
-
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Update</button>
+                                            <a href="${pageContext.request.contextPath}/admin/department" class="btn btn-secondary">Back</a>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
-                        </div></div></div></div></div>
-        <!-- Thêm jQuery và Bootstrap JS nếu cần -->
-        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+                        </div>
+                    </div>
+                </div>            
+            </div>
+        </div>
         <script>
             document.getElementById("active").addEventListener('change', function () {
                 if (this.checked) {
@@ -105,5 +121,8 @@
                 }
             });
         </script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
     </body>
 </html>

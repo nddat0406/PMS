@@ -5,4 +5,5 @@
                       className="org.apache.catalina.webresources.DirResourceSet"
                       webAppMount="/images"/>
     </Resources>
+
 </Context>
