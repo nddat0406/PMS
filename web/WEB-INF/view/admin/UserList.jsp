@@ -25,7 +25,7 @@
         <div id="layout" class="theme-cyan">
 
             <!-- Page Loader -->
-            <jsp:include page="../common/pageLoader.jsp"></jsp:include>
+            <%--<jsp:include page="../common/pageLoader.jsp"></jsp:include>--%>
                 <div id="wrapper">
 
                     <!-- top navbar -->

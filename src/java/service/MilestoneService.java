@@ -42,6 +42,7 @@ public class MilestoneService {
             throw new SQLException(e);
         }
     }
+   
     public List<Milestone> getAllMilestone(int id) throws SQLException {
         return mdao.getAllByProjectId(id);
     }

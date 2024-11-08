@@ -56,8 +56,8 @@ public class GroupDAO extends BaseDAO {
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
 
-            pre.setInt(1, pageSize);  
-            pre.setInt(2, offset);    
+            pre.setInt(1, pageSize);
+            pre.setInt(2, offset);
 
             ResultSet rs = pre.executeQuery();
 
@@ -144,7 +144,7 @@ public class GroupDAO extends BaseDAO {
             e.printStackTrace();
         }
 
-        return domain; 
+        return domain;
     }
 
     public List<Group> Search(String keyword) {
@@ -292,6 +292,34 @@ public class GroupDAO extends BaseDAO {
                 domain.setStatus(rs.getInt("status"));
                 domain.setUser(userDao.getActiveUserById(rs.getInt("userId")));
                 domain.setParent(new Group(getDeptNameById(rs.getInt("domainId"))));
+                list.add(domain);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error:  " + e);
+        }
+
+        return list;
+    }
+
+    public List<Group> getDomainUserByDomainId(String domainId) {
+        List<Group> list = new ArrayList<>();
+        String sql = "select du.* \n"
+                + "from pms.group as g,\n"
+                + "pms.domain_user as du\n"
+                + "where du.domainId = g.id\n"
+                + "and g.type = 1 AND domainId = ?";
+
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            pre.setObject(1, domainId);
+            ResultSet rs = pre.executeQuery();
+            UserDAO userDao = new UserDAO();
+            while (rs.next()) {
+                Group domain = new Group();
+                domain.setId(rs.getInt("id"));
+                domain.setStatus(rs.getInt("status"));
+                domain.setUser(userDao.getActiveUserById(rs.getInt("userId")));
+//                domain.setParent(new Group(getDeptNameById(rs.getInt("domainId"))));
                 list.add(domain);
             }
         } catch (SQLException e) {
@@ -522,7 +550,7 @@ public class GroupDAO extends BaseDAO {
     }
 
     // Phương thức lọc phòng ban theo mã, tên, phòng ban cha và trạng thái
-    public List<Group> filter(int pageNumber, int pageSize , Integer status) {
+    public List<Group> filter(int pageNumber, int pageSize, Integer status) {
         List<Group> departments = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM pms.group  where type=0 and 1=1");
 
@@ -645,11 +673,6 @@ public class GroupDAO extends BaseDAO {
         return false;
     }
 
-    
-    
-    
-    
-    
     public List<Group> getAllUserDomain() {
         List<Group> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.domain_user JOIN pms.user ON domain_user.userId = user.id JOIN pms.domain ON domain_user.domainId = domain.id;";

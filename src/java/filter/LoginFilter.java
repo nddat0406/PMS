@@ -115,6 +115,7 @@ public class LoginFilter implements Filter {
         if (acc == null && (!path.contains("login")
                 && !path.contains("logout")
                 && !path.contains("register")
+                && !path.contains("verifyEmail")
                 && !path.contains("GoogleLogin")
                 && !path.contains("forgot-password")
                 && !path.contains("assets"))) {

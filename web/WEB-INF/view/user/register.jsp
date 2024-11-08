@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,15 +17,15 @@
         <!-- VENDOR CSS -->
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css" >
-    <!-- Icon -->
-   
+        <!-- Icon -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 
         <!-- MAIN CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
     </head>
 
     <body>
-
         <div id="layout" class="theme-cyan">
             <!-- WRAPPER -->
             <div id="wrapper">
@@ -49,59 +50,195 @@
                                 <p class="fs-5 mb-0">Create an account</p>
                             </div>
                             <c:if test="${not empty requestScope.error}">
-                                        <div style="color: red; margin-top: 10px;">
-                                        ${requestScope.error}
-                                        </div>
-                                    </c:if>
+                                <div style="color: red; margin-top: 10px;">
+                                    ${requestScope.error}
+                                </div>
+                            </c:if>
                             <div class="card-body">
-                                <form action="${pageContext.request.contextPath}/register" method="POST">
+                                <form action="${pageContext.request.contextPath}/register" method="POST" id="regisForm">
                                     <div class="form-floating mb-1">
                                         <input type="full-name" name="fullName" class="form-control" placeholder="full-name">
                                         <label>Full Name</label>
                                     </div>
                                     <div class="form-floating mb-1">
-                                        <input type="email" name="email" class="form-control" placeholder="name@example.com">
+                                        <input type="email" name="email" class="form-control" placeholder="name@example.com" id="emailInput">
                                         <label>Email address</label>
+                                    </div>
+                                    <div style="color: red; margin-top: 10px;display: none" id="emailMess">
+
                                     </div>
                                     <c:if test="${not empty requestScope.emailError}">
                                         <div style="color: red; margin-top: 10px;">
-                                        ${requestScope.emailError}
+                                            ${requestScope.emailError}
                                         </div>
                                     </c:if>
-                                    <div class="form-floating">
-                                        <input type="password" name="password" class="form-control" placeholder="Password">
+                                    <div class="form-floating mb-1">
+                                        <input type="password" name="password" class="form-control" placeholder="Password" id="passInput">
                                         <label>Password</label>
+                                    </div>
+                                    <div style="color: red; margin-top: 10px;display: none" id="passwordError">
+
                                     </div>
                                     <c:if test="${not empty requestScope.passwordError}">
                                         <div style="color: red; margin-top: 10px;">
-                                        ${requestScope.passwordError}
+                                            ${requestScope.passwordError}
                                         </div>
                                     </c:if>
-                                    <div class="form-floating">
-                                        <input type="password" name="rePassword" class="form-control" placeholder="Re-Password">
+                                    <div class="form-floating mb-1">
+                                        <input type="password" name="rePassword" class="form-control" placeholder="Re-Password" id="repassInput">
                                         <label>Re-Password</label>
                                     </div>
                                     <c:if test="${not empty requestScope.rePasswordError}">
                                         <div style="color: red; margin-top: 10px;">
-                                        ${requestScope.rePasswordError}
+                                            ${requestScope.rePasswordError}
                                         </div>
                                     </c:if>
                                     <div class="my-3">
-                                        <button type="submit" class="btn btn-primary w-100 px-3 py-2 mb-2">REGISTER</button>
+                                        <button type="button" id="registerBtn"  class="btn btn-primary w-100 px-3 py-2 mb-2">REGISTER</button>
+                                        <button type="button" id="loadingBtn" class="btn btn-primary w-100 px-3 py-2 mb-2" style="display: none;" disabled="disabled"><i class="fa fa-spinner fa-spin"></i> <span>Loading...</span></button>
                                         <span>Already have an account? <a href="${pageContext.request.contextPath}/login">Login</a></span>
                                     </div>
                                 </form>
                                 <div class="d-grid gap-2 mt-3 pt-3">
                                     <div class="text-center"><span>OR</span></div>
                                     <button class="btn btn-light"><i class="fab fa-google"></i>  Sign in with Email</button>
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <button class="btn" data-bs-toggle="modal" data-bs-target="#OTPModal" id="toggleOTPModal" hidden></button>
             </div>
             <!-- END WRAPPER -->
+
+            <!-- Verify Email Modal -->
+
+            <div class="modal fade" id="OTPModal" tabindex="-1" aria-labelledby="largeModal" aria-hidden="false">
+                <div class="modal-dialog modal-dialog-centered">
+                    <form action="verifyEmail" method="post">
+                        <input type="hidden" name="action" value="verify">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">OTP Verification</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <label>Enter OTP sended to email: ${oldFilledEmail}</label><br/><br/>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="inputGroup-sizing-default">OTP</span>
+                                    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" name="otp" id="otpCode">
+                                </div>
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;" id="verifyError">
+                                </div>
+                            </div>
+                            <div class="modal-footer justify-content-center" >
+                                <button type="button" class="btn btn-primary" onclick="verifyEmail()" style="width: 100px" id="verifyBtn">Verify</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
+        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+
+        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+
+        <script>
+                                    $(document).ready(function () {
+                                        $("#registerBtn").on("click", function (event) {
+                                            $('#verifyError').hide();
+                                            $('#otpCode').val("");
+                                            const password = $("#passInput").val();
+                                            const repass = $("#repassInput").val();
+                                            if ($("#emailInput").val().trim() === "") {
+                                                $("#emailMess").text("Email is required!");
+                                                $("#emailMess").show();
+                                            }
+                                            if ($("#passInput").val().trim() === "" || $("#repassInput").val().trim() === "") {
+                                                $("#passwordError").text("Password and Re-password is required!");
+                                                $("#passwordError").show();
+                                            } else {
+                                                if (password !== repass) {
+                                                    $("#passwordError").text("Password and Re-password not match!");
+                                                    $("#passwordError").show();
+                                                } else {
+                                                    // Hide error message if passwords match
+                                                    $("#passwordError").hide();
+                                                    sendVerificationEmail();
+                                                }
+                                            }
+                                        });
+
+                                        // Hide error message when user starts typing in either field
+                                        $("#passInput, #repassInput, #emailInput").on("input", function () {
+                                            $("#passwordError").hide();
+                                            $("#emailMess").hide();
+                                        });
+                                    });
+
+                                    function sendVerificationEmail() {
+                                        const email = $('#emailInput').val();
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "verifyEmail",
+                                            data: {
+                                                registerEmail: email,
+                                                action: "sendEmail"
+                                            },
+                                            dataType: "json",
+                                            beforeSend: function () {
+                                                $("#registerBtn").css("display", "none");
+                                                $("#loadingBtn").css("display", "block");
+                                            },
+                                            success: function (response) {
+                                                // Check response status
+                                                if (response.status === "success") {
+                                                    // Display verification modal on success
+                                                    $('#toggleOTPModal').click();
+                                                } else {
+                                                    // Display error message on the page
+                                                    $("#emailMess").text(response.message);
+                                                    $("#emailMess").css('display', 'block');
+                                                }
+                                            },
+                                            error: function (ts) {
+                                                // Handle unexpected errors
+                                                $("#emailMess").text(ts.responseText).show();
+                                            },
+                                            complete: function () {
+                                                $("#registerBtn").css("display", "block");
+                                                $("#loadingBtn").css("display", "none");
+                                            }
+                                        });
+                                    }
+                                    function verifyEmail() {
+                                        const otp = $('#otpCode').val();
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "verifyEmail",
+                                            data: {
+                                                otpValue: otp,
+                                                action: "verify"
+                                            },
+                                            dataType: "json",
+                                            success: function (response) {
+                                                // Check response status
+                                                if (response.status === "success") {
+                                                    // Display verification modal on success
+                                                    $('#regisForm').submit();
+                                                } else {
+                                                    // Display error message on the page
+                                                    $('#verifyError').html(`<i class="fa fa-times-circle"></i>&nbsp;`+response.message+"<br>");
+                                                    $('#verifyError').show();
+                                                }
+                                            },
+                                            error: function (ts) {
+                                                // Handle unexpected errors
+                                                $("#emailMess").text("Some thing when wrong!").show();
+                                            }
+                                        });
+                                    }
+        </script>
     </body>
 </html>

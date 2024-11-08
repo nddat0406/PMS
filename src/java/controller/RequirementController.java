@@ -1,33 +1,25 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-
 package controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.SQLException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.sql.SQLException;
+import java.io.IOException;
 import java.util.List;
+
 import model.Milestone;
 import model.Requirement;
 import service.BaseService;
 import service.RequirementService;
 
-/**
- *
- * @author DELL
- */
-@WebServlet(name="RequirementController", urlPatterns={"/requirement"})
+@WebServlet(name = "RequirementController", urlPatterns = { "/requirement" })
 public class RequirementController extends HttpServlet {
-   
-   private final RequirementService requirementService = new RequirementService();
+
+    private final RequirementService requirementService = new RequirementService();
     private final BaseService baseService = new BaseService();
     private final String REQUIREMENT_PAGE = "/WEB-INF/view/user/requirement/requirement-manage.jsp";
 

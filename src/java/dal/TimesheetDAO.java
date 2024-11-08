@@ -344,8 +344,7 @@ public class TimesheetDAO extends BaseDAO {
             requirement r ON t.requirementId = r.id
     """);
 
-        // Thêm điều kiện nếu người dùng là Member (không phải Admin)
-        if (role == MEMBER_ROLE) { // Giả sử role = 1 là Admin
+        if (role == MEMBER_ROLE) { 
             query.append("WHERE t.reporter = ? OR t.reviewer = ?  ");
         }
 
