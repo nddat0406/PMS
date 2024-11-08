@@ -21,6 +21,21 @@
         <group name="test">
             <file>file:/D:/FPTU/SWP391/project/PMS/web/META-INF/context.xml</file>
         </group>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+        <group>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/UserIssuesController.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/classes/app.properties</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/user/issues/user-issues.jsp</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/dal/IssueDAO.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/IssueController.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/service/IssueService.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/META-INF/context.xml</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/common/topNavbar.jsp</file>
+=======
+<<<<<<< HEAD
+>>>>>>> f5245158edf6165803da411f0e77f7f24568d621
         <group name="PRO">
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/dal/BaseDAO.java</file>
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/service/BaseService.java</file>
@@ -45,6 +60,22 @@
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/web/WEB-INF/view/user/login.jsp</file>
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/controller/AdminController.java</file>
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/model/Milestone.java</file>
+<<<<<<< HEAD
+=======
+=======
+        <group>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/AllocationController.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/user/Allocation/alloList.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/DefectController.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/model/User.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/admin/DefectList.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/DefectDAO.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/filter/LoginFilter.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/web.xml</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/PhaseDAO.java</file>
+>>>>>>> f39038dcb7c38fb64fd20df907c4169ff381edfb
+>>>>>>> 910eea71ef8a49afb6f889cdc90e607e4f6e5077
+>>>>>>> f5245158edf6165803da411f0e77f7f24568d621
         </group>
     </open-files>
 </project-private>

@@ -86,11 +86,11 @@
                                             <div class="row g-2">
                                                 <div class="col-md-4 col-sm-12">
                                                     <label for="code">Project Code</label>
-                                                    <input type="text" id="code" name="code" class="form-control" required value="${sessionScope.code}" placeholder="Enter project code">
+                                                    <input type="text" id="code" name="code" class="form-control"  value="${sessionScope.code}" placeholder="Enter project code">
                                                 </div>
                                                 <div class="col-md-4 col-sm-12">
                                                     <label for="name">Project Name</label>
-                                                    <input type="text" id="name" name="name" class="form-control" required value="${sessionScope.name}" placeholder="Enter project name">
+                                                    <input type="text" id="name" name="name" class="form-control"  value="${sessionScope.name}" placeholder="Enter project name">
                                                 </div>
                                                 <div class="col-md-4 col-sm-12">
                                                     <label for="bizTerm">Select BizTerm</label>
