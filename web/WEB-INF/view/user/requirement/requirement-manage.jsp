@@ -73,10 +73,10 @@
                             <div class="block-header py-lg-4 py-3">
                                 <div class="row g-3">
                                     <div class="col-md-6 col-sm-12">
-                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Issues</h2>
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Requirement</h2>
                                         <ul class="breadcrumb mb-0">
                                             <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
-                                            <li class="breadcrumb-item active">Issues</li>
+                                            <li class="breadcrumb-item active">Requirement</li>
                                         </ul>
                                     </div>
                                 </div>

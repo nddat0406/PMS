@@ -69,7 +69,7 @@ public class GroupController extends HttpServlet {
     private void paginateList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int pageNumber = getPageNumber(request);
-        int pageSize = 6;
+        int pageSize = 12;
         Integer filterStatus = getFilterStatus(request);
         List<Group> listD;
         if (filterStatus != null) {
@@ -87,7 +87,7 @@ public class GroupController extends HttpServlet {
     private void paginateListWithFilter(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int pageNumber = getPageNumber(request);
-        int pageSize = 6;
+        int pageSize = 12;
         String filterStatusParam = request.getParameter("status");
         Integer filterStatus = (filterStatusParam != null && !filterStatusParam.isEmpty()) ? Integer.parseInt(filterStatusParam) : null;
 

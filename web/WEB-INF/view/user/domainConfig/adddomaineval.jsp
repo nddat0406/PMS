@@ -100,14 +100,7 @@
                                                     <label for="description">Description:</label>
                                                     <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter description"></textarea>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="domain" class="form-label">Phase</label>
-                                                    <select class="form-select" id="domain" name="domain">
-                                                        <c:forEach var="project" items="${projects}">
-                                                            <option value="${project.id}">${project.name}</option>
-                                                        </c:forEach>
-                                                    </select>
-                                                </div>
+
                                                 <button type="submit" class="btn btn-primary">Submit</button>
                                             </form>
                                         </div>

@@ -195,7 +195,7 @@ public class DepartmentController extends HttpServlet {
 
     private void paginateList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int pageNumber = getPageNumber(request);
-        int pageSize = 6;
+        int pageSize = 12;
 
         Integer filterStatus = getFilterStatus(request); // Sử dụng filterStatus nếu có
 
@@ -214,7 +214,7 @@ public class DepartmentController extends HttpServlet {
 
     private void paginateListWithFilter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int pageNumber = getPageNumber(request);
-        int pageSize = 6;
+        int pageSize = 12;
 
         Integer filterStatus = getFilterStatus(request); // Lấy filterStatus từ request
 
