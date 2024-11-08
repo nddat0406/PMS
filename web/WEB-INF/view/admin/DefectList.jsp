@@ -286,10 +286,10 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="assignee" class="form-label">Assignee *</label>
-                                            <select class="form-select" id="assignee" name="assignee" required>
+                                            <select class="form-select" name="assignee" id="assignee" required>
                                                 <option value="">Select Assignee</option>
-                                                <c:forEach items="${assignee}" var="ass">   
-                                                    <option value="${ass.id}">${ass.fullname}</option>
+                                                <c:forEach items="${assignee}" var="user">
+                                                    <option value="${user.id}">${user.fullname}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>

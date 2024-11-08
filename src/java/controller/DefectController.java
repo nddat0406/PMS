@@ -33,7 +33,7 @@ public class DefectController extends HttpServlet {
     private RequirementService requirementService;
     private ProjectService projectService;
     private SettingService settingService;
-
+    private UserService userService;
     @Override
     public void init() throws ServletException {
         defectDAO = new DefectDAO();
@@ -133,7 +133,7 @@ public class DefectController extends HttpServlet {
             request.setAttribute("project", projectService.getAllProject(
                     ((User) request.getSession().getAttribute("loginedUser")).getId()));
             request.setAttribute("serverities", settingService.getAllSettings());
-
+            //request.setAttribute("assignee", userService.getAll());
             request.getRequestDispatcher("/WEB-INF/view/admin/DefectDetails.jsp")
                     .forward(request, response);
         } else {

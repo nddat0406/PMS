@@ -14,14 +14,31 @@
             <file>file:/D:/FPTU/SWP391/project/PMS/web/META-INF/context.xml</file>
         </group>
         <group>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/AllocationController.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/user/Allocation/alloList.jsp</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/DefectController.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/META-INF/context.xml</file>
             <file>file:/D:/FALL2024/SWP391/lastone/src/java/model/User.java</file>
             <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/admin/DefectList.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/common/sidebar.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/service/IssueService.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/web.xml</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/service/RequirementService.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/model/Issue.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/DefectController.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/PhaseController.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/UserDAO.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/Dashboard.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/user/issues/issue-manage.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/service/ProjectService.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/admin/DefectDetails.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/RequirementDAO.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/IssueDAO.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/AllocationController.java</file>
             <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/DefectDAO.java</file>
             <file>file:/D:/FALL2024/SWP391/lastone/src/java/filter/LoginFilter.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/web.xml</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/admin/Department.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/user/Allocation/alloList.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/service/UserService.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/model/Requirement.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/model/Defect.java</file>
             <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/PhaseDAO.java</file>
         </group>
     </open-files>
