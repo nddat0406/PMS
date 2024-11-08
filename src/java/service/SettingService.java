@@ -136,7 +136,7 @@ public class SettingService {
     }
 
     public Setting geDomaintById(int id) {
-        return settingDAO.geDomaintById(id);
+        return settingDAO.getDomainById(id);
     }
       public List<Setting> getDomainSettingByDomainId(int domainID) {
         return settingDAO.getDomainSettingByDomainId(domainID);
