@@ -94,20 +94,20 @@ public class TimesheetService {
         return timesheetDAO.getProjectsByUserId(userId, role);
     }
 
-    public List<User> getAllReporters() {
-        return timesheetDAO.getAllReporters();
+    public List<User> getReporter(int prjID) {
+        return timesheetDAO.getAllReportersByProjectId(prjID);
     }
 
-    public List<User> getAllReviewers() {
-        return timesheetDAO.getAllReviewers();
+    public List<User> getReviewer(int prjID) {
+        return timesheetDAO.getAllReviewersByProjectId(prjID);
     }
 
-    public List<Requirement> getAllRequirements(int userId, int role) {
-        return timesheetDAO.getAllRequirements(userId, role);
+    public List<Requirement> getAllRequirements(int projectid, int role) {
+        return timesheetDAO.getAllRequirements(projectid, role);
     }
 
-    public boolean updateTimesheetStatus(int timesheetId, int newStatus) {
-        return timesheetDAO.updateTimesheetStatus(timesheetId, newStatus);
+    public boolean updateTimesheetStatus(int timesheetId, int newStatus,String reasonReject) {
+        return timesheetDAO.updateTimesheetStatus(timesheetId, newStatus,reasonReject);
     }
 
     public boolean addTimesheet(Timesheet timesheet) throws IllegalArgumentException {
@@ -126,14 +126,14 @@ public class TimesheetService {
 //            throw new IllegalArgumentException("Please fill out all required information.");
 //        }
         // Kiểm tra các trường bắt buộc
+        if (timesheet.getProject() == null || timesheet.getProject().getId() <= 0) {
+            throw new IllegalArgumentException("Project is required.");
+        }
         if (timesheet.getReporter() == null || timesheet.getReporter().getId() <= 0) {
             throw new IllegalArgumentException("Reporter is required.");
         }
         if (timesheet.getReviewer() == null || timesheet.getReviewer().getId() <= 0) {
             throw new IllegalArgumentException("Reviewer is required.");
-        }
-        if (timesheet.getProject() == null || timesheet.getProject().getId() <= 0) {
-            throw new IllegalArgumentException("Project is required.");
         }
         if (timesheet.getRequirement() == null || timesheet.getRequirement().getId() <= 0) {
             throw new IllegalArgumentException("Requirement is required.");
