@@ -106,6 +106,7 @@
                                                         <th class="sortTableHead" name="startDate" sortBy="asc">Start Date <i class="fa fa-sort sort-icon"></i></th>
                                                         <th class="sortTableHead" name="endDate" sortBy="asc">End Date <i class="fa fa-sort sort-icon"></i></th>
                                                         <th class="sortTableHead" name="status" sortBy="asc">Status <i class="fa fa-sort sort-icon"></i></th>
+                                                        <th class="sortTableHead" name="reasonReject" sortBy="asc">ReasonReject <i class="fa fa-sort sort-icon"></i></th>
                                                         <th>Action</th>
                                                     </tr>
 
@@ -131,12 +132,15 @@
                                                                   timesheet.status == 2 ? 'APPROVED' :
                                                                   timesheet.status == 3 ? 'REJECTED' : 'Unknown'}
                                                             </td>
-
+                                                            <td>
+                                                                ${timesheet.status == 3 ? timesheet.reasonReject : ''}
+                                                            </td>
                                                             <td>
                                                                 <!-- Nút View/Edit -->
-                                                                <form action="${pageContext.request.contextPath}/timesheet?action=22222222222222222222222222222" method="get" style="display: inline-block;">
+                                                                <form action="${pageContext.request.contextPath}/timesheet?action=view" method="get" style="display: inline-block;">
                                                                     <input type="hidden" name="action" value="view">
                                                                     <input type="hidden" name="id" value="${timesheet.id}">
+                                                                    <input type="hidden" name="pid" value="${timesheet.project.id}">
                                                                     <button type="submit" class="btn btn-sm btn-outline-primary">
                                                                         <i class="fa fa-info-circle"></i> 
                                                                     </button>
@@ -185,14 +189,15 @@
                                                                     </form>
 
                                                                     <!-- Nút Reject -->
-                                                                    <form action="${pageContext.request.contextPath}/timesheet" method="POST" style="display:inline;">
+                                                                    <form id="rejectForm_${timesheet.id}" action="${pageContext.request.contextPath}/timesheet" method="POST" style="display:inline;">
                                                                         <input type="hidden" name="action" value="changestatus">
                                                                         <input type="hidden" name="timesheetId" value="${timesheet.id}">
                                                                         <input type="hidden" name="newStatus" value="3"> <!-- Đặt status thành REJECTED -->
-                                                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Reject Timesheet">
+                                                                        <button type="button" class="btn btn-sm btn-outline-danger" title="Reject Timesheet" onclick="openRejectModal(${timesheet.id})">
                                                                             <i class="fa fa-times-circle"></i> Reject
                                                                         </button>
                                                                     </form>
+
                                                                 </c:if>
                                                             </td>
 
@@ -231,6 +236,33 @@
                     </div>
                 </div>
             </div>
+<!--popup reject-->
+            <div class="modal fade" id="reasonRejectModal" tabindex="-1" aria-labelledby="reasonRejectModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="reasonRejectModalLabel">Enter Rejection Reason</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="rejectForm" method="POST" action="${pageContext.request.contextPath}/timesheet">
+                                <input type="hidden" name="action" value="changestatus">
+                                <input type="hidden" name="timesheetId" id="modalTimesheetId">
+                                <input type="hidden" name="newStatus" value="3"> <!-- Status REJECTED -->
+                                <div class="mb-3">
+                                    <label for="reasonReject" class="form-label">Reason for Rejection</label>
+                                    <textarea id="reasonReject" name="reasonReject" class="form-control" required></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-danger">Reject</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!--popup add-->
             <div class="modal fade" id="AddTimesheetModal" tabindex="-1" aria-labelledby="AddTimesheetModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -250,10 +282,21 @@
                                 <input type="hidden" name="action" value="add">
 
                                 <div class="row g-3">
+                                    <!-- Project Selector -->
+                                    <div class="col-md-6">
+                                        <label for="projectId" class="form-label">Project</label>
+                                        <select id="projectId" name="projectId" class="form-select" onchange="fetchRelatedData(this.value)">
+                                            <option value="">Select Project</option>
+                                            <c:forEach var="project" items="${projects}">
+                                                <option value="${project.id}" <c:if test="${sessionScope.projectId == project.id}">selected</c:if>>${project.name}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+
                                     <!-- Reporter Selector -->
                                     <div class="col-md-6">
                                         <label for="reporter" class="form-label">Reporter</label>
-                                        <c:if test="${role == 2|| role == 3}">
+                                        <c:if test="${role == 2 || role == 3}">
                                             <input type="text" id="reporterName" name="reporterName" class="form-control" value="${sessionScope.loginedUser.fullname}" readonly>
                                             <input type="hidden" name="reporter" value="${sessionScope.loginedUser.id}">
                                         </c:if>
@@ -274,7 +317,7 @@
                                             <input type="text" id="reviewerName" name="reviewerName" class="form-control" value="${sessionScope.loginedUser.fullname}" readonly>
                                             <input type="hidden" name="reviewer" value="${sessionScope.loginedUser.id}">
                                         </c:if>
-                                        <c:if test="${role == 1 || role == 2|| role == 3}">
+                                        <c:if test="${role == 1 || role == 2 || role == 3}">
                                             <select id="reviewer" name="reviewer" class="form-select">
                                                 <option value="">Select Reviewer</option>
                                                 <c:forEach var="reviewer" items="${reviewers}">
@@ -284,32 +327,18 @@
                                         </c:if>
                                     </div>
 
-                                    <!-- Project Selector -->
-                                    <div class="col-md-6">
-                                        <label for="projectId" class="form-label">Project</label>
-                                        <select id="projectId" name="projectId" class="form-select">
-                                            <option value="">Select Project</option>
-                                            <c:forEach var="project" items="${projects}">
-                                                <option value="${project.id}" <c:if test="${sessionScope.projectId == project.id}">selected</c:if>>${project.name}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-
                                     <!-- Requirement Selector -->
-
                                     <div class="col-md-6">
                                         <label for="requirement" class="form-label">Requirement</label>
                                         <select id="requirement" name="requirementId" class="form-select">
                                             <option value="">Select Requirement</option>
                                             <c:forEach var="requirement" items="${requirements}">
                                                 <option value="${requirement.id}" <c:if test="${sessionScope.requirementId == requirement.id}">selected</c:if>>${requirement.title}</option>
-
                                             </c:forEach>
                                         </select>
                                     </div>
 
                                     <!-- Time Create Field -->
-
                                     <div class="col-md-6">
                                         <label for="timeCreate" class="form-label">Time Create</label>
                                         <input type="date" id="timeCreate" name="timeCreate" class="form-control" value="${sessionScope.timeCreate}">
@@ -332,182 +361,278 @@
                                                 <option value="3" <c:if test="${sessionScope.status == '3'}">selected</c:if>>Rejected</option>
                                                 </select>
                                         </c:if>
-                                        <c:if test="${role == 2|| role == 3}">
-                                            <input type="text" id="status" name="statusDisplay" class="form-control" value="Draft" readonly>
-                                            <input type="hidden" name="status" value="0">
+                                        <c:if test="${role == 2 || role == 3}">
+                                            <input type="text" id="status" name="statusDisplay" class="form-control" value="Submitted" readonly>
+                                            <input type="hidden" name="status" value="1">
                                         </c:if>
                                     </div>
-
                                 </div>
 
                                 <div class="modal-footer mt-4">
                                     <button type="submit" class="btn btn-primary">Add Timesheet</button>
                                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
-
                             </form>
                         </div>
                     </div>
                 </div>
-                <script>
-                    $(document).ready(function () {
-                    <c:if test="${not empty sessionScope.errorMessagee}">
-                        $('#AddTimesheetModal').modal('show');
-                    </c:if>
-                    });
-                </script>
             </div>
-            <!-- Xóa các giá trị session sau khi sử dụng -->
-            <c:remove var="errorMessagee" scope="session" />
-            <c:remove var="reporterId" scope="session" />
-            <c:remove var="reviewerId" scope="session" />
-            <c:remove var="projectId" scope="session" />
-            <c:remove var="requirementId" scope="session" />
-            <c:remove var="timeCreate" scope="session" />
-            <c:remove var="timeComplete" scope="session" />
-            <c:remove var="status" scope="session" />
-        </div>
-        <script>
-            $(document).ready(function () {
-                function parseDate(dateString) {
-                    var parts = dateString.split('/');
-                    if (parts.length === 3) {
-                        return new Date(parts[2], parts[1] - 1, parts[0]); // Năm, tháng (0-indexed), ngày
-                    }
-                    return null;
-                }
 
-                function sortTable(columnIndex, order) {
-                    var rows = $('.tableBody tr').get();
-
-                    rows.sort(function (a, b) {
-                        var A = $(a).children('td').eq(columnIndex).text().toUpperCase();
-                        var B = $(b).children('td').eq(columnIndex).text().toUpperCase();
-
-                        if (columnIndex === 5 || columnIndex === 6) { // Chỉ số cột Start Date/End Date
-                            var dateA = parseDate(A);
-                            var dateB = parseDate(B);
-
-                            if (dateA && dateB) {
-                                return order === 'asc' ? dateA - dateB : dateB - dateA;
-                            }
-                        }
-
-                        if (A < B) {
-                            return order === 'asc' ? -1 : 1;
-                        }
-                        if (A > B) {
-                            return order === 'asc' ? 1 : -1;
-                        }
-                        return 0;
-                    });
-
-                    $.each(rows, function (index, row) {
-                        $('.tableBody').append(row);
-                    });
-                    rows.sort(function (a, b) {
-                        var A = $(a).children('td').eq(columnIndex).text().toUpperCase();
-                        var B = $(b).children('td').eq(columnIndex).text().toUpperCase();
-
-                        // Kiểm tra nếu là số và chuyển đổi trước khi so sánh
-                        var numA = parseFloat(A) || A;
-                        var numB = parseFloat(B) || B;
-
-                        if (!isNaN(numA) && !isNaN(numB)) {
-                            return order === 'asc' ? numA - numB : numB - numA;
-                        }
-
-                        // Nếu không phải số, sử dụng so sánh chuỗi thông thường
-                        if (A < B) {
-                            return order === 'asc' ? -1 : 1;
-                        }
-                        if (A > B) {
-                            return order === 'asc' ? 1 : -1;
-                        }
-                        return 0;
-                    });
-
-                    $.each(rows, function (index, row) {
-                        $('.tableBody').append(row);
-                    });
-                }
-
-                $('.sortTableHead').on('click', function () {
-                    var $th = $(this);
-                    var columnIndex = $th.index();
-                    var sortBy = $th.attr('sortBy');
-
-                    sortTable(columnIndex, sortBy);
-
-                    // Xóa biểu tượng sắp xếp khỏi các cột khác
-                    $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
-
-                    // Cập nhật biểu tượng sắp xếp cho cột được nhấn
-                    if (sortBy === 'asc') {
-                        sortBy = 'desc';
-                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
-                    } else {
-                        sortBy = 'asc';
-                        $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
-                    }
-
-                    // Cập nhật trạng thái sắp xếp trong thuộc tính `sortBy`
-                    $th.attr('sortBy', sortBy);
+            <script>
+                $(document).ready(function () {
+                <c:if test="${not empty sessionScope.errorMessagee}">
+                    $('#AddTimesheetModal').modal('show');
+                </c:if>
                 });
-            });
-
-        </script>
-        <script>
-            function exportToExcel() {
-                $.ajax({
-                    type: "POST",
-                    url: "${pageContext.request.contextPath}/timesheet", // URL của Servlet
-                    data: {action: "export"}, // Gửi action là "export"
-                    xhrFields: {
-                        responseType: 'blob' // Đặt response là blob để nhận file
-                    },
-                    success: function (data, status, xhr) {
-                        var filename = "Timesheet_List.xlsx"; // Tên file tải về
-
-                        // Tạo URL từ dữ liệu blob
-                        var url = window.URL.createObjectURL(data);
-                        var a = document.createElement('a');
-                        a.href = url;
-                        a.download = filename;
-
-                        // Tự động tải file
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                    },
-                    error: function (xhr, status, error) {
-                        alert("Error exporting file. Please try again.");
+            </script>
+            <script>
+                function fetchRelatedData(projectId) {
+                    if (!projectId) {
+                        // Nếu không có projectId, xóa dữ liệu trong các trường liên quan
+                        clearRelatedFields();
+                        return;
                     }
+
+                    fetch('${pageContext.request.contextPath}/timesheet?action=fetchRelatedData&projectId=' + projectId)
+
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`Network response was not ok: ${response.statusText}`);
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log("Received data:", data);
+                                updateRelatedFields(data);
+                            })
+                            .catch(error => {
+                                console.error("Error fetching related data:", error);
+                            });
+                }
+            </script>
+        </div>
+        <!-- Xóa các giá trị session sau khi sử dụng -->
+        <c:remove var="errorMessagee" scope="session" />
+        <c:remove var="reporterId" scope="session" />
+        <c:remove var="reviewerId" scope="session" />
+        <c:remove var="projectId" scope="session" />
+        <c:remove var="requirementId" scope="session" />
+        <c:remove var="timeCreate" scope="session" />
+        <c:remove var="timeComplete" scope="session" />
+        <c:remove var="status" scope="session" />
+    </div>
+    <script>
+        function openRejectModal(timesheetId) {
+            // Gán giá trị timesheetId cho input ẩn trong modal
+            document.getElementById('modalTimesheetId').value = timesheetId;
+
+            // Hiển thị modal
+            var rejectModal = new bootstrap.Modal(document.getElementById('reasonRejectModal'));
+            rejectModal.show();
+        }
+    </script>
+
+    <script>
+        function updateRelatedFields(data) {
+            console.log("Updating related fields with data:", data);
+
+            // Cập nhật dropdown của Reporter
+            const reporterSelect = document.getElementById("reporter");
+            if (reporterSelect) {
+                reporterSelect.innerHTML = '<option value="">Select Reporter</option>'; // Xóa các tùy chọn cũ
+                data.reporters.forEach(reporter => {
+                    const option = document.createElement("option");
+                    option.value = reporter.id;
+                    option.textContent = reporter.fullname;
+                    reporterSelect.appendChild(option);
                 });
             }
-        </script>
-        <script>
-            // Nếu có thông báo, ẩn nó sau 3 giây
-            $(document).ready(function () {
-                const notification = $('#notification');
-                if (notification.length) {
-                    setTimeout(function () {
-                        notification.fadeOut('slow'); // Ẩn thông báo
-                    }, 3000); // Thời gian 3000ms = 3 giây
+
+            // Cập nhật dropdown của Reviewer
+            const reviewerSelect = document.getElementById("reviewer");
+            if (reviewerSelect) {
+                reviewerSelect.innerHTML = '<option value="">Select Reviewer</option>'; // Xóa các tùy chọn cũ
+                data.reviewers.forEach(reviewer => {
+                    const option = document.createElement("option");
+                    option.value = reviewer.id;
+                    option.textContent = reviewer.fullname;
+                    reviewerSelect.appendChild(option);
+                });
+            }
+
+            // Cập nhật dropdown của Requirement
+            const requirementSelect = document.getElementById("requirement");
+            if (requirementSelect) {
+                requirementSelect.innerHTML = '<option value="">Select Requirement</option>'; // Xóa các tùy chọn cũ
+                data.requirements.forEach(requirement => {
+                    const option = document.createElement("option");
+                    option.value = requirement.id;
+                    option.textContent = requirement.title;
+                    requirementSelect.appendChild(option);
+                });
+            }
+        }
+
+        function clearRelatedFields() {
+            // Xóa dữ liệu của các trường liên quan nếu không có project được chọn
+            const reporterSelect = document.getElementById("reporter");
+            const reviewerSelect = document.getElementById("reviewer");
+            const requirementSelect = document.getElementById("requirement");
+
+            if (reporterSelect) {
+                reporterSelect.innerHTML = '<option value="">Select Reporter</option>';
+            }
+
+            if (reviewerSelect) {
+                reviewerSelect.innerHTML = '<option value="">Select Reviewer</option>';
+            }
+
+            if (requirementSelect) {
+                requirementSelect.innerHTML = '<option value="">Select Requirement</option>';
+            }
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            function parseDate(dateString) {
+                var parts = dateString.split('/');
+                if (parts.length === 3) {
+                    return new Date(parts[2], parts[1] - 1, parts[0]); // Năm, tháng (0-indexed), ngày
+                }
+                return null;
+            }
+
+            function sortTable(columnIndex, order) {
+                var rows = $('.tableBody tr').get();
+
+                rows.sort(function (a, b) {
+                    var A = $(a).children('td').eq(columnIndex).text().toUpperCase();
+                    var B = $(b).children('td').eq(columnIndex).text().toUpperCase();
+
+                    if (columnIndex === 5 || columnIndex === 6) { // Chỉ số cột Start Date/End Date
+                        var dateA = parseDate(A);
+                        var dateB = parseDate(B);
+
+                        if (dateA && dateB) {
+                            return order === 'asc' ? dateA - dateB : dateB - dateA;
+                        }
+                    }
+
+                    if (A < B) {
+                        return order === 'asc' ? -1 : 1;
+                    }
+                    if (A > B) {
+                        return order === 'asc' ? 1 : -1;
+                    }
+                    return 0;
+                });
+
+                $.each(rows, function (index, row) {
+                    $('.tableBody').append(row);
+                });
+                rows.sort(function (a, b) {
+                    var A = $(a).children('td').eq(columnIndex).text().toUpperCase();
+                    var B = $(b).children('td').eq(columnIndex).text().toUpperCase();
+
+                    // Kiểm tra nếu là số và chuyển đổi trước khi so sánh
+                    var numA = parseFloat(A) || A;
+                    var numB = parseFloat(B) || B;
+
+                    if (!isNaN(numA) && !isNaN(numB)) {
+                        return order === 'asc' ? numA - numB : numB - numA;
+                    }
+
+                    // Nếu không phải số, sử dụng so sánh chuỗi thông thường
+                    if (A < B) {
+                        return order === 'asc' ? -1 : 1;
+                    }
+                    if (A > B) {
+                        return order === 'asc' ? 1 : -1;
+                    }
+                    return 0;
+                });
+
+                $.each(rows, function (index, row) {
+                    $('.tableBody').append(row);
+                });
+            }
+
+            $('.sortTableHead').on('click', function () {
+                var $th = $(this);
+                var columnIndex = $th.index();
+                var sortBy = $th.attr('sortBy');
+
+                sortTable(columnIndex, sortBy);
+
+                // Xóa biểu tượng sắp xếp khỏi các cột khác
+                $('.sortTableHead .sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+
+                // Cập nhật biểu tượng sắp xếp cho cột được nhấn
+                if (sortBy === 'asc') {
+                    sortBy = 'desc';
+                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-up').addClass('fa-sort-down');
+                } else {
+                    sortBy = 'asc';
+                    $th.find('.sort-icon').removeClass('fa-sort fa-sort-down').addClass('fa-sort-up');
+                }
+
+                // Cập nhật trạng thái sắp xếp trong thuộc tính `sortBy`
+                $th.attr('sortBy', sortBy);
+            });
+        });
+
+    </script>
+    <script>
+        function exportToExcel() {
+            $.ajax({
+                type: "POST",
+                url: "${pageContext.request.contextPath}/timesheet", // URL của Servlet
+                data: {action: "export"}, // Gửi action là "export"
+                xhrFields: {
+                    responseType: 'blob' // Đặt response là blob để nhận file
+                },
+                success: function (data, status, xhr) {
+                    var filename = "Timesheet_List.xlsx"; // Tên file tải về
+
+                    // Tạo URL từ dữ liệu blob
+                    var url = window.URL.createObjectURL(data);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+
+                    // Tự động tải file
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                },
+                error: function (xhr, status, error) {
+                    alert("Error exporting file. Please try again.");
                 }
             });
-        </script>
-        <script>
-            // Kiểm tra nếu có thông báo lỗi, tự động mở modal
-            $(document).ready(function () {
-            <c:if test="${not empty sessionScope.errorMessagee}">
-                $('#AddTimesheetModal').modal('show');
-            </c:if>
-            });
-        </script>
+        }
+    </script>
+    <script>
+        // Nếu có thông báo, ẩn nó sau 3 giây
+        $(document).ready(function () {
+            const notification = $('#notification');
+            if (notification.length) {
+                setTimeout(function () {
+                    notification.fadeOut('slow'); // Ẩn thông báo
+                }, 3000); // Thời gian 3000ms = 3 giây
+            }
+        });
+    </script>
+    <script>
+        // Kiểm tra nếu có thông báo lỗi, tự động mở modal
+        $(document).ready(function () {
+        <c:if test="${not empty sessionScope.errorMessagee}">
+            $('#AddTimesheetModal').modal('show');
+        </c:if>
+        });
+    </script>
 
-        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
-        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-    </body>
+    <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/bundles/dataTables.bundle.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
+</body>
 </html>

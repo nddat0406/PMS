@@ -1,5 +1,6 @@
 package controller;
 
+import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,6 +18,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import model.Requirement;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -39,11 +41,15 @@ public class TimesheetController extends HttpServlet {
             action = "list";
         }
         switch (action) {
+
             case "list":
                 listTimesheets(request, response);
                 break;
             case "view":
                 view(request, response);
+                break;
+            case "fetchRelatedData":
+                fetchRelatedData(request, response);
                 break;
             default:
                 listTimesheets(request, response);
@@ -72,6 +78,39 @@ public class TimesheetController extends HttpServlet {
                 break;
         }
 
+    }
+
+    private void fetchRelatedData(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            HttpSession session = request.getSession();
+            User loginedUser = (User) session.getAttribute("loginedUser");
+            if (loginedUser == null) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in.");
+                return;
+            }
+
+            int projectId = Integer.parseInt(request.getParameter("projectId"));
+            int role = loginedUser.getRole();
+
+            // Lấy danh sách các user và yêu cầu liên quan đến project
+            List<User> reporters = timesheetService.getReporter(projectId);
+            List<User> reviewers = timesheetService.getReviewer(projectId);
+            List<Requirement> requirements = timesheetService.getAllRequirements(projectId, role);
+
+            // Trả dữ liệu JSON về client
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(new Gson().toJson(Map.of(
+                    "reporters", reporters,
+                    "reviewers", reviewers,
+                    "requirements", requirements
+            )));
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid project ID.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while fetching related data.");
+        }
     }
 
     private void listTimesheets(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -118,19 +157,9 @@ public class TimesheetController extends HttpServlet {
             int totalTimesheets = timesheetService.getTotalTimesheets(role, userId, searchKeyword, status, projectId);
             int totalPages = (int) Math.ceil((double) totalTimesheets / limit);
             List<Project> projects = timesheetService.getProjectsByUserRole(userId, role);
-
-            List<User> reporters = timesheetService.getAllReporters();
-            List<User> reviewers = timesheetService.getAllReviewers();
-
-            List<Requirement> requirements = timesheetService.getAllRequirements(userId, role);
-            // Chuyển dữ liệu vào request để hiển thị trong JSP
-            request.setAttribute("reporters", reporters);
-            request.setAttribute("reviewers", reviewers);
-            request.setAttribute("requirements", requirements);
-
-            request.setAttribute("role", role);
             // Gán giá trị vào request
             request.setAttribute("projects", projects);
+            request.setAttribute("role", role);
             request.setAttribute("timesheets", timesheets);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
@@ -233,7 +262,7 @@ public class TimesheetController extends HttpServlet {
         int role = loginedUser.getRole();
 
         int timesheetId = Integer.parseInt(request.getParameter("id"));
-
+        int projectId = Integer.parseInt(request.getParameter("pid"));
         // Lấy thông tin timesheet qua service
         Timesheet timesheet = timesheetService.getTimesheetById(timesheetId);
         if (timesheet == null) {
@@ -243,15 +272,15 @@ public class TimesheetController extends HttpServlet {
             return;
         }
         List<Project> projects = timesheetService.getProjectsByUserRole(userId, role);
-        List<User> reporters = timesheetService.getAllReporters();
-        List<User> reviewers = timesheetService.getAllReviewers();
-
-        List<Requirement> requirements = timesheetService.getAllRequirements(userId, role);
+        List<User> reporters = timesheetService.getReporter(projectId);
+        List<User> reviewers = timesheetService.getReviewer(projectId);
+        List<Requirement> requirements = timesheetService.getAllRequirements(projectId, role);
         // Chuyển dữ liệu vào request để hiển thị trong JSP
         request.setAttribute("reporters", reporters);
         request.setAttribute("reviewers", reviewers);
         request.setAttribute("requirements", requirements);
         request.setAttribute("projects", projects);
+        request.setAttribute("pid", projectId);
         // Gán timesheet vào request
         request.setAttribute("role", role);
         request.setAttribute("timesheet", timesheet);
@@ -268,7 +297,6 @@ public class TimesheetController extends HttpServlet {
             String requirementIdStr = request.getParameter("requirementId");
             String statusStr = request.getParameter("status");
             String timeCreateStr = request.getParameter("timeCreate");
-
 
             int id = idStr != null && !idStr.trim().isEmpty() ? Integer.parseInt(idStr.trim()) : 0;
             int reporterId = reporterIdStr != null && !reporterIdStr.trim().isEmpty() ? Integer.parseInt(reporterIdStr.trim()) : 0;
@@ -319,13 +347,13 @@ public class TimesheetController extends HttpServlet {
             } else {
                 request.getSession().setAttribute("message", "Failed to update timesheet!");
                 storeInputAttributes(request);
-                response.sendRedirect(request.getContextPath() + "/timesheet?action=view&id=" + id);
+                response.sendRedirect(request.getContextPath() + "/timesheet?action=view&id=" + id + "&pid=" + projectId);
             }
         } catch (IllegalArgumentException e) {
             // Gán thông báo lỗi từ IllegalArgumentException vào session
             request.getSession().setAttribute("errorMessage", e.getMessage());
             storeInputAttributes(request);
-            response.sendRedirect(request.getContextPath() + "/timesheet?action=view&id=" + request.getParameter("id"));
+            response.sendRedirect(request.getContextPath() + "/timesheet?action=view&id=" + request.getParameter("id") + "&pid=" + request.getParameter("projectId"));
         } catch (Exception e) {
             e.printStackTrace();
             request.getSession().setAttribute("message", "Invalid input data!");
@@ -347,12 +375,12 @@ public class TimesheetController extends HttpServlet {
 
     private void addTimesheet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            String reporterStr = request.getParameter("reporter");
-            String reviewerStr = request.getParameter("reviewer");
+
             String projectStr = request.getParameter("projectId");
             String requirementStr = request.getParameter("requirementId");
             String statusStr = request.getParameter("status");
-
+            String reporterStr = request.getParameter("reporter");
+            String reviewerStr = request.getParameter("reviewer");
             int reporterId = reporterStr != null && !reporterStr.isEmpty() ? Integer.parseInt(reporterStr) : 0;
             int reviewerId = reviewerStr != null && !reviewerStr.isEmpty() ? Integer.parseInt(reviewerStr) : 0;
             int projectId = projectStr != null && !projectStr.isEmpty() ? Integer.parseInt(projectStr) : 0;
@@ -416,14 +444,20 @@ public class TimesheetController extends HttpServlet {
     private void changeStatus(HttpServletRequest request, HttpServletResponse response) throws IOException {
         TimesheetService timesheetService = new TimesheetService();
         int timesheetId = Integer.parseInt(request.getParameter("timesheetId"));
-        int newStatus = Integer.parseInt(request.getParameter("newStatus")); // Set status thành SUBMITTED
+        int newStatus = Integer.parseInt(request.getParameter("newStatus"));
 
-        boolean isUpdated = timesheetService.updateTimesheetStatus(timesheetId, newStatus);
+        // Nhận lý do từ chối nếu trạng thái là REJECTED
+        String reasonReject = null;
+        if (newStatus == 3) { // Giả sử trạng thái '3' là REJECTED
+            reasonReject = request.getParameter("reasonReject");
+        }
+
+        boolean isUpdated = timesheetService.updateTimesheetStatus(timesheetId, newStatus, reasonReject);
 
         if (isUpdated) {
-            request.getSession().setAttribute("message", "Timesheet submit successfully!");
+            request.getSession().setAttribute("message", "Timesheet status updated successfully!");
         } else {
-            request.getSession().setAttribute("message", "Failed to submit timesheet!");
+            request.getSession().setAttribute("message", "Failed to update timesheet status!");
         }
         response.sendRedirect(request.getContextPath() + "/timesheet?action=list");
     }
