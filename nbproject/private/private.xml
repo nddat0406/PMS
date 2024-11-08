@@ -10,10 +10,17 @@
             <file>file:/D:/FPTU/SWP391/project/PMS/src/java/filter/LoginFilter.java</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/AllocationController.java</file>
         </group>
+        <group>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/src/java/dal/TimesheetDAO.java</file>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/web/WEB-INF/view/user/timesheet/timesheetdetail.jsp</file>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/web/WEB-INF/view/user/timesheet/timesheet.jsp</file>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/src/java/service/TimesheetService.java</file>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/web/WEB-INF/view/common/sidebar.jsp</file>
+            <file>file:/D:/fpt/SWP%20FALL24/4-11-2024/src/java/controller/TimesheetController.java</file>
+        </group>
         <group name="test">
             <file>file:/D:/FPTU/SWP391/project/PMS/web/META-INF/context.xml</file>
         </group>
-<<<<<<< HEAD
         <group name="PRO">
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/dal/BaseDAO.java</file>
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/service/BaseService.java</file>
@@ -28,6 +35,7 @@
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/service/GroupService.java</file>
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/service/UserService.java</file>
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/web/WEB-INF/view/admin/UserList.jsp</file>
+            <file>file:/C:/Users/DELL/SWP391/PMS/team6/web/META-INF/context.xml</file>
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/dal/GroupDAO.java</file>
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/web/WEB-INF/view/user/domainConfig/domaineval.jsp</file>
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/controller/DomainConfigController.java</file>
@@ -37,18 +45,6 @@
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/web/WEB-INF/view/user/login.jsp</file>
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/controller/AdminController.java</file>
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/model/Milestone.java</file>
-=======
-        <group>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/AllocationController.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/user/Allocation/alloList.jsp</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/DefectController.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/model/User.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/admin/DefectList.jsp</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/DefectDAO.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/filter/LoginFilter.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/web.xml</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/PhaseDAO.java</file>
->>>>>>> f39038dcb7c38fb64fd20df907c4169ff381edfb
         </group>
     </open-files>
 </project-private>
