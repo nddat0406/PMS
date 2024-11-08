@@ -3,11 +3,13 @@ package dal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import model.Criteria;
 import model.ProjectPhase;
 import model.Group;
+import model.Project;
 
 public class PhaseDAO extends BaseDAO {
-    
+
     public List<ProjectPhase> getAll() throws SQLException {
         List<ProjectPhase> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.projectphase";
@@ -18,7 +20,7 @@ public class PhaseDAO extends BaseDAO {
                 ProjectPhase phase = new ProjectPhase();
                 phase.setId(rs.getInt("id"));
                 phase.setName(rs.getString("name"));
-                phase.setPriority(rs.getInt("priority")); 
+                phase.setPriority(rs.getInt("priority"));
                 phase.setDetails(rs.getString("details"));
                 phase.setFinalPhase(rs.getBoolean("finalPhase"));
                 phase.setCompleteRate(rs.getInt("completeRate"));
@@ -37,23 +39,23 @@ public class PhaseDAO extends BaseDAO {
 
     public List<ProjectPhase> searchFilter(List<ProjectPhase> list, Integer domainId, Boolean status, String keyword) {
         List<ProjectPhase> filteredList = new ArrayList<>();
-        
+
         for (ProjectPhase phase : list) {
             boolean matchesDomain = (domainId == null || domainId == 0 || phase.getDomain().getId() == domainId);
             boolean matchesStatus = (status == null || phase.isStatus() == status);
-            boolean matchesKeyword = (keyword == null || keyword.isBlank() || 
-                                    phase.getName().toLowerCase().contains(keyword.toLowerCase()));
-            
+            boolean matchesKeyword = (keyword == null || keyword.isBlank()
+                    || phase.getName().toLowerCase().contains(keyword.toLowerCase()));
+
             if (matchesDomain && matchesStatus && matchesKeyword) {
                 filteredList.add(phase);
             }
         }
         return filteredList;
     }
-    
+
     public void insert(ProjectPhase phase) throws SQLException {
-        String sql = "INSERT INTO pms.projectphase (name, priority, details, finalPhase, completeRate, status, domainId) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO pms.projectphase (name, priority, details, finalPhase, completeRate, status, domainId) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement st = getConnection().prepareStatement(sql);
             st.setString(1, phase.getName());
@@ -68,10 +70,10 @@ public class PhaseDAO extends BaseDAO {
             throw new SQLException("Error inserting phase: " + e.getMessage());
         }
     }
-    
+
     public void updatePhase(ProjectPhase phase) throws SQLException {
-        String sql = "UPDATE pms.projectphase SET name=?, priority=?, details=?, finalPhase=?, " +
-                    "completeRate=?, status=?, domainId=? WHERE id=?";
+        String sql = "UPDATE pms.projectphase SET name=?, priority=?, details=?, finalPhase=?, "
+                + "completeRate=?, status=?, domainId=? WHERE id=?";
         try {
             PreparedStatement st = getConnection().prepareStatement(sql);
             st.setString(1, phase.getName());
@@ -87,7 +89,7 @@ public class PhaseDAO extends BaseDAO {
             throw new SQLException("Error updating phase: " + e.getMessage());
         }
     }
-    
+
     public boolean updateStatus(int phaseId, boolean newStatus) throws SQLException {
         String sql = "UPDATE pms.projectphase SET status = ? WHERE id = ?";
         try {
@@ -100,7 +102,7 @@ public class PhaseDAO extends BaseDAO {
             throw new SQLException("Error updating phase status: " + e.getMessage());
         }
     }
-    
+
     public void delete(int id) throws SQLException {
         String sql = "DELETE FROM pms.projectphase WHERE id = ?";
         try {
@@ -111,7 +113,7 @@ public class PhaseDAO extends BaseDAO {
             throw new SQLException("Error deleting phase: " + e.getMessage());
         }
     }
-    
+
     public ProjectPhase getPhaseById(int id) throws SQLException {
         String sql = "SELECT * FROM pms.projectphase WHERE id = ?";
         try {
@@ -136,5 +138,36 @@ public class PhaseDAO extends BaseDAO {
             throw new SQLException(e);
         }
         return null;
+    }
+
+   
+  
+
+    public List<ProjectPhase> getProjectPhaseByDomainId(Integer dID) throws SQLException {
+        List<ProjectPhase> list = new ArrayList<>();
+        String sql = "SELECT * FROM pms.projectphase where domainId = ? ";
+        try {
+            PreparedStatement st = getConnection().prepareStatement(sql);
+            st.setObject(1, dID);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                ProjectPhase phase = new ProjectPhase();
+                phase.setId(rs.getInt("id"));
+                phase.setName(rs.getString("name"));
+                phase.setPriority(rs.getInt("priority"));
+                phase.setDetails(rs.getString("details"));
+                phase.setFinalPhase(rs.getBoolean("finalPhase"));
+                phase.setCompleteRate(rs.getInt("completeRate"));
+                phase.setStatus(rs.getBoolean("status"));
+                // Set domain
+                Group domain = new Group();
+                domain.setId(rs.getInt("domainId"));
+                phase.setDomain(domain);
+                list.add(phase);
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+        return list;
     }
 }

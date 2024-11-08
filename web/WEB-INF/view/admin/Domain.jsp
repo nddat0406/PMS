@@ -107,7 +107,7 @@
                                     <div class="card-body">
                                         <form id="navbar-search" class="navbar-form search-form position-relative d-none d-md-block" method="get" action="domain">
                                             <input type="hidden" name="action" value="search">
-                                            <input name="keyword" class="form-control" placeholder="Search here..." type="text" required>
+                                            <input name="keyword" class="form-control" placeholder="Search here..." type="text" >
                                             <button type="submit" class="btn btn-secondary">
                                                 <i class="fa fa-search"></i>
                                             </button>
@@ -188,7 +188,6 @@
                                                 </li>
                                             </ul>
                                         </nav>
-
                                     </div>
                                 </div>
                             </div>

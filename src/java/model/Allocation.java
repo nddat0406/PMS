@@ -103,6 +103,13 @@ public class Allocation {
             return "<span class=\"badge bg-secondary\">Inactive</span>";
         }
     }
+    public String getStatusS() {
+        if (this.status) {
+            return "Active";
+        } else {
+            return "Inactive";
+        }
+    }
 
     public void setStatus(boolean status) {
         this.status = status;

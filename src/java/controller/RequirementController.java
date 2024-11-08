@@ -13,6 +13,7 @@ import java.util.List;
 
 import model.Milestone;
 import model.Requirement;
+import model.User;
 import service.BaseService;
 import service.RequirementService;
 
@@ -107,6 +108,35 @@ public class RequirementController extends HttpServlet {
                     response.getWriter().write(String.valueOf(milestoneId != null ? milestoneId : ""));
                     return;
                 }
+                case "getAssignees" -> {
+                    int projectId = Integer.parseInt(request.getParameter("projectId"));
+                    List<User> assignees = requirementService.getListUsersByProjectId(projectId);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    // Convert assignees list to JSON with better string building
+                    StringBuilder json = new StringBuilder("[");
+                    for (int i = 0; i < assignees.size(); i++) {
+                        User user = assignees.get(i);
+                        if (i > 0) {
+                            json.append(",");
+                        }
+                        json.append("{\"id\":").append(user.getId())
+                                .append(",\"name\":\"").append(user.getFullname().replace("\"", "\\\""))
+                                .append("\"}");
+                    }
+                    json.append("]");
+                    response.getWriter().write(json.toString());
+                    return;
+                }
+                case "getAssigneeId" -> {
+                    int requirementId = Integer.parseInt(request.getParameter("requirementId"));
+                    Integer assigneeId = requirementService.getAssigneeIdForRequirement(requirementId);
+                    System.out.println(assigneeId);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write(String.valueOf(assigneeId != null ? assigneeId : ""));
+                    return;
+                }
                 default ->
                     doGet(request, response);
             }
@@ -144,6 +174,11 @@ public class RequirementController extends HttpServlet {
 
     private void postFilter(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
+        HttpSession session = request.getSession();
+        request.setAttribute("requirementService", requirementService);
+         List<Requirement> listServiceAll = requirementService.getAll();
+                session.setAttribute("requirementList", listServiceAll);
+            
         String complexityFilter = request.getParameter("complexityFilter");
         String projectFilterRaw = request.getParameter("projectFilter");
         String statusFilterRaw = request.getParameter("statusFilter");
@@ -152,7 +187,8 @@ public class RequirementController extends HttpServlet {
         int projectFilter = baseService.TryParseInt(projectFilterRaw);
         int statusFilter = baseService.TryParseInt(statusFilterRaw);
 
-        HttpSession session = request.getSession();
+        
+        
         List<Requirement> list = requirementService.getRequirementsByFilter(complexityFilter, projectFilter,
                 statusFilter, searchKey);
 
@@ -186,7 +222,13 @@ public class RequirementController extends HttpServlet {
             int status = Integer.parseInt(request.getParameter("status"));
             int estimatedEffort = Integer.parseInt(request.getParameter("estimatedEffort"));
             int projectId = Integer.parseInt(request.getParameter("projectId"));
-            int userId = Integer.parseInt(request.getParameter("userId"));
+            
+            // Get assignee ID
+            String assigneeIdStr = request.getParameter("assigneeId");
+            Integer assigneeId = null;
+            if (assigneeIdStr != null && !assigneeIdStr.isEmpty()) {
+                assigneeId = Integer.parseInt(assigneeIdStr);
+            }
 
             // Get milestone ID if provided
             String milestoneIdStr = request.getParameter("milestoneId");
@@ -194,7 +236,7 @@ public class RequirementController extends HttpServlet {
             if (milestoneIdStr != null && !milestoneIdStr.isEmpty()) {
                 milestoneId = Integer.parseInt(milestoneIdStr);
             }
-
+            
             Requirement requirement = Requirement.builder()
                     .title(title)
                     .details(details)
@@ -202,21 +244,21 @@ public class RequirementController extends HttpServlet {
                     .status(status)
                     .estimatedEffort(estimatedEffort)
                     .projectId(projectId)
-                    .userId(userId)
+                    .userId(assigneeId) // Set the assignee ID
                     .build();
-
+            
             requirementService.insertRequirementWithMilestone(requirement, milestoneId);
-
+            
             // Refresh the list after adding
             List<Requirement> list = refreshChanges(request);
             request.setAttribute("successMess", "Add successful");
-            pagination(request, response, list);
-
+            doGet(request, response);
+            
         } catch (SQLException ex) {
             request.setAttribute("AddErrorMess", ex.getMessage());
             request.setAttribute("isAdd", "true");
             List<Requirement> list = (List<Requirement>) request.getSession().getAttribute("requirementList");
-            pagination(request, response, list);
+            doGet(request, response);
         }
     }
 
@@ -229,13 +271,21 @@ public class RequirementController extends HttpServlet {
             String complexity = request.getParameter("complexity");
             int status = Integer.parseInt(request.getParameter("status"));
             int estimatedEffort = Integer.parseInt(request.getParameter("estimatedEffort"));
-            int userId = Integer.parseInt(request.getParameter("userId"));
+
+            // Get assignee ID
+            String assigneeIdStr = request.getParameter("assigneeId");
+            Integer assigneeId = null;
+            if (assigneeIdStr != null && !assigneeIdStr.isEmpty()) {
+                assigneeId = Integer.parseInt(assigneeIdStr);
+            }
+
             // Get milestone ID if provided
             String milestoneIdStr = request.getParameter("milestoneId");
             Integer milestoneId = null;
             if (milestoneIdStr != null && !milestoneIdStr.isEmpty()) {
                 milestoneId = Integer.parseInt(milestoneIdStr);
             }
+
             Requirement requirement = Requirement.builder()
                     .id(id)
                     .title(title)
@@ -243,7 +293,7 @@ public class RequirementController extends HttpServlet {
                     .complexity(complexity)
                     .status(status)
                     .estimatedEffort(estimatedEffort)
-                    .userId(userId)
+                    .userId(assigneeId) // Set the assignee ID
                     .build();
 
             request.setAttribute("modalItem", requirement);
@@ -253,13 +303,13 @@ public class RequirementController extends HttpServlet {
             List<Requirement> list = refreshChanges(request);
             request.setAttribute("successMess", "Update successful");
             request.removeAttribute("modalItem");
-            pagination(request, response, list);
+            doGet(request, response);
 
         } catch (SQLException ex) {
             request.setAttribute("UpdateErrorMess", ex.getMessage());
             request.setAttribute("isUpdate", "true");
             List<Requirement> list = (List<Requirement>) request.getSession().getAttribute("requirementList");
-            pagination(request, response, list);
+            doGet(request, response);
         }
     }
 

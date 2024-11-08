@@ -54,7 +54,7 @@
                                             <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                             </li>
-                                           <li class="nav-item" role="presentation" style="width: 150px">
+                                            <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link" id="ProjectPhase-tab" href="${pageContext.request.contextPath}/phaselist" role="tab">Project Phase</a>
                                             </li>
                                         </ul>
@@ -64,7 +64,7 @@
                                     <div class="card-body">
                                         <div class="tab-content p-0" id="myTabContent">
                                             <form action="${baseUrl}/domain/domainsetting" method="get" class="mb-3">
-                                                <input type="hidden" name="action" value="domainUser" />
+                                                <input type="hidden" name="action" value="domainsetting" />
                                                 <div class="row g-3">
                                                     <div class="col-md-4">
                                                         <input type="text" name="search" class="form-control" 
@@ -104,7 +104,7 @@
                                                             <c:forEach var="setting" items="${domainSettings}">
                                                                 <tr>
                                                                     <td>${setting.id}</td>
-                                                                    <td>${setting.domain.name}</td>
+                                                                    <td>${setting.name}</td>
                                                                     <td>${setting.type}</td>
                                                                     <td>${setting.priority}</td>
                                                                     <td>${setting.status == true ? "Active" : "Inactive"}</td>
@@ -121,14 +121,17 @@
                                                             </c:forEach>
                                                         </tbody>
                                                     </table>
+                                                  
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>                            
                                 </div>
                             </div>
 
                         </div>
+
                     </div>
 
                     <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>

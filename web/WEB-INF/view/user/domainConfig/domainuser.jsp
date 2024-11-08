@@ -63,7 +63,7 @@
                                             <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link active" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                             </li>
-                                           <li class="nav-item" role="presentation" style="width: 150px">
+                                            <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link" id="ProjectPhase-tab" href="${pageContext.request.contextPath}/phaselist" role="tab">Project Phase</a>
                                             </li>
                                         </ul>
@@ -98,7 +98,7 @@
                                                             <th>Username</th>
                                                             <th>Email</th>
                                                             <th>Phone</th>
-                                                            <th>Domain</th>
+                                                            
                                                             <th>Status</th>
                                                             <th>Action</th>
                                                         </tr>
@@ -110,7 +110,7 @@
                                                                 <td>${user.user.fullname}</td>
                                                                 <td>${user.user.email}</td>
                                                                 <td>${user.user.mobile}</td>
-                                                                <td>${user.parent.name}</td>
+
                                                                 <td>
                                                                     <c:choose>
                                                                         <c:when test="${user.status == 1}">Active</c:when>
@@ -143,6 +143,15 @@
                     </div>
                 </div>
             </div>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="domainuser?page=${page==1?1:page-1}">Previous</a></li>
+                        <c:forEach begin="${1}" end="${num}" var="i">
+                        <li class="page-item ${i==page?'active':''}"><a class="page-link" href="domainuser?page=${i}">${i}</a></li>
+                        </c:forEach>
+                    <li class="page-item"><a class="page-link" href="domainuser?page=${page!=num?page+1:page}">Next</a></li>
+                </ul>
+            </nav>
         </div>
 
         <!-- JS file -->

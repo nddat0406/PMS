@@ -44,7 +44,7 @@
                             </ul>
                         </li>
                         <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-tasks"></i><span>Project</span></a></li> 
-
+                        <li><a href="${pageContext.request.contextPath}/allocation"><i class="fa fa-user-plus"></i><span>Allocation</span></a></li> 
                         <li><a href="${pageContext.request.contextPath}/settings"><i class="fa fa-cogs"></i><span>Setting Management</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/user/profile"><i class="fa fa-user"></i><span>Users profile</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/logout"><i class="fa fa-sign-out"></i><span>Logout</span></a></li>
@@ -61,13 +61,15 @@
                             <a href="#Employees" class="has-arrow"><i class="fa fa-users"></i><span>Project Tracking</span></a>
                             <ul class="list-unstyled">
                                 <li><a href="emp-all.html">Project issue</a></li>
-                                <li><a href="${pageContext.request.contextPath}/requirement">Timesheet</a></li>
+                                <li><a href="${pageContext.request.contextPath}/timesheet">Timesheet</a></li>
                                 <li><a href="${pageContext.request.contextPath}/requirement">Requirement</a></li>
-                                <li><a href="emp-leave.html">Milestone</a></li>
+                                <li><a href="${pageContext.request.contextPath}/defectlist"><span>Defect</span></a></li> 
+
                             </ul>
                         </li>
-                        <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-tasks"></i><span>Project</span></a></li> 
+                        <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-tasks"></i><span>Project List</span></a></li> 
                         <li><a href="${pageContext.request.contextPath}/admin/domain"><i class="fa fa-building"></i><span>Domain List</span></a></li>
+                        <li><a href="${pageContext.request.contextPath}/allocation"><i class="fa fa-user-plus"></i><span>Allocation</span></a></li> 
                         <li><a href="${pageContext.request.contextPath}/user/profile"><i class="fa fa-user"></i><span>Users profile</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/logout"><i class="fa fa-sign-out"></i><span>Logout</span></a></li>
                     </ul>
