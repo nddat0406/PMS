@@ -17,6 +17,16 @@ public class Criteria {
     private boolean status;
     private Milestone milestone;
     private ProjectPhase phase;
+    private Group domain;
+
+    public Group getDomain() {
+        return domain;
+    }
+
+    public void setDomain(Group domain) {
+        this.domain = domain;
+    }
+    
 
     public int getId() {
         return id;

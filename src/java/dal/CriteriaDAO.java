@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Criteria;
+import model.Group;
 import model.Milestone;
 import model.Project;
 
@@ -24,6 +25,30 @@ public class CriteriaDAO extends BaseDAO {
     private PhaseDAO phdao = new PhaseDAO();
 
     public List<Criteria> getCriteriaByProject(int id) throws SQLException {
+        String str = "SELECT * FROM pms.project_criteria where projectId=?";
+        try {
+            List<Criteria> list = new ArrayList<>();
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            pre.setInt(1, id);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Criteria temp = new Criteria();
+                temp.setId(rs.getInt(1));
+                temp.setName(rs.getString(2));
+                temp.setWeight(rs.getInt(3));
+                temp.setProject(pdao.getById(rs.getInt(4)));
+                temp.setStatus(rs.getBoolean(5));
+                temp.setDescription(rs.getString(6));
+                temp.setMilestone(mdao.getMilestoneById(rs.getInt(7)));
+                list.add(temp);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
+
+    public List<Criteria> getProjectPhaseCriteriaById(int id) throws SQLException {
         String str = "SELECT * FROM pms.project_criteria where projectId=?";
         try {
             List<Criteria> list = new ArrayList<>();
@@ -189,7 +214,7 @@ public class CriteriaDAO extends BaseDAO {
         List<Criteria> list = new ArrayList<>();
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql.toString());
-               
+
             for (int i = 0; i < params.size(); i++) {
                 if (params.get(i) instanceof String) {
                     pre.setString(i + 1, (String) params.get(i));
@@ -238,7 +263,8 @@ public class CriteriaDAO extends BaseDAO {
         }
 
         List<Criteria> list = new ArrayList<>();
-        try {PreparedStatement pre = getConnection().prepareStatement(sql.toString());
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql.toString());
             for (int i = 0; i < params.size(); i++) {
                 if (params.get(i) instanceof String) {
                     pre.setString(i + 1, (String) params.get(i));
@@ -270,7 +296,8 @@ public class CriteriaDAO extends BaseDAO {
     public void editStatusDomainEval(String status, int id) {
         String query = "UPDATE `projectphase_criteria` SET `status` = ? WHERE `id` = ?";
 
-        try {PreparedStatement ps = getConnection().prepareStatement(query);
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(query);
             ps.setBoolean(1, status.equals("active"));
             ps.setInt(2, id);
             ps.executeUpdate();
@@ -290,7 +317,6 @@ public class CriteriaDAO extends BaseDAO {
             e.printStackTrace();
         }
     }
-
 
     public Criteria getDomainEvalById(int id) throws SQLException {
         String sql = "SELECT * FROM pms.projectphase_criteria WHERE id = ?";
@@ -317,30 +343,31 @@ public class CriteriaDAO extends BaseDAO {
         return criteria;
     }
 
-   public void addDomainEval(Criteria criteria) {
-        String query = "INSERT INTO `projectphase_criteria` (`name`, `weight`, `status`, `phaseId`, `description`,  `id`) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+    public void addDomainEval(Criteria criteria) {
+        String query = "INSERT INTO `projectphase_criteria` (`name`, `weight`, `status`, `phaseId`, `description`,domainId,  `id`) "
+                + "VALUES (?, ?, ?, ?, ?, ?,?)";
 
         try {
-                PreparedStatement ps = getConnection().prepareStatement(query);
+            PreparedStatement ps = getConnection().prepareStatement(query);
 
             ps.setString(1, criteria.getName());
             ps.setDouble(2, criteria.getWeight());
             ps.setBoolean(3, criteria.isStatus());
             ps.setInt(4, criteria.getPhase().getId());
             ps.setString(5, criteria.getDescription());
-            ps.setInt(6, this.getLastId() + 1);
+            ps.setInt(6, criteria.getDomain().getId());
+            ps.setInt(7, this.getLastId() + 1);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
-   }
+    }
+
     public void editDomainEval(Criteria criteria) {
         String query = "UPDATE `projectphase_criteria` SET `name` = ?, `weight` = ?, `status` = ?, `phaseId` = ?, `description` = ? WHERE `id` = ?";
 
         try {
             PreparedStatement ps = getConnection().prepareStatement(query);
-                
 
             ps.setString(1, criteria.getName());
             ps.setDouble(2, criteria.getWeight());
@@ -354,7 +381,8 @@ public class CriteriaDAO extends BaseDAO {
             e.printStackTrace();
         }
     }
-     public int getLastId() {
+
+    public int getLastId() {
         String query = "SELECT MAX(id) FROM `projectphase_criteria`";
         int lastId = -1;
 
@@ -371,4 +399,37 @@ public class CriteriaDAO extends BaseDAO {
 
         return lastId;
     }
+
+    public List<Criteria> getDomainCriteriaByDomainId(Integer dID) throws SQLException {
+        String str = "select * from pms.projectphase_criteria where domainId=?";
+        Criteria criteria = null;
+        List<Criteria> list = new ArrayList<>();
+        try {
+
+            PreparedStatement pre = getConnection().prepareStatement(str);
+            pre.setInt(1, dID);
+
+            ResultSet rs = pre.executeQuery();
+
+            while (rs.next()) {
+                criteria = new Criteria();
+                criteria.setId(rs.getInt("id"));
+                criteria.setName(rs.getString("name"));
+                criteria.setWeight(rs.getInt("weight"));
+                criteria.setStatus(rs.getBoolean("status"));
+                criteria.setPhase(phdao.getPhaseById(rs.getInt("phaseId")));
+                criteria.setDescription(rs.getString(6));
+                Group group = new Group();
+                group.setId(dID);
+                criteria.setDomain(group);
+                list.add(criteria);
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+        return list;
+    }
+
+
+
 }

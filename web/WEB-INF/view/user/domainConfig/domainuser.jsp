@@ -63,7 +63,7 @@
                                             <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link active" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                             </li>
-                                           <li class="nav-item" role="presentation" style="width: 150px">
+                                            <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link" id="ProjectPhase-tab" href="${pageContext.request.contextPath}/phaselist" role="tab">Project Phase</a>
                                             </li>
                                         </ul>
@@ -143,6 +143,15 @@
                     </div>
                 </div>
             </div>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="domainuser?page=${page==1?1:page-1}">Previous</a></li>
+                        <c:forEach begin="${1}" end="${num}" var="i">
+                        <li class="page-item ${i==page?'active':''}"><a class="page-link" href="domainuser?page=${i}">${i}</a></li>
+                        </c:forEach>
+                    <li class="page-item"><a class="page-link" href="domainuser?page=${page!=num?page+1:page}">Next</a></li>
+                </ul>
+            </nav>
         </div>
 
         <!-- JS file -->

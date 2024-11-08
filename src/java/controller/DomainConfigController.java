@@ -32,6 +32,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import service.BaseService;
 import service.CriteriaService;
 import service.GroupService;
 import service.ProjectService;
@@ -42,10 +43,16 @@ import service.UserService;
  *
  * @author HP
  */
-@WebServlet(name = "DomainConfigController", urlPatterns = {"/domain", "/domain/domainuser", "/domain/domainsetting", "/domain/projectphasecriteria", "/domain/domaineval"})
+@WebServlet(name = "DomainConfigController", urlPatterns = {"/domain", "/domain/domainuser", "/domain/domainsetting", "/domain/domaineval"})
 
 @MultipartConfig
 public class DomainConfigController extends HttpServlet {
+
+    private String linkEval = "/WEB-INF/view/user/domainConfig/domaineval.jsp";
+    private String linkUser = "/WEB-INF/view/user/domainConfig/domainuser.jsp";
+    private String linkSetting = "/WEB-INF/view/user/domainConfig/domainsetting.jsp";
+
+    private BaseService baseService = new BaseService();
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -57,6 +64,7 @@ public class DomainConfigController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String page = request.getRequestURI();
@@ -106,18 +114,18 @@ public class DomainConfigController extends HttpServlet {
         action = action != null ? action : "";
         GroupService groupService = new GroupService();
         SettingService settingService = new SettingService();
-        List<Group> groups = groupService.getAllDomains();
+
         HttpSession session = request.getSession();
         switch (action) {
             case "add":
-                request.setAttribute("groups", groups);
+
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/adddomainsetting.jsp").forward(request, response);
                 break;
             case "edit":
                 int id = Integer.parseInt(request.getParameter("id"));
                 Setting st = settingService.geDomaintById(id);
                 request.setAttribute("setting", st);
-                request.setAttribute("groups", groups);
+
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/editdomainsetting.jsp").forward(request, response);
                 break;
             case "deactive":
@@ -136,20 +144,33 @@ public class DomainConfigController extends HttpServlet {
                 String searchName = request.getParameter("search");
                 String filterStatus = request.getParameter("status");
                 String type = request.getParameter("type");
-                String domainId = request.getParameter("domainId");
+                Integer dID;
+                String dIdRaw = request.getParameter("domainId");//lay parameter  domainId
+                if (dIdRaw == null) {
+                    dID = (Integer) session.getAttribute("domainId");
+                    if (dID == null) {
+                        throw new ServletException("Some thing went wrong, cannot find the domain id");
+                    }
+                } else {
+                    dID = Integer.valueOf(dIdRaw);
+                    session.setAttribute("domainId", dID);
+                }
                 SettingService se = new SettingService();
                 searchName = searchName != null ? searchName.trim() : null;
                 type = type != null ? type.trim() : null;
                 filterStatus = filterStatus != null ? filterStatus.trim() : null;
                 List<Setting> domainSettings;
-                domainSettings = se.getFilteredDomainSettings(type, filterStatus, searchName);
-                session.setAttribute("domainId", domainId);
+                domainSettings = se.getDomainSettingByDomainId(dID);
+
+                session.setAttribute("domainId", dID);
                 request.setAttribute("searchName", searchName);
                 request.setAttribute("filterStatus", filterStatus);
                 request.setAttribute("type", type);
                 request.setAttribute("domainSettings", domainSettings);
-                request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domainsetting.jsp").forward(request, response);
-            } catch (SQLException e) {
+                    request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domainsetting.jsp").forward(request, response);
+           
+
+            } catch (Exception e) {
                 throw new ServletException(e);
             }
         }
@@ -189,83 +210,24 @@ public class DomainConfigController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/domain/domainuser");
             }
             default -> {
-                String domainId = (String) session.getAttribute("domainId");
+
+                Integer dID;
+                String dIdRaw = request.getParameter("domainId");//lay parameter  domainId
+                if (dIdRaw == null) {
+                    dID = (Integer) session.getAttribute("domainId");
+                    if (dID == null) {
+                        throw new ServletException("Some thing went wrong, cannot find the domain id");
+                    }
+                } else {
+                    dID = Integer.valueOf(dIdRaw);
+                    session.setAttribute("domainId", dID);
+                }
                 GroupService service = new GroupService();
-                List<Group> domainUsers = service.getDomainUserByDomainId(domainId);
+                List<Group> domainUsers = service.getDomainUserByDomainId(dID);
                 request.setAttribute("domainUsers", domainUsers);
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domainuser.jsp").forward(request, response);
+
             }
-        }
-    }
-
-    private void ProjectPhaseCriteria(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
-        String path = request.getServletPath().substring("/domain/".length());
-        CriteriaService cr = new CriteriaService();
-        switch (path) {
-            case "eval" -> {
-                String action = request.getParameter("action");
-                switch (action) {
-                    case "filter":
-                        postEvalFilter(request, response);
-                    case "changeStatus":
-                        postEvalFlipStatus(request, response);
-                    case "delete":
-                        postEvalDelete(request, response);
-                    case "add":
-                        postEvalAdd(request, response);
-                    case "update":
-                        postEvalUpdate(request, response);
-                    case "sort":
-                        postSortEval(request, response);
-                    case "deactive":
-                    case "active":
-                        int idU = Integer.parseInt(request.getParameter("id"));
-                        System.out.println(action);
-                        cr.editStatusDomainEval(action, idU);
-                        response.sendRedirect(request.getContextPath() + "/domain/domainsetting");
-                        break;
-                    default: {
-                        getDomainEval(request, response);
-                    }
-                }
-            }
-
-            default ->
-                throw new AssertionError();
-        }
-        CriteriaDAO dao = new CriteriaDAO();
-        try {
-            String searchName = request.getParameter("search");
-            String filterStatus = request.getParameter("status");
-            searchName = searchName != null ? searchName.trim() : null;
-            filterStatus = filterStatus != null ? filterStatus.trim() : null;
-            List<Criteria> criteriaList;
-            criteriaList = dao.getAllCriteria(searchName, filterStatus);
-            request.setAttribute("searchName", searchName);
-            request.setAttribute("filterStatus", filterStatus);
-            request.setAttribute("criteriaList", criteriaList);
-            request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domainprojectphase.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void domaineval(HttpServletRequest request, HttpServletResponse response) {
-        CriteriaService service = new CriteriaService();
-        CriteriaService cr = new CriteriaService();
-        try {
-            String searchName = request.getParameter("search");
-            String filterStatus = request.getParameter("status");
-            searchName = searchName != null ? searchName.trim() : null;
-            filterStatus = filterStatus != null ? filterStatus.trim() : null;
-            List<Criteria> criteriaList;
-            criteriaList = service.getAllCriteria(searchName, filterStatus);
-            request.setAttribute("searchName", searchName);
-            request.setAttribute("filterStatus", filterStatus);
-            request.setAttribute("criteriaList", criteriaList);
-            request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domaineval.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -274,24 +236,17 @@ public class DomainConfigController extends HttpServlet {
         action = action != null ? action : "";
         CriteriaService cr = new CriteriaService();
         switch (action) {
-            case "filter":
-                postEvalFilter(request, response);
-                break;
-            case "changeStatus":
-                postEvalFlipStatus(request, response);
-                break;
+
             case "delete":
                 postEvalDelete(request, response);
                 break;
             case "add":
-                postEvalAdd(request, response);
+                getEvalAdd(request, response);
                 break;
             case "edit":
                 postEvalUpdate(request, response);
                 break;
-            case "sort":
-                postSortEval(request, response);
-                break;
+
             case "deactive":
             case "active":
                 int idU = Integer.parseInt(request.getParameter("id"));
@@ -300,6 +255,7 @@ public class DomainConfigController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/domain/domaineval");
                 break;
             default: {
+
                 getDomainEval(request, response);
             }
         }
@@ -398,11 +354,12 @@ public class DomainConfigController extends HttpServlet {
 
     private void addDomainEval(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
+            HttpSession session = request.getSession();
             String name = request.getParameter("name");
             String weightStr = request.getParameter("weight");
             String statusStr = request.getParameter("status");
             String description = request.getParameter("description");
-            String domainIdStr = request.getParameter("domain");
+            int domainId = (int) session.getAttribute("domainId");
 
             List<String> errors = new ArrayList<>();
 
@@ -420,29 +377,9 @@ public class DomainConfigController extends HttpServlet {
                 errors.add("Invalid weight.");
             }
 
-            int status = 1;
-            try {
-                status = Integer.parseInt(statusStr);
-                if (status != 0 && status != 1) {
-                    errors.add("Invalid status.");
-                }
-            } catch (NumberFormatException e) {
-                errors.add("Invalid status.");
-            }
-
-            int domainId = 0;
-            try {
-                domainId = Integer.parseInt(domainIdStr);
-                if (domainId <= 0) {
-                    errors.add("Invalid domain.");
-                }
-            } catch (NumberFormatException e) {
-                errors.add("Invalid domain.");
-            }
-
             if (!errors.isEmpty()) {
                 request.setAttribute("errors", errors);
-                this.postEvalAdd(request, response);
+                this.getEvalAdd(request, response);
                 return;
             }
 
@@ -450,9 +387,11 @@ public class DomainConfigController extends HttpServlet {
             criteria.setPhase(new ProjectPhase());
             criteria.setName(name);
             criteria.setWeight((int) weight);
-            criteria.setStatus(status == 1);
+            criteria.setStatus(Boolean.parseBoolean(statusStr));
             criteria.setDescription(description);
-            criteria.getPhase().setId(domainId);
+            Group group = new Group();
+            group.setId(domainId);
+            criteria.setDomain(group);
 
             CriteriaService service = new CriteriaService();
             service.addDomainEval(criteria);
@@ -505,12 +444,14 @@ public class DomainConfigController extends HttpServlet {
 
     private void addDomainSetting(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
+            HttpSession session = request.getSession();
             String name = request.getParameter("name");
             String typeStr = request.getParameter("type");
             String priorityStr = request.getParameter("priority");
             String statusStr = request.getParameter("status");
             String description = request.getParameter("description");
-            String domainStr = request.getParameter("domain");
+
+            int domainId = (int) session.getAttribute("domainId");//lay parameter  domainId
             String errorMessage = null;
             if (name == null || name.trim().length() < 3) {
                 errorMessage = "Name must be at least 3 characters long.";
@@ -522,23 +463,21 @@ public class DomainConfigController extends HttpServlet {
                 errorMessage = "Status must be either 'true' or 'false'.";
             } else if (description == null || description.trim().isEmpty()) {
                 errorMessage = "Description is required.";
-            } else if (domainStr == null || !domainStr.matches("\\d+")) {
-                errorMessage = "Domain ID must be a valid number.";
+
             }
 
             if (errorMessage != null) {
                 request.setAttribute("errorMessage", errorMessage);
-                GroupService groupService = new GroupService();
-                List<Group> groups = groupService.getAllDomains();
-                request.setAttribute("groups", groups);
+
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/adddomainsetting.jsp").forward(request, response);
                 return;
             }
+            Group group = new Group();
+            group.setId(domainId);
             Setting st = new Setting(0, name, Integer.parseInt(typeStr), Integer.parseInt(priorityStr), Boolean.parseBoolean(statusStr), description);
+            st.setDomain(group);
             SettingService settingService = new SettingService();
-            Group g = new Group();
-            g.setId(Integer.parseInt(domainStr));
-            st.setDomain(g);
+
             settingService.addDomain(st);
             response.sendRedirect(request.getContextPath() + "/domain/domainsetting");
         } catch (Exception e) {
@@ -548,13 +487,14 @@ public class DomainConfigController extends HttpServlet {
 
     private void editDomainSetting(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
+            HttpSession session = request.getSession();
             String id = request.getParameter("id");
             String name = request.getParameter("name");
             String typeStr = request.getParameter("type");
             String priorityStr = request.getParameter("priority");
             String statusStr = request.getParameter("status");
             String description = request.getParameter("description");
-            String domainStr = request.getParameter("domain");
+            int domainId = (int) session.getAttribute("domainId");
             String errorMessage = null;
             if (name == null || name.trim().length() < 3) {
                 errorMessage = "Name must be at least 3 characters long.";
@@ -566,8 +506,7 @@ public class DomainConfigController extends HttpServlet {
                 errorMessage = "Status must be either 'true' or 'false'.";
             } else if (description == null || description.trim().isEmpty()) {
                 errorMessage = "Description is required.";
-            } else if (domainStr == null || !domainStr.matches("\\d+")) {
-                errorMessage = "Domain ID must be a valid number.";
+
             }
 
             if (errorMessage != null) {
@@ -581,7 +520,7 @@ public class DomainConfigController extends HttpServlet {
             Setting st = new Setting(Integer.parseInt(id), name, Integer.parseInt(typeStr), Integer.parseInt(priorityStr), Boolean.parseBoolean(statusStr), description);
             SettingService settingService = new SettingService();
             Group g = new Group();
-            g.setId(Integer.parseInt(domainStr));
+            g.setId(domainId);
             st.setDomain(g);
             settingService.updateDomain(st);
             response.sendRedirect(request.getContextPath() + "/domain/domainsetting");
@@ -669,13 +608,6 @@ public class DomainConfigController extends HttpServlet {
 
     }
 
-    private void postEvalFilter(HttpServletRequest request, HttpServletResponse response) {
-    }
-
-    private void postEvalFlipStatus(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
     private void postEvalDelete(HttpServletRequest request, HttpServletResponse response) {
         CriteriaService cr = new CriteriaService();
         try {
@@ -687,10 +619,14 @@ public class DomainConfigController extends HttpServlet {
         }
     }
 
-    private void postEvalAdd(HttpServletRequest request, HttpServletResponse response) {
+    private void getEvalAdd(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
         try {
+
             ProjectService projectService = new ProjectService();
-            List<Project> projects = projectService.getAllProjectPharse();
+            //lay tu session
+          int dID = (int) session.getAttribute("domainId");
+            List<ProjectPhase> projects = projectService.getAllProjectPharseByDomainId(dID);
             request.setAttribute("projects", projects);
             request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/adddomaineval.jsp").forward(request, response);
         } catch (Exception e) {
@@ -713,30 +649,112 @@ public class DomainConfigController extends HttpServlet {
         }
     }
 
-    private void postSortEval(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    private void getDomainEval(HttpServletRequest request, HttpServletResponse response) {
+    private void getDomainEval(HttpServletRequest request, HttpServletResponse response) throws SQLException {
         CriteriaService dao = new CriteriaService();
+        HttpSession session = request.getSession();
         try {
+            Integer dID;
+            String dIdRaw = request.getParameter("domainId");//lay parameter  domainId
+            if (dIdRaw == null) {
+                dID = (Integer) session.getAttribute("domainId");
+                if (dID == null) {
+                    throw new ServletException("Some thing went wrong, cannot find the project id");
+                }
+            } else {
+                dID = Integer.valueOf(dIdRaw);
+                session.setAttribute("domainId", dID);
+            }
             String searchName = request.getParameter("search");
             String filterStatus = request.getParameter("status");
             searchName = searchName != null ? searchName.trim() : null;
             filterStatus = filterStatus != null ? filterStatus.trim() : null;
             List<Criteria> criteriaList;
-            criteriaList = dao.getAllCriteriaPhase(searchName, filterStatus);
+
+            criteriaList = dao.getDomainCriterriaByDomainId(dID);
             request.setAttribute("searchName", searchName);
             request.setAttribute("filterStatus", filterStatus);
             request.setAttribute("criteriaList", criteriaList);
+
             request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domaineval.jsp").forward(request, response);
-        } catch (ServletException | IOException | SQLException e) {
+        } catch (ServletException | IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void domainEval(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
+//    private void ProjectPhaseCriteria(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+//        String path = request.getServletPath().substring("/domain/".length());
+//        CriteriaService cr = new CriteriaService();
+//        switch (path) {
+//            case "eval" -> {
+//                String action = request.getParameter("action");
+//                switch (action) {
+//                    case "filter":
+//                        postEvalFilter(request, response);
+//                        break;
+//                    case "changeStatus":
+//                        postEvalFlipStatus(request, response);
+//                        break;
+//                    case "delete":
+//                        postEvalDelete(request, response);
+//                        break;
+//                    case "add":
+//                        getEvalAdd(request, response);
+//                        break;
+//                    case "update":
+//                        postEvalUpdate(request, response);
+//                        break;
+//                    case "sort":
+//                        postSortEval(request, response);
+//                        break;
+//                    case "deactive":
+//                        break;
+//                    case "active":
+//                        int idU = Integer.parseInt(request.getParameter("id"));
+//                        System.out.println(action);
+//                        cr.editStatusDomainEval(action, idU);
+//                        response.sendRedirect(request.getContextPath() + "/domain/domainsetting");
+//                        break;
+//                    default: {
+//                        getDomainEval(request, response);
+//                    }
+//                }
+//            }
+//
+//            default ->
+//                throw new AssertionError();
+//        }
+//        CriteriaDAO dao = new CriteriaDAO();
+//        try {
+//            String searchName = request.getParameter("search");
+//            String filterStatus = request.getParameter("status");
+//            searchName = searchName != null ? searchName.trim() : null;
+//            filterStatus = filterStatus != null ? filterStatus.trim() : null;
+//            List<Criteria> criteriaList;
+//            criteriaList = dao.getAllCriteria(searchName, filterStatus);
+//            request.setAttribute("searchName", searchName);
+//            request.setAttribute("filterStatus", filterStatus);
+//            request.setAttribute("criteriaList", criteriaList);
+//            request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domainprojectphase.jsp").forward(request, response);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    private void domaineval(HttpServletRequest request, HttpServletResponse response) {
+//        CriteriaService service = new CriteriaService();
+//        CriteriaService cr = new CriteriaService();
+//        try {
+//            String searchName = request.getParameter("search");
+//            String filterStatus = request.getParameter("status");
+//            searchName = searchName != null ? searchName.trim() : null;
+//            filterStatus = filterStatus != null ? filterStatus.trim() : null;
+//            List<Criteria> criteriaList;
+//            criteriaList = service.getAllCriteria(searchName, filterStatus);
+//            request.setAttribute("searchName", searchName);
+//            request.setAttribute("filterStatus", filterStatus);
+//            request.setAttribute("criteriaList", criteriaList);
+//            request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domaineval.jsp").forward(request, response);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
