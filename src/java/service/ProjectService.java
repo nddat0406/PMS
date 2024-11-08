@@ -110,7 +110,7 @@ public class ProjectService {
             row.createCell(3).setCellValue(a.getRole().getName());
             row.createCell(4).setCellValue(a.getEffortRate());
             row.createCell(5).setCellValue(u.getDepartment().getName());
-            row.createCell(6).setCellValue(a.getStatusString());
+            row.createCell(6).setCellValue(a.getStatusS());
         }
         return workbook;
     }

@@ -515,6 +515,7 @@ public class UserDAO extends BaseDAO {
             user.setGender(rs.getBoolean(12));
             user.setBirthdate(rs.getDate(13));
             user.setOtp(rs.getString(14));
+            user.setOtp_expiry(rs.getDate(15));
             return user;
         } catch (SQLException e) {
             throw new SQLException("User not exis or not active");

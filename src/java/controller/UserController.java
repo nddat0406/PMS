@@ -374,7 +374,6 @@ public class UserController extends HttpServlet {
                     request.setAttribute("showOTPModal", "true");
                     request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
                 }
-
             } catch (SQLException | MessagingException e) {
                 try {
                     request.setAttribute("profile", uService.getUserProfile(user.getId()));

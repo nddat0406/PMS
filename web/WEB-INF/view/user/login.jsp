@@ -58,12 +58,12 @@
                                 <form action="${pageContext.request.contextPath}/login" method="POST">
                                     <div class="form-floating mb-1">
                                         <input type="email" name="email" class="form-control" placeholder="name@example.com"
-                                               value="Admin@gmail.com"/>
+                                               />
                                         <label>Email address</label>
                                     </div>
                                     <div class="form-floating">
                                         <input type="password" name="password" class="form-control" placeholder="Password"
-                                               value="123456"/>
+                                               />
                                         <label>Password</label>
                                     </div>
                                     <div class="form-check my-3">
@@ -75,10 +75,6 @@
                                     <input type="hidden" name="contain" value="login">
                                     <button type="submit" class="btn btn-primary w-100 px-3 py-2">LOGIN</button>
                                 </form>
-                                <div class="d-grid gap-2 mt-3 pt-3">
-                                    <div class="text-center"><span>OR</span></div>
-                                    <a href="" class="btn btn-light"><i class="fab fa-google"></i> Sign in with Gmail</a>  
-                                </div>
                                 <div class="mt-3 pt-3 border-top">
                                     <p class="mb-1"><a href="${pageContext.request.contextPath}/forgot-password"><i class="fa fa-lock me-2"></i>Forgot password?</a></p>
                                     <span>Don't have an account? <a href="${pageContext.request.contextPath}/register">Register</a></span>

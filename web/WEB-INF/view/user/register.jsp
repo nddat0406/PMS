@@ -99,10 +99,6 @@
                                         <span>Already have an account? <a href="${pageContext.request.contextPath}/login">Login</a></span>
                                     </div>
                                 </form>
-                                <div class="d-grid gap-2 mt-3 pt-3">
-                                    <div class="text-center"><span>OR</span></div>
-                                    <button class="btn btn-light"><i class="fab fa-google"></i>  Sign in with Email</button>
-                                </div>
                             </div>
                         </div>
                     </div>
