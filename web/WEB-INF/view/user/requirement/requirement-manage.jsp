@@ -396,7 +396,7 @@
 
             <script>
                         function showError(fieldId, message) {
-                        var field = $('#' + fieldId);
+                        var field = $('#' + fieldId);//chinh la id
                         field.addClass('is-invalid');
                         field.after('<div class="invalid-feedback">' + message + '</div>');
                         }
