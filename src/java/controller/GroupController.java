@@ -69,7 +69,7 @@ public class GroupController extends HttpServlet {
     private void paginateList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int pageNumber = getPageNumber(request);
-        int pageSize = 6;
+        int pageSize = 12;
         Integer filterStatus = getFilterStatus(request);
         List<Group> listD;
         if (filterStatus != null) {
@@ -87,7 +87,7 @@ public class GroupController extends HttpServlet {
     private void paginateListWithFilter(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int pageNumber = getPageNumber(request);
-        int pageSize = 6;
+        int pageSize = 12;
         String filterStatusParam = request.getParameter("status");
         Integer filterStatus = (filterStatusParam != null && !filterStatusParam.isEmpty()) ? Integer.parseInt(filterStatusParam) : null;
 
@@ -118,6 +118,11 @@ public class GroupController extends HttpServlet {
     private void handleSearch(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String keyword = request.getParameter("keyword");
+        if (keyword == null || keyword.trim().isEmpty()) {
+            // Sử dụng logic phân trang mặc định
+            paginateList(request, response);
+            return;
+        }
         List<Group> searchResults = Domain.searchDomain(keyword);
         request.setAttribute("listD", searchResults);
         request.getRequestDispatcher("/WEB-INF/view/admin/Domain.jsp").forward(request, response);
@@ -156,7 +161,7 @@ public class GroupController extends HttpServlet {
 
         try {
             Domain.addGroup(addCode, addName, addDetails, addStatus);
-            paginateList(request, response);
+            response.sendRedirect(request.getContextPath() + "/admin/domain");
         } catch (IllegalArgumentException e) {
             // Gửi thông báo lỗi lại giao diện người dùng
             request.getSession().setAttribute("errorMessage", e.getMessage());

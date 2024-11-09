@@ -5,6 +5,7 @@
 package service;
 
 import dal.AllocationDAO;
+import dal.PhaseDAO;
 import dal.ProjectDAO;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -32,6 +33,7 @@ public class ProjectService {
     private ProjectDAO pdao = new ProjectDAO();
     private BaseService baseService = new BaseService();
     private AllocationDAO adao = new AllocationDAO();
+    private PhaseDAO hdao=new PhaseDAO();
 
     public List<Allocation> getByUser(int id, int role) throws SQLException {
         try {
@@ -110,7 +112,7 @@ public class ProjectService {
             row.createCell(3).setCellValue(a.getRole().getName());
             row.createCell(4).setCellValue(a.getEffortRate());
             row.createCell(5).setCellValue(u.getDepartment().getName());
-            row.createCell(6).setCellValue(a.getStatusString());
+            row.createCell(6).setCellValue(a.getStatusS());
         }
         return workbook;
     }
@@ -147,21 +149,25 @@ public class ProjectService {
 
     public String addProjectWithMilestones(Project project) {
         try {
-            // Check Code length
-            if (project.getCode() != null && project.getCode().length() > 10) {
-                return "Project code must not exceed 10 characters.";  // Trả về thông báo lỗi
+            if (project == null
+                    || project.getName() == null || project.getName().trim().isEmpty()
+                    || project.getCode() == null || project.getCode().trim().isEmpty()
+                    || project.getStartDate() == null
+                    || project.getDomain() == null || project.getDomain().getId() <= 0) {
+                return "Please fill in all the required fields."; 
             }
-            // check Code and name
+            if (project.getCode() != null && project.getCode().length() > 10) {
+                return "Project code must not exceed 10 characters."; 
+            }
             if (pdao.isCodeExists(project.getCode()) && pdao.isNameExists(project.getName())) {
-                return " code and name already exists";  // Trả về thông báo lỗi
+                return " code and name already exists";  
             }
             if (pdao.isCodeExists(project.getCode())) {
-                return "code already exists";  // Trả về thông báo lỗi
+                return "code already exists";  
             }
 
-            // check Name
             if (pdao.isNameExists(project.getName())) {
-                return "name already exists";  // Trả về thông báo lỗi
+                return "name already exists";  
             }
 // Thiết lập startDate cho các milestones
             Date startDate = project.getStartDate();
@@ -174,9 +180,9 @@ public class ProjectService {
             cal.set(java.util.Calendar.MILLISECOND, 0);
             java.util.Date currentDate = cal.getTime();
 
-// Kiểm tra xem startDate có phải là ngày hôm nay hoặc trong tương lai không
+
             if (startDate == null || startDate.before(currentDate)) {
-                return "Start date must be today or in the future.";  // Trả về thông báo lỗi
+                return "Start date must be today or in the future.";  
             }
 
             // Gọi phương thức thêm project và lấy projectId
@@ -193,7 +199,7 @@ public class ProjectService {
 
                 // Kiểm tra nếu không có phases nào được trả về
                 if (phases.isEmpty()) {
-                    return "No phases found for domainId: " + project.getDomain().getId();  // Trả về thông báo lỗi
+                    return "No phases found for domainId: " + project.getDomain().getId();  
                 }
 
                 // Lặp qua các giai đoạn và tạo milestones
@@ -213,33 +219,29 @@ public class ProjectService {
                     milestone.setPriority(phase.getPriority());
                     milestone.setDetails("Generated milestone for phase: " + phase.getName());
                     milestone.setEndDate(new java.sql.Date(endDate.getTime()));
-                    milestone.setStatus(0); // Default status (e.g., not started)
+                    milestone.setStatus(0); 
                     milestone.setDeliver("Default deliverable");
                     milestone.setProject(project); // Đặt đối tượng Project vào milestone
                     milestone.setPhase(phase); // Đặt đối tượng Phase vào milestone
 
-                    // Thêm milestone vào cơ sở dữ liệu
                     try {
                         pdao.addMilestone(milestone);
                         System.out.println("Milestone added for phase: " + phase.getName());
                     } catch (SQLException e) {
                         System.err.println("Error while adding milestone for phase: " + phase.getName());
                         e.printStackTrace();
-                        return "Error while adding milestone for phase: " + phase.getName();  // Trả về thông báo lỗi
+                        return "Error while adding milestone for phase: " + phase.getName();  
                     }
 
-                    // Cập nhật startDate cho mốc tiếp theo (bắt đầu sau khi mốc trước kết thúc)
                     startDate = endDate;
                 }
-
-                // Nếu tất cả các milestones được thêm thành công, trả về null (không có lỗi)
                 return null;
             } else {
-                return "Failed to retrieve a valid projectId.";  // Trả về thông báo lỗi
+                return "Failed to retrieve a valid projectId.";  
             }
         } catch (SQLException e) {
             System.err.println("Error while adding project or retrieving phases: " + e.getMessage());
-            return "An error occurred while adding the project: " + e.getMessage();  // Trả về thông báo lỗi
+            return "An error occurred while adding the project: " + e.getMessage();  
         }
     }
 
@@ -275,19 +277,24 @@ public class ProjectService {
             throw new IllegalAccessError("Illegal action!");
         }
     }
-    
-    public List<Project> getAllProject() throws SQLException{
+
+    public List<Project> getAllProject() throws SQLException {
         return pdao.getAllProject();
     }
+
     public static void main(String[] args) throws SQLException {
         List<Project> temp = new ProjectService().getAllProject();
         for (Project project : temp) {
             System.out.println(project.getId());
         }
     }
+
     public List<Project> getAllProject(int id) throws SQLException {
         return pdao.getAllByUser(id);
     }
 
+    public List<ProjectPhase> getAllProjectPharseByDomainId(Integer dID) throws SQLException {
+        return hdao.getProjectPhaseByDomainId(dID);
+    }
 
 }

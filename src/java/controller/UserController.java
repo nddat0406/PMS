@@ -374,7 +374,6 @@ public class UserController extends HttpServlet {
                     request.setAttribute("showOTPModal", "true");
                     request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
                 }
-
             } catch (SQLException | MessagingException e) {
                 try {
                     request.setAttribute("profile", uService.getUserProfile(user.getId()));
@@ -394,7 +393,6 @@ public class UserController extends HttpServlet {
                     uService.updateEmail(email, user.getId());
                     // Redirect to a profile page if everything is valid
                     request.getSession().setAttribute("loginedUser", uService.getUserProfile(user.getId()));
-
                     response.sendRedirect(request.getContextPath() + "/user/profile?profileChanged=success");
                 } else {
                     request.setAttribute("otpModalError", error);

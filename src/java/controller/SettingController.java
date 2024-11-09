@@ -32,7 +32,6 @@ public class SettingController extends HttpServlet {
         if (action == null) {
             action = "list";
         }
-
         try {
             switch (action) {
                 case "list":
@@ -135,7 +134,7 @@ public class SettingController extends HttpServlet {
             if (settingService.isNameOrTypeDuplicate(addName, addType)) {
                 request.setAttribute("errorMessage", "Setting name or type already exists!");
                 prepareAddRequest(request, addName, addType, addPriority, addStatus, addDescription);
-                request.getRequestDispatcher("/WEB-INF/view/admin/AddSetting.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/view/admin/SettingDetails.jsp").forward(request, response);
             } else {
                 settingService.addSetting(addName, addType, addPriority, addStatus, addDescription);
                 paginateList(request, response);
@@ -143,7 +142,7 @@ public class SettingController extends HttpServlet {
         } catch (IllegalArgumentException e) {
             request.setAttribute("errorMessage", e.getMessage());
             prepareAddRequest(request, addName, addType, addPriority, addStatus, addDescription);
-            request.getRequestDispatcher("/WEB-INF/view/admin/AddSetting.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/admin/SettingDetails.jsp").forward(request, response);
         }
     }
 

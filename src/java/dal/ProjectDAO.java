@@ -27,25 +27,24 @@ public class ProjectDAO extends BaseDAO {
     private UserDAO udao = new UserDAO();
 
     public List<Project> getAllByUser(int id) throws SQLException {
-        String str = "select p.* from allocation a join project p on p.id = a.projectId where userId = ?";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(str);
+        String str = "SELECT p.* FROM allocation a JOIN project p ON p.id = a.projectId WHERE userId = ?";
+        List<Project> projectList = new ArrayList<>();
+        try (PreparedStatement pre = getConnection().prepareStatement(str)) {
             pre.setInt(1, id);
-            ResultSet rs = pre.executeQuery();
-
-            List<Project> projectList = new ArrayList<>();
-            while (rs.next()) {
-                projectList.add(setProjectInfor(rs));
+            try (ResultSet rs = pre.executeQuery()) {
+                while (rs.next()) {
+                    projectList.add(setProjectInfor(rs));
+                }
             }
-            return projectList;
         } catch (SQLException e) {
             throw new SQLException(e);
         }
+        return projectList;
     }
 
     public Project setProjectInfor(ResultSet rs) throws SQLException {
+        Project temp = new Project();
         try {
-            Project temp = new Project();
             temp.setId(rs.getInt(1));
             temp.setBizTerm(getBizTerm(rs.getInt(2)));
             temp.setCode(rs.getString(3));
@@ -53,59 +52,62 @@ public class ProjectDAO extends BaseDAO {
             temp.setDetails(rs.getString(5));
             temp.setStartDate(rs.getDate(6));
             temp.setStatus(rs.getInt(7));
+
             Group gr = new Group();
             gr.setId(rs.getInt(8));
             gr.setName(gdao.getDeptNameById(rs.getInt(8)));
             temp.setDepartment(gr);
+
             Group gr2 = new Group();
             gr2.setId(rs.getInt(9));
             gr2.setName(gdao.getDomainName(rs.getInt(9)));
             temp.setDomain(gr2);
-            return temp;
+
         } catch (SQLException ex) {
             throw new SQLException(ex);
         }
+        return temp;
     }
 
     private String getBizTerm(int id) throws SQLException {
-        String str = "select name from setting where id=? and type=1 and status = 1";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(str);
+        String str = "SELECT name FROM setting WHERE id=? AND type=1 AND status = 1";
+        try (PreparedStatement pre = getConnection().prepareStatement(str)) {
             pre.setInt(1, id);
-            ResultSet rs = pre.executeQuery();
-            rs.next();
-            return rs.getString(1);
+            try (ResultSet rs = pre.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString(1);
+                }
+            }
         } catch (SQLException e) {
             return null;
         }
+        return null;
     }
 
     public Project getById(int id) throws SQLException {
-        String str = "select * from project where id=?";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(str);
+        String str = "SELECT * FROM project WHERE id=?";
+        try (PreparedStatement pre = getConnection().prepareStatement(str)) {
             pre.setInt(1, id);
-            ResultSet rs = pre.executeQuery();
-            rs.next();
-            return (Project) setProjectInfor(rs);
+            try (ResultSet rs = pre.executeQuery()) {
+                if (rs.next()) {
+                    return setProjectInfor(rs);
+                }
+            }
         } catch (SQLException e) {
             throw new SQLException(e);
         }
+        return null;
     }
 
     public void flipStatusMemberOfPrj(int id) throws SQLException {
-        String sql = """
-                     UPDATE `pms`.`allocation`
-                     SET
-                     `status` = status ^ 1
-                     WHERE `id` = ?""";
-        PreparedStatement st = getConnection().prepareStatement(sql);
-        st.setInt(1, id);
-        st.executeUpdate();
+        String sql = "UPDATE `pms`.`allocation` SET `status` = status ^ 1 WHERE `id` = ?";
+        try (PreparedStatement st = getConnection().prepareStatement(sql)) {
+            st.setInt(1, id);
+            st.executeUpdate();
+        }
     }
 
-    //  ------------------  project list vs project detail -----------------------------
-    //list prj
+// listProjects method with try-with-resources
     public List<Project> listProjects(int userId, int page, int pageSize, String keyword, Integer status, Integer domainId, Integer departmentId) {
         List<Project> projects = new ArrayList<>();
         StringBuilder query = new StringBuilder("SELECT p.id, p.bizTerm, p.code, p.name, p.details, p.startDate, p.status, "
@@ -113,183 +115,144 @@ public class ProjectDAO extends BaseDAO {
                 + "g2.id AS departmentId, g2.name AS departmentName "
                 + "FROM project p "
                 + "JOIN allocation a ON p.id = a.projectId "
-                + "JOIN `group` g1 ON p.domainId = g1.id AND g1.type = 1 " // Join với group để lấy thông tin domain (type = 1)
-                + "JOIN `group` g2 ON p.departmentId = g2.id AND g2.type = 0 " // Join với group để lấy thông tin department (type = 0)
-                + "WHERE a.userId = ? "); // Điều kiện để chỉ lấy các dự án của người dùng
+                + "JOIN `group` g1 ON p.domainId = g1.id AND g1.type = 1 "
+                + "JOIN `group` g2 ON p.departmentId = g2.id AND g2.type = 0 "
+                + "WHERE a.userId = ? and a.status=1 ");
 
-        // Thêm điều kiện tìm kiếm theo keyword nếu có
         if (keyword != null && !keyword.trim().isEmpty()) {
             query.append("AND (p.name LIKE ? OR p.code LIKE ?) ");
         }
-
-        // Thêm điều kiện lọc theo trạng thái nếu có
         if (status != null) {
             query.append("AND p.status = ? ");
         }
-
-        // Thêm điều kiện lọc theo domain nếu có
         if (domainId != null) {
             query.append("AND g1.id = ? ");
         }
-
-        // Thêm điều kiện lọc theo department nếu có
         if (departmentId != null) {
             query.append("AND g2.id = ? ");
         }
-
         query.append("LIMIT ? OFFSET ?");
         int offset = (page - 1) * pageSize;
 
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(query.toString());
+        try (PreparedStatement pre = getConnection().prepareStatement(query.toString())) {
             int index = 1;
-
-            // Thiết lập tham số userId
             pre.setInt(index++, userId);
 
-            // Thiết lập tham số tìm kiếm
             if (keyword != null && !keyword.trim().isEmpty()) {
                 pre.setString(index++, "%" + keyword.trim() + "%");
                 pre.setString(index++, "%" + keyword.trim() + "%");
             }
-
-            // Thiết lập tham số lọc theo trạng thái
             if (status != null) {
                 pre.setInt(index++, status);
             }
-
-            // Thiết lập tham số lọc theo domain
             if (domainId != null) {
                 pre.setInt(index++, domainId);
             }
-
-            // Thiết lập tham số lọc theo department
             if (departmentId != null) {
                 pre.setInt(index++, departmentId);
             }
-
-            // Thiết lập tham số phân trang
             pre.setInt(index++, pageSize);
             pre.setInt(index, offset);
 
-            ResultSet resultSet = pre.executeQuery();
+            try (ResultSet resultSet = pre.executeQuery()) {
+                while (resultSet.next()) {
+                    Project project = new Project();
+                    project.setId(resultSet.getInt("id"));
+                    project.setBizTerm(resultSet.getString("bizTerm"));
+                    project.setCode(resultSet.getString("code"));
+                    project.setName(resultSet.getString("name"));
+                    project.setDetails(resultSet.getString("details"));
+                    project.setStartDate(resultSet.getDate("startDate"));
+                    project.setStatus(resultSet.getInt("status"));
 
-            while (resultSet.next()) {
-                Project project = new Project();
-                project.setId(resultSet.getInt("id"));
-                project.setBizTerm(resultSet.getString("bizTerm"));
-                project.setCode(resultSet.getString("code"));
-                project.setName(resultSet.getString("name"));
-                project.setDetails(resultSet.getString("details"));
-                project.setStartDate(resultSet.getDate("startDate"));
-                project.setStatus(resultSet.getInt("status"));
+                    Group domain = new Group();
+                    domain.setId(resultSet.getInt("domainId"));
+                    domain.setName(resultSet.getString("domainName"));
+                    project.setDomain(domain);
 
-                // Lấy thông tin domain
-                Group domain = new Group();
-                domain.setId(resultSet.getInt("domainId"));
-                domain.setName(resultSet.getString("domainName"));
-                project.setDomain(domain);
+                    Group department = new Group();
+                    department.setId(resultSet.getInt("departmentId"));
+                    department.setName(resultSet.getString("departmentName"));
+                    project.setDepartment(department);
 
-                // Lấy thông tin department
-                Group department = new Group();
-                department.setId(resultSet.getInt("departmentId"));
-                department.setName(resultSet.getString("departmentName"));
-                project.setDepartment(department);
-
-                projects.add(project);
+                    projects.add(project);
+                }
             }
-
         } catch (SQLException e) {
-            e.printStackTrace(); // Thay thế bằng log lỗi nếu cần thiết
+            e.printStackTrace();
         }
-
         return projects;
     }
 
     public int getTotalProjects(int userId, String keyword, Integer status) {
         StringBuilder query = new StringBuilder("SELECT COUNT(*) FROM project p "
                 + "JOIN allocation a ON p.id = a.projectId "
-                + "WHERE a.userId = ? "); // Điều kiện để chỉ đếm các dự án của người dùng
+                + "WHERE a.userId = ? ");
 
-        // Thêm điều kiện tìm kiếm theo keyword nếu có
         if (keyword != null && !keyword.trim().isEmpty()) {
             query.append("AND (p.name LIKE ? OR p.code LIKE ?) ");
         }
-
-        // Thêm điều kiện lọc theo trạng thái nếu có
         if (status != null) {
             query.append("AND p.status = ? ");
         }
 
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(query.toString());
+        try (PreparedStatement pre = getConnection().prepareStatement(query.toString())) {
             int index = 1;
-
-            // Thiết lập tham số userId
             pre.setInt(index++, userId);
 
-            // Thiết lập tham số tìm kiếm
             if (keyword != null && !keyword.trim().isEmpty()) {
                 pre.setString(index++, "%" + keyword.trim() + "%");
                 pre.setString(index++, "%" + keyword.trim() + "%");
             }
-
-            // Thiết lập tham số lọc theo trạng thái
             if (status != null) {
                 pre.setInt(index++, status);
             }
 
-            ResultSet resultSet = pre.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt(1);
+            try (ResultSet resultSet = pre.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }
             }
-
         } catch (SQLException e) {
-            e.printStackTrace(); // Thay thế bằng log lỗi nếu cần thiết
+            e.printStackTrace();
         }
-
         return 0;
     }
 
-    //lấy detail
     public Project getProjectById(int id) {
         Project project = null;
         String query = "SELECT p.id, p.bizTerm, p.code, p.name, p.details, p.startDate, p.status, "
-                + "g1.id AS domainId, g1.name AS    domainName, "
+                + "g1.id AS domainId, g1.name AS domainName, "
                 + "g2.id AS departmentId, g2.name AS departmentName "
                 + "FROM project p "
-                + "JOIN `group` g1 ON p.domainId = g1.id AND g1.type = 1 " // Lấy thông tin domain từ group (type = 1)
-                + "JOIN `group` g2 ON p.departmentId = g2.id AND g2.type = 0 " // Lấy thông tin department từ group (type = 0)
+                + "JOIN `group` g1 ON p.domainId = g1.id AND g1.type = 1 "
+                + "JOIN `group` g2 ON p.departmentId = g2.id AND g2.type = 0 "
                 + "WHERE p.id = ?";
 
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(query);
+        try (PreparedStatement pre = getConnection().prepareStatement(query)) {
             pre.setInt(1, id);
-            ResultSet resultSet = pre.executeQuery();
+            try (ResultSet resultSet = pre.executeQuery()) {
+                if (resultSet.next()) {
+                    project = new Project();
+                    project.setId(resultSet.getInt("id"));
+                    project.setBizTerm(resultSet.getString("bizTerm"));
+                    project.setCode(resultSet.getString("code"));
+                    project.setName(resultSet.getString("name"));
+                    project.setDetails(resultSet.getString("details"));
+                    project.setStartDate(resultSet.getDate("startDate"));
+                    project.setStatus(resultSet.getInt("status"));
 
-            if (resultSet.next()) {
-                project = new Project();
-                project.setId(resultSet.getInt("id"));
-                project.setBizTerm(resultSet.getString("bizTerm"));
-                project.setCode(resultSet.getString("code"));
-                project.setName(resultSet.getString("name"));
-                project.setDetails(resultSet.getString("details"));
-                project.setStartDate(resultSet.getDate("startDate"));
-                project.setStatus(resultSet.getInt("status"));
+                    Group domain = new Group();
+                    domain.setId(resultSet.getInt("domainId"));
+                    domain.setName(resultSet.getString("domainName"));
+                    project.setDomain(domain);
 
-                // Lấy thông tin domain
-                Group domain = new Group();
-                domain.setId(resultSet.getInt("domainId"));
-                domain.setName(resultSet.getString("domainName"));
-                project.setDomain(domain);
-
-                // Lấy thông tin department
-                Group department = new Group();
-                department.setId(resultSet.getInt("departmentId"));
-                department.setName(resultSet.getString("departmentName"));
-                project.setDepartment(department);
+                    Group department = new Group();
+                    department.setId(resultSet.getInt("departmentId"));
+                    department.setName(resultSet.getString("departmentName"));
+                    project.setDepartment(department);
+                }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -297,12 +260,9 @@ public class ProjectDAO extends BaseDAO {
         return project;
     }
 
-    //thêm prj mới 
     public int addProject(Project project) throws SQLException {
         String sql = "INSERT INTO project (bizTerm, code, name, details, startDate, status, departmentId, domainId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try {
-            // Sử dụng Statement.RETURN_GENERATED_KEYS để yêu cầu các khóa tự động sinh
-            PreparedStatement statement = getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+        try (PreparedStatement statement = getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, project.getBizTerm());
             statement.setString(2, project.getCode());
             statement.setString(3, project.getName());
@@ -313,60 +273,45 @@ public class ProjectDAO extends BaseDAO {
             statement.setInt(8, project.getDomainId());
             statement.executeUpdate();
 
-            // Lấy khóa tự động sinh (ID) vừa được tạo
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1); // Trả về projectId vừa được tạo
+                    return generatedKeys.getInt(1);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return 0; // Trả về 0 nếu không thành công
+        return 0;
     }
 
-    // Hàm kiểm tra nếu code đã tồn tại
     public boolean isCodeExists(String code) throws SQLException {
         String query = "SELECT COUNT(*) FROM project WHERE code = ?";
-
-        try {
-            PreparedStatement statement = getConnection().prepareStatement(query);
+        try (PreparedStatement statement = getConnection().prepareStatement(query)) {
             statement.setString(1, code);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt(1) > 0;  // Nếu COUNT > 0, tức là code đã tồn tại
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
         }
         return false;
     }
 
-    // Hàm kiểm tra nếu name đã tồn tại
     public boolean isNameExists(String name) throws SQLException {
         String query = "SELECT COUNT(*) FROM project WHERE name = ?";
-
-        try {
-            PreparedStatement statement = getConnection().prepareStatement(query);
+        try (PreparedStatement statement = getConnection().prepareStatement(query)) {
             statement.setString(1, name);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt(1) > 0;
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
         }
         return false;
     }
-// Lấy danh sách các giai đoạn dựa trên domainId từ bảng 'projectphase'
 
     public List<ProjectPhase> getPhasesByDomainId(int domainId) throws SQLException {
         List<ProjectPhase> phases = new ArrayList<>();
         String sql = "SELECT id, name, priority FROM projectphase WHERE domainId = ?";
-        try {
-            PreparedStatement statement = getConnection().prepareStatement(sql);
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
             statement.setInt(1, domainId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
@@ -377,17 +322,13 @@ public class ProjectDAO extends BaseDAO {
                     phases.add(phase);
                 }
             }
-        } catch (SQLException e) {
-            throw new SQLException(e);
         }
         return phases;
     }
 
-    // Thêm một milestone vào bảng 'milestone'
     public void addMilestone(Milestone milestone) throws SQLException {
         String sql = "INSERT INTO milestone (name, priority, details, endDate, status, deliver, projectId, phaseId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try {
-            PreparedStatement statement = getConnection().prepareStatement(sql);
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
             statement.setString(1, milestone.getName());
             statement.setInt(2, milestone.getPriority());
             statement.setString(3, milestone.getDetails());
@@ -397,264 +338,218 @@ public class ProjectDAO extends BaseDAO {
             statement.setInt(7, milestone.getProject().getId());
             statement.setInt(8, milestone.getPhase().getId());
             statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new SQLException(e);
-
         }
     }
 
-    // lấy role để phân quyền 
     public String getRoleByUserAndProject(int userId, int projectId) throws SQLException {
         String role = null;
-
-        // Truy vấn SQL để lấy projectRole từ bảng allocation
         String query = "SELECT projectRole FROM allocation WHERE userId = ? AND projectId = ? LIMIT 1";
-
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setInt(1, userId);
-        statement.setInt(2, projectId);
-
-        ResultSet resultSet = statement.executeQuery();
-
-        // Nếu có kết quả, lấy giá trị của projectRole
-        if (resultSet.next()) {
-            role = resultSet.getString("projectRole");
+        try (PreparedStatement statement = getConnection().prepareStatement(query)) {
+            statement.setInt(1, userId);
+            statement.setInt(2, projectId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    role = resultSet.getString("projectRole");
+                }
+            }
         }
-
-        // Trả về role (nếu không có kết quả sẽ là null)
         return role;
     }
 
-    // Phương thức cập nhật trạng thái dự án
     public void updateProjectStatus(int projectId, int status) throws SQLException {
         String query = "UPDATE project SET status = ? WHERE id = ?";
-
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(query);
-            // Gán giá trị cho các tham số
-            preparedStatement.setInt(1, status); // Trạng thái mới
-            preparedStatement.setInt(2, projectId); // ID của dự án
-
-            // Thực thi truy vấn
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement(query)) {
+            preparedStatement.setInt(1, status);
+            preparedStatement.setInt(2, projectId);
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new SQLException("Không thể cập nhật trạng thái dự án");
         }
     }
 
     public List<Project> getAllProjectPharse() throws SQLException {
-        String str = "select * from projectphase";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(str);
-            ResultSet rs = pre.executeQuery();
-            List<Project> projectList = new ArrayList<>();
+        String str = "SELECT * FROM projectphase";
+        List<Project> projectList = new ArrayList<>();
+        try (PreparedStatement pre = getConnection().prepareStatement(str); ResultSet rs = pre.executeQuery()) {
             while (rs.next()) {
                 Project project = new Project();
                 project.setId(rs.getInt("id"));
                 project.setName(rs.getString("name"));
                 projectList.add(project);
             }
-            return projectList;
-        } catch (SQLException e) {
-            throw new SQLException(e);
         }
+        return projectList;
     }
 
     public Project getAllProjectPharseBYId(int id) throws SQLException {
-        String str = "select * from projectphase  where id = ?";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(str);
+        String str = "SELECT * FROM projectphase WHERE id = ?";
+        try (PreparedStatement pre = getConnection().prepareStatement(str)) {
             pre.setInt(1, id);
-            ResultSet rs = pre.executeQuery();
-            while (rs.next()) {
-                Project project = new Project();
-                project.setId(rs.getInt("id"));
-                project.setName(rs.getString("name"));
-                return project;
+            try (ResultSet rs = pre.executeQuery()) {
+                if (rs.next()) {
+                    Project project = new Project();
+                    project.setId(rs.getInt("id"));
+                    project.setName(rs.getString("name"));
+                    return project;
+                }
             }
-            return null;
         } catch (SQLException e) {
             throw new SQLException(e);
         }
+        return null;
     }
-    // Hàm list all prj for admin 
 
+// List all projects for admin
     public List<Project> listAllProjectsForAdmin(int page, int pageSize, String keyword, Integer status, Integer domainId, Integer departmentId) {
         List<Project> projects = new ArrayList<>();
-
-        // Xây dựng câu truy vấn SQL
         StringBuilder query = new StringBuilder("SELECT p.id, p.bizTerm, p.code, p.name, p.details, p.startDate, p.status, "
                 + "g1.id AS domainId, g1.name AS domainName, "
                 + "g2.id AS departmentId, g2.name AS departmentName "
                 + "FROM project p "
-                + "JOIN `group` g1 ON p.domainId = g1.id AND g1.type = 1 " // Join để lấy thông tin domain (type = 1)
-                + "JOIN `group` g2 ON p.departmentId = g2.id AND g2.type = 0 "); // Join để lấy thông tin department (type = 0)
+                + "JOIN `group` g1 ON p.domainId = g1.id AND g1.type = 1 "
+                + "JOIN `group` g2 ON p.departmentId = g2.id AND g2.type = 0 ");
 
         boolean hasCondition = false;
-
-        // Điều kiện tìm kiếm theo keyword nếu có
         if (keyword != null && !keyword.trim().isEmpty()) {
             query.append("WHERE (p.name LIKE ? OR p.code LIKE ?) ");
             hasCondition = true;
         }
-
-        // Điều kiện lọc theo trạng thái nếu có
         if (status != null) {
             query.append(hasCondition ? "AND " : "WHERE ");
             query.append("p.status = ? ");
             hasCondition = true;
         }
-
-        // Điều kiện lọc theo domain nếu có
         if (domainId != null) {
             query.append(hasCondition ? "AND " : "WHERE ");
             query.append("g1.id = ? ");
             hasCondition = true;
         }
-
-        // Điều kiện lọc theo department nếu có
         if (departmentId != null) {
             query.append(hasCondition ? "AND " : "WHERE ");
             query.append("g2.id = ? ");
         }
-
-        // Thêm phân trang
         query.append("LIMIT ? OFFSET ?");
         int offset = (page - 1) * pageSize;
 
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(query.toString());
+        try (PreparedStatement pre = getConnection().prepareStatement(query.toString())) {
             int index = 1;
-
-            // Thiết lập tham số tìm kiếm
             if (keyword != null && !keyword.trim().isEmpty()) {
                 pre.setString(index++, "%" + keyword.trim() + "%");
                 pre.setString(index++, "%" + keyword.trim() + "%");
             }
-
-            // Thiết lập tham số lọc trạng thái
             if (status != null) {
                 pre.setInt(index++, status);
             }
-
-            // Thiết lập tham số lọc theo domain
             if (domainId != null) {
                 pre.setInt(index++, domainId);
             }
-
-            // Thiết lập tham số lọc theo department
             if (departmentId != null) {
                 pre.setInt(index++, departmentId);
             }
-
-            // Thiết lập phân trang
             pre.setInt(index++, pageSize);
             pre.setInt(index, offset);
 
-            ResultSet resultSet = pre.executeQuery();
+            try (ResultSet resultSet = pre.executeQuery()) {
+                while (resultSet.next()) {
+                    Project project = new Project();
+                    project.setId(resultSet.getInt("id"));
+                    project.setBizTerm(resultSet.getString("bizTerm"));
+                    project.setCode(resultSet.getString("code"));
+                    project.setName(resultSet.getString("name"));
+                    project.setDetails(resultSet.getString("details"));
+                    project.setStartDate(resultSet.getDate("startDate"));
+                    project.setStatus(resultSet.getInt("status"));
 
-            // Duyệt kết quả trả về và thêm vào danh sách dự án
-            while (resultSet.next()) {
-                Project project = new Project();
-                project.setId(resultSet.getInt("id"));
-                project.setBizTerm(resultSet.getString("bizTerm"));
-                project.setCode(resultSet.getString("code"));
-                project.setName(resultSet.getString("name"));
-                project.setDetails(resultSet.getString("details"));
-                project.setStartDate(resultSet.getDate("startDate"));
-                project.setStatus(resultSet.getInt("status"));
+                    Group domain = new Group();
+                    domain.setId(resultSet.getInt("domainId"));
+                    domain.setName(resultSet.getString("domainName"));
+                    project.setDomain(domain);
 
-                // Lấy thông tin domain
-                Group domain = new Group();
-                domain.setId(resultSet.getInt("domainId"));
-                domain.setName(resultSet.getString("domainName"));
-                project.setDomain(domain);
+                    Group department = new Group();
+                    department.setId(resultSet.getInt("departmentId"));
+                    department.setName(resultSet.getString("departmentName"));
+                    project.setDepartment(department);
 
-                // Lấy thông tin department
-                Group department = new Group();
-                department.setId(resultSet.getInt("departmentId"));
-                department.setName(resultSet.getString("departmentName"));
-                project.setDepartment(department);
-
-                projects.add(project);
+                    projects.add(project);
+                }
             }
-
         } catch (SQLException e) {
-            e.printStackTrace(); // Thay thế bằng log lỗi nếu cần thiết
+            e.printStackTrace();
         }
-
         return projects;
     }
 
     public List<Project> getAllProject() throws SQLException {
-        String str = "select * from project";
-        PreparedStatement pre = getConnection().prepareStatement(str);
-        ResultSet rs = pre.executeQuery();
+        String str = "SELECT * FROM project";
         List<Project> projectList = new ArrayList<>();
-        while (rs.next()) {
-            Project project = new Project();
-            project.setId(rs.getInt("id"));
-            project.setName(rs.getString("name"));
-            project.setCode(rs.getString("code"));
-            projectList.add(project);
+        try (PreparedStatement pre = getConnection().prepareStatement(str); ResultSet rs = pre.executeQuery()) {
+            while (rs.next()) {
+                Project project = new Project();
+                project.setId(rs.getInt("id"));
+                project.setName(rs.getString("name"));
+                project.setCode(rs.getString("code"));
+                projectList.add(project);
+            }
         }
         return projectList;
     }
 
     public List<User> getProjectAllocationUser(Integer PID) throws SQLException {
         String str = """
-                     SELECT 
-                         u.id, 
-                         u.email, 
-                         u.fullname,
-                         u.image
-                     FROM 
-                         user u
-                     LEFT JOIN 
-                         allocation a ON u.id = a.userId AND a.projectId = ?
-                     WHERE 
-                         a.id IS NULL and u.status=1""";
-        PreparedStatement pre = getConnection().prepareStatement(str);
-        pre.setInt(1, PID);
-        ResultSet rs = pre.executeQuery();
+                 SELECT 
+                     u.id, 
+                     u.email, 
+                     u.fullname,
+                     u.image
+                 FROM 
+                     user u
+                 LEFT JOIN 
+                     allocation a ON u.id = a.userId AND a.projectId = ?
+                 WHERE 
+                     a.id IS NULL and u.status=1""";
         List<User> userList = new ArrayList<>();
-        while (rs.next()) {
-            User temp = new User();
-            temp.setId(rs.getInt(1));
-            temp.setEmail(rs.getString(2));
-            temp.setFullname(rs.getString(3));
-            temp.setImage(rs.getString(4));
-            userList.add(temp);
+        try (PreparedStatement pre = getConnection().prepareStatement(str)) {
+            pre.setInt(1, PID);
+            try (ResultSet rs = pre.executeQuery()) {
+                while (rs.next()) {
+                    User temp = new User();
+                    temp.setId(rs.getInt(1));
+                    temp.setEmail(rs.getString(2));
+                    temp.setFullname(rs.getString(3));
+                    temp.setImage(rs.getString(4));
+                    userList.add(temp);
+                }
+            }
         }
         return userList;
     }
 
     public List<Setting> getListRole(Integer PID) throws SQLException {
         String str = """
-                     SELECT DISTINCT 
-                     ds.id,
-                         ds.name,
-                         ds.priority
-                     FROM 
-                         allocation a
-                     JOIN 
-                         project p ON a.projectId = p.id
-                     JOIN 
-                         domain_setting ds ON ds.id = a.role
-                     WHERE 
-                         p.id = ? AND ds.type = 2""";
-        PreparedStatement pre = getConnection().prepareStatement(str);
-        pre.setInt(1, PID);
-        ResultSet rs = pre.executeQuery();
+                 SELECT DISTINCT 
+                 ds.id,
+                     ds.name,
+                     ds.priority
+                 FROM 
+                     allocation a
+                 JOIN 
+                     project p ON a.projectId = p.id
+                 JOIN 
+                     domain_setting ds ON ds.id = a.role
+                 WHERE 
+                     p.id = ? AND ds.type = 2""";
         List<Setting> settingList = new ArrayList<>();
-        while (rs.next()) {
-            Setting temp = new Setting();
-            temp.setId(rs.getInt(1));
-            temp.setName(rs.getString(2));
-            temp.setPriority(rs.getInt(3));
-            settingList.add(temp);
+        try (PreparedStatement pre = getConnection().prepareStatement(str)) {
+            pre.setInt(1, PID);
+            try (ResultSet rs = pre.executeQuery()) {
+                while (rs.next()) {
+                    Setting temp = new Setting();
+                    temp.setId(rs.getInt(1));
+                    temp.setName(rs.getString(2));
+                    temp.setPriority(rs.getInt(3));
+                    settingList.add(temp);
+                }
+            }
         }
         return settingList;
     }
+
 }

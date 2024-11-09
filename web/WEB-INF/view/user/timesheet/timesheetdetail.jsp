@@ -26,56 +26,56 @@
                             <div class="alert alert-info" id="notification">${message}</div>
                             <c:remove var="message" scope="session"/>
                         </c:if>
+                        <c:if test="${ timesheet.status == 1 || timesheet.status == 2}">
+                            <!-- Chi tiết Timesheet -->
+                            <div class="card">
 
-                        <!-- Chi tiết Timesheet -->
-                        <div class="card">
-
-                            <div class="card-header">
-                                <h5>Timesheet Detail - ID: ${timesheet.id}</h5>
-                            </div>
-                            <div class="card-body">
-                                <!-- Thông tin chi tiết -->
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label><strong>Reporter:</strong></label>
-                                        <p>${timesheet.reporter.fullname}</p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label><strong>Reviewer:</strong></label>
-                                        <p>${timesheet.reviewer.fullname}</p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label><strong>Project:</strong></label>
-                                        <p>${timesheet.project.name}</p>
-                                    </div>
+                                <div class="card-header">
+                                    <h5>Timesheet Detail - ID: ${timesheet.id}</h5>
                                 </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label><strong>Requirement:</strong></label>
-                                        <p>${timesheet.requirement.title}</p>
+                                <div class="card-body">
+                                    <!-- Thông tin chi tiết -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label><strong>Reporter:</strong></label>
+                                            <p>${timesheet.reporter.fullname}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label><strong>Reviewer:</strong></label>
+                                            <p>${timesheet.reviewer.fullname}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label><strong>Project:</strong></label>
+                                            <p>${timesheet.project.name}</p>
+                                        </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <label><strong>Status:</strong></label>
 
-                                        <p>               ${timesheet.status == 0 ? 'DRAFT' :
-                                                            timesheet.status == 1 ? 'SUBMITTED' :
-                                                            timesheet.status == 2 ? 'APPROVED' :
-                                                            timesheet.status == 3 ? 'REJECTED' : 'Unknown'}</p>
-                                    </div>
-                                </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label><strong>Requirement:</strong></label>
+                                            <p>${timesheet.requirement.title}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label><strong>Status:</strong></label>
 
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label><strong>Time Created:</strong></label>
-                                        <p><fmt:formatDate value="${timesheet.timeCreated}" pattern="dd/MM/yyyy"/></p>
+                                            <p>               ${timesheet.status == 0 ? 'DRAFT' :
+                                                                timesheet.status == 1 ? 'SUBMITTED' :
+                                                                timesheet.status == 2 ? 'APPROVED' :
+                                                                timesheet.status == 3 ? 'REJECTED' : 'Unknown'}</p>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label><strong>Time Completed:</strong></label>
-                                        <p><fmt:formatDate value="${timesheet.timeCompleted}" pattern="dd/MM/yyyy"/></p>
-                                    </div>
-                                </div>
 
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label><strong>Time Created:</strong></label>
+                                            <p><fmt:formatDate value="${timesheet.timeCreated}" pattern="dd/MM/yyyy"/></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label><strong>Time Completed:</strong></label>
+                                            <p><fmt:formatDate value="${timesheet.timeCompleted}" pattern="dd/MM/yyyy"/></p>
+                                        </div>
+                                    </div>
+                                </c:if>
                                 <!-- Nút Quay Lại -->
                                 <div class="row mb-3">
                                     <div class="col-md-12">
@@ -102,7 +102,14 @@
                                                 <input type="hidden" name="id" value="${timesheet.id}">
 
                                                 <div class="row mb-3">
+                                                    <!-- Project Field -->
+                                                    <div class="col-md-4">
+                                                        <label for="project"><strong>Project:</strong></label>
+                                                        <p class="form-control-plaintext">${timesheet.project.name}</p>
+                                                        <input type="hidden" name="projectId" value="${timesheet.project.id}">
+                                                    </div>
 
+                                                    <!-- Reporter Field -->
                                                     <c:if test="${role == 1 || role == 4 || role == 5 || role == 6}">
                                                         <div class="col-md-6">
                                                             <label for="reporter"><strong>Reporter:</strong></label>
@@ -117,10 +124,18 @@
                                                             </select>
                                                         </div>
                                                     </c:if>
-                                                    <c:if test="${role == 2||role == 3}">
-                                                        <input type="hidden" name="reporter" value="${sessionScope.loginedUser.id}">
+                                                    <c:if test="${role == 2 || role == 3}">
+                                                        <div class="col-md-6">
+                                                            <label for="reporter"><strong>Reporter:</strong></label>
+                                                            <p class="form-control-plaintext">${sessionScope.loginedUser.fullname}</p>
+                                                            <input type="hidden" name="reporter" value="${sessionScope.loginedUser.id}">
+                                                        </div>
                                                     </c:if>
-                                                    <c:if test="${role == 2|| role == 1|| role == 3}">
+                                                </div>
+
+                                                <div class="row mb-3">
+                                                    <!-- Reviewer Field -->
+                                                    <c:if test="${role == 2 || role == 1 || role == 3}">
                                                         <div class="col-md-6">
                                                             <label for="reviewer"><strong>Reviewer:</strong></label>
                                                             <select id="reviewer" name="reviewer" class="form-control">
@@ -135,27 +150,18 @@
                                                         </div>
                                                     </c:if>
                                                     <c:if test="${role == 4 || role == 5 || role == 6}">
-                                                        <input type="hidden" name="reviewer" value="${sessionScope.loginedUser.id}">
+                                                        <div class="col-md-6">
+                                                            <label for="reviewer"><strong>Reviewer:</strong></label>
+                                                            <p class="form-control-plaintext">${sessionScope.loginedUser.fullname}</p>
+                                                            <input type="hidden" name="reviewer" value="${sessionScope.loginedUser.id}">
+                                                        </div>
                                                     </c:if>
                                                 </div>
 
                                                 <div class="row mb-3">
-                                                    <div class="col-md-4">
-                                                        <label for="project"><strong>Project:</strong></label>
-
-                                                        <select id="project" name="projectId" class="form-control">
-                                                            <option value="">Select Project</option>
-                                                            <c:forEach var="project" items="${projects}">
-                                                                <option value="${project.id}" 
-                                                                        <c:if test="${sessionScope.projectId == project.id || project.id == timesheet.project.id}">selected</c:if>>
-                                                                    ${project.name}
-                                                                </option>
-                                                            </c:forEach>
-                                                        </select>
-                                                    </div>
+                                                    <!-- Requirement Field -->
                                                     <div class="col-md-4">
                                                         <label for="requirement"><strong>Requirement:</strong></label>
-
                                                         <select id="requirement" name="requirementId" class="form-control">
                                                             <option value="">Select Requirement</option>
                                                             <c:forEach var="requirement" items="${requirements}">
@@ -166,7 +172,9 @@
                                                             </c:forEach>
                                                         </select>
                                                     </div>
-                                                    <c:if test="${role == 1}">
+
+                                                    <!-- Status Field -->
+                                                    <c:if test="${role == 1 || role == 4 || role == 5 || role == 6}">
                                                         <div class="col-md-4">
                                                             <label for="status"><strong>Status:</strong></label>
                                                             <select id="status" name="status" class="form-control">
@@ -177,31 +185,33 @@
                                                                 </select>
                                                             </div>
                                                     </c:if>
-                                                    <c:if test="${role == 3 ||role == 2 || role == 4 || role == 5 || role == 6}">
+                                                    <c:if test="${role == 3 || role == 2}">
                                                         <input type="hidden" name="status" value="${timesheet.status}">
                                                     </c:if>
                                                 </div>
 
                                                 <div class="row mb-3">
+                                                    <!-- Time Fields -->
                                                     <div class="col-md-6">
                                                         <label for="timeCreate"><strong>Time Created:</strong></label>
-                                                        <input type="date" id="timeCreate" name="timeCreate" class="form-control"
-                                                               value="${sessionScope.timeCreate != null ? sessionScope.timeCreate : timesheet.timeCreated}">
+                                                        <input type="date" id="timeCreate" name="timeCreate" class="form-control" 
+                                                               value="${sessionScope.timeCreate != null ? sessionScope.timeCreate : timesheet.timeCreated}" readonly>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label for="timeComplete"><strong>Time Completed:</strong></label>
-                                                        <input type="date" id="timeComplete" name="timeComplete" class="form-control"
+                                                        <input type="date" id="timeComplete" name="timeComplete" class="form-control" 
                                                                value="${sessionScope.timeComplete != null ? sessionScope.timeComplete : timesheet.timeCompleted}">
                                                     </div>
                                                 </div>
 
+
                                                 <div class="row">
                                                     <div class="col-md-12">
+                                                        <input type="hidden" name="pid" value="${timesheet.project.id}">
                                                         <button type="submit" class="btn btn-primary">Update Timesheet</button>
                                                     </div>
                                                 </div>
                                             </form>
-
 
                                             <!-- Xóa các giá trị session sau khi sử dụng -->
                                             <c:remove var="errorMessage" scope="session" />

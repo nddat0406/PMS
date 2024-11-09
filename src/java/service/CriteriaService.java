@@ -119,4 +119,8 @@ public class CriteriaService {
         return cdao.getAllCriteriaPhase(searchName, filterStatus);
     }
 
+    public List<Criteria> getDomainCriterriaByDomainId(Integer dID) throws SQLException {
+        return cdao.getDomainCriteriaByDomainId(dID);
+    }
+
 }

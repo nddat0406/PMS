@@ -39,15 +39,16 @@
                         <li>
                             <a href="#Employees" class="has-arrow"><i class="fa fa-building"></i><span>Group Management</span></a>
                             <ul class="list-unstyled">
-
                                 <li><a href="${pageContext.request.contextPath}/admin/department">Department Management</a></li>
                                 <li><a href="${pageContext.request.contextPath}/admin/domain">Domain Management</a></li>
                             </ul>
                         </li>
                         <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-tasks"></i><span>Project</span></a></li> 
+                        <li><a href="${pageContext.request.contextPath}/allocation"><i class="fa fa-user-plus"></i><span>Allocation</span></a></li> 
                         <li><a href="${pageContext.request.contextPath}/settings"><i class="fa fa-cogs"></i><span>Setting Management</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/defectlist"><i class="fa fa-tasks"></i><span>Defect</span></a></li> 
                         <li><a href="${pageContext.request.contextPath}/allocation"><i class="fa fa-sitemap"></i><span>Allocation List</span></a></li>
+
 
                         <li><a href="${pageContext.request.contextPath}/user/profile"><i class="fa fa-user"></i><span>Users profile</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/logout"><i class="fa fa-sign-out"></i><span>Logout</span></a></li>
@@ -60,21 +61,19 @@
                 <nav class="sidebar-nav">
                     <ul class="main-menu metismenu list-unstyled">
                         <li><a href="${pageContext.request.contextPath}/dashboard"><i class="fa fa-tachometer"></i><span>Dashboard</span></a></li>
-
-                        <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-tasks"></i><span>Project</span></a></li> 
                         <li>
-                            <a href="#Employees" class="has-arrow"><i class="fa fa-thumb-tack"></i><span>Project Tracking</span></a>
+                            <a href="#Employees" class="has-arrow"><i class="fa fa-users"></i><span>Project Tracking</span></a>
                             <ul class="list-unstyled">
                                 <li><a href="emp-all.html">Project issue</a></li>
                                 <li><a href="${pageContext.request.contextPath}/timesheet">Timesheet</a></li>
-                                <li><a href="${pageContext.request.contextPath}/user/requirement">Requirement</a></li>
+                                <li><a href="${pageContext.request.contextPath}/requirement">Requirement</a></li>
                                 <li><a href="${pageContext.request.contextPath}/defectlist"><span>Defect</span></a></li> 
 
                             </ul>
                         </li>
-                        <li><a href="${pageContext.request.contextPath}/admin/department"><i class="fa fa-building"></i><span>Department List</span></a></li>
-                        <li><a href="${pageContext.request.contextPath}/admin/domain"><i class="fa fa-tags"></i><span>Domain List</span></a></li>
-                        <li><a href="${pageContext.request.contextPath}/allocation"><i class="fa fa-sitemap"></i><span>Allocation List</span></a></li>
+                        <li><a href="${pageContext.request.contextPath}/projectlist"><i class="fa fa-tasks"></i><span>Project List</span></a></li> 
+                        <li><a href="${pageContext.request.contextPath}/admin/domain"><i class="fa fa-building"></i><span>Domain List</span></a></li>
+                        <li><a href="${pageContext.request.contextPath}/allocation"><i class="fa fa-user-plus"></i><span>Allocation</span></a></li> 
                         <li><a href="${pageContext.request.contextPath}/user/profile"><i class="fa fa-user"></i><span>Users profile</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/logout"><i class="fa fa-sign-out"></i><span>Logout</span></a></li>
                     </ul>

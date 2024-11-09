@@ -252,12 +252,14 @@ public class ProjectController extends HttpServlet {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             java.sql.Date startDate = null;
             try {
-                java.util.Date parsedDate = dateFormat.parse(startDateStr);
-                startDate = new java.sql.Date(parsedDate.getTime());
-            } catch (ParseException ex) {
-                forwardWithError(session, request, response, "Invalid date format. Please use yyyy-MM-dd.",
-                        name, code, details, bizTerm, status, departmentId, domainId, startDateStr);
-                return;
+                if (startDateStr != null && !startDateStr.trim().isEmpty()) { 
+                    java.util.Date parsedDate = dateFormat.parse(startDateStr);
+                    startDate = new java.sql.Date(parsedDate.getTime());
+                } else {
+                    startDate = null; 
+                }
+            } catch (ParseException ex) {                
+                startDate = null;
             }
 
             // Tạo đối tượng Project

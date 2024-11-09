@@ -279,7 +279,7 @@
                         </form>
                     </div>
                 </div>
-                <button class="btn" data-bs-toggle="modal" data-bs-target="#OTPModal" id="toggleOTPModal"></button>>
+                                        <button class="btn" data-bs-toggle="modal" data-bs-target="#OTPModal" id="toggleOTPModal" hidden></button>
                 <script>
                     $("#toggleOTPModal").click();
                 </script>

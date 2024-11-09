@@ -180,6 +180,9 @@ public class GroupService {
      public List<Group> getDomainUser() {
          return gdao.getDomainUser();
      }
+     public List<Group> getDomainUserByDomainId(int domainId) {
+        return gdao.getDomainUserByDomainId(domainId);
+    }
      public void addDomainUser(Group user) throws SQLException {
          gdao.addDomainUser(user);
      }
