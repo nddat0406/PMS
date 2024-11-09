@@ -277,14 +277,4 @@ public class IssueDAO extends BaseDAO {
         return result;
     }
 
-    public static void main(String[] args) {
-        IssueDAO issueDAO = new IssueDAO();
-        try {
-            issueDAO.getAll().stream().forEach(item -> {
-                System.out.println(item);
-            });
-        } catch (SQLException ex) {
-            Logger.getLogger(IssueDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 }

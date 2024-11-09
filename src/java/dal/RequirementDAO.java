@@ -24,8 +24,8 @@ public class RequirementDAO extends BaseDAO {
 
     public Requirement getRequirementById(int id) throws SQLException {
         String sql = "SELECT * FROM pms.requirement WHERE id=?";
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(sql);
+        try (PreparedStatement pre = getConnection().prepareStatement(sql)) {
+
             pre.setInt(1, id);
             ResultSet rs = pre.executeQuery();
             if (rs.next()) {
@@ -39,9 +39,9 @@ public class RequirementDAO extends BaseDAO {
 
     public List<Requirement> getAllByProjectId(int projectId) throws SQLException {
         String sql = "SELECT * FROM pms.requirement WHERE projectId=?";
-        try {
+        try (PreparedStatement pre = getConnection().prepareStatement(sql)) {
             List<Requirement> list = new ArrayList<>();
-            PreparedStatement pre = getConnection().prepareStatement(sql);
+
             pre.setInt(1, projectId);
             ResultSet rs = pre.executeQuery();
             while (rs.next()) {
@@ -55,8 +55,8 @@ public class RequirementDAO extends BaseDAO {
 
     public void updateRequirement(Requirement requirement) throws SQLException {
         String sql = "UPDATE pms.requirement SET title=?, details=?, complexity=?, status=?, estimateEffort=?, userId=? WHERE id=?";
-        try {
-            PreparedStatement ps = getConnection().prepareStatement(sql);
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+
             ps.setString(1, requirement.getTitle());
             ps.setString(2, requirement.getDetails());
             ps.setString(3, requirement.getComplexity());
@@ -72,8 +72,7 @@ public class RequirementDAO extends BaseDAO {
 
     public void insertRequirement(Requirement requirement) throws SQLException {
         String sql = "INSERT INTO pms.requirement (projectId, userId, title, details, complexity, status, estimateEffort) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try {
-            PreparedStatement ps = getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+        try (PreparedStatement ps = getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, requirement.getProjectId());
             ps.setInt(2, requirement.getUserId());
             ps.setString(3, requirement.getTitle());
@@ -170,16 +169,17 @@ public class RequirementDAO extends BaseDAO {
         }
     }
 
-
     public Integer getMilestoneIdForRequirement(int requirementId) throws SQLException {
         String sql = "SELECT milestoneId FROM requirement_milestone WHERE requirementId = ?";
 
-        PreparedStatement ps = getConnection().prepareStatement(sql);
-        ps.setInt(1, requirementId);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            return rs.getInt("milestoneId");
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, requirementId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("milestoneId");
+            }
+            return null;
         }
-        return null;
     }
+
 }

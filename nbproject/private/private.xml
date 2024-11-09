@@ -19,6 +19,9 @@
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/dal/CriteriaDAO.java</file>
             <file>file:/C:/Users/DELL/SWP391/PMS/team6/web/WEB-INF/view/user/projectConfig/projectmember.jsp</file>
         </group>
-        <group name="test"/>
+        <group name="test">
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/common/sidebar.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/web/META-INF/context.xml</file>
+        </group>
     </open-files>
 </project-private>
