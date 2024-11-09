@@ -48,10 +48,6 @@ import service.UserService;
 @MultipartConfig
 public class DomainConfigController extends HttpServlet {
 
-
-
-  
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -139,6 +135,7 @@ public class DomainConfigController extends HttpServlet {
                 break;
             default:
                 try {
+                List<Setting> domainSettings;
                 String searchName = request.getParameter("search");
                 String filterStatus = request.getParameter("status");
                 String type = request.getParameter("type");
@@ -154,22 +151,22 @@ public class DomainConfigController extends HttpServlet {
                     session.setAttribute("domainId", dID);
                 }
                 SettingService se = new SettingService();
-                searchName = searchName != null ? searchName.trim() : null;
-                type = type != null ? type.trim() : null;
-                filterStatus = filterStatus != null ? filterStatus.trim() : null;
-               
+                if ((searchName != null && !searchName.isEmpty())
+                        || (filterStatus != null && !filterStatus.isEmpty())
+                        || (type != null && !type.isEmpty())) {
+                    // Nếu có bộ lọc, dùng danh sách đã lọc
+                    domainSettings = se.getFilteredDomainSettings( filterStatus, searchName,dID);
+                } else {
+                    // Nếu không có bộ lọc, lấy toàn bộ danh sách
+                    domainSettings = se.getDomainSettingByDomainId(dID);
+                }
 
-                List<Setting> domainSettings;
-                domainSettings = se.getDomainSettingByDomainId(dID);
-                domainSettings=se.filterSettings(filterStatus, filterStatus, type);
-
-                session.setAttribute("domainId", dID);
                 request.setAttribute("searchName", searchName);
                 request.setAttribute("filterStatus", filterStatus);
                 request.setAttribute("type", type);
                 request.setAttribute("domainSettings", domainSettings);
-                    request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domainsetting.jsp").forward(request, response);
-           
+               
+                request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domainsetting.jsp").forward(request, response);
 
             } catch (Exception e) {
                 throw new ServletException(e);
@@ -238,9 +235,7 @@ public class DomainConfigController extends HttpServlet {
         CriteriaService cr = new CriteriaService();
         switch (action) {
 
-            case "delete":
-                postEvalDelete(request, response);
-                break;
+           
             case "add":
                 getEvalAdd(request, response);
                 break;
@@ -401,7 +396,6 @@ public class DomainConfigController extends HttpServlet {
             System.out.println("Error: " + e);
         }
     }
-
     private void addDomainUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             int userId = Integer.parseInt(request.getParameter("user"));
@@ -626,7 +620,7 @@ public class DomainConfigController extends HttpServlet {
 
             ProjectService projectService = new ProjectService();
             //lay tu session
-          int dID = (int) session.getAttribute("domainId");
+            int dID = (int) session.getAttribute("domainId");
             List<ProjectPhase> projects = projectService.getAllProjectPharseByDomainId(dID);
             request.setAttribute("projects", projects);
             request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/adddomaineval.jsp").forward(request, response);
@@ -638,7 +632,7 @@ public class DomainConfigController extends HttpServlet {
     private void postEvalUpdate(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         try {
-             int dID = (int) session.getAttribute("domainId");
+            int dID = (int) session.getAttribute("domainId");
             int id = Integer.parseInt(request.getParameter("id"));
             CriteriaService crService = new CriteriaService();
             Criteria criteria = crService.getDomainEvalById(id);

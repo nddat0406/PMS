@@ -131,8 +131,8 @@ public class SettingService {
         }
     }
 
-    public List<Setting> getFilteredDomainSettings(String type, String filterStatus, String searchName) throws SQLException {
-        return settingDAO.getFilteredDomainSettings(type, filterStatus, searchName);
+    public List<Setting> getFilteredDomainSettings( String filterStatus, String searchName, Integer dID) throws SQLException {
+        return settingDAO.getFilteredDomainSettings( filterStatus, searchName,dID);
     }
 
     public Setting geDomaintById(int id) {

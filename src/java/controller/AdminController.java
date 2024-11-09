@@ -247,7 +247,7 @@ public class AdminController extends HttpServlet {
         try {
 
             if (uService.isEmailExists(email)) {
-                request.setAttribute("error", "Mobile number already exists.");
+                request.setAttribute("error", "Email existed");
                 // Điều hướng tới trang thêm người dùng (có thể là trang UserList.jsp hoặc trang AddUser.jsp)
                 request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
                 return; // Dừng lại nếu mobile trùng

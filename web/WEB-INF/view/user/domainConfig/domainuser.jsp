@@ -121,8 +121,7 @@
                                                                 <td>
                                                                     <a href="${baseUrl}/domain/domainuser?action=edit&id=${user.id}" type="submit" class="btn btn-warning">Detail</a>
                                                                     |
-                                                                    <a href="${baseUrl}/domain/domainuser?action=delete&id=${user.id}" type="submit" class="btn btn-warning">Delete</a>
-                                                                    |
+                                                                   
                                                                     <a href="${baseUrl}/domain/domainuser?action=deactive&id=${user.id}" type="submit" class="btn btn-danger">Deactive</a>
                                                                     |
                                                                     <a href="${baseUrl}/domain/domainuser?action=active&id=${user.id}" type="submit" class="btn btn-danger">Active</a>
