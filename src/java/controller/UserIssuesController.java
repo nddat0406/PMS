@@ -19,7 +19,7 @@ import java.sql.Date;
 import java.util.List;
 import service.ProjectService;
 
-@WebServlet(name = "UserIssuesController", urlPatterns = {"/user-issues"})
+@WebServlet(name = "UserIssuesController", urlPatterns = { "/user-issues" })
 public class UserIssuesController extends HttpServlet {
 
     private final IssueService issueService = new IssueService();
@@ -60,9 +60,8 @@ public class UserIssuesController extends HttpServlet {
 
                 // Add type and status lists for dropdowns
                 request.setAttribute("typeList", issueService.getAllTypes());
-                request.setAttribute("statusList", List.of(
-                        "Open", "To Do", "Doing", "Done", "Closed"
-                ));
+                session.setAttribute("statusList", List.of(
+                        "Open", "To Do", "Doing", "Done", "Closed"));
 
                 pagination(request, response, list);
             } else {
@@ -142,26 +141,38 @@ public class UserIssuesController extends HttpServlet {
         request.getRequestDispatcher(USER_ISSUES_PAGE).forward(request, response);
     }
 
+    // In UserIssuesController.java
     private void postFilter(HttpServletRequest request, HttpServletResponse response, int userId)
             throws ServletException, IOException, SQLException {
         HttpSession session = request.getSession();
         User loginedUser = (User) session.getAttribute("loginedUser");
+
         // Get all projects associated with the user
         List<Allocation> userAllocations = projectService.getByUser(loginedUser.getId(), loginedUser.getRole());
         List<Project> userProjects = projectService.getProjectsInAllocation(userAllocations);
         request.setAttribute("projects", userProjects);
+
         String projectFilterRaw = request.getParameter("projectFilter");
         String statusFilterRaw = request.getParameter("statusFilter");
         String typeFilter = request.getParameter("typeFilter");
         String searchKey = request.getParameter("searchKey");
 
         int projectFilter = baseService.TryParseInt(projectFilterRaw);
-        int statusFilter = baseService.TryParseInt(statusFilterRaw);
+
+        // Modified status filter handling to match IssueController
+        Integer statusFilter = null;
+        if (statusFilterRaw != null && !statusFilterRaw.trim().isEmpty()) {
+            try {
+                statusFilter = Integer.parseInt(statusFilterRaw);
+            } catch (NumberFormatException e) {
+                statusFilter = null; // Handle empty string case ("All Status")
+            }
+        }
 
         // Include userId in search to ensure user only sees their issues
-        List<Issue> list = issueService.searchAdvancedForUser(
-                searchKey, projectFilter, typeFilter, statusFilter, userId
-        );
+        List<Issue> list = issueService.searchAdvanced(searchKey, projectFilter, typeFilter, null, statusFilter, null,
+        null);
+                
 
         session.setAttribute("searchKey", searchKey);
         session.setAttribute("projectFilter", projectFilter);
@@ -189,6 +200,19 @@ public class UserIssuesController extends HttpServlet {
     private void postUpdate(HttpServletRequest request, HttpServletResponse response, int userId)
             throws ServletException, IOException, SQLException {
         try {
+            HttpSession session = request.getSession();
+            User loginedUser = (User) session.getAttribute("loginedUser");
+
+            // Redirect to login if user not logged in
+            if (loginedUser == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            // Get all projects associated with the user
+            List<Allocation> userAllocations = projectService.getByUser(loginedUser.getId(), loginedUser.getRole());
+            List<Project> userProjects = projectService.getProjectsInAllocation(userAllocations);
+            request.setAttribute("projects", userProjects);
             int issueId = Integer.parseInt(request.getParameter("id"));
             // Verify issue belongs to user before updating
             Issue existingIssue = issueService.getIssueById(issueId);
@@ -196,18 +220,19 @@ public class UserIssuesController extends HttpServlet {
                 throw new ServletException("Unauthorized access to issue");
             }
 
-            Issue issue = Issue.builder()
-                    .id(issueId)
-                    .title(request.getParameter("title"))
-                    .description(request.getParameter("description"))
-                    .type(request.getParameter("type"))
-                    .status(Integer.parseInt(request.getParameter("status")))
-                    .due_date(Date.valueOf(request.getParameter("dueDate")))
-                    .end_date(Date.valueOf(request.getParameter("endDate")))
-                    .assignee_id(userId) // Ensure assignee remains the same
-                    .build();
+//            Issue issue = Issue.builder()
+//                    .id(issueId)
+//                    .title(request.getParameter("title"))
+//                    .description(request.getParameter("description"))
+//                    .type(request.getParameter("type"))
+//                    .status(Integer.parseInt(request.getParameter("status")))
+//                    .due_date(Date.valueOf(request.getParameter("dueDate")))
+//                    .end_date(existingIssue.getEnd_date())
+//                    .assignee_id(userId) // Ensure assignee remains the same
+//                    .build();
+            existingIssue.setStatus(Integer.parseInt(request.getParameter("status")));
 
-            issueService.updateIssue(issue);
+            issueService.updateIssue(existingIssue);
 
             List<Issue> list = refreshList(request, userId);
             request.setAttribute("successMess", "Update successful");
@@ -230,8 +255,7 @@ public class UserIssuesController extends HttpServlet {
         String order = (String) session.getAttribute("sortOrder");
 
         List<Issue> list = issueService.searchAdvancedForUser(
-                searchKey, projectFilter, typeFilter, statusFilter, userId
-        );
+                searchKey, projectFilter, typeFilter, statusFilter, userId);
 
         if (fieldName != null && order != null) {
             baseService.sortListByField(list, fieldName, order);

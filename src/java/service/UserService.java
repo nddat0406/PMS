@@ -301,4 +301,9 @@ public class UserService {
                 .summaryStatistics();
         return stats.getAverage();
     }
+        public List<User> getUsersByProjectId(int projectId) {
+
+        return udao.getUsersByProjectId(projectId);
+
+    }
 }
