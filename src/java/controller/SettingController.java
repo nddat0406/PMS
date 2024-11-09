@@ -123,7 +123,7 @@ public class SettingController extends HttpServlet {
         }
     }
 
-    private void handleAddSetting(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+    private void handleAddSetting(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String addName = request.getParameter("name");
         int addType = Integer.parseInt(request.getParameter("type"));
         int addPriority = Integer.parseInt(request.getParameter("priority"));
@@ -139,7 +139,7 @@ public class SettingController extends HttpServlet {
                 settingService.addSetting(addName, addType, addPriority, addStatus, addDescription);
                 paginateList(request, response);
             }
-        } catch (IllegalArgumentException e) {
+        } catch (SQLException  e) {
             request.setAttribute("errorMessage", e.getMessage());
             prepareAddRequest(request, addName, addType, addPriority, addStatus, addDescription);
             request.getRequestDispatcher("/WEB-INF/view/admin/SettingDetails.jsp").forward(request, response);

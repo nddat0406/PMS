@@ -120,7 +120,6 @@ public class SettingService {
         List<Setting> settings = filterSettings(String.valueOf(type), null, name);
         return !settings.isEmpty();  // Trả về true nếu có setting trùng lặp
     }
-    //for prj list vs prj detail 
 
     public List<Setting> getAllBizTerms() {
         try {
@@ -131,8 +130,8 @@ public class SettingService {
         }
     }
 
-    public List<Setting> getFilteredDomainSettings(String type, String filterStatus, String searchName) throws SQLException {
-        return settingDAO.getFilteredDomainSettings(type, filterStatus, searchName);
+    public List<Setting> getFilteredDomainSettings( String filterStatus, String searchName, Integer dID) throws SQLException {
+        return settingDAO.getFilteredDomainSettings( filterStatus, searchName,dID);
     }
 
     public Setting geDomaintById(int id) {

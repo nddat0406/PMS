@@ -7,6 +7,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Group;
 import service.GroupService;
 
@@ -75,7 +78,11 @@ public class GroupController extends HttpServlet {
         if (filterStatus != null) {
             listD = Domain.filterDepartments(pageNumber, pageSize, filterStatus);
         } else {
-            listD = Domain.getAllGroups(pageNumber, pageSize);
+            try {
+                listD = Domain.getAllGroups(pageNumber, pageSize);
+            } catch (SQLException ex) {
+                throw new ServletException(ex);
+            }
         }
 
         request.setAttribute("listD", listD);

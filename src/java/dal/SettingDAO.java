@@ -185,7 +185,7 @@ public class SettingDAO extends BaseDAO {
             }
 
             if (keyword != null && !keyword.isEmpty()) {
-                stmt.setInt(index++, Integer.parseInt(keyword));
+                stmt.setString(index++, keyword);
             }
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -266,13 +266,9 @@ public class SettingDAO extends BaseDAO {
         return list;
     }
 
-    public List<Setting> getFilteredDomainSettings(String filterType, String filterStatus, String keyword) throws SQLException {
+    public List<Setting> getFilteredDomainSettings(String filterStatus, String keyword, int domainId) throws SQLException {
         List<Setting> settings = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM domain_setting WHERE 1=1");
-
-        if (filterType != null && !filterType.isEmpty()) {
-            sql.append(" AND type = ?");
-        }
+        StringBuilder sql = new StringBuilder("SELECT * FROM domain_setting WHERE domainId = ?");
 
         if (filterStatus != null && !filterStatus.isEmpty()) {
             sql.append(" AND status = ?");
@@ -285,16 +281,15 @@ public class SettingDAO extends BaseDAO {
         try (PreparedStatement stmt = getConnection().prepareStatement(sql.toString())) {
             int index = 1;
 
-            if (filterType != null && !filterType.isEmpty()) {
-                stmt.setInt(index++, Integer.parseInt(filterType));
-            }
+            // Thêm domainId làm tham số đầu tiên
+            stmt.setInt(1, domainId);
 
             if (filterStatus != null && !filterStatus.isEmpty()) {
-                stmt.setInt(index++, Integer.parseInt(filterStatus));
+                stmt.setInt(3, Integer.parseInt(filterStatus));
             }
 
             if (keyword != null && !keyword.isEmpty()) {
-                stmt.setString(index++, "%" + keyword + "%");
+                stmt.setString(4, "%" + keyword + "%");
             }
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -400,5 +395,4 @@ public class SettingDAO extends BaseDAO {
         return 0;
     }
 
-    
 }

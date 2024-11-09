@@ -92,14 +92,7 @@
                                                         <option value="false">Inactive</option>
                                                     </select>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="domain" class="form-label">Group Domain</label>
-                                                    <select class="form-select" id="domain" name="domain">
-                                                        <c:forEach var="group" items="${groups}">
-                                                            <option value="${group.id}">${group.name}</option>
-                                                        </c:forEach>
-                                                    </select>
-                                                </div>
+
                                                 <button type="submit" class="btn btn-primary">Submit</button>
                                             </form>
                                         </div>
