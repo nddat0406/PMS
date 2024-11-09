@@ -13,6 +13,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import model.Group;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SettingDAO extends BaseDAO {
 
@@ -398,4 +400,5 @@ public class SettingDAO extends BaseDAO {
         return 0;
     }
 
+    
 }

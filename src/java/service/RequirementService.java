@@ -19,8 +19,7 @@ public class RequirementService extends BaseService {
     private final RequirementDAO requirementDAO = new RequirementDAO();
     private final ProjectDAO projectDAO = new ProjectDAO();
     private final MilestoneDAO mileStoneDAO = new MilestoneDAO();
-    private final UserDAO userDAO=new UserDAO();
-    
+    private final UserDAO userDAO = new UserDAO();
 
     public List<Requirement> getRequirementsByProject(int projectId) throws SQLException {
         try {
@@ -69,7 +68,6 @@ public class RequirementService extends BaseService {
 //            throw new SQLException("Error deleting requirement: " + e.getMessage());
 //        }
 //    }
-
     public void insertRequirement(Requirement requirement) throws SQLException {
         try {
             // Validation
@@ -106,7 +104,6 @@ public class RequirementService extends BaseService {
             if (searchKey != null && searchKey.trim().isEmpty()) {
                 searchKey = null;
             }
-
             return requirementDAO.searchRequirements(searchKey, complexity, status);
         } catch (SQLException e) {
             throw new SQLException("Error filtering requirements: " + e.getMessage());
@@ -178,11 +175,11 @@ public class RequirementService extends BaseService {
     public String getProjectName(int id) {
         return projectDAO.getProjectById(id).getName();
     }
-    
+
     public List<Project> getAllProject() throws SQLException {
         return projectDAO.getAllProject();
     }
-    
+
     public List<Milestone> getListMileStoneByProjectId(int projectId) {
         try {
             return mileStoneDAO.getAllByProjectId(projectId);
@@ -209,7 +206,7 @@ public class RequirementService extends BaseService {
 
             // Insert requirement (this will set the ID in the requirement object)
             requirementDAO.insertRequirement(requirement);
-            
+
             // If milestone is specified, create the relationship using the new requirement ID
             if (milestoneId != null && milestoneId > 0) {
                 requirementDAO.insertRequirementMilestone(requirement.getId(), milestoneId);
@@ -231,7 +228,7 @@ public class RequirementService extends BaseService {
 
             // Update requirement
             requirementDAO.updateRequirement(requirement);
-            
+
             // Update milestone relationship
             requirementDAO.updateRequirementMilestone(requirement.getId(), milestoneId);
         } catch (SQLException e) {
@@ -255,5 +252,14 @@ public class RequirementService extends BaseService {
             Logger.getLogger(RequirementService.class.getName()).log(Level.SEVERE, null, e);
             return null;
         }
+    }
+
+    public List<Requirement> getAllByProjectId(int projectId) {
+        try {
+            return requirementDAO.getAllByProjectId(projectId);
+        } catch (SQLException ex) {
+            Logger.getLogger(RequirementService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return new ArrayList<>();
     }
 }

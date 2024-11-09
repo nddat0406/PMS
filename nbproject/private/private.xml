@@ -2,26 +2,28 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group name="PRO">
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/web/WEB-INF/view/user/projectConfig/projecteval.jsp</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/controller/ProjectConfigController.java</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/service/BaseService.java</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/web/WEB-INF/view/user/domainConfig/adddomainsetting.jsp</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/service/ProjectService.java</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/web/WEB-INF/view/user/domainConfig/domainuser.jsp</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/model/Criteria.java</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/service/CriteriaService.java</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/web/META-INF/context.xml</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/web/WEB-INF/view/user/domainConfig/domaineval.jsp</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/controller/DomainConfigController.java</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/web/WEB-INF/view/user/domainConfig/domainsetting.jsp</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/dal/PhaseDAO.java</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/src/java/dal/CriteriaDAO.java</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS/team6/web/WEB-INF/view/user/projectConfig/projectmember.jsp</file>
+        <group>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/service/SettingService.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/user/projectConfig/projectmilestone.jsp</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/UserIssuesController.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/service/RequirementService.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/service/UserService.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/admin/SettingDetails.jsp</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/dal/SettingDAO.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/dal/MilestoneDAO.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/ProjectConfigController.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/admin/SettingList.jsp</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/SettingController.java</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/classes/app.properties</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/META-INF/context.xml</file>
+            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/IssueController.java</file>
         </group>
+<<<<<<< HEAD
         <group name="test">
             <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/common/sidebar.jsp</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/web/META-INF/context.xml</file>
         </group>
+=======
+>>>>>>> 78ec11a3e7b7329c3f0b9d47917bcf3bfc9191ef
     </open-files>
 </project-private>
