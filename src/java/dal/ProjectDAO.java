@@ -4,6 +4,7 @@
  */
 package dal;
 
+import com.mysql.cj.protocol.Resultset;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -588,5 +589,22 @@ public class ProjectDAO extends BaseDAO {
         }
         return settingList;
     }
+
+    public List<User> getProjectMembers(Integer pID) throws SQLException {
+        String sql = "SELECT distinct u.id, u.fullname FROM pms.allocation a join pms.user u on u.id=a.userId where a.projectId=? and a.status=1";
+        try(PreparedStatement pre = getConnection().prepareStatement(sql)){
+            pre.setInt(1, pID);
+            ResultSet rs = pre.executeQuery();
+            List<User> list =new ArrayList<>();
+            while(rs.next()){
+                User temp = new User();
+                temp.setId(rs.getInt(1));
+                temp.setFullname(rs.getString(2));
+                list.add(temp);
+            }
+            return list;
+        }
+    }
+    
 
 }

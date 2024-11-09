@@ -23,7 +23,7 @@ public class RequirementDAO extends BaseDAO {
     }
 
     public Requirement getRequirementById(int id) throws SQLException {
-        String sql = "SELECT * FROM pms.requirement WHERE id=?";
+        String sql = "SELECT * FROM pms.requirement WHERE projectId=?";
         try {
             PreparedStatement pre = getConnection().prepareStatement(sql);
             pre.setInt(1, id);
