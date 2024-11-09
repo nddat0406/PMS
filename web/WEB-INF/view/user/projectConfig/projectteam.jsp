@@ -336,7 +336,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label>Milestone</label>
-                                            <select name="uMilestone" class="select2updatemultiple form-select" multiple="multiple" style="width: 100%">
+                                            <select name="uMilestone" class="select2updatemultiple form-select" multiple="multiple" style="width: 100%" required>
                                                 <c:forEach items="${msList}" var="m">
                                                     <option value="${m.id}" ${modalItem.hasMile(m.id)?'selected':''}>${m.name}</option>
                                                 </c:forEach>
@@ -383,7 +383,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label>Milestone</label>
-                                            <select name="Milestone" class="select2addmultiple form-select" multiple="nultiple" style="width: 100%">
+                                            <select name="Milestone" class="select2addmultiple form-select" multiple="nultiple" style="width: 100%" required>
                                                 <c:forEach items="${msList}" var="m">
                                                     <option value="${m.id}" ${oldAddItem.hasMile(m.id)?'selected':''}>${m.name}</option>
                                                 </c:forEach>

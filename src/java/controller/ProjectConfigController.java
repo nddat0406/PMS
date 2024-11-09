@@ -27,6 +27,7 @@ import model.Project;
 import service.BaseService;
 import model.Milestone;
 import model.Team;
+import model.User;
 import org.apache.poi.ss.usermodel.Workbook;
 import service.CriteriaService;
 import service.GroupService;
@@ -53,8 +54,6 @@ public class ProjectConfigController extends HttpServlet {
     private String linkMile = "/WEB-INF/view/user/projectConfig/projectmilestone.jsp";
     private String linkMember = "/WEB-INF/view/user/projectConfig/projectmember.jsp";
     private String linkTeam = "/WEB-INF/view/user/projectConfig/projectteam.jsp";
-
-    List<Project> myProjects;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -95,7 +94,6 @@ public class ProjectConfigController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getServletPath().substring("/project/".length());
-        myProjects = (List<Project>) request.getSession().getAttribute("myProjectList");
         switch (action) {
             case "eval" -> {
                 if (request.getParameter("page") != null) {
@@ -285,9 +283,8 @@ public class ProjectConfigController extends HttpServlet {
                 }
             } else {
                 pID = Integer.valueOf(pIdRaw);
-                if (pService.havePermission(pID, myProjects)) {
-                    session.setAttribute("selectedProject", pID);
-                }
+                session.setAttribute("selectedProject", pID);
+
             }
             List<Criteria> list = cService.listCriteriaOfProject(pID);
             session.setAttribute("criteriaList", list);
@@ -315,9 +312,8 @@ public class ProjectConfigController extends HttpServlet {
                 }
             } else {
                 pID = Integer.valueOf(pIdRaw);
-                if (pService.havePermission(pID, myProjects)) {
-                    session.setAttribute("selectedProject", pID);
-                }
+                session.setAttribute("selectedProject", pID);
+
             }
             List<Allocation> list = pService.getProjectMembers(pID);
             session.setAttribute("memberList", list);
@@ -340,15 +336,13 @@ public class ProjectConfigController extends HttpServlet {
                 }
             } else {
                 pID = Integer.valueOf(pIdRaw);
-                if (pService.havePermission(pID, myProjects)) {
-                    session.setAttribute("selectedProject", pID);
-                }
+                session.setAttribute("selectedProject", pID);
+
             }
 
             List<Milestone> milestones = mService.getAllMilestone(pID);
-            if (pService.havePermission(pID, myProjects)) {
-                session.setAttribute("selectedProject", pID);
-            }
+            session.setAttribute("selectedProject", pID);
+
             session.setAttribute("milestoneList", milestones);
             // Use the existing pagination method
             pagination(request, response, milestones, linkMile);
@@ -376,9 +370,8 @@ public class ProjectConfigController extends HttpServlet {
                 }
             } else {
                 pID = Integer.valueOf(pIdRaw);
-                if (pService.havePermission(pID, myProjects)) {
-                    session.setAttribute("selectedProject", pID);
-                }
+                session.setAttribute("selectedProject", pID);
+
             }
             List<Milestone> mList = mService.getAllMilestone(pID);
             List<Team> list = tService.getTeamsByProject(pID, mList.get(0).getId());

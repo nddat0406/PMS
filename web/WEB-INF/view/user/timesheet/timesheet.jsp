@@ -236,7 +236,7 @@
                     </div>
                 </div>
             </div>
-<!--popup reject-->
+            <!--popup reject-->
             <div class="modal fade" id="reasonRejectModal" tabindex="-1" aria-labelledby="reasonRejectModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -262,7 +262,7 @@
                     </div>
                 </div>
             </div>
-<!--popup add-->
+            <!--popup add-->
             <div class="modal fade" id="AddTimesheetModal" tabindex="-1" aria-labelledby="AddTimesheetModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">

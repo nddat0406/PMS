@@ -130,14 +130,15 @@ public class SettingService {
         }
     }
 
-    public List<Setting> getFilteredDomainSettings( String filterStatus, String searchName, Integer dID) throws SQLException {
-        return settingDAO.getFilteredDomainSettings( filterStatus, searchName,dID);
+    public List<Setting> getFilteredDomainSettings(String filterStatus, String searchName, Integer dID) throws SQLException {
+        return settingDAO.getFilteredDomainSettings(filterStatus, searchName, dID);
     }
 
     public Setting geDomaintById(int id) {
         return settingDAO.getDomainById(id);
     }
-      public List<Setting> getDomainSettingByDomainId(int domainID) throws SQLException {
+
+    public List<Setting> getDomainSettingByDomainId(int domainID) throws SQLException {
         return settingDAO.getDomainSettingByDomainId(domainID);
     }
 
@@ -155,5 +156,13 @@ public class SettingService {
 
     public void updateDomain(Setting domain) throws SQLException {
         settingDAO.updateDomain(domain);
+    }
+
+    public Object getAllSeverites() throws SQLException {
+        try {
+            return settingDAO.getAllSettings();
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
     }
 }

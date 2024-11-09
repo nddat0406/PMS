@@ -140,11 +140,11 @@ public class LoginController extends HttpServlet {
             } else {
                 request.getSession().setAttribute("email", email);
                 request.getSession().setAttribute("pass", pass);
-                request.getSession().setAttribute("errorMess", "Sai tài khoản hoặc mật khẩu");
+                request.getSession().setAttribute("errorMess", "Email or password is wrong!");
                 request.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
             }
         } catch (SQLException ex) {
-            request.setAttribute("errorMess", "Login failed!");
+            request.setAttribute("errorMess", "Login failed! Some thing went wrong. (This user might been deactivated!)");
             request.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
         }
     }

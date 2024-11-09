@@ -72,6 +72,7 @@
                                         </ul>
                                     </div>
                                 </div>
+
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="tab-content p-0" id="myTabContent">
@@ -94,7 +95,6 @@
                                                             <th>Username</th>
                                                             <th>Email</th>
                                                             <th>Phone</th>
-
                                                             <th>Status</th>
                                                             <th>Action</th>
                                                         </tr>
@@ -115,9 +115,6 @@
                                                                     </c:choose>
                                                                 </td>
                                                                 <td>
-                                                                    <a href="${baseUrl}/domain/domainuser?action=edit&id=${user.id}" type="submit" class="btn btn-warning">Detail</a>
-                                                                    |
-
                                                                     <a href="${baseUrl}/domain/domainuser?action=deactive&id=${user.id}" type="submit" class="btn btn-danger">Deactive</a>
                                                                     |
                                                                     <a href="${baseUrl}/domain/domainuser?action=active&id=${user.id}" type="submit" class="btn btn-danger">Active</a>

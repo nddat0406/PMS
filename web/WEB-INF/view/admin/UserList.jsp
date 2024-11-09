@@ -282,7 +282,7 @@
                                                                     <div class="col-md-4 col-sm-12">
                                                                         <label for="departmentId">Department:</label>
                                                                         <select class="form-control" id="departmentId" name="departmentId" required>
-                                                                        <c:forEach var="department" items="${departments}">
+                                                                        <c:forEach var="department" items="${departmentSelecList}">
                                                                             <option value="${department.id}" 
                                                                                     <c:if test="${department.id == param.departmentId}">selected</c:if>>
                                                                                 ${department.name}

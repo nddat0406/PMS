@@ -83,20 +83,12 @@
                                                 <!-- Title -->
                                                 <div class="col-md-12">
                                                     <label for="title" class="form-label">Title *</label>
-                                                    <input type="text" class="form-control" id="title" name="title" 
+                                                    <input type="text" class="form-control" id="title" name="title"  
                                                            value="${defect.title}" required>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label for="projectId" class="form-label">Project *</label>
-                                                    <select class="form-select" id="projectId" name="projectId" required>
-                                                        <option value="">Select Project</option>
-                                                        <c:forEach items="${project}" var="pro">
-                                                            <option value="${pro.id}" 
-                                                                    ${pro.id == defect.project.id ? 'selected' : ''}>
-                                                                ${pro.name}
-                                                            </option>
-                                                        </c:forEach>
-                                                    </select>
+                                                    <input type="text" name="projectId" value="${defect.project.name}" class="form-control" readonly>
                                                 </div>
                                                 <!-- Requirement -->
                                                 <div class="col-md-6">
@@ -144,18 +136,19 @@
                                                         <option value="4" ${defect.status == 4 ? 'selected' : ''}>Closed</option>
                                                     </select>
                                                 </div>
-<!--                                                <div class="col-md-6">
-                                                    <label for="projectId" class="form-label">Assignee *</label>
-                                                    <select class="form-select" id="projectId" name="projectId" required>
-                                                        <option value="">Select Project</option>
-                                                        <c:forEach items="${assignee}" var="ass">
-                                                            <option value="${ass.id}" 
-                                                                    ${ass.id == defect.assignee.id ? 'selected' : ''}>
-                                                                ${ass.name}
-                                                            </option>
-                                                        </c:forEach>
-                                                    </select>
-                                                </div>-->
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Assignee <span class="text-danger">*</span></label>
+                                                        <select class="form-select" name="assignee" id="assignee" >
+                                                            <option value="">Select Assignee</option>
+                                                            <c:forEach items="${members}" var="user">
+                                                                <option value="${user.id}" ${user.id == defect.assignee.id ? 'selected' : ''} >
+                                                                    ${user.fullname}
+                                                                </option>
+                                                            </c:forEach>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <!-- Details -->
                                                 <div class="col-12">
                                                     <label for="details" class="form-label">Details</label>

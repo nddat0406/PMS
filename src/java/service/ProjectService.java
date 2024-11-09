@@ -190,12 +190,10 @@ public class ProjectService {
 
             // Kiểm tra nếu projectId hợp lệ
             if (projectId > 0) {
-                System.out.println("Project added with ID: " + projectId);
                 project.setId(projectId);
 
                 // Lấy danh sách các giai đoạn (phases) dựa trên domainId
                 List<ProjectPhase> phases = pdao.getPhasesByDomainId(project.getDomain().getId());
-                System.out.println("Number of phases found for domainId " + project.getDomain().getId() + ": " + phases.size());
 
                 // Kiểm tra nếu không có phases nào được trả về
                 if (phases.isEmpty()) {
@@ -204,22 +202,20 @@ public class ProjectService {
 
                 // Lặp qua các giai đoạn và tạo milestones
                 for (ProjectPhase phase : phases) {
-                    System.out.println("Processing phase: " + phase.getName() + " with priority: " + phase.getPriority());
 
                     // Tính toán endDate dựa trên priority của phase
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(startDate);
                     calendar.add(Calendar.DAY_OF_YEAR, phase.getPriority() * 45);
                     Date endDate = new Date(calendar.getTimeInMillis());
-                    System.out.println("Calculated endDate for phase " + phase.getName() + ": " + endDate);
 
                     // Tạo đối tượng Milestone
                     Milestone milestone = new Milestone();
-                    milestone.setName("Milestone for " + phase.getName());
+                    milestone.setName(phase.getName());
                     milestone.setPriority(phase.getPriority());
-                    milestone.setDetails("Generated milestone for phase: " + phase.getName());
+                    milestone.setDetails(phase.getDetails());
                     milestone.setEndDate(new java.sql.Date(endDate.getTime()));
-                    milestone.setStatus(0);
+                    milestone.setStatus(2);
                     milestone.setDeliver("Default deliverable");
                     milestone.setProject(project); // Đặt đối tượng Project vào milestone
                     milestone.setPhase(phase); // Đặt đối tượng Phase vào milestone
@@ -228,15 +224,12 @@ public class ProjectService {
                         pdao.addMilestone(milestone);
                         List<Criteria> criteriaList = pdao.getCriteriaByPhaseId(phase.getId());
                         for (Criteria criteria : criteriaList) {
-                            criteria.setPhase(phase);
-                            criteria.setDomain(project.getDomain()); 
-                            criteria.setMilestone(milestone); 
+                            criteria.setProject(new Project(project.getId()));
+                            criteria.setMilestone(new Milestone(pdao.getMaxMileId())); 
                             pdao.addCriteria(criteria);
-                            System.out.println("Criteria added for phase: " + phase.getName() + " and milestone: " + milestone.getName());
                         }
 
                     } catch (SQLException e) {
-                        System.err.println("Error while adding milestone for phase: " + phase.getName());
                         e.printStackTrace();
                         return "Error while adding milestone for phase: " + phase.getName();
                     }
@@ -248,7 +241,6 @@ public class ProjectService {
                 return "Failed to retrieve a valid projectId.";
             }
         } catch (SQLException e) {
-            System.err.println("Error while adding project or retrieving phases: " + e.getMessage());
             return "An error occurred while adding the project: " + e.getMessage();
         }
     }
@@ -279,11 +271,7 @@ public class ProjectService {
     }
 
     public boolean havePermission(Integer pID, List<Project> myProjects) {
-        if (baseService.objectWithIdExists(pID, myProjects)) {
-            return true;
-        } else {
-            throw new IllegalAccessError("Illegal action!");
-        }
+        return true;
     }
 
     public List<Project> getAllProject() throws SQLException {

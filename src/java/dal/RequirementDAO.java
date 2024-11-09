@@ -95,7 +95,8 @@ public class RequirementDAO extends BaseDAO {
         }
     }
 
-    public List<Requirement> searchRequirements(String searchKey, String complexity, Integer status) throws SQLException {
+    public List<Requirement> searchRequirements(String searchKey, String complexity, Integer status, Integer projectId)
+            throws SQLException {
         List<Requirement> result = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM pms.requirement WHERE 1=1");
         ArrayList<Object> params = new ArrayList<>();
@@ -112,9 +113,15 @@ public class RequirementDAO extends BaseDAO {
             params.add(complexity);
         }
 
-        if (status != null && status != 0) {
+        // Status will be null if it was -1 ("All Status")
+        if (status != null) {
             sql.append(" AND status = ?");
             params.add(status);
+        }
+
+        if (projectId != null && projectId != 0) {
+            sql.append(" AND projectId = ?");
+            params.add(projectId);
         }
 
         try (PreparedStatement ps = getConnection().prepareStatement(sql.toString())) {
@@ -128,6 +135,7 @@ public class RequirementDAO extends BaseDAO {
             }
         }
         return result;
+
     }
 
     public List<Requirement> getAll() throws SQLException {

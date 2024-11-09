@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package controller;
+
 import dal.PhaseDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -213,11 +214,7 @@ public class DomainConfigController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/domain/domaineval");
             }
             default -> {
-                try {
-                    getDomainEval(request, response);
-                } catch (SQLException ex) {
-                    Logger.getLogger(DomainConfigController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                getDomainEval(request, response);
             }
         }
     }
@@ -260,7 +257,7 @@ public class DomainConfigController extends HttpServlet {
             String statusStr = request.getParameter("status");
             String description = request.getParameter("description");
             int phase = Integer.parseInt(request.getParameter("phase"));
-            
+
             HttpSession session = request.getSession();
             int domainId = (int) session.getAttribute("domainId");
             List<String> errors = new ArrayList<>();
@@ -288,8 +285,6 @@ public class DomainConfigController extends HttpServlet {
             } catch (NumberFormatException e) {
                 errors.add("Invalid status.");
             }
-
-          
 
             if (!errors.isEmpty()) {
                 request.setAttribute("errors", errors);
@@ -463,7 +458,7 @@ public class DomainConfigController extends HttpServlet {
             String errorMessage = null;
             if (name == null || name.trim().length() < 3) {
                 errorMessage = "Name must be at least 3 characters long.";
-            }  else if (priorityStr == null || !priorityStr.matches("\\d+")) {
+            } else if (priorityStr == null || !priorityStr.matches("\\d+")) {
                 errorMessage = "Priority must be a valid number.";
             } else if (statusStr == null || (!statusStr.equalsIgnoreCase("true") && !statusStr.equalsIgnoreCase("false"))) {
                 errorMessage = "Status must be either 'true' or 'false'.";
@@ -480,7 +475,7 @@ public class DomainConfigController extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/adddomainsetting.jsp").forward(request, response);
                 return;
             }
-            Setting st = new Setting(Integer.parseInt(id), name,  Integer.parseInt(priorityStr), Boolean.parseBoolean(statusStr), description);
+            Setting st = new Setting(Integer.parseInt(id), name, Integer.parseInt(priorityStr), Boolean.parseBoolean(statusStr), description);
             SettingService settingService = new SettingService();
             Group g = new Group();
             g.setId(domainId);
@@ -568,7 +563,7 @@ public class DomainConfigController extends HttpServlet {
 
     }
 
-    private void postEvalUpdate(HttpServletRequest request, HttpServletResponse response) {
+    private void postEvalUpdate(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         HttpSession session = request.getSession();
         try {
             Integer dID;
@@ -591,39 +586,53 @@ public class DomainConfigController extends HttpServlet {
             request.setAttribute("domainEval", criteria);
             request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/editdomaineval.jsp").forward(request, response);
         } catch (Exception e) {
-            System.out.println("Error: " + e);
+            throw new ServletException(e);
         }
     }
 
-    private void getDomainEval(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+    private void getDomainEval(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         CriteriaService dao = new CriteriaService();
         HttpSession session = request.getSession();
         try {
             Integer dID;
-            String dIdRaw = request.getParameter("domainId");//lay parameter  domainId
+            String dIdRaw = request.getParameter("domainId"); // Get domainId parameter
             if (dIdRaw == null) {
                 dID = (Integer) session.getAttribute("domainId");
                 if (dID == null) {
-                    throw new ServletException("Some thing went wrong, cannot find the domain id");
+                    throw new ServletException("Something went wrong, cannot find the domain id");
                 }
             } else {
                 dID = Integer.valueOf(dIdRaw);
                 session.setAttribute("domainId", dID);
             }
+
+            // Get filter/search parameters
             String searchName = request.getParameter("search");
             String filterStatus = request.getParameter("status");
             searchName = searchName != null ? searchName.trim() : null;
             filterStatus = filterStatus != null ? filterStatus.trim() : null;
-            List<Criteria> criteriaList;
 
-            criteriaList = dao.getDomainCriterriaByDomainId(dID);
+            // Fetch criteria list with filters if provided
+            List<Criteria> criteriaList;
+            if ((searchName != null && !searchName.isEmpty()) || (filterStatus != null && !filterStatus.isEmpty())) {
+
+                // Apply filters
+                criteriaList = dao.getFilteredDomainCriteria(dID, searchName, filterStatus);
+
+            } else {
+                // Fetch all without filters
+                criteriaList = dao.getDomainCriterriaByDomainId(dID);
+            }
+
+            // Set attributes for the view
             request.setAttribute("searchName", searchName);
             request.setAttribute("filterStatus", filterStatus);
             request.setAttribute("criteriaList", criteriaList);
 
+            // Forward to the evaluation page
             request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domaineval.jsp").forward(request, response);
-        } catch (ServletException | IOException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            throw new ServletException(ex);
         }
     }
 

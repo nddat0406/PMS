@@ -176,7 +176,7 @@
                                         <nav aria-label="Page navigation example">
                                             <ul class="pagination">
                                                 <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                                    <a class="page-link" href="?action=list&page=${currentPage - 1}&status=${filterStatus}" aria-label="Previous">
+                                                    <a class="page-link" href="?action=list&page=${currentPage - 1<1?1:currentPage - 1}&status=${filterStatus}" aria-label="Previous">
                                                         <span aria-hidden="true">&laquo;</span>
                                                     </a>
                                                 </li>

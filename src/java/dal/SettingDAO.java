@@ -279,13 +279,13 @@ public class SettingDAO extends BaseDAO {
             int index = 1;
 
             // Thêm domainId làm tham số đầu tiên
-            stmt.setInt(1, domainId);
+            stmt.setInt(index++, domainId);
 
             if (filterStatus != null && !filterStatus.isEmpty()) {
-                stmt.setInt(2, Integer.parseInt(filterStatus));
+                stmt.setInt(index++, Integer.parseInt(filterStatus));
             }
             if (keyword != null && !keyword.isEmpty()) {
-                stmt.setString(4, "%" + keyword + "%");
+                stmt.setString(index++, "%" + keyword + "%");
             }
 
             try (ResultSet rs = stmt.executeQuery()) {

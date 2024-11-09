@@ -463,7 +463,7 @@ public class UserDAO extends BaseDAO {
                     user.setFullname(rs.getString(3));
                     user.setMobile(rs.getString(4));
                     user.setRole(rs.getInt(7));
-                    user.setDepartment(new Group(rs.getInt(9),gdao.getDeptNameById(rs.getInt(9))));
+                    user.setDepartment(new Group(rs.getInt(9), gdao.getDeptNameById(rs.getInt(9))));
                     user.setImage(rs.getString(10));
                     user.setAddress(rs.getString(11));
                     user.setGender(rs.getBoolean(12));
@@ -481,7 +481,7 @@ public class UserDAO extends BaseDAO {
         try (PreparedStatement st = getConnection().prepareStatement(sql)) {
             st.setString(1, email);
             try (ResultSet rs = st.executeQuery()) {
-                return rs.next() && BaseService.checkPassword(pass, rs.getString(1));
+                return  rs.next() && BaseService.checkPassword(pass,rs.getString(1) );
             }
         }
     }
@@ -541,7 +541,7 @@ public class UserDAO extends BaseDAO {
         try (PreparedStatement stmt = getConnection().prepareStatement(insertSQL)) {
             stmt.setString(1, fullname);
             stmt.setString(2, email);
-            stmt.setString(3, BaseService.hashPassword(password));
+            stmt.setString(3, password);
             stmt.setInt(4, 1);
             stmt.setInt(5, 2);
             stmt.setInt(6, 1);

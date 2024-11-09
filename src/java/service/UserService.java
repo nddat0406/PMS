@@ -207,8 +207,7 @@ public class UserService {
     }
 
     public boolean createUser(String fullname, String email, String password) {
-        password = BaseService.hashPassword(password);
-        return udao.createUser(fullname, email, password);
+        return udao.createUser(fullname, email, BaseService.hashPassword(password));
     }
 
     public boolean isEmailExists(String email) {

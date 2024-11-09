@@ -299,6 +299,7 @@ public class AllocationController extends HttpServlet {
                 request.setAttribute("updateErrorMess", error);
                 request.setAttribute("isUpdate", true);
                 pagination(request, response, list, alloLink);
+                return;
             }
             List<Allocation> list = refreshChanges(request);
             request.setAttribute("successMess", "Update successful!");

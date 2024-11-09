@@ -69,7 +69,6 @@ public class RequirementController extends HttpServlet {
             doGet(request, response);
             return;
         }
-
         try {
             switch (action) {
                 case "filter" ->
@@ -173,7 +172,7 @@ public class RequirementController extends HttpServlet {
         request.getRequestDispatcher(REQUIREMENT_PAGE).forward(request, response);
     }
 
-    private void postFilter(HttpServletRequest request, HttpServletResponse response)
+   private void postFilter(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
         HttpSession session = request.getSession();
         request.setAttribute("requirementService", requirementService);

@@ -115,10 +115,10 @@
                                                     <span class="input-group-text">Status</span>
                                                     <select class="form-select" name="statusFilter" id="statusFilter" onchange="ChangeFilter()">
                                                         <option value="0" ${statusFilter==0?'selected':''}>All Status</option>
-                                                        <option value="1" ${statusFilter==1?'selected':''}>To Do</option>
-                                                        <option value="2" ${statusFilter==2?'selected':''}>In Progress</option>
-                                                        <option value="3" ${statusFilter==3?'selected':''}>Completed</option>
-                                                        <option value="4" ${statusFilter==4?'selected':''}>Cancelled</option>
+                                                        <option value="1" ${statusFilter==1?'selected':''}>Committed</option>
+                                                        <option value="2" ${statusFilter==2?'selected':''}>Analyze</option>
+                                                        <option value="3" ${statusFilter==3?'selected':''}>Design</option>
+                                                        <option value="4" ${statusFilter==4?'selected':''}>Accepted</option>
                                                     </select>
                                                 </div>
                                                 <div class="input-group mb-3" style="width: 15%">
@@ -236,7 +236,6 @@
                                     <div class="mb-3">
                                         <label class="form-label">Project <span class="text-danger">*</span></label>
                                         <select class="form-select" name="projectId" id="modalProject" required>
-                                            <option value="">Select Project</option>
                                             <c:forEach items="${requirementService.getAllProject()}" var="project">
                                                 <option value="${project.id}">${project.name}</option>
                                             </c:forEach>
@@ -254,7 +253,6 @@
                                     <div class="mb-3">
                                         <label class="form-label">Assignee</label>
                                         <select class="form-select" name="assigneeId" id="modalAssignee">
-                                            <option value="">Select Assignee</option>
                                         </select>
                                     </div>
 

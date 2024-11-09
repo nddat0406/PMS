@@ -123,4 +123,8 @@ public class CriteriaService {
         return cdao.getDomainCriteriaByDomainId(dID);
     }
 
+   public List<Criteria> getFilteredDomainCriteria(Integer dID, String searchName, String filterStatus) throws SQLException {
+        return cdao.getFilteredDomainCriteria( dID,  searchName, filterStatus);
+    }
+
 }

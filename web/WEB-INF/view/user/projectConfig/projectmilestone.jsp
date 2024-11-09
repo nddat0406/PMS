@@ -79,7 +79,6 @@
                                                 <li class="nav-item" role="presentation" style="width: 150px"><a class="nav-link" id="Settings-tab" href="team" role="tab">Team</a></li>
                                             </ul>
                                         </div>
-
                                     </div>
                                     <div class="tab-content p-0" id="myTabContent">
                                         <div class="tab-pane fade active show" id="Tab1">

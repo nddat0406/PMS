@@ -315,7 +315,7 @@ public class CriteriaDAO extends BaseDAO {
             ps.setInt(4, criteria.getPhase().getId());
             ps.setString(5, criteria.getDescription());
             ps.setInt(6, criteria.getId());
-            Group g=new Group();
+            Group g = new Group();
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new ServletException(e);
@@ -364,4 +364,50 @@ public class CriteriaDAO extends BaseDAO {
 
         return list;
     }
+
+    public List<Criteria> getFilteredDomainCriteria(Integer dID, String searchName, String filterStatus) throws SQLException {
+        List<Criteria> list = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM pms.projectphase_criteria WHERE domainId = ?");
+
+        if (filterStatus != null && !filterStatus.isEmpty()) {
+            sql.append(" AND status = ?");
+        }
+
+        if (searchName != null && !searchName.isEmpty()) {
+            sql.append(" AND name LIKE ?");
+        }
+
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql.toString())) {
+            int index = 1;
+
+            // Thêm domainId làm tham số đầu tiên
+            stmt.setInt(index++, dID);
+
+            if (filterStatus != null && !filterStatus.isEmpty()) {
+                stmt.setInt(index++, Integer.parseInt(filterStatus));
+            }
+
+            if (searchName != null && !searchName.isEmpty()) {
+                stmt.setString(index++, "%" + searchName + "%");
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Criteria criteria = new Criteria();
+                    criteria.setId(rs.getInt("id"));
+                    criteria.setName(rs.getString("name"));
+                    criteria.setWeight(rs.getInt("weight"));
+                    criteria.setStatus(rs.getBoolean("status"));
+                    criteria.setPhase(phdao.getPhaseById(rs.getInt("phaseId")));
+                    criteria.setDescription(rs.getString(6));
+                    Group group = new Group();
+                    group.setId(dID);
+                    criteria.setDomain(group);
+                    list.add(criteria);
+                }
+            }
+        }
+        return list;
+    }
+
 }

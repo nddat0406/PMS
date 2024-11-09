@@ -123,31 +123,6 @@
                                     </div>
                                     <div class="card-body">
 
-                                        <!-- Search Form -->
-                                        <form action="${pageContext.request.contextPath}/phaselist" method="POST">
-                                            <input type="hidden" name="action" value="search">
-
-                                            <div class="input-group mb-3">
-                                                <!-- Keyword Search -->
-                                                <input type="text" class="form-control" name="keyword" 
-                                                       value="${param.keyword}" placeholder="Search phase name..." 
-                                                       style="width: 30%">
-
-
-                                                <!-- Status Filter -->
-                                                <label for="status" class="input-group-text">Status:</label>
-                                                <select name="status" id="status" class="form-select" style="width: 15%;">
-                                                    <option value="">All Status</option>
-                                                    <option value="true" ${param.status == 'true' ? 'selected' : ''}>Active</option>
-                                                    <option value="false" ${param.status == 'false' ? 'selected' : ''}>Inactive</option>
-                                                </select>
-
-                                                <!-- Search Button -->
-                                                <button type="submit" class="btn btn-primary">
-                                                    <i class="fa fa-search"></i> Search
-                                                </button>
-                                            </div>
-                                        </form>
                                         <!-- Error Messages -->
                                         <c:if test="${not empty error}">
                                             <div class="alert alert-danger">

@@ -68,14 +68,7 @@
                                         </div>
 
                                         <!-- Filter by Priority -->
-                                        <div class="col-md-3">
-                                            <select name="keywordPri" class="form-control">
-                                                <option value="">Filter by Priority</option>
-                                                <option value="1" ${keyword == 1 ? 'selected' : ''}>Priority 1</option>
-                                                <option value="2" ${keyword == 2 ? 'selected' : ''}>Priority 2</option>
-                                                <option value="3" ${keyword == 3 ? 'selected' : ''}>Priority 3</option>
-                                            </select>
-                                        </div>
+                                        
 
                                         <!-- Filter by Status -->
                                         <div class="col-md-2">
@@ -85,17 +78,6 @@
                                                 <option value="0" ${filterStatus != null && filterStatus.equals("0") ? "selected" : ""}>Inactive</option>
                                             </select>
                                         </div>
-
-                                        <!-- Search Bar -->
-                                        <div class="col-md-3">
-                                            <div class="input-group">
-                                                <input name="keyword" class="form-control" placeholder="Search by Name" type="text" >
-                                                <button type="submit" class="btn btn-secondary">
-                                                    <i class="fa fa-search"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-
                                         <!-- Filter Button -->
                                         <div class="col-md-1">
                                             <button type="submit" class="btn btn-primary">Filter</button>

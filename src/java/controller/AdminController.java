@@ -100,7 +100,7 @@ public class AdminController extends HttpServlet {
                 } catch (SQLException ex) {
                     Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                request.setAttribute("departments", departments);
+                request.getSession().setAttribute("departmentSelecList", departments);
 
                 // Sorting users by fullname
                 String sortOrder = request.getParameter("sort");

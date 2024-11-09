@@ -24,6 +24,7 @@ public class Project {
     private Group domain;
     private List<User> member;
     private List<Allocation> allocation;
+    private List<Requirement> requirement;
     private List<Setting> listRole;
 
     public Project() {
@@ -137,5 +138,13 @@ public class Project {
 
     public void setAllocation(List<Allocation> allocation) {
         this.allocation = allocation;
+    }
+
+    public List<Requirement> getRequirement() {
+        return requirement;
+    }
+
+    public void setRequirement(List<Requirement> requirement) {
+        this.requirement = requirement;
     }
 }

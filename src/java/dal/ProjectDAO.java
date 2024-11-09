@@ -4,6 +4,7 @@
  */
 package dal;
 
+import com.mysql.cj.protocol.Resultset;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -317,18 +318,28 @@ public class ProjectDAO extends BaseDAO {
     }
 
     public void addCriteria(Criteria criteria) throws SQLException {
-        String sql = "INSERT INTO projectphase_criteria (name, weight, status, phaseId, description, domainId) VALUES (?, ?, ?, ?, ?, ?)";
-        try {
-            PreparedStatement statement = getConnection().prepareStatement(sql);
+        String sql = """
+                     INSERT INTO `pms`.`project_criteria`
+                     (
+                     `name`,
+                     `weight`,
+                     `projectId`,
+                     `description`,
+                     `milestoneId`)
+                     VALUES
+                     (
+                     ?,
+                     ?,
+                     ?,
+                     ?,
+                     ?)""";
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
             statement.setString(1, criteria.getName());
             statement.setInt(2, criteria.getWeight());
-            statement.setInt(3, criteria.getStatusInt()); // convert boolean status to int
-            statement.setInt(4, criteria.getPhase().getId()); // ensure phase object is set
-            statement.setString(5, criteria.getDescription());
-            statement.setInt(6, criteria.getDomain().getId()); // assuming Group (domain) has an ID
+            statement.setInt(3, criteria.getProject().getId()); // ensure phase object is set
+            statement.setString(4, criteria.getDescription());
+            statement.setInt(5, criteria.getMilestone().getId()); // assuming Group (domain) has an ID
             statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
@@ -589,4 +600,28 @@ public class ProjectDAO extends BaseDAO {
         return settingList;
     }
 
+    public List<User> getProjectMembers(Integer pID) throws SQLException {
+        String sql = "SELECT distinct u.id, u.fullname FROM pms.allocation a join pms.user u on u.id=a.userId where a.projectId=? and a.status=1";
+        try (PreparedStatement pre = getConnection().prepareStatement(sql)) {
+            pre.setInt(1, pID);
+            ResultSet rs = pre.executeQuery();
+            List<User> list = new ArrayList<>();
+            while (rs.next()) {
+                User temp = new User();
+                temp.setId(rs.getInt(1));
+                temp.setFullname(rs.getString(2));
+                list.add(temp);
+            }
+            return list;
+        }
+    }
+
+    public int getMaxMileId() throws SQLException {
+        String sql = "SELECT max(id) FROM pms.milestone";
+        try (PreparedStatement pre = getConnection().prepareStatement(sql)) {
+            ResultSet rs = pre.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        }
+    }
 }

@@ -8,6 +8,8 @@
         <title>Defect List</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/dataTables.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
 
@@ -86,25 +88,12 @@
                                             <input type="text" class="form-control" name="keyword" 
                                                    value="${param.keyword}" placeholder="Search title...">
                                         </div>
-
-                                        <!-- Requirement Filter -->
-                                        <div class="col-md-2">
-                                            <select name="requirementId" class="form-select">
-                                                <option value="">All Requirements</option>
-                                                <c:forEach items="${requirements}" var="req">
-                                                    <option value="${req.id}" ${param.requirementId == req.id ? 'selected' : ''}>
-                                                        ${req.title}
-                                                    </option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-
                                         <!-- Milestone Filter -->
                                         <div class="col-md-2">
-                                            <select name="projectId" class="form-select">
+                                            <select name="projectId" id="projectId" class="form-select">
                                                 <option value="">All Project </option>
                                                 <c:forEach items="${project}" var="pro">
-                                                    <option value="${pro.id}" ${param.projectId == pro.id ? 'selected' : ''}>
+                                                    <option value="${pro.id}" ${sessionScope.projectFilter == pro.id ? 'selected' : ''}>
                                                         ${pro.name}
                                                     </option>
                                                 </c:forEach>
@@ -113,10 +102,10 @@
 
                                         <!-- Severity Filter -->
                                         <div class="col-md-2">
-                                            <select name="serverityId" class="form-select">
+                                            <select name="serverityId" id="serverityId" class="form-select">
                                                 <option value="">All Severities</option>
                                                 <c:forEach items="${serverities}" var="sev">
-                                                    <option value="${sev.id}" ${param.serverityId == sev.id ? 'selected' : ''}>
+                                                    <option value="${sev.id}" ${sessionScope.serverityFilter == sev.id ? 'selected' : ''}>
                                                         ${sev.name}
                                                     </option>
                                                 </c:forEach>
@@ -156,10 +145,10 @@
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
-                                                <th>Requirement</th>
-                                                <th>Project</th>
-                                                <th>Severity</th>
                                                 <th>Title</th>
+                                                <th>Project</th>
+                                                <th>Requirement</th>
+                                                <th>Severity</th>
                                                 <th>Leakage</th>
                                                 <th>Due Date</th>
                                                 <th>Status</th>
@@ -170,15 +159,15 @@
                                         <tbody>
                                             <c:forEach items="${defects}" var="defect">
                                                 <tr>
-                                                    <td>${defect.id}</td>                                                  
-                                                    <td>${defect.requirement.title}</td>
+                                                    <td>${defect.id}</td>   
+                                                    <td>${defect.title}</td>
                                                     <td>${defect.project.name}</td>
+                                                    <td>${defect.requirement.title}</td>
                                                     <td>
                                                         <span class="badge bg-${defect.serverity.id == 1 ? 'danger' : defect.serverity.id == 2 ? 'warning' : 'info'}">
                                                             ${defect.serverity.name}
                                                         </span>
                                                     </td>
-                                                    <td>${defect.title}</td>
                                                     <td>
                                                         <span class="badge ${defect.leakage ? 'bg-danger' : 'bg-secondary'}">
                                                             ${defect.leakage ? 'Yes' : 'No'}
@@ -253,45 +242,39 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="projectId" class="form-label">Project *</label>
-                                            <select class="form-select" id="projectId" name="projectId" required>
+                                            <select class="form-select" id="selectProject" name="projectId" required>
                                                 <option value="">Select Project</option>
-                                                <c:forEach items="${project}" var="pro">
-                                                    <option value="${pro.id}">${pro.name}</option>
+                                                <c:forEach items="${project}" var="project">
+                                                    <option value="${project.id}">${project.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
                                         <!-- Requirement -->
                                         <div class="col-md-6">
                                             <label for="requirementId" class="form-label">Requirement *</label>
-                                            <select class="form-select" id="requirementId" name="requirementId" required>
-                                                <option value="">Select Requirement</option>
-                                                <c:forEach items="${requirements}" var="req">
-                                                    <option value="${req.id}">${req.title}</option>
-                                                </c:forEach>
+                                            <select class="form-select" id="selectReq" name="requirementId" required>
                                             </select>
                                         </div>
-
-                                        <!-- Milestone -->
-
-
                                         <!-- Severity -->
                                         <div class="col-md-6">
                                             <label for="serverityId" class="form-label">Severity *</label>
                                             <select class="form-select" id="serverityId" name="serverityId" required>
-                                                <option value="">Select Severity</option>
                                                 <c:forEach items="${serverities}" var="sev">
                                                     <option value="${sev.id}">${sev.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="assignee" class="form-label">Assignee *</label>
-                                            <select class="form-select" name="assignee" id="assignee" required>
-                                                <option value="">Select Assignee</option>
-                                                <c:forEach items="${assignee}" var="user">
-                                                    <option value="${user.id}">${user.fullname}</option>
-                                                </c:forEach>
-                                            </select>
+                                            <div class="mb-3">
+                                                <label class="form-label">Assignee <span class="text-danger">*</span></label>
+                                                <select class="form-select" name="assigneeId" id="selectMember" >
+                                                    <c:forEach items="${users}" var="user">
+                                                        <option value="${user.id}" ${defect != null && defect.assignee == user.id ? 'selected' : ''}>
+                                                            ${user.fullname}
+                                                        </option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
                                         </div>
 
                                         <!-- Due Date -->
@@ -317,7 +300,7 @@
 
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Add Defect</button>
+                                        <button type="submit" class="btn btn-primary" id="addBtn">Add Defect</button>
                                     </div>
                                 </form>
                             </div>
@@ -349,27 +332,76 @@
                                                                                 document.getElementById('deleteForm').submit();
                                                                             };
 
-                                                                            // Requirement change handler to load related project
-                                                                            $('#requirementId').change(function () {
-                                                                                const reqId = $(this).val();
-                                                                                if (reqId) {
-                                                                                    // Clear current project options
-                                                                                    $('#projectId').html('<option value="">Select Project</option>');
-
-                                                                                    // Load project for selected requirement's project
-                                                                                    $.get('${pageContext.request.contextPath}/getProject',
-                                                                                            {requirementId: reqId},
-                                                                                            function (project) {
-                                                                                                console.log(project.name);
-                                                                                                $('#projectId').empty();
-                                                                                                $('#projectId').append(new Option(project.name, project.id));
-                                                                                            });
-                                                                                }
+                                                                            $('#selectProject').on('change', function () {
+                                                                                var selectedvalue = $(this).val();
+                                                                                console.log(selectedvalue);
+                                                                                $.ajax({
+                                                                                    url: "${pageContext.request.contextPath}/defectlist",
+                                                                                    type: 'post',
+                                                                                    dataType: 'json',
+                                                                                    data: {
+                                                                                        pId: selectedvalue,
+                                                                                        action: "getProjectAdd"
+                                                                                    },
+                                                                                    success: function (responseData) {
+                                                                                        $('#addBtn').prop("disabled", false);
+                                                                                        if (responseData.memberList[0].id === -1 || responseData.reqList[0].id === -1) {
+                                                                                            $('#addBtn').prop("disabled", true);
+                                                                                            $('#addErrorDisplay').css('display', 'block');
+                                                                                            $('#addErrorDisplay').find('i').text("Cannot add to this project because the domain for this project has not been set up with roles or there are no more user to add.");
+                                                                                        } else {
+                                                                                            $('#addErrorDisplay').css('display', 'none');
+                                                                                        }
+                                                                                        console.log(responseData.memberList);
+                                                                                        console.log(responseData.reqList);
+                                                                                        $('#selectMember').empty();
+                                                                                        $.each(responseData.memberList, function (index, item) {
+                                                                                            var option;
+                                                                                            if (item.id === 0 || item.id === -1) {
+                                                                                                option = $('<option>')
+                                                                                                        .text(item.fullname)
+                                                                                                        .val(item.id);
+                                                                                            } else {
+                                                                                                option = $('<option>')
+                                                                                                        .text(item.fullname)
+                                                                                                        .val(item.id); // Set the value
+                                                                                            }
+                                                                                            $('#selectMember').append(option);
+                                                                                        });
+                                                                                        $('#selectReq').empty();
+                                                                                        $.each(responseData.reqList, function (index, item) {
+                                                                                            var option;
+                                                                                            if (item.id === 0 || item.id === -1) {
+                                                                                                option = $('<option>')
+                                                                                                        .text(item.title)
+                                                                                                        .val(item.id);
+                                                                                            } else {
+                                                                                                option = $('<option>')
+                                                                                                        .text(item.title)
+                                                                                                        .val(item.id); // Set the value
+                                                                                            }
+                                                                                            $('#selectReq').append(option);
+                                                                                        });
+                                                                                    }
+                                                                                });
                                                                             });
-
                                                                             // Date validation
                                                                             $('#duedate').attr('min', new Date().toISOString().split('T')[0]);
                                                                         });
             </script>
+            <!--            <script>$('#projectId').on('change', function () {
+                                const projectId = $(this).val();
+            
+                                if (projectId) {
+                                    // Load requirements
+                                    loadRequirements(projectId);
+                                    // Load assignees
+                                    //loadAssignees(projectId);
+                                } else {
+                                    // Clear both dropdowns if no project selected
+                                    $('#requirementId').html('<option value="">Select Requirement</option>');
+                                    //$('#assigneeId').html('<option value="">Select Assignee</option>');
+                                }
+                            });</script>-->
         </body>
     </html>

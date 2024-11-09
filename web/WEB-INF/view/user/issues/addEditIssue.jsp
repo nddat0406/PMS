@@ -146,13 +146,15 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <c:if test="${issue!=null}" >
+                                                <div class="mb-3">
+                                                    <label class="form-label">End Date <span class="text-danger">*</span></label>
+                                                    <input type="date" class="form-control" name="endDate" 
+                                                           value="${issue != null ? issue.end_date : ''}"
+                                                           id="endDate">
+                                                </div>
+                                            </c:if>
 
-                                            <div class="mb-3">
-                                                <label class="form-label">End Date <span class="text-danger">*</span></label>
-                                                <input type="date" class="form-control" name="endDate" 
-                                                       value="${issue != null ? issue.end_date : ''}"
-                                                       id="endDate">
-                                            </div>
 
                                             <div class="mb-3">
                                                 <label class="form-label">Description <span class="text-danger">*</span></label>
