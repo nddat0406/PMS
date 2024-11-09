@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import model.Group;
 import model.User;
+import service.GroupService;
 import service.UserService;
 
 /**
@@ -32,6 +33,7 @@ import service.UserService;
 public class AdminController extends HttpServlet {
 
     private UserService uService = new UserService();
+    private GroupService groupService = new GroupService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -88,9 +90,7 @@ public class AdminController extends HttpServlet {
                         list = uService.getAll();
 
                     } catch (SQLException ex) {
-                        Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
-                        response.getWriter().print("Error retrieving user list: " + ex.getMessage());
-                        return;
+                        throw new ServletException(ex);
                     }
 
                 }
@@ -110,18 +110,14 @@ public class AdminController extends HttpServlet {
                     list.sort(Comparator.comparing(User::getFullname).reversed());
                 }
 
-                // Call pagination logic to handle large user lists
                 try {
+                    // Call pagination logic to handle large user lists
                     pagination(request, response, list);
                 } catch (SQLException ex) {
                     Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                // Set the list into the request attribute to forward to the JSP
-                request.setAttribute("data", list);
-                request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
             }
-
             case "userdetail" -> {
                 try {
                     int id = Integer.parseInt(request.getParameter("id"));
@@ -134,13 +130,11 @@ public class AdminController extends HttpServlet {
                     request.getRequestDispatcher("/WEB-INF/view/admin/UserDetails.jsp").forward(request, response);
                 } catch (SQLException ex) {
                     Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
-                    response.getWriter().print("SQL Error: " + ex.getMessage());
+                    throw new ServletException(ex);
                 }
             }
-
             default -> {
-
-                response.getWriter().print("Invalid action");
+                throw new ServletException("Invalid action");
             }
         }
     }
@@ -164,37 +158,26 @@ public class AdminController extends HttpServlet {
         try {
             switch (action) {
                 case "search":
-
                     List<User> list = searchUser(request, response);
                     request.setAttribute("data", list);
                     request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
-
                     break;
-
                 case "add":
                     addUser(request, response, dao);
-
                     break;
-
                 case "edit":
-
                     editUser(request, response, dao);
-
                     break;
-
                 case "changeStatus":
                     changeStatus(request, response, dao);
                     break;
-
                 default:
-
-                    response.getWriter().print("Invalid action in POST request");
+                    response.sendRedirect(request.getContextPath()+"/admin/userlist");
                     break;
             }
         } catch (ServletException | IOException | SQLException e) {
             Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, e);
-            response.getWriter().print("Error: " + e.getMessage());
-
+            throw new ServletException("Invalid action");
         }
     }
 
@@ -224,13 +207,10 @@ public class AdminController extends HttpServlet {
                     .filter(user -> user.getStatus() == statusValue)
                     .collect(Collectors.toList());
         }
-  request.setAttribute("data", listUser);
+        request.setAttribute("data", listUser);
         request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
-
         return listUser; // Trả về danh sách người dùng đã lọc
 
-        
-      
     }
 
     private void addUser(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, ServletException, IOException {
@@ -266,18 +246,17 @@ public class AdminController extends HttpServlet {
             uService.addUser(uNew);
             List<User> updatedList = uService.getAll();
             pagination(request, response, updatedList);
-
         } catch (SQLException e) {
-//            // Xử lý ngoại lệ khi id không hợp lệ hoặc xảy ra lỗi khác
-//            request.setAttribute("error", "Invalid ID or other input errors.");
-//            // Điều hướng tới trang UserList với thông báo lỗi
-//            request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
-            response.getWriter().print(e);
+            // Xử lý ngoại lệ khi id không hợp lệ hoặc xảy ra lỗi khác
+            request.setAttribute("error", "Invalid ID or other input errors.");
+            // Điều hướng tới trang UserList với thông báo lỗi
+            request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
+
         }
 
     }
 
-    private void editUser(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, IOException {
+    private void editUser(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, IOException, ServletException {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             String mobile = request.getParameter("mobile");
@@ -302,18 +281,14 @@ public class AdminController extends HttpServlet {
 
             user.setAddress(address);
             user.setDepartment(department);
-
             // Update user
             uService.updateUser(user);
-//
-            response.sendRedirect(request.getContextPath() + "/admin/userlist");
+            List<User> list = uService.getAll();
+            pagination(request, response, list);
         } catch (NumberFormatException e) {
-            response.getWriter().print("Invalid number format: " + e.getMessage());
-
-        } catch (IOException e) {
-            Logger.getLogger(AdminController.class
-                    .getName()).log(Level.SEVERE, null, e);
+            throw new ServletException(e);
         }
+
     }
 
     public void pagination(HttpServletRequest request, HttpServletResponse response, List<?> list) throws ServletException, IOException, SQLException {
@@ -343,31 +318,21 @@ public class AdminController extends HttpServlet {
             request.getSession().setAttribute("numberPage", numperpage);
 
             request.setAttribute("data", paginatedList);
-            request.setAttribute("deptList", uService.getAll());
-
+            request.setAttribute("deptList", groupService.getAllDepartment());
             request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
         } catch (SQLException ex) {
             throw new SQLException(ex);
         }
     }
 
-    public static void main(String[] args) throws SQLException {
-        List<User> list = new ArrayList<>();
-        UserService u = new UserService();
-        list = u.getAll();
-        System.out.println(list.size());
-    }
-
-    public void changeStatus(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, IOException {
+    public void changeStatus(HttpServletRequest request, HttpServletResponse response, UserService dao) throws IOException, ServletException {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             int status = Integer.parseInt(request.getParameter("status"));
             uService.updateUserStatus(id, status);
             response.sendRedirect(request.getContextPath() + "/admin/userlist");
-
-        } catch (NumberFormatException e) {
-            response.getWriter().print("Invalid number format: " + e.getMessage());
-
+        } catch (NumberFormatException | SQLException e) {
+            throw new ServletException(e);
         }
     }
 }

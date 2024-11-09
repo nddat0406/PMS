@@ -122,9 +122,6 @@ public class UserService {
             throw new SQLException(ex);
         }
     }
-    public static void main(String[] args) throws SQLException {
-        System.out.println(new UserService().getAll());
-    }
 
     public List<User> findByName(String keyword) throws SQLException {
         try {
@@ -148,6 +145,7 @@ public class UserService {
     }
 
     public void addUser(User user) throws SQLException {
+        user.setPassword(BaseService.hashPassword(user.getPassword()));
         if (validateUser(user)) {
             udao.Insert(user);
         } else {
@@ -179,11 +177,8 @@ public class UserService {
     }
 
     public void deleteUser(int id) throws SQLException {
-        try {
-            udao.deleteUser(id);
-        } catch (SQLException e) {
-            System.out.println("err");
-        }
+        udao.deleteUser(id);
+
     }
 
     public void updateUser(User user) throws SQLException {
@@ -212,6 +207,7 @@ public class UserService {
     }
 
     public boolean createUser(String fullname, String email, String password) {
+        password = BaseService.hashPassword(password);
         return udao.createUser(fullname, email, password);
     }
 
@@ -301,7 +297,8 @@ public class UserService {
                 .summaryStatistics();
         return stats.getAverage();
     }
-        public List<User> getUsersByProjectId(int projectId) {
+
+    public List<User> getUsersByProjectId(int projectId) {
 
         return udao.getUsersByProjectId(projectId);
 

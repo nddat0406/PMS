@@ -87,13 +87,13 @@
                                                            value="${defect.title}" required>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <label for="milestoneId" class="form-label">Project *</label>
-                                                    <select class="form-select" id="milestoneId" name="milestoneId" required>
-                                                        <option value="">Select Milestone</option>
-                                                        <c:forEach items="${milestones}" var="mile">
-                                                            <option value="${mile.id}" 
-                                                                    ${mile.id == defect.milestone.id ? 'selected' : ''}>
-                                                                ${mile.name}
+                                                    <label for="projectId" class="form-label">Project *</label>
+                                                    <select class="form-select" id="projectId" name="projectId" required>
+                                                        <option value="">Select Project</option>
+                                                        <c:forEach items="${project}" var="pro">
+                                                            <option value="${pro.id}" 
+                                                                    ${pro.id == defect.project.id ? 'selected' : ''}>
+                                                                ${pro.name}
                                                             </option>
                                                         </c:forEach>
                                                     </select>
@@ -144,7 +144,18 @@
                                                         <option value="4" ${defect.status == 4 ? 'selected' : ''}>Closed</option>
                                                     </select>
                                                 </div>
-
+<!--                                                <div class="col-md-6">
+                                                    <label for="projectId" class="form-label">Assignee *</label>
+                                                    <select class="form-select" id="projectId" name="projectId" required>
+                                                        <option value="">Select Project</option>
+                                                        <c:forEach items="${assignee}" var="ass">
+                                                            <option value="${ass.id}" 
+                                                                    ${ass.id == defect.assignee.id ? 'selected' : ''}>
+                                                                ${ass.name}
+                                                            </option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>-->
                                                 <!-- Details -->
                                                 <div class="col-12">
                                                     <label for="details" class="form-label">Details</label>
@@ -187,24 +198,32 @@
 
         <script>
             $(document).ready(function () {
-                // Requirement change handler to load related milestones
+                // Initialize DataTable
+                $('.table').DataTable({
+                    responsive: true
+                });
+
+                // Submit delete form
+                window.submitDeleteForm = function (id) {
+                    document.getElementById('deleteId').value = id;
+                    document.getElementById('deleteForm').submit();
+                };
+
+                // Requirement change handler to load related project
                 $('#requirementId').change(function () {
                     const reqId = $(this).val();
                     if (reqId) {
-                        // Clear current milestone options
-                        $('#milestoneId').html('<option value="">Select Milestone</option>');
+                        // Clear current project options
+                        $('#projectId').html('<option value="">Select Project</option>');
 
-                        // Load milestones for selected requirement's project
-                        $.get('${pageContext.request.contextPath}/admin/getMilestones',
+                        // Load project for selected requirement's project
+                        $.get('${pageContext.request.contextPath}/getProject',
                                 {requirementId: reqId},
-                                function (milestones) {
-                                    milestones.forEach(function (milestone) {
-                                        $('#milestoneId').append(
-                                                `<option value="${milestone.id}">${milestone.name}</option>`
-                                                );
-                                    });
-                                }
-                        );
+                                function (project) {
+                                    console.log(project.name);
+                                    $('#projectId').empty();
+                                    $('#projectId').append(new Option(project.name, project.id));
+                                });
                     }
                 });
 

@@ -20,28 +20,22 @@ public class GroupDAO extends BaseDAO {
 
     public String getDeptNameById(int id) throws SQLException {
 
-    String str = "SELECT name FROM pms.group WHERE type=0 AND id=?";
-    try (PreparedStatement pre = getConnection().prepareStatement(str)) {
-        pre.setInt(1, id);
-        
-        try (ResultSet rs = pre.executeQuery()) {
-            if (rs.next()) {
-                return rs.getString("name");
-            } else {
-                // Return null or a default value if no matching department is found
-                System.out.println("No department found for ID: " + id);
-                return null;
-            }
-        }
-    } catch (SQLException e) {
-        throw new SQLException("Error retrieving department name for ID: " + id, e);
+        String str = "SELECT name FROM pms.group WHERE type=0 AND id=?";
+        try (PreparedStatement pre = getConnection().prepareStatement(str)) {
+            pre.setInt(1, id);
 
+            try (ResultSet rs = pre.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("name");
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error retrieving department name for ID: " + id, e);
+
+        }
     }
-}
-    public static void main(String[] args) throws SQLException {
-        System.out.println(new GroupDAO().getAllDepartment());
-    }
-   
 
     public String getDomainName(int id) throws SQLException {
         String str = "SELECT name FROM pms.group  where type=1 and id=?";
@@ -56,7 +50,7 @@ public class GroupDAO extends BaseDAO {
         }
     }
 
-    public List<Group> Read(int pageNumber, int pageSize) {
+    public List<Group> Read(int pageNumber, int pageSize) throws SQLException {
         List<Group> listD = new ArrayList<>();
         int offset = (pageNumber - 1) * pageSize;
         String sql = "SELECT * FROM pms.group where type=1 LIMIT ? OFFSET ?";
@@ -76,8 +70,6 @@ public class GroupDAO extends BaseDAO {
                     listD.add(domain);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return listD;
     }
@@ -332,7 +324,6 @@ public class GroupDAO extends BaseDAO {
 
         return listD;
     }
-   
 
     public Group getParentDepartmentById(int id) {
         String sql = "SELECT * FROM pms.group WHERE type = 0 AND id = ?";
@@ -554,43 +545,37 @@ public class GroupDAO extends BaseDAO {
     }
 
     // Tìm kiếm phòng ban theo từ khóa
-    public List<Group> searchDepartments(String keyword) {
+    public List<Group> searchDepartments(String keyword) throws SQLException {
         List<Group> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.group  where type=0 and code LIKE ? OR name LIKE ?";
+        PreparedStatement pre = getConnection().prepareStatement(sql);
 
-        try {
-            PreparedStatement pre = getConnection().prepareStatement(sql);
+        // Sử dụng ký tự % để tìm kiếm với từ khóa
+        String searchKeyword = "%" + keyword + "%";
 
-            // Sử dụng ký tự % để tìm kiếm với từ khóa
-            String searchKeyword = "%" + keyword + "%";
+        pre.setString(1, searchKeyword);
+        pre.setString(2, searchKeyword);
 
-            pre.setString(1, searchKeyword);
-            pre.setString(2, searchKeyword);
+        ResultSet rs = pre.executeQuery();
 
-            ResultSet rs = pre.executeQuery();
+        while (rs.next()) {
+            Group department = new Group();
+            department.setId(rs.getInt("id"));
+            department.setCode(rs.getString("code"));
+            department.setName(rs.getString("name"));
+            department.setDetails(rs.getString("details"));
+            department.setStatus(rs.getInt("status"));
 
-            while (rs.next()) {
-                Group department = new Group();
-                department.setId(rs.getInt("id"));
-                department.setCode(rs.getString("code"));
-                department.setName(rs.getString("name"));
-                department.setDetails(rs.getString("details"));
-                department.setStatus(rs.getInt("status"));
-
-                // Xử lý lấy phòng ban cha nếu có
-                int parentId = rs.getInt("parent");
-                if (!rs.wasNull()) {
-                    Group parentDepartment = getParentDepartmentById(parentId);
-                    department.setParent(parentDepartment);
-                } else {
-                    department.setParent(null);
-                }
-
-                list.add(department);
+            // Xử lý lấy phòng ban cha nếu có
+            int parentId = rs.getInt("parent");
+            if (!rs.wasNull()) {
+                Group parentDepartment = getParentDepartmentById(parentId);
+                department.setParent(parentDepartment);
+            } else {
+                department.setParent(null);
             }
 
-        } catch (SQLException e) {
-            System.out.println(e);
+            list.add(department);
         }
 
         return list;
@@ -627,43 +612,14 @@ public class GroupDAO extends BaseDAO {
         return false;
     }
 
-    public List<Group> getAllUserDomain() {
-        List<Group> list = new ArrayList<>();
-        String sql = "SELECT * FROM pms.domain_user JOIN pms.user ON domain_user.userId = user.id JOIN pms.domain ON domain_user.domainId = domain.id;";
-        try {
-            PreparedStatement ps = getConnection().prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                String id = String.valueOf(rs.getInt(1));
-                String status = String.valueOf(rs.getInt(4));
-                String email = rs.getString(5);
-                String fullname = rs.getString(7);
-
-                String mobile = rs.getString(8);
-                String domainName = rs.getString(21);
-                Group d = new Group();
-                list.add(d);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return list;
-    }
-
     public void addDomainUser(Group user) throws SQLException {
 
-        String sql = "INSERT INTO domain_user (id, userId, domainId, status) VALUES (?, ?, ?, ?)";
-
-        try {
-            PreparedStatement pstmt = getConnection().prepareStatement(sql);
-            pstmt.setInt(1, user.getId());
-            pstmt.setString(2, user.getUser().getId() + "");
-            pstmt.setInt(3, user.getParent().getId());
-            pstmt.setInt(4, user.getStatus());
-            pstmt.executeUpdate();
-        } catch (Exception e) {
-            System.out.println("Error: " + e);
-        }
+        String sql = "INSERT INTO domain_user ( userId, domainId, status) VALUES ( ?, ?, ?)";
+        PreparedStatement pstmt = getConnection().prepareStatement(sql);
+        pstmt.setInt(1, user.getUser().getId());
+        pstmt.setInt(2, user.getId());
+        pstmt.setInt(3, user.getStatus());
+        pstmt.executeUpdate();
     }
 
     public List<Group> getDomainUsersWithPagination(int page, int pageSize) {

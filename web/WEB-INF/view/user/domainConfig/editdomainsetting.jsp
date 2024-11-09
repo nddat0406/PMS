@@ -51,12 +51,12 @@
                                                 <a class="nav-link active" id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link" id="Evaluation-tab" href="${baseUrl}/eval" role="tab">Evaluation Criteria</a>
+                                                <a class="nav-link" id="Evaluation-tab" href="${baseUrl}/domain/domaineval" role="tab">Evaluation Criteria</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                             </li>
-                                           <li class="nav-item" role="presentation" style="width: 150px">
+                                            <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link" id="ProjectPhase-tab" href="${pageContext.request.contextPath}/phaselist" role="tab">Project Phase</a>
                                             </li>
                                         </ul>

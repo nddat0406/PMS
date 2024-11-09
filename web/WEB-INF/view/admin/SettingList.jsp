@@ -89,7 +89,7 @@
                                         <!-- Search Bar -->
                                         <div class="col-md-3">
                                             <div class="input-group">
-                                                <input name="keyword" class="form-control" placeholder="Search by Name" type="text" required>
+                                                <input name="keyword" class="form-control" placeholder="Search by Name" type="text" >
                                                 <button type="submit" class="btn btn-secondary">
                                                     <i class="fa fa-search"></i>
                                                 </button>

@@ -261,9 +261,6 @@
                                                                     <input type="email" class="form-control" placeholder="Email" name="email" required>
                                                                 </div>
                                                                 <div class="col-md-4 col-sm-12">
-                                                                    <input type="text" class="form-control" placeholder="Mobile" name="mobile" required>
-                                                                </div>
-                                                                <div class="col-md-4 col-sm-12">
                                                                     <input type="text" class="form-control" placeholder="Name" name="fullname" required>
                                                                 </div>
                                                                 <div class="col-md-4 col-sm-12">
@@ -293,7 +290,6 @@
                                                                     <div class="col-md-4 col-sm-12">
                                                                         <label for="departmentId">Department:</label>
                                                                         <select class="form-control" id="departmentId" name="departmentId" required>
-                                                                            <option value="">-- Select Department --</option>
                                                                         <c:forEach var="department" items="${departments}">
                                                                             <option value="${department.id}" 
                                                                                     <c:if test="${department.id == param.departmentId}">selected</c:if>>
@@ -305,7 +301,7 @@
 
 
                                                                 <div class="col-md-4 col-sm-12">
-                                                                    <input type="text" class="form-control" placeholder="Address *" name="address" required>
+                                                                    <input type="text" class="form-control" placeholder="Address" name="address" required>
                                                                 </div>
 
                                                                 <!-- Modal Footer with Add and Close Buttons -->
