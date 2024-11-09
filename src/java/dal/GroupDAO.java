@@ -128,13 +128,12 @@ public class GroupDAO extends BaseDAO {
 
     public List<Group> Search(String keyword) {
         List<Group> list = new ArrayList<>();
-        String sql = "SELECT * FROM pms.group where type=1 and code LIKE ? OR name LIKE ? OR details LIKE ?";
+        String sql = "SELECT * FROM pms.group where type=1 AND (code LIKE ? OR name LIKE ?)";
 
         try (PreparedStatement pre = getConnection().prepareStatement(sql)) {
             String searchKeyword = "%" + keyword + "%";
             pre.setString(1, searchKeyword);
             pre.setString(2, searchKeyword);
-            pre.setString(3, searchKeyword);
 
             try (ResultSet rs = pre.executeQuery()) {
                 while (rs.next()) {
@@ -142,7 +141,6 @@ public class GroupDAO extends BaseDAO {
                     domain.setId(rs.getInt("id"));
                     domain.setCode(rs.getString("code"));
                     domain.setName(rs.getString("name"));
-                    domain.setDetails(rs.getString("details"));
                     domain.setStatus(rs.getInt("status"));
                     list.add(domain);
                 }
@@ -546,7 +544,7 @@ public class GroupDAO extends BaseDAO {
     // Tìm kiếm phòng ban theo từ khóa
     public List<Group> searchDepartments(String keyword) throws SQLException {
         List<Group> list = new ArrayList<>();
-        String sql = "SELECT * FROM pms.group  where type=0 and code LIKE ? OR name LIKE ?";
+        String sql = "SELECT * FROM pms.group  where type=0 AND (code LIKE ? OR name LIKE ?)";
         PreparedStatement pre = getConnection().prepareStatement(sql);
 
         // Sử dụng ký tự % để tìm kiếm với từ khóa
@@ -562,7 +560,6 @@ public class GroupDAO extends BaseDAO {
             department.setId(rs.getInt("id"));
             department.setCode(rs.getString("code"));
             department.setName(rs.getString("name"));
-            department.setDetails(rs.getString("details"));
             department.setStatus(rs.getInt("status"));
 
             // Xử lý lấy phòng ban cha nếu có

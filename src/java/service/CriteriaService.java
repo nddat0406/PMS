@@ -111,7 +111,7 @@ public class CriteriaService {
         cdao.addDomainEval(domain);
     }
 
-    public void editDomainEval(Criteria domain) {
+    public void editDomainEval(Criteria domain) throws Exception {
         cdao.editDomainEval(domain);
     }
 

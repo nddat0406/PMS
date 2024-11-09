@@ -4,6 +4,7 @@
  */
 package dal;
 
+import jakarta.servlet.ServletException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -304,19 +305,20 @@ public class CriteriaDAO extends BaseDAO {
         }
     }
 
-    public void editDomainEval(Criteria criteria) {
+    public void editDomainEval(Criteria criteria) throws Exception {
         String query = "UPDATE `projectphase_criteria` SET `name` = ?, `weight` = ?, `status` = ?, `phaseId` = ?, `description` = ? WHERE `id` = ?";
-
-        try (PreparedStatement ps = getConnection().prepareStatement(query)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(query);
             ps.setString(1, criteria.getName());
             ps.setDouble(2, criteria.getWeight());
             ps.setBoolean(3, criteria.isStatus());
             ps.setInt(4, criteria.getPhase().getId());
             ps.setString(5, criteria.getDescription());
             ps.setInt(6, criteria.getId());
+            Group g=new Group();
             ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Error editing domain evaluation: " + e.getMessage());
+            throw new ServletException(e);
         }
     }
 
@@ -341,7 +343,6 @@ public class CriteriaDAO extends BaseDAO {
 
         try (PreparedStatement pre = getConnection().prepareStatement(str)) {
             pre.setInt(1, dID);
-
             try (ResultSet rs = pre.executeQuery()) {
                 while (rs.next()) {
                     Criteria criteria = new Criteria();

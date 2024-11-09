@@ -5,9 +5,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import model.Defect;
-import model.Requirement;
-import model.Milestone;
-import model.Setting;
 
 public class DefectDAO extends BaseDAO {
 

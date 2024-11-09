@@ -76,15 +76,6 @@
                                     <div class="card-body">
                                         <div class="tab-content p-0" id="myTabContent">
                                             <div class="d-flex row justify-content-end mb-2">
-                                                <div class="col-lg-6">
-                                                    <form action="${baseUrl}/domain/" method="post" enctype="multipart/form-data" class="mb-3">
-                                                        <button type="submit" name="action" value="import" class="btn btn-success">
-                                                            <i class="fas fa-file-upload"></i> Import from Excel
-                                                        </button>
-                                                        <input type="file" name="file" accept=".xlsx" class="form-control d-inline-block" style="width: auto;"/>
-                                                        <a href="assets/domain_user.xlsx" download>Template</a>
-                                                    </form>
-                                                </div>
                                                 <div class="col-lg-4">
                                                     <button type="button" value="export" onclick="exportToExel()" class="btn btn-primary">
                                                         <i class="fas fa-file-excel"></i> Export to Excel

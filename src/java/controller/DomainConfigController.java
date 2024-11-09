@@ -3,8 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package controller;
-
-import dal.CriteriaDAO;
 import dal.PhaseDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -21,15 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Allocation;
 import model.Criteria;
 import model.Group;
 import model.ProjectPhase;
 import model.Setting;
 import model.User;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -101,10 +95,15 @@ public class DomainConfigController extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/editdomainsetting.jsp").forward(request, response);
                 break;
             case "deactive":
-                break;
             case "active":
                 int idU = Integer.parseInt(request.getParameter("id"));
-                settingService.updateStatusDomain(action, idU);
+                 {
+                    try {
+                        settingService.updateStatusDomain(action, idU);
+                    } catch (SQLException ex) {
+                        throw new ServletException(ex);
+                    }
+                }
                 response.sendRedirect(request.getContextPath() + "/domain/domainsetting");
                 break;
 
@@ -260,8 +259,10 @@ public class DomainConfigController extends HttpServlet {
             String weightStr = request.getParameter("weight");
             String statusStr = request.getParameter("status");
             String description = request.getParameter("description");
-            String domainIdStr = request.getParameter("domain");
-
+            int phase = Integer.parseInt(request.getParameter("phase"));
+            
+            HttpSession session = request.getSession();
+            int domainId = (int) session.getAttribute("domainId");
             List<String> errors = new ArrayList<>();
 
             if (name == null || name.trim().isEmpty()) {
@@ -288,15 +289,7 @@ public class DomainConfigController extends HttpServlet {
                 errors.add("Invalid status.");
             }
 
-            int domainId = 0;
-            try {
-                domainId = Integer.parseInt(domainIdStr);
-                if (domainId <= 0) {
-                    errors.add("Invalid domain.");
-                }
-            } catch (NumberFormatException e) {
-                errors.add("Invalid domain.");
-            }
+          
 
             if (!errors.isEmpty()) {
                 request.setAttribute("errors", errors);
@@ -306,13 +299,11 @@ public class DomainConfigController extends HttpServlet {
 
             Criteria criteria = new Criteria();
             criteria.setId(id);
-            criteria.setPhase(new ProjectPhase());
+            criteria.setPhase(new ProjectPhase(phase));
             criteria.setName(name);
             criteria.setWeight((int) weight);
             criteria.setStatus(status == 1);
             criteria.setDescription(description);
-            criteria.getPhase().setId(domainId);
-
             CriteriaService service = new CriteriaService();
             service.editDomainEval(criteria);
             response.sendRedirect(request.getContextPath() + "/domain/domaineval");
@@ -456,7 +447,7 @@ public class DomainConfigController extends HttpServlet {
             settingService.addDomain(st);
             response.sendRedirect(request.getContextPath() + "/domain/domainsetting");
         } catch (Exception e) {
-            System.out.println("Error: " + e);
+            throw new ServletException(e);
         }
     }
 
@@ -465,7 +456,6 @@ public class DomainConfigController extends HttpServlet {
             HttpSession session = request.getSession();
             String id = request.getParameter("id");
             String name = request.getParameter("name");
-            String typeStr = request.getParameter("type");
             String priorityStr = request.getParameter("priority");
             String statusStr = request.getParameter("status");
             String description = request.getParameter("description");
@@ -473,9 +463,7 @@ public class DomainConfigController extends HttpServlet {
             String errorMessage = null;
             if (name == null || name.trim().length() < 3) {
                 errorMessage = "Name must be at least 3 characters long.";
-            } else if (typeStr == null || !typeStr.matches("\\d+")) {
-                errorMessage = "Type must be a valid number.";
-            } else if (priorityStr == null || !priorityStr.matches("\\d+")) {
+            }  else if (priorityStr == null || !priorityStr.matches("\\d+")) {
                 errorMessage = "Priority must be a valid number.";
             } else if (statusStr == null || (!statusStr.equalsIgnoreCase("true") && !statusStr.equalsIgnoreCase("false"))) {
                 errorMessage = "Status must be either 'true' or 'false'.";
@@ -492,7 +480,7 @@ public class DomainConfigController extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/adddomainsetting.jsp").forward(request, response);
                 return;
             }
-            Setting st = new Setting(Integer.parseInt(id), name, Integer.parseInt(typeStr), Integer.parseInt(priorityStr), Boolean.parseBoolean(statusStr), description);
+            Setting st = new Setting(Integer.parseInt(id), name,  Integer.parseInt(priorityStr), Boolean.parseBoolean(statusStr), description);
             SettingService settingService = new SettingService();
             Group g = new Group();
             g.setId(domainId);
@@ -518,7 +506,7 @@ public class DomainConfigController extends HttpServlet {
                 dID = Integer.valueOf(dIdRaw);
                 request.getSession().setAttribute("domainId", dID);
             }
-            
+
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setHeader("Content-Disposition", "attachment; filename=domain_users.xlsx");
 

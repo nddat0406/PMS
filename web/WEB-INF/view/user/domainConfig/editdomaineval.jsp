@@ -104,7 +104,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="domain" class="form-label">Phase</label>
-                                                    <select class="form-select" id="domain" name="domain">
+                                                    <select class="form-select" id="domain" name="phase">
                                                         <c:forEach var="project" items="${projects}">
                                                             <option value="${project.id}" <c:if test="${domainEval.phase.id == project.id}">selected</c:if>>${project.name}</option>
                                                         </c:forEach>
