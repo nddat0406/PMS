@@ -137,15 +137,15 @@ public class SettingService {
     public Setting geDomaintById(int id) {
         return settingDAO.getDomainById(id);
     }
-      public List<Setting> getDomainSettingByDomainId(int domainID) {
+      public List<Setting> getDomainSettingByDomainId(int domainID) throws SQLException {
         return settingDAO.getDomainSettingByDomainId(domainID);
     }
 
-    public void updateStatusDomain(String domain, int domainId) {
+    public void updateStatusDomain(String domain, int domainId) throws SQLException {
         settingDAO.updateStatusDomain(domain, domainId);
     }
 
-    public void deleteDomain(int id) {
+    public void deleteDomain(int id) throws SQLException {
         settingDAO.deleteDomain(id);
     }
 

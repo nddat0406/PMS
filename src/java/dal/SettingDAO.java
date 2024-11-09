@@ -99,7 +99,6 @@ public class SettingDAO extends BaseDAO {
             ps.setInt(6, setting.getId());
             return ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
             return 0;
         }
     }
@@ -242,7 +241,7 @@ public class SettingDAO extends BaseDAO {
         return settings;
     }
 
-    public List<Setting> getDomainSettingByDomainId(int domainId) {
+    public List<Setting> getDomainSettingByDomainId(int domainId) throws SQLException {
         List<Setting> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.domain_setting WHERE domainId = ?";
 
@@ -260,8 +259,6 @@ public class SettingDAO extends BaseDAO {
                     list.add(setting);
                 }
             }
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
         }
         return list;
     }
@@ -285,9 +282,8 @@ public class SettingDAO extends BaseDAO {
             stmt.setInt(1, domainId);
 
             if (filterStatus != null && !filterStatus.isEmpty()) {
-                stmt.setInt(3, Integer.parseInt(filterStatus));
+                stmt.setInt(2, Integer.parseInt(filterStatus));
             }
-
             if (keyword != null && !keyword.isEmpty()) {
                 stmt.setString(4, "%" + keyword + "%");
             }
@@ -304,8 +300,6 @@ public class SettingDAO extends BaseDAO {
                     settings.add(setting);
                 }
             }
-        } catch (SQLException e) {
-            System.out.println("Error: " + e);
         }
         return settings;
     }
@@ -327,24 +321,20 @@ public class SettingDAO extends BaseDAO {
         return bizTerms;
     }
 
-    public void updateStatusDomain(String domain, int domainId) {
+    public void updateStatusDomain(String domain, int domainId) throws SQLException {
         String sql = "UPDATE domain_setting SET status = ? WHERE id = ?";
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
             statement.setBoolean(1, domain.equals("active"));
             statement.setInt(2, domainId);
             statement.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error: " + e);
         }
     }
 
-    public void deleteDomain(int id) {
+    public void deleteDomain(int id) throws SQLException {
         String sql = "DELETE FROM domain_setting WHERE id = ?";
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
             statement.setInt(1, id);
             statement.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error: " + e);
         }
     }
 
@@ -361,25 +351,19 @@ public class SettingDAO extends BaseDAO {
             statement.setInt(6, domain.getDomain().getId());
             statement.setInt(7, newId);
             statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
         }
     }
 
     public void updateDomain(Setting domain) throws SQLException {
-        String sql = "UPDATE domain_setting SET name = ?, type = ?, priority = ?, status = ?, details = ?, domainId = ? WHERE id = ?";
+        String sql = "UPDATE domain_setting SET name = ?, priority = ?, status = ?, details = ?, domainId = ? WHERE id = ?";
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
             statement.setString(1, domain.getName());
-            statement.setInt(2, domain.getType());
-            statement.setInt(3, domain.getPriority());
-            statement.setBoolean(4, domain.isStatus());
-            statement.setString(5, domain.getDescription());
-            statement.setInt(6, domain.getDomain().getId());
-            statement.setInt(7, domain.getId());
+            statement.setInt(2, domain.getPriority());
+            statement.setBoolean(3, domain.isStatus());
+            statement.setString(4, domain.getDescription());
+            statement.setInt(5, domain.getDomain().getId());
+            statement.setInt(6, domain.getId());
             statement.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error: " + e);
         }
     }
 
@@ -389,8 +373,6 @@ public class SettingDAO extends BaseDAO {
             if (resultSet.next()) {
                 return resultSet.getInt(1);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return 0;
     }

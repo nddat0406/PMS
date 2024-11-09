@@ -121,7 +121,7 @@
                                                             <td>
                                                                 <a href="${baseUrl}/domain/domaineval?action=edit&id=${criteria.id}" type="submit" class="btn btn-warning">Detail</a>
                                                                 |
-                                                               
+
                                                                 <a href="${baseUrl}/domain/domaineval?action=deactive&id=${criteria.id}" type="submit" class="btn btn-danger">Deactive</a>
                                                                 |
                                                                 <a href="${baseUrl}/domain/domaineval?action=active&id=${criteria.id}" type="submit" class="btn btn-danger">Active</a>
@@ -138,24 +138,23 @@
                         </div>
                     </div>
                 </div>
-
             </div>            
         </div>
 
-                                            
 
 
-            <!-- Core JS files -->
-            <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-            <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
-            <script>
-                $(document).ready(function () {
-                    $('#domainSettingsTable').DataTable();
-                });
+        <!-- Core JS files -->
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
 
-            </script>
+        <script>
+            $(document).ready(function () {
+                $('#domainSettingsTable').DataTable();
+            });
+
+        </script>
 
     </body>
 </html>

@@ -18,6 +18,13 @@ public class ProjectPhase {
     private boolean status;
     private Group domain;
 
+    public ProjectPhase(int phase) {
+        this.id=phase;
+    }
+
+    public ProjectPhase() {
+    }
+
     public int getId() {
         return id;
     }

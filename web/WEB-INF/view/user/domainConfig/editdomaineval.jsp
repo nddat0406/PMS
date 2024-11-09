@@ -44,24 +44,24 @@
                             <div class="row g-3">
                                 <div class="col-lg-12 col-md-12">
                                     <div class="card mb-3">
-                                        <div class="card-body">
-                                        <c:set var="baseUrl" value="${pageContext.request.contextPath}" />
-                                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                            <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link active" id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
-                                            </li>
-                                            <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link" id="Evaluation-tab" href="${baseUrl}/eval" role="tab">Evaluation Criteria</a>
-                                            </li>
-                                            <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
-                                            </li>
-                                            <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link " id="ProjectPhase-tab" href="${pageContext.request.contextPath}/phaselist" role="tab">Project Phase</a>
-                                            </li>
-                                        </ul>
+                                            <div class="card-body">
+                                            <c:set var="baseUrl" value="${pageContext.request.contextPath}" />
+                                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                                <li class="nav-item" role="presentation" style="width: 150px">
+                                                    <a class="nav-link " id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
+                                                </li>
+                                                <li class="nav-item" role="presentation" style="width: 150px">
+                                                    <a class="nav-link active" id="Evaluation-tab" href="${baseUrl}/domain/domaineval" role="tab">Evaluation Criteria</a>
+                                                </li>
+                                                <li class="nav-item" role="presentation" style="width: 150px">
+                                                    <a class="nav-link" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
+                                                </li>
+                                                <li class="nav-item" role="presentation" style="width: 150px">
+                                                    <a class="nav-link" id="ProjectPhase-tab" href="${pageContext.request.contextPath}/phaselist" role="tab">Project Phase</a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
 
                                 <div class="tab-content p-0" id="myTabContent">
                                     <div class="row g-3">
@@ -104,7 +104,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="domain" class="form-label">Phase</label>
-                                                    <select class="form-select" id="domain" name="domain">
+                                                    <select class="form-select" id="domain" name="phase">
                                                         <c:forEach var="project" items="${projects}">
                                                             <option value="${project.id}" <c:if test="${domainEval.phase.id == project.id}">selected</c:if>>${project.name}</option>
                                                         </c:forEach>

@@ -76,13 +76,13 @@
                                                 <input type="hidden" name="action" value="editdomainsetting" />
                                                 <input type="hidden" name="id" value="${setting.id}" />
                                                 <div class="mb-3">
-                                                    <label for="name" class="form-label">Domain Name</label>
+                                                    <label for="name" class="form-label">Setting Name</label>
                                                     <input value="${setting.name}" type="text" class="form-control" id="name" name="name" required minlength="3">
                                                     <div class="invalid-feedback">Name must be at least 3 characters long.</div>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="type" class="form-label">Type</label>
-                                                    <input value="${setting.type}" type="number" class="form-control" id="type" name="type" required min="1">
+                                                    <input value="${setting.type}" type="number" class="form-control" id="type" name="type" readonly value="${setting.type}" >
                                                     <div class="invalid-feedback">Type must be a positive number.</div>
                                                 </div>
                                                 <div class="mb-3">

@@ -31,6 +31,14 @@ public class Setting {
         this.id = role;
     }
 
+    public Setting(int parseInt, String name, int parseInt0, boolean parseBoolean, String description) {
+        this.id = parseInt;
+        this.name = name;
+        this.priority = parseInt0;
+        this.status = parseBoolean;
+        this.description = description;
+    }
+
     // Getters and Setters
     public int getId() {
         return id;
