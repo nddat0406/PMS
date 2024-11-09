@@ -114,7 +114,7 @@
                                             <th>Type</th>
                                             <th>Priority</th>
                                             <th>Status</th>
-                                            <th>Actions</th>
+                                            <th class="text-center">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -176,13 +176,13 @@
                                     <ul class="pagination">
                                         <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
                                             <a class="page-link" href="?action=list&page=${currentPage - 1}" aria-label="Previous">
-                                                <span aria-hidden="true">;</span>
+                                                <span aria-hidden="true">Previous</span>
                                             </a>
                                         </li>
                                         <li class="page-item active"><a class="page-link">${currentPage}</a></li>
                                         <li class="page-item">
                                             <a class="page-link" href="?action=list&page=${currentPage + 1}" aria-label="Next">
-                                                <span aria-hidden="true">;</span>
+                                                <span aria-hidden="true">Next</span>
                                             </a>
                                         </li>
                                     </ul>

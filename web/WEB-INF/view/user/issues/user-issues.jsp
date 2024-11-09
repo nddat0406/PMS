@@ -45,43 +45,16 @@
                 font-size: 0.875em;
             }
             /* Keep all status and type color classes */
-            .status-open {
-                background-color: #17a2b8;
-                color: white;
-            }
-            .status-todo {
-                background-color: #ffc107;
-                color: black;
-            }
-            .status-doing {
-                background-color: #0d6efd;
-                color: white;
-            }
-            .status-done {
-                background-color: #198754;
-                color: white;
-            }
-            .status-closed {
-                background-color: #6c757d;
-                color: white;
-            }
-
-            .type-qa {
-                background-color: #17a2b8;
-                color: white;
-            }
-            .type-task {
-                background-color: #28a745;
-                color: white;
-            }
-            .type-issue {
-                background-color: #ffc107;
-                color: black;
-            }
-            .type-complaint {
-                background-color: #dc3545;
-                color: white;
-            }
+            .status-open { background-color: #17a2b8; color: white; }
+            .status-todo { background-color: #ffc107; color: black; }
+            .status-doing { background-color: #0d6efd; color: white; }
+            .status-done { background-color: #198754; color: white; }
+            .status-closed { background-color: #6c757d; color: white; }
+            
+            .type-qa { background-color: #17a2b8; color: white; }
+            .type-task { background-color: #28a745; color: white; }
+            .type-issue { background-color: #ffc107; color: black; }
+            .type-complaint { background-color: #dc3545; color: white; }
         </style>
     </head>
     <body>
@@ -145,7 +118,7 @@
                                                 </div>
                                                 <div class="col-md-2">
                                                     <select class="form-select" name="statusFilter">
-                                                        <option value="0">All Status</option>
+                                                        <option value="">All Status</option>
                                                         <option value="0" ${sessionScope.statusFilter == 0 ? 'selected' : ''}>Open</option>
                                                         <option value="1" ${sessionScope.statusFilter == 1 ? 'selected' : ''}>To Do</option>
                                                         <option value="2" ${sessionScope.statusFilter == 2 ? 'selected' : ''}>Doing</option>
@@ -285,53 +258,50 @@
                     </div>
                 </div>
             </div>
+        
 
+        <!-- Update Status Modal -->
+        <div class="modal fade" id="issueModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update Issue Status</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="issueForm" action="${pageContext.request.contextPath}/user-issues" method="post">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="id" id="modalIssueId">
 
-            <!-- Update Status Modal -->
-            <div class="modal fade" id="issueModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Update Issue Status</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="issueForm" action="${pageContext.request.contextPath}/user-issues" method="post">
-                                <input type="hidden" name="action" value="update">
-                                <input type="hidden" name="id" id="modalIssueId">
+                            <div class="mb-3">
+                                <label class="form-label">Title</label>
+                                <input type="text" class="form-control" id="modalTitle" readonly>
+                            </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">Title</label>
-                                    <input type="text" class="form-control" id="modalTitle" readonly>
-                                </div>
+                            <div class="mb-3">
+                                <label class="form-label">Status <span class="text-danger">*</span></label>
+                                <select class="form-select" name="status" id="modalStatus" required>
+                                    <c:forEach items="${statusList}" var="status" varStatus="loop">
+                                        <option value="${loop.index}">${status}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">Status <span class="text-danger">*</span></label>
-                                    <select class="form-select" name="status" id="modalStatus" required>
-                                        <c:forEach items="${statusList}" var="status" varStatus="loop">
-                                            <option value="${loop.index}">${status}</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-
-                                <!-- Hidden fields to maintain other values -->
-                                <input type="hidden" name="title" id="hiddenTitle">
-                                <input type="hidden" name="description" id="hiddenDescription">
-                                <input type="hidden" name="type" id="hiddenType">
-                                <input type="hidden" name="dueDate" id="hiddenDueDate">
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="saveIssue">Save Changes</button>
-                                </div>
-                            </form>
-
-                        </div>
-
+                            <!-- Hidden fields to maintain other values -->
+                            <input type="hidden" name="title" id="hiddenTitle">
+                            <input type="hidden" name="description" id="hiddenDescription">
+                            <input type="hidden" name="type" id="hiddenType">
+                            <input type="hidden" name="dueDate" id="hiddenDueDate">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="saveIssue">Save Changes</button>
                     </div>
                 </div>
             </div>
         </div>
-
+    </div>
         <!-- Scripts -->
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
@@ -342,6 +312,7 @@
             }
 
             $(document).ready(function () {
+                let originalOptionsState;
                 // Handle Read More buttons
                 $('.read-more-btn').click(function () {
                     $(this).closest('.content-wrapper').toggleClass('expanded');
@@ -354,14 +325,21 @@
                 $('.edit-issue').click(function () {
                     const row = $(this).closest('tr');
                     const statusSpan = row.find('td:eq(6) span');
-
+                    const statusText = statusSpan.text().trim();
+                    const statusValue = getStatusValue(statusText);
+                    
+                    console.log('Status Text:', statusText);
+                    console.log('Status Value:', statusValue);
+                    
+                    $('#modalStatus').val(statusValue);
+                    
                     // Set form action to update
                     $('input[name="action"]').val('update');
 
                     // Populate form with row data
                     $('#modalIssueId').val(row.find('td:eq(0)').text());
                     $('#modalTitle').val(row.find('td:eq(3)').text());
-                    $('#modalStatus').val(getStatusValue(row.find('td:eq(6) span').text().trim()));
+                    <!-- $('#modalStatus').val(getStatusValue(row.find('td:eq(6) span').text().trim())); -->
 
                     // Set hidden fields
                     $('#hiddenTitle').val(row.find('td:eq(3)').text());
@@ -372,13 +350,34 @@
 
                     // Disable "Closed" option in status dropdown if current status isn't closed
                     const currentStatus = getStatusValue(statusSpan.text().trim());
-                    console.log(currentStatus);
-                    if (currentStatus === '4') { // 4 is the value for "Closed"
-                        $('#modalStatus option').prop('disabled', true);
-                    }
+        
+        // Store original state
+        originalOptionsState = $('#modalStatus option').map(function() {
+            return {
+                value: $(this).val(),
+                disabled: $(this).prop('disabled')
+            };
+        }).get();
+
+        // Disable options based on current status
+        if (currentStatus === '4') { // Closed status
+            $('#modalStatus option').prop('disabled', true);
+            $('#modalStatus').val('4');
+        } else {
+            $('#modalStatus option').prop('disabled', false);
+        }
 
                     $('#issueModal').modal('show');
                 });
+                // Handle modal close - reset options
+    $('#issueModal').on('hidden.bs.modal', function() {
+        // Restore original state
+        if (originalOptionsState) {
+            $('#modalStatus option').each(function(index) {
+                $(this).prop('disabled', originalOptionsState[index].disabled);
+            });
+        }
+    });
 
                 // Handle form submission
                 $('#saveIssue').click(function () {
@@ -386,7 +385,7 @@
                 });
 
                 // Handle Reset button
-                $('button[type="reset"]').click(function () {
+                $('button[type="reset"]').click(function() {
                     window.location = '${pageContext.request.contextPath}/user-issues';
                 });
 

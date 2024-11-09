@@ -2,7 +2,13 @@ package service;
 
 import dal.IssueDAO;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import model.Issue;
 import java.sql.*;
 
@@ -121,13 +127,6 @@ public class IssueService extends BaseService {
         if (issue.getDue_date() == null) {
             errors.add("Due date is required");
         }
-        if (issue.getEnd_date() == null) {
-            errors.add("End date is required");
-        }
-        if (issue.getDue_date() != null && issue.getEnd_date() != null
-                && issue.getDue_date().after(issue.getEnd_date())) {
-            errors.add("Due date cannot be earlier than end date");
-        }
 
         // Status validation
         if (!isValidStatus(issue.getStatus())) {
@@ -185,32 +184,32 @@ public class IssueService extends BaseService {
     public String getStatusColor(int status) {
         return switch (status) {
             case STATUS_OPEN ->
-                "#17a2b8";    // Info blue
+                "#17a2b8"; // Info blue
             case STATUS_TODO ->
-                "#ffc107";     // Warning yellow
+                "#ffc107"; // Warning yellow
             case STATUS_DOING ->
-                "#0d6efd";    // Primary blue
+                "#0d6efd"; // Primary blue
             case STATUS_DONE ->
-                "#198754";     // Success green
+                "#198754"; // Success green
             case STATUS_CLOSED ->
-                "#6c757d";   // Secondary gray
+                "#6c757d"; // Secondary gray
             default ->
-                "#6c757d";             // Default gray
+                "#6c757d"; // Default gray
         };
     }
 
     public String getTypeColor(String type) {
         return switch (type) {
             case TYPE_QA ->
-                "#17a2b8";       // Info blue for Q&A
+                "#17a2b8"; // Info blue for Q&A
             case TYPE_TASK ->
-                "#28a745";     // Green for Task
+                "#28a745"; // Green for Task
             case TYPE_ISSUE ->
-                "#ffc107";    // Warning yellow for Issue
+                "#ffc107"; // Warning yellow for Issue
             case TYPE_COMPLAINT ->
                 "#dc3545"; // Danger red for Complaint
             default ->
-                "#6c757d";            // Secondary gray for unknown
+                "#6c757d"; // Secondary gray for unknown
         };
     }
 
@@ -237,23 +236,21 @@ public class IssueService extends BaseService {
             Integer assigneeId, Integer status, Date startDate, Date endDate) throws SQLException {
         try {
             // Normalize parameters
-            if (projectId != null && projectId == 0) {
-                projectId = null;
-            }
-            if (assigneeId != null && assigneeId == 0) {
-                assigneeId = null;
-            }
-            if (status != null && status == 0) {
-                status = null;
-            }
-            if (searchKey != null && searchKey.trim().isEmpty()) {
-                searchKey = null;
-            }
-            if (type != null && !isValidType(type)) {
-                type = null;
-            }
+            String normalizedSearchKey = (searchKey != null && !searchKey.trim().isEmpty()) ? searchKey.trim().toLowerCase() : null;
+            Integer normalizedProjectId = (projectId != null && projectId == 0) ? null : projectId;
+            String normalizedType = (type != null && !type.trim().isEmpty() && isValidType(type)) ? type : null;
+            Integer normalizedAssigneeId = (assigneeId != null && assigneeId == 0) ? null : assigneeId;
+            // Don't normalize status - keep it as is to distinguish between null (All) and 0 (Open)
 
-            return issueDAO.searchAdvanced(searchKey, projectId, type, assigneeId, status, startDate, endDate);
+            return issueDAO.searchAdvanced(
+                    normalizedSearchKey,
+                    normalizedProjectId,
+                    normalizedType,
+                    normalizedAssigneeId,
+                    status, // Pass the original status value
+                    startDate,
+                    endDate
+            );
         } catch (SQLException e) {
             throw new SQLException("Error performing advanced search: " + e.getMessage());
         }
@@ -268,10 +265,10 @@ public class IssueService extends BaseService {
     }
 
     public List<Issue> searchAdvancedForUser(
-            String searchKey, 
-            Integer projectId, 
+            String searchKey,
+            Integer projectId,
             String type,
-            Integer status, 
+            Integer status,
             int userId) throws SQLException {
         try {
             // Normalize parameters
@@ -293,4 +290,5 @@ public class IssueService extends BaseService {
             throw new SQLException("Error performing advanced search for user " + userId + ": " + e.getMessage());
         }
     }
+
 }
