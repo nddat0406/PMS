@@ -36,6 +36,31 @@ public class PhaseDAO extends BaseDAO {
         }
         return list;
     }
+    public ProjectPhase getPhaseById(int id) throws SQLException {
+        String sql = "SELECT * FROM pms.projectphase WHERE id = ?";
+        try {
+            PreparedStatement st = getConnection().prepareStatement(sql);
+            st.setInt(1, id);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                ProjectPhase phase = new ProjectPhase();
+                phase.setId(rs.getInt("id"));
+                phase.setName(rs.getString("name"));
+                phase.setPriority(rs.getInt("priority"));
+                phase.setDetails(rs.getString("details"));
+                phase.setFinalPhase(rs.getBoolean("finalPhase"));
+                phase.setCompleteRate(rs.getInt("completeRate"));
+                phase.setStatus(rs.getBoolean("status"));
+                Group domain = new Group();
+                domain.setId(rs.getInt("domainId"));
+                phase.setDomain(domain);
+                return phase;
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+        return null;
+    }
 
     public List<ProjectPhase> searchFilter(List<ProjectPhase> list, Integer domainId, Boolean status, String keyword) {
         List<ProjectPhase> filteredList = new ArrayList<>();
@@ -89,7 +114,30 @@ public class PhaseDAO extends BaseDAO {
             throw new SQLException("Error updating phase: " + e.getMessage());
         }
     }
-
+//public ProjectPhase getModalItem(int modalItemID) throws SQLException {
+//        String str = "SELECT * FROM pms.allocation where id=?";
+//        try (PreparedStatement pre = getConnection().prepareStatement(str)) {
+//            pre.setInt(1, modalItemID);
+//
+//            try (ResultSet rs = pre.executeQuery()) {
+//                ProjectPhase temp = new ProjectPhase();
+//
+//                if (rs.next()) {
+//                    temp.setId(rs.getInt(7));
+//                    temp.setUser(udao.getUserById(rs.getInt(1))); // Assuming udao is properly instantiated
+//                    Project p = pdao.getById(rs.getInt(2)); // Assuming pdao is properly instantiated
+//                    p.setListRole(pdao.getListRole(rs.getInt(2))); // Assuming getListRole() is implemented in pdao
+//                    temp.setProject(p);
+//                    temp.setStartDate(rs.getDate(3));
+//                    temp.setEndDate(rs.getDate(4));
+//                    temp.setEffortRate(rs.getInt(5));
+//                    temp.setStatus(rs.getBoolean(6));
+//                    temp.setRole(this.getRoleNameOfAllocation(rs.getInt(7)));
+//                }
+//                return temp;
+//            }
+//        }
+//    }
     public boolean updateStatus(int phaseId, boolean newStatus) throws SQLException {
         String sql = "UPDATE pms.projectphase SET status = ? WHERE id = ?";
         try {
@@ -113,36 +161,6 @@ public class PhaseDAO extends BaseDAO {
             throw new SQLException("Error deleting phase: " + e.getMessage());
         }
     }
-
-    public ProjectPhase getPhaseById(int id) throws SQLException {
-        String sql = "SELECT * FROM pms.projectphase WHERE id = ?";
-        try {
-            PreparedStatement st = getConnection().prepareStatement(sql);
-            st.setInt(1, id);
-            ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                ProjectPhase phase = new ProjectPhase();
-                phase.setId(rs.getInt("id"));
-                phase.setName(rs.getString("name"));
-                phase.setPriority(rs.getInt("priority"));
-                phase.setDetails(rs.getString("details"));
-                phase.setFinalPhase(rs.getBoolean("finalPhase"));
-                phase.setCompleteRate(rs.getInt("completeRate"));
-                phase.setStatus(rs.getBoolean("status"));
-                Group domain = new Group();
-                domain.setId(rs.getInt("domainId"));
-                phase.setDomain(domain);
-                return phase;
-            }
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        }
-        return null;
-    }
-
-   
-  
-
     public List<ProjectPhase> getProjectPhaseByDomainId(Integer dID) throws SQLException {
         List<ProjectPhase> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.projectphase where domainId = ? ";

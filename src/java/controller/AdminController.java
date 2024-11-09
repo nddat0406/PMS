@@ -116,7 +116,6 @@ public class AdminController extends HttpServlet {
                 } catch (SQLException ex) {
                     Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
                 // Set the list into the request attribute to forward to the JSP
                 request.setAttribute("data", list);
                 request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
@@ -157,18 +156,14 @@ public class AdminController extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         String action = request.getParameter("action");
         UserService dao = new UserService();
-
         try {
             switch (action) {
                 case "search":
-
                     List<User> list = searchUser(request, response);
                     request.setAttribute("data", list);
                     request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
-
                     break;
 
                 case "add":
@@ -191,10 +186,8 @@ public class AdminController extends HttpServlet {
                     response.getWriter().print("Invalid action in POST request");
                     break;
             }
-        } catch (ServletException | IOException | SQLException e) {
-            Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, e);
-            response.getWriter().print("Error: " + e.getMessage());
-
+        } catch (SQLException e) {
+            throw new ServletException(e);
         }
     }
 
@@ -224,13 +217,9 @@ public class AdminController extends HttpServlet {
                     .filter(user -> user.getStatus() == statusValue)
                     .collect(Collectors.toList());
         }
-  request.setAttribute("data", listUser);
+        request.setAttribute("data", listUser);
         request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
-
         return listUser; // Trả về danh sách người dùng đã lọc
-
-        
-      
     }
 
     private void addUser(HttpServletRequest request, HttpServletResponse response, UserService dao) throws SQLException, ServletException, IOException {
@@ -268,11 +257,11 @@ public class AdminController extends HttpServlet {
             pagination(request, response, updatedList);
 
         } catch (SQLException e) {
-//            // Xử lý ngoại lệ khi id không hợp lệ hoặc xảy ra lỗi khác
-//            request.setAttribute("error", "Invalid ID or other input errors.");
-//            // Điều hướng tới trang UserList với thông báo lỗi
-//            request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
-            response.getWriter().print(e);
+            // Xử lý ngoại lệ khi id không hợp lệ hoặc xảy ra lỗi khác
+            request.setAttribute("error", "Invalid ID or other input errors.");
+            // Điều hướng tới trang UserList với thông báo lỗi
+            request.getRequestDispatcher("/WEB-INF/view/admin/UserList.jsp").forward(request, response);
+
         }
 
     }
