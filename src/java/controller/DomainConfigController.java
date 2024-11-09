@@ -155,16 +155,16 @@ public class DomainConfigController extends HttpServlet {
             UserService userService = new UserService();
             GroupService groupService = new GroupService();
             List<User> users = userService.getAll();
-            List<Group> groups = groupService.getAllDomains();
+            
             switch (action) {
                 case "add" -> {
                     request.setAttribute("users", users);
-                    request.setAttribute("groups", groups);
+                    
                     request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/adddomainuser.jsp").forward(request, response);
                 }
                 case "edit" -> {
                     request.setAttribute("users", users);
-                    request.setAttribute("groups", groups);
+                    
                     int id = Integer.parseInt(request.getParameter("id"));
                     Group us = groupService.getDomainUserById(id);
                     request.setAttribute("us", us);
@@ -230,10 +230,7 @@ public class DomainConfigController extends HttpServlet {
                     exportDomainUsersToExcel(request, response);
                     response.sendRedirect(request.getContextPath() + "/domain/domainuser?page=1");
                 }
-                case "import" -> {
-                    importFromExcel(request);
-                    response.sendRedirect(request.getContextPath() + "/domain/domainuser?page=1");
-                }
+               
                 case "adddomainsetting" ->
                     this.addDomainSetting(request, response);
                 case "editdomainsetting" ->
@@ -519,29 +516,7 @@ public class DomainConfigController extends HttpServlet {
         }
     }
 
-    private void importFromExcel(HttpServletRequest request) throws IOException, ServletException {
-        Part filePart = request.getPart("file");
-        try (Workbook workbook = new XSSFWorkbook(filePart.getInputStream())) {
-            Sheet sheet = workbook.getSheetAt(0);
-            GroupService service = new GroupService();
-            for (Row row : sheet) {
-                if (row.getRowNum() == 0) {
-                    continue;
-                }
-                Group user = new Group();
-                user.setUser(new User());
-                user.setParent(new Group());
-                user.setId((int) row.getCell(0).getNumericCellValue());
-                user.getUser().setId((int) row.getCell(1).getNumericCellValue());
-                user.getParent().setId((int) row.getCell(2).getNumericCellValue());
-                user.getParent().setStatus((int) row.getCell(3).getNumericCellValue());
-                service.addDomainUser(user);
-            }
-        } catch (Exception e) {
-            throw new ServletException("Error importing data from Excel file", e);
-        }
 
-    }
 
     private void getEvalAdd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {

@@ -98,13 +98,12 @@ public class RequirementService extends BaseService {
             if (projectId != null && projectId == 0) {
                 projectId = null;
             }
-            if (status != null && status == 0) {
-                status = null;
-            }
+            // No need to check for status == 0 since we're handling -1 as "All Status"
             if (searchKey != null && searchKey.trim().isEmpty()) {
                 searchKey = null;
             }
-            return requirementDAO.searchRequirements(searchKey, complexity, status);
+
+            return requirementDAO.searchRequirements(searchKey, complexity, status, projectId);
         } catch (SQLException e) {
             throw new SQLException("Error filtering requirements: " + e.getMessage());
         }

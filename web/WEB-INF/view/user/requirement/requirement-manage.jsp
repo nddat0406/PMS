@@ -115,10 +115,10 @@
                                                     <span class="input-group-text">Status</span>
                                                     <select class="form-select" name="statusFilter" id="statusFilter" onchange="ChangeFilter()">
                                                         <option value="0" ${statusFilter==0?'selected':''}>All Status</option>
-                                                        <option value="1" ${statusFilter==1?'selected':''}>To Do</option>
-                                                        <option value="2" ${statusFilter==2?'selected':''}>In Progress</option>
-                                                        <option value="3" ${statusFilter==3?'selected':''}>Completed</option>
-                                                        <option value="4" ${statusFilter==4?'selected':''}>Cancelled</option>
+                                                        <option value="1" ${statusFilter==1?'selected':''}>Committed</option>
+                                                        <option value="2" ${statusFilter==2?'selected':''}>Analyze</option>
+                                                        <option value="3" ${statusFilter==3?'selected':''}>Design</option>
+                                                        <option value="4" ${statusFilter==4?'selected':''}>Accepted</option>
                                                     </select>
                                                 </div>
                                                 <div class="input-group mb-3" style="width: 15%">
@@ -133,13 +133,13 @@
                                         <table id="requirements_list" class="table table-hover mb-0">
                                             <thead>
                                                 <tr>
-                                                    <th name="id" sortBy="desc" class="sortTableHead" aria-sort="none">ID <i class="fa fa-sort sort-icon"></i></th>
-                                                    <th name="title" sortBy="desc" class="sortTableHead" aria-sort="none">Title <i class="fa fa-sort sort-icon"></i></th>
-                                                    <th name="projectName" sortBy="desc" class="sortTableHead" aria-sort="none">Project <i class="fa fa-sort sort-icon"></i></th>
+                                                    <th name="id" sortBy="desc" class="sortTableHead" aria-sort="none">ID </th>
+                                                    <th name="title" sortBy="desc" class="sortTableHead" aria-sort="none">Title </th>
+                                                    <th name="projectName" sortBy="desc" class="sortTableHead" aria-sort="none">Project</th>
                                                     <th style="display: none">Details</th>
-                                                    <th name="complexity" sortBy="desc" class="sortTableHead" aria-sort="none">Complexity <i class="fa fa-sort sort-icon"></i></th>
-                                                    <th name="status" sortBy="desc" class="sortTableHead" aria-sort="none">Status <i class="fa fa-sort sort-icon"></i></th>
-                                                    <th name="estimatedEffort" sortBy="desc" class="sortTableHead" aria-sort="none">Effort (h) <i class="fa fa-sort sort-icon"></i></th>
+                                                    <th name="complexity" sortBy="desc" class="sortTableHead" aria-sort="none">Complexity</th>
+                                                    <th name="status" sortBy="desc" class="sortTableHead" aria-sort="none">Status </th>
+                                                    <th name="estimatedEffort" sortBy="desc" class="sortTableHead" aria-sort="none">Effort (h)</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
