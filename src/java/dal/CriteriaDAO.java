@@ -4,6 +4,7 @@
  */
 package dal;
 
+import jakarta.servlet.ServletException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Criteria;
 import model.Group;
-import model.Milestone;
-import model.Project;
 
 /**
  *
@@ -290,7 +289,7 @@ public class CriteriaDAO extends BaseDAO {
         return criteria;
     }
 
-    public void addDomainEval(Criteria criteria) {
+    public void addDomainEval(Criteria criteria) throws SQLException {
         String query = "INSERT INTO `projectphase_criteria` (`name`, `weight`, `status`, `phaseId`, `description`, `domainId`, `id`) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
@@ -303,28 +302,27 @@ public class CriteriaDAO extends BaseDAO {
             ps.setInt(6, criteria.getDomain().getId());
             ps.setInt(7, this.getLastId() + 1);
             ps.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error adding domain evaluation: " + e.getMessage());
         }
     }
 
-    public void editDomainEval(Criteria criteria) {
+    public void editDomainEval(Criteria criteria) throws Exception {
         String query = "UPDATE `projectphase_criteria` SET `name` = ?, `weight` = ?, `status` = ?, `phaseId` = ?, `description` = ? WHERE `id` = ?";
-
-        try (PreparedStatement ps = getConnection().prepareStatement(query)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(query);
             ps.setString(1, criteria.getName());
             ps.setDouble(2, criteria.getWeight());
             ps.setBoolean(3, criteria.isStatus());
             ps.setInt(4, criteria.getPhase().getId());
             ps.setString(5, criteria.getDescription());
             ps.setInt(6, criteria.getId());
+            Group g=new Group();
             ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Error editing domain evaluation: " + e.getMessage());
+            throw new ServletException(e);
         }
     }
 
-    public int getLastId() {
+    public int getLastId() throws SQLException {
         String query = "SELECT MAX(id) FROM `projectphase_criteria`";
         int lastId = -1;
 
@@ -333,7 +331,7 @@ public class CriteriaDAO extends BaseDAO {
                 lastId = rs.getInt(1);
             }
         } catch (SQLException e) {
-            System.out.println("Error fetching last ID: " + e.getMessage());
+            throw new SQLException(e);
         }
 
         return lastId;
@@ -345,7 +343,6 @@ public class CriteriaDAO extends BaseDAO {
 
         try (PreparedStatement pre = getConnection().prepareStatement(str)) {
             pre.setInt(1, dID);
-
             try (ResultSet rs = pre.executeQuery()) {
                 while (rs.next()) {
                     Criteria criteria = new Criteria();

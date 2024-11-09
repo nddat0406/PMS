@@ -12,8 +12,6 @@
         <meta name="author" content="WrapTheme, design by: ThemeMakker.com">
         <link rel="icon" href="favicon.ico" type="image/x-icon">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
     </head>
 
     <body>
@@ -48,13 +46,13 @@
                                         <c:set var="baseUrl" value="${pageContext.request.contextPath}" />
                                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                                             <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link active" id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
+                                                <a class="nav-link " id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link" id="Evaluation-tab" href="${baseUrl}/eval" role="tab">Evaluation Criteria</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
+                                                <a class="nav-link active" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link" id="ProjectPhase-tab" href="${pageContext.request.contextPath}/phaselist" role="tab">Project Phase</a>
@@ -92,14 +90,6 @@
                                                         <option value="false">Inactive</option>
                                                     </select>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="domain" class="form-label">Group Domain</label>
-                                                    <select class="form-select" id="domain" name="domain">
-                                                        <c:forEach var="group" items="${groups}">
-                                                            <option value="${group.id}">${group.name}</option>
-                                                        </c:forEach>
-                                                    </select>
-                                                </div>
                                                 <button type="submit" class="btn btn-primary">Submit</button>
                                             </form>
                                         </div>
@@ -108,11 +98,10 @@
                             </div>
                         </div>
                     </div>
-
-                    <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
-                    <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
                 </div>
             </div>
     </body>

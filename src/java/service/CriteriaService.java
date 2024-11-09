@@ -107,11 +107,11 @@ public class CriteriaService {
         return cdao.getDomainEvalById(id);
     }
 
-    public void addDomainEval(Criteria domain) {
+    public void addDomainEval(Criteria domain) throws SQLException {
         cdao.addDomainEval(domain);
     }
 
-    public void editDomainEval(Criteria domain) {
+    public void editDomainEval(Criteria domain) throws Exception {
         cdao.editDomainEval(domain);
     }
 

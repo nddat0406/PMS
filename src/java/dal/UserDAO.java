@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.mail.MessagingException;
 import model.Group;
 import model.User;
+import org.apache.tomcat.dbcp.dbcp2.SQLExceptionList;
 
 /**
  *
@@ -425,7 +426,7 @@ public class UserDAO extends BaseDAO {
             st.setInt(1, id);
             st.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e);
+            throw new SQLException(e);
         }
     }
 
@@ -462,7 +463,7 @@ public class UserDAO extends BaseDAO {
                     user.setFullname(rs.getString(3));
                     user.setMobile(rs.getString(4));
                     user.setRole(rs.getInt(7));
-                    user.setDepartment(new Group(gdao.getDeptNameById(rs.getInt(9))));
+                    user.setDepartment(new Group(rs.getInt(9),gdao.getDeptNameById(rs.getInt(9))));
                     user.setImage(rs.getString(10));
                     user.setAddress(rs.getString(11));
                     user.setGender(rs.getBoolean(12));

@@ -5,9 +5,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import model.Defect;
+import model.Project;
 import model.Requirement;
-import model.Milestone;
-import model.Setting;
 
 public class DefectDAO extends BaseDAO {
 
@@ -175,6 +174,7 @@ public List<Requirement> getAllByProjectId(int projectId) throws SQLException {
         }
         return list;
     }
+
 
 
 }

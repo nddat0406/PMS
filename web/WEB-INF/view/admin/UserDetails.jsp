@@ -126,8 +126,7 @@
                                                     <option value="">-- Select Department --</option>
                                                     <!-- Lặp qua tất cả các phòng ban -->
                                                 <c:forEach var="dept" items="${departments}">
-                                                    <option value="${dept.id}" 
-                                                            <c:if test="${dept.id == updateUser.department.id}">selected</c:if>>
+                                                    <option value="${dept.id}" ${dept.id == updateUser.department.id?'selected':''}>
                                                         ${dept.name}
                                                     </option>
                                                 </c:forEach>

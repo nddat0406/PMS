@@ -711,7 +711,6 @@ public class ProjectConfigController extends HttpServlet {
         try {
             List<Allocation> list = pService.getProjectMembers((int) request.getSession().getAttribute("selectedProject"));
             Workbook workbook = pService.exportProjectMember(list);
-
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setHeader("Content-Disposition", "attachment; filename=Project_Members.xlsx");
 

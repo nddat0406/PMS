@@ -8,6 +8,8 @@
         <title>Defect List</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/dataTables.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
 
@@ -240,7 +242,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="projectId" class="form-label">Project *</label>
-                                            <select class="form-select" id="projectId" name="projectId" required>
+                                            <select class="form-select" id="selectProject" name="projectId" required>
                                                 <option value="">Select Project</option>
                                                 <c:forEach items="${project}" var="project">
                                                     <option value="${project.id}">${project.name}</option>
@@ -248,16 +250,12 @@
                                             </select>
                                         </div>
                                         <!-- Requirement -->
-                                        <<div class="col-md-6">
+                                        <div class="col-md-6">
                                             <label for="requirementId" class="form-label">Requirement *</label>
-                                            <select class="form-select" id="requirementId" name="requirementId" required>
+                                            <select class="form-select" id="selectReq" name="requirementId" required>
                                                 <option value="">Select Requirement</option>
                                             </select>
                                         </div>
-
-                                        <!-- Milestone -->
-
-
                                         <!-- Severity -->
                                         <div class="col-md-6">
                                             <label for="serverityId" class="form-label">Severity *</label>
@@ -271,7 +269,7 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Assignee <span class="text-danger">*</span></label>
-                                                <select class="form-select" name="assigneeId" id="assigneeId" >
+                                                <select class="form-select" name="assigneeId" id="selectMember" >
                                                     <option value="">Select Assignee</option>
                                                     <c:forEach items="${users}" var="user">
                                                         <option value="${user.id}" ${defect != null && defect.assignee == user.id ? 'selected' : ''}>
@@ -305,7 +303,7 @@
 
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Add Defect</button>
+                                        <button type="submit" class="btn btn-primary" id="addBtn">Add Defect</button>
                                     </div>
                                 </form>
                             </div>
@@ -337,87 +335,73 @@
                                                                                 document.getElementById('deleteForm').submit();
                                                                             };
 
-                                                                            // Requirement change handler to load related project
-//                                                                            $('#requirementId').change(function () {
-//                                                                                const reqId = $(this).val();
-//                                                                                if (reqId) {
-//                                                                                    // Clear current project options
-//                                                                                    $('#projectId').html('<option value="">Select Project</option>');
-//
-//                                                                                    // Load project for selected requirement's project
-//                                                                                    $.get('${pageContext.request.contextPath}/getProject',
-//                                                                                            {requirementId: reqId},
-//                                                                                            function (project) {
-//                                                                                                console.log(project.name);
-//                                                                                                $('#projectId').empty();
-//                                                                                                $('#projectId').append(new Option(project.name, project.id));
-//                                                                                            });
-//                                                                                }
-//                                                                            });
-                                                                            // Project change handler to load related requirements
-//                                                                            $('#projectId').change(function () {
-//                                                                                const reqId = $(this).val();
-//                                                                                if (reqId) {
-//                                                                                    // Clear current project options
-//                                                                                    $('#requirementId').html('<option value="">Select Requirement</option>');
-//
-//                                                                                    // Load project for selected requirement's project
-//                                                                                    $.get('${pageContext.request.contextPath}/getProject',
-//                                                                                            {projectId reqId},
-//                                                                                            function (requirement) {
-//                                                                                                console.log(requirement.name);
-//                                                                                                $('#requirementId:').empty();
-//                                                                                                $('#requirementId:').append(new Option(requirement.name, requirement.id));
-//                                                                                            });
-//                                                                                }
-//                                                                            });
-//                                                                            function loadRequirements(projectId) {
-                                                                            // Khi người dùng thay đổi lựa chọn trong dropdown Project
-                                                                            function loadRequirements(projectId) {
-                                                                                $('#projectId').change(function () {
-                                                                                    const projectId = $(this).val();
-                                                                                    if (projectId) {
-                                                                                        // Xóa các lựa chọn hiện tại trong dropdown Requirement
-                                                                                        $('#requirementId').html('<option value="">Select Requirement</option>');
-
-                                                                                        // Gửi yêu cầu tới server để lấy danh sách yêu cầu của dự án đã chọn
-                                                                                        $.get('${pageContext.request.contextPath}/getProject',
-                                                                                                {projectId: projectId},
-                                                                                                function (requirements) {
-                                                                                                    // Xóa danh sách hiện tại và thêm lại lựa chọn mặc định
-                                                                                                    $('#requirementId').empty();
-                                                                                                    $('#requirementId').append(new Option("Select Requirement", ""));
-
-                                                                                                    // Thêm các yêu cầu mới vào dropdown Requirement
-                                                                                                    requirements.forEach(function (req) {
-                                                                                                        $('#requirementId').append(new Option(req.title, req.id));
-                                                                                                    });
-                                                                                                }
-                                                                                        );
-                                                                                    } else {
-                                                                                        // Nếu không có dự án nào được chọn, đặt lại danh sách Requirement
-                                                                                        $('#requirementId').html('<option value="">Select Requirement</option>');
+                                                                            $('#selectProject').on('change', function () {
+                                                                                var selectedvalue = $(this).val();
+                                                                                $.ajax({
+                                                                                    url: "${pageContext.request.contextPath}/defectlist",
+                                                                                    type: 'post',
+                                                                                    dataType: 'json',
+                                                                                    data: {
+                                                                                        pId: selectedvalue,
+                                                                                        action: "getProjectAdd"
+                                                                                    },
+                                                                                    success: function (responseData) {
+                                                                                        $('#addBtn').prop("disabled", false);
+                                                                                        if (responseData.memberList[0].id === -1 || responseData.reqList[0].id === -1) {
+                                                                                            $('#addBtn').prop("disabled", true);
+                                                                                            $('#addErrorDisplay').css('display', 'block');
+                                                                                            $('#addErrorDisplay').find('i').text("Cannot add to this project because the domain for this project has not been set up with roles or there are no more user to add.");
+                                                                                        } else {
+                                                                                            $('#addErrorDisplay').css('display', 'none');
+                                                                                        }
+                                                                                        $('#selectMember').empty();
+                                                                                        $.each(responseData.memberList, function (index, item) {
+                                                                                            var option;
+                                                                                            if (item.id === 0 || item.id === -1) {
+                                                                                                option = $('<option>')
+                                                                                                        .text(item.fullname)
+                                                                                                        .val(item.id);
+                                                                                            } else {
+                                                                                                option = $('<option>')
+                                                                                                        .text(item.fullname)
+                                                                                                        .val(item.id); // Set the value
+                                                                                            }
+                                                                                            $('#selectMember').append(option);
+                                                                                        });
+                                                                                        $('#selectReq').empty();
+                                                                                        $.each(responseData.reqList, function (index, item) {
+                                                                                            var option;
+                                                                                            if (item.id === 0 || item.id === -1) {
+                                                                                                option = $('<option>')
+                                                                                                        .text(item.name)
+                                                                                                        .val(item.id);
+                                                                                            } else {
+                                                                                                option = $('<option>')
+                                                                                                        .text(item.name)
+                                                                                                        .val(item.id); // Set the value
+                                                                                            }
+                                                                                            $('#selectReq').append(option);
+                                                                                        });
                                                                                     }
                                                                                 });
-                                                                            }
-                                                                            }
+                                                                            });
                                                                             // Date validation
                                                                             $('#duedate').attr('min', new Date().toISOString().split('T')[0]);
                                                                         });
             </script>
-<!--            <script>$('#projectId').on('change', function () {
-                    const projectId = $(this).val();
-
-                    if (projectId) {
-                        // Load requirements
-                        loadRequirements(projectId);
-                        // Load assignees
-                        //loadAssignees(projectId);
-                    } else {
-                        // Clear both dropdowns if no project selected
-                        $('#requirementId').html('<option value="">Select Requirement</option>');
-                        //$('#assigneeId').html('<option value="">Select Assignee</option>');
-                    }
-                });</script>-->
+            <!--            <script>$('#projectId').on('change', function () {
+                                const projectId = $(this).val();
+            
+                                if (projectId) {
+                                    // Load requirements
+                                    loadRequirements(projectId);
+                                    // Load assignees
+                                    //loadAssignees(projectId);
+                                } else {
+                                    // Clear both dropdowns if no project selected
+                                    $('#requirementId').html('<option value="">Select Requirement</option>');
+                                    //$('#assigneeId').html('<option value="">Select Assignee</option>');
+                                }
+                            });</script>-->
         </body>
     </html>

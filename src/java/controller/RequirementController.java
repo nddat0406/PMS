@@ -88,6 +88,7 @@ public class RequirementController extends HttpServlet {
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
                     // Convert milestones list to JSON
+                    //su dung noi chuoi de tao JSON
                     String json = "[";
                     for (int i = 0; i < milestones.size(); i++) {
                         Milestone m = milestones.get(i);

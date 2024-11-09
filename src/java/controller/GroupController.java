@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
 import model.Group;
 import service.GroupService;
 
@@ -41,7 +42,7 @@ public class GroupController extends HttpServlet {
         } catch (NumberFormatException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Domain ID");
-        } catch (Exception e) {
+        } catch ( SQLException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred");
         }
@@ -51,37 +52,48 @@ public class GroupController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        try {
-            switch (action) {
-                case "update" ->
-                    handleUpdate(request, response);
-                case "add" ->
-                    handleAdd(request, response);
-                default ->
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred");
+        switch (action) {
+            case "update" ->
+                handleUpdate(request, response);
+            case "add" ->
+                handleAdd(request, response);
+            default ->
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
         }
+
     }
 
     private void paginateList(HttpServletRequest request, HttpServletResponse response)
+            //<<<<<<< HEAD
             throws ServletException, IOException {
-        int pageNumber = getPageNumber(request);
-        int pageSize = 12;
-        Integer filterStatus = getFilterStatus(request);
-        List<Group> listD;
-        if (filterStatus != null) {
-            listD = Domain.filterDepartments(pageNumber, pageSize, filterStatus);
-        } else {
-            listD = Domain.getAllGroups(pageNumber, pageSize);
+        try {
+            int pageNumber = getPageNumber(request);
+            int pageSize = 12;
+            Integer filterStatus = getFilterStatus(request);
+            List<Group> listD;
+            if (filterStatus != null) {
+                listD = Domain.filterDepartments(pageNumber, pageSize, filterStatus);
+            } else {
+                listD = Domain.getAllGroups(pageNumber, pageSize);
+            }
+            request.setAttribute("listD", listD);
+            request.setAttribute("currentPage", pageNumber);
+            request.setAttribute("filterStatus", filterStatus);
+            request.getRequestDispatcher("/WEB-INF/view/admin/Domain.jsp").forward(request, response);
+        } catch (SQLException ex) {
+            throw new ServletException(ex);
+//=======
+//            throws ServletException, IOException, SQLException {
+//        int pageNumber = getPageNumber(request);
+//        int pageSize = 12;
+//        Integer filterStatus = getFilterStatus(request);
+//        List<Group> listD;
+//        if (filterStatus != null) {
+//            listD = Domain.filterDepartments(pageNumber, pageSize, filterStatus);
+//        } else {
+//            listD = Domain.getAllGroups(pageNumber, pageSize);
+//>>>>>>> c18b28d7bfc293806ffd6ef0a60db0354a8691c9
         }
-
-        request.setAttribute("listD", listD);
-        request.setAttribute("currentPage", pageNumber);
-        request.setAttribute("filterStatus", filterStatus);
-        request.getRequestDispatcher("/WEB-INF/view/admin/Domain.jsp").forward(request, response);
     }
 
     private void paginateListWithFilter(HttpServletRequest request, HttpServletResponse response)
@@ -89,7 +101,7 @@ public class GroupController extends HttpServlet {
         int pageNumber = getPageNumber(request);
         int pageSize = 12;
         String filterStatusParam = request.getParameter("status");
-        Integer filterStatus = (filterStatusParam != null && !filterStatusParam.isEmpty()) ? Integer.parseInt(filterStatusParam) : null;
+        Integer filterStatus = (filterStatusParam != null && !filterStatusParam.isEmpty()) ? Integer.valueOf(filterStatusParam) : null;
 
         List<Group> filteredList = Domain.filterGroups(pageNumber, pageSize, filterStatus);
 
@@ -116,7 +128,7 @@ public class GroupController extends HttpServlet {
     }
 
     private void handleSearch(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException {
         String keyword = request.getParameter("keyword");
         if (keyword == null || keyword.trim().isEmpty()) {
             // Sử dụng logic phân trang mặc định

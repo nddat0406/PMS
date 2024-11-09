@@ -4,12 +4,14 @@
  */
 package dal;
 
+import com.mysql.cj.protocol.Resultset;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Allocation;
+import model.Criteria;
 import model.Group;
 import model.Milestone;
 import model.Project;
@@ -282,32 +284,6 @@ public class ProjectDAO extends BaseDAO {
         return 0;
     }
 
-    public boolean isCodeExists(String code) throws SQLException {
-        String query = "SELECT COUNT(*) FROM project WHERE code = ?";
-        try (PreparedStatement statement = getConnection().prepareStatement(query)) {
-            statement.setString(1, code);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getInt(1) > 0;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean isNameExists(String name) throws SQLException {
-        String query = "SELECT COUNT(*) FROM project WHERE name = ?";
-        try (PreparedStatement statement = getConnection().prepareStatement(query)) {
-            statement.setString(1, name);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getInt(1) > 0;
-                }
-            }
-        }
-        return false;
-    }
-
     public List<ProjectPhase> getPhasesByDomainId(int domainId) throws SQLException {
         List<ProjectPhase> phases = new ArrayList<>();
         String sql = "SELECT id, name, priority FROM projectphase WHERE domainId = ?";
@@ -339,6 +315,68 @@ public class ProjectDAO extends BaseDAO {
             statement.setInt(8, milestone.getPhase().getId());
             statement.executeUpdate();
         }
+    }
+
+    public void addCriteria(Criteria criteria) throws SQLException {
+        String sql = "INSERT INTO projectphase_criteria (name, weight, status, phaseId, description, domainId) VALUES (?, ?, ?, ?, ?, ?)";
+        try {
+            PreparedStatement statement = getConnection().prepareStatement(sql);
+            statement.setString(1, criteria.getName());
+            statement.setInt(2, criteria.getWeight());
+            statement.setInt(3, criteria.getStatusInt()); // convert boolean status to int
+            statement.setInt(4, criteria.getPhase().getId()); // ensure phase object is set
+            statement.setString(5, criteria.getDescription());
+            statement.setInt(6, criteria.getDomain().getId()); // assuming Group (domain) has an ID
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Criteria> getCriteriaByPhaseId(int phaseId) throws SQLException {
+        List<Criteria> criteriaList = new ArrayList<>();
+        String sql = "SELECT id, name, weight, description, status FROM projectphase_criteria WHERE phaseId = ?";
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setInt(1, phaseId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Criteria criteria = new Criteria();
+                    criteria.setId(resultSet.getInt("id"));
+                    criteria.setName(resultSet.getString("name"));
+                    criteria.setWeight(resultSet.getInt("weight"));
+                    criteria.setDescription(resultSet.getString("description"));
+                    criteria.setStatus(resultSet.getBoolean("status"));
+                    criteriaList.add(criteria);
+                }
+            }
+        }
+        return criteriaList;
+    }
+
+    public boolean isCodeExists(String code) throws SQLException {
+        String query = "SELECT COUNT(*) FROM project WHERE code = ?";
+        try (PreparedStatement statement = getConnection().prepareStatement(query)) {
+            statement.setString(1, code);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isNameExists(String name) throws SQLException {
+        String query = "SELECT COUNT(*) FROM project WHERE name = ?";
+        try (PreparedStatement statement = getConnection().prepareStatement(query)) {
+            statement.setString(1, name);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
 
     public String getRoleByUserAndProject(int userId, int projectId) throws SQLException {
@@ -551,5 +589,22 @@ public class ProjectDAO extends BaseDAO {
         }
         return settingList;
     }
+
+    public List<User> getProjectMembers(Integer pID) throws SQLException {
+        String sql = "SELECT distinct u.id, u.fullname FROM pms.allocation a join pms.user u on u.id=a.userId where a.projectId=? and a.status=1";
+        try(PreparedStatement pre = getConnection().prepareStatement(sql)){
+            pre.setInt(1, pID);
+            ResultSet rs = pre.executeQuery();
+            List<User> list =new ArrayList<>();
+            while(rs.next()){
+                User temp = new User();
+                temp.setId(rs.getInt(1));
+                temp.setFullname(rs.getString(2));
+                list.add(temp);
+            }
+            return list;
+        }
+    }
+    
 
 }

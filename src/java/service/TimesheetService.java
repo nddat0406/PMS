@@ -86,7 +86,7 @@ public class TimesheetService {
     }
 
     public boolean updateTimesheet(Timesheet timesheet) {
-        validateTimesheet(timesheet);
+        validateUpdate(timesheet);
         return timesheetDAO.updateTimesheet(timesheet);
     }
 
@@ -114,17 +114,43 @@ public class TimesheetService {
         validateTimesheet(timesheet);
         return timesheetDAO.insertTimesheet(timesheet);
     }
+    private void validateUpdate(Timesheet timesheet) throws IllegalArgumentException {
+        // Kiểm tra các trường bắt buộc
+        if (timesheet.getProject() == null || timesheet.getProject().getId() <= 0) {
+            throw new IllegalArgumentException("Project is required.");
+        }
+        if (timesheet.getReporter() == null || timesheet.getReporter().getId() <= 0) {
+            throw new IllegalArgumentException("Reporter is required.");
+        }
+        if (timesheet.getReviewer() == null || timesheet.getReviewer().getId() <= 0) {
+            throw new IllegalArgumentException("Reviewer is required.");
+        }
+        if (timesheet.getRequirement() == null || timesheet.getRequirement().getId() <= 0) {
+            throw new IllegalArgumentException("Requirement is required.");
+        }
 
+        // Lấy ngày hiện tại không có thành phần thời gian
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        cal.set(java.util.Calendar.MINUTE, 0);
+        cal.set(java.util.Calendar.SECOND, 0);
+        cal.set(java.util.Calendar.MILLISECOND, 0);
+        java.util.Date currentDate = cal.getTime();
+
+        // Kiểm tra Time Created
+        if (timesheet.getTimeCreated() == null) {
+            throw new IllegalArgumentException("Time Created is required.");
+        }
+        if (timesheet.getTimeCompleted() != null && timesheet.getTimeCompleted().before(timesheet.getTimeCreated())) {
+            throw new IllegalArgumentException("Time Completed must be after Time Created.");
+        }
+
+        int status = timesheet.getStatus();
+        if (status < 0 || status > 3) {
+            throw new IllegalArgumentException("Invalid status value.");
+        }
+    }
     private void validateTimesheet(Timesheet timesheet) throws IllegalArgumentException {
-        // Kiểm tra chung nếu bất kỳ trường nào không có giá trị
-//        if (timesheet.getReporter() == null || timesheet.getReporter().getId() <= 0
-//                || timesheet.getReviewer() == null || timesheet.getReviewer().getId() <= 0
-//                || timesheet.getProject() == null || timesheet.getProject().getId() <= 0
-//                || timesheet.getRequirement() == null || timesheet.getRequirement().getId() <= 0
-//                || timesheet.getTimeCreated() == null) {
-//
-//            throw new IllegalArgumentException("Please fill out all required information.");
-//        }
         // Kiểm tra các trường bắt buộc
         if (timesheet.getProject() == null || timesheet.getProject().getId() <= 0) {
             throw new IllegalArgumentException("Project is required.");

@@ -1,7 +1,7 @@
 package controller;
 
 import com.google.gson.Gson;
-import dal.DefectDAO;
+import com.google.gson.JsonObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,29 +15,28 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Defect;
-import model.Milestone;
 import model.Project;
 import model.User;
 import model.Requirement;
 import model.Setting;
+import service.DefectService;
 import service.ProjectService;
 import service.RequirementService;
 import service.SettingService;
 import service.UserService;
 
 @WebServlet(name = "DefectController",
-        urlPatterns = {"/defectlist", "/defectdetail", "/getProject"})
+        urlPatterns = {"/defectlist", "/defectdetail", "/getProject", "/defect"})
 public class DefectController extends HttpServlet {
 
-    private DefectDAO defectDAO;
+    private DefectService defectService;
     private RequirementService requirementService;
     private ProjectService projectService;
     private SettingService settingService;
-    private UserService userService;
 
     @Override
     public void init() throws ServletException {
-        defectDAO = new DefectDAO();
+        defectService = new DefectService();
         requirementService = new RequirementService();
         projectService = new ProjectService();
         settingService = new SettingService();
@@ -76,9 +75,8 @@ public class DefectController extends HttpServlet {
                     handleDelete(request, response);
                 case "changeStatus" ->
                     handleStatusChange(request, response);
-               
-                case "getAssignees" ->
-                    handleGetAssignees(request, response);
+                case "getProjectAdd" ->
+                    handleGetProjectAdd(request, response);
                 default ->
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
@@ -103,16 +101,16 @@ public class DefectController extends HttpServlet {
         // Admins get all defects
 
         // Nếu người dùng là member, chỉ lấy defect của họ
-        defects = defectDAO.getDefectByAssignee(loginUser.getId());
+        defects = defectService.getDefectByAssignee(loginUser.getId());
         request.setAttribute("project", projectService.getAllProject(loginUser.getId()));
 
         // Nếu là admin, lấy tất cả defect
-        defects = defectDAO.getAll();
+        defects = defectService.getAll();
         request.setAttribute("project", projectService.getAllProject());
 
 //        } else {
 //            // Members get defects only for the projects they participate in
-//            defects = defectDAO.getDefectsByUserProjects(loginUser.getId());
+//            defects = defectService.getDefectsByUserProjects(loginUser.getId());
 //            request.setAttribute("project", projectService.getAllProject(loginUser.getId()));
 //        }
         // Get data for filters
@@ -127,7 +125,7 @@ public class DefectController extends HttpServlet {
     private void showDefectDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
         int id = Integer.parseInt(request.getParameter("id"));
-        Defect defect = defectDAO.getById(id);
+        Defect defect = defectService.getById(id);
 
         if (defect != null) {
             // Load related data
@@ -153,8 +151,8 @@ public class DefectController extends HttpServlet {
         Integer serverityId = parseIntParameter(request.getParameter("serverityId"));
         Integer status = parseIntParameter(request.getParameter("status"));
 
-        List<Defect> defects = defectDAO.getAll();
-        defects = defectDAO.searchFilter(defects, requirementId, projectId,
+        List<Defect> defects = defectService.getAll();
+        defects = defectService.searchFilter(defects, requirementId, projectId,
                 serverityId, status, keyword);
 
         request.setAttribute("defects", defects);
@@ -177,7 +175,7 @@ public class DefectController extends HttpServlet {
         try {
             // Validate defect data
             validateDefect(defect);
-            defectDAO.insert(defect);
+            defectService.insert(defect);
             response.sendRedirect(request.getContextPath() + "/defectlist");
         } catch (Exception e) {
             request.setAttribute("error", e.getMessage());
@@ -191,14 +189,14 @@ public class DefectController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         HttpSession session = request.getSession();
         User loginUser = (User) session.getAttribute("loginedUser");
-        Defect defect = defectDAO.getById(id);
+        Defect defect = defectService.getById(id);
 
         if (defect != null) {
             populateDefectFromRequest(defect, request);
 
             try {
                 validateDefect(defect);
-                defectDAO.update(defect);
+                defectService.update(defect);
                 response.sendRedirect(request.getContextPath() + "/defectlist");
             } catch (Exception e) {
                 request.setAttribute("error", e.getMessage());
@@ -215,7 +213,7 @@ public class DefectController extends HttpServlet {
     private void handleDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
         int id = Integer.parseInt(request.getParameter("id"));
-        defectDAO.delete(id);
+        defectService.delete(id);
         response.sendRedirect(request.getContextPath() + "/defectlist");
     }
 
@@ -223,7 +221,7 @@ public class DefectController extends HttpServlet {
             throws ServletException, IOException, SQLException {
         int id = Integer.parseInt(request.getParameter("id"));
         int status = Integer.parseInt(request.getParameter("status"));
-        defectDAO.updateStatus(id, status);
+        defectService.updateStatus(id, status);
         response.sendRedirect(request.getContextPath() + "/defectlist");
     }
 
@@ -256,7 +254,7 @@ public class DefectController extends HttpServlet {
     private void handleGetRequirement(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-          
+
             int projectId = Integer.parseInt(request.getParameter("projectId"));
 
             Requirement requirement = requirementService.getRequirementById(projectId);
@@ -268,39 +266,7 @@ public class DefectController extends HttpServlet {
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(json);
         } catch (Exception e) {
-            Logger.getLogger(DefectController.class.getName()).log(Level.SEVERE, null, e);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("Error loading milestones");
-        }
-    }
-
-    private void handleGetAssignees(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, SQLException {
-        try {
-            int projectId = Integer.parseInt(request.getParameter("projectId"));
-            List<User> assignee = userService.getUsersByProjectId(projectId);
-
-            // Create JSON response manually
-            StringBuilder json = new StringBuilder("[");
-            for (int i = 0; i < assignee.size(); i++) {
-                User user = assignee.get(i);
-                if (i > 0) {
-                    json.append(",");
-                }
-                json.append("{")
-                        .append("\"id\":").append(user.getId()).append(",")
-                        .append("\"fullname\":\"").append(user.getFullname().replace("\"", "\\\"")).append("\"")
-                        .append("}");
-            }
-            json.append("]");
-
-            // Send response
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(json.toString());
-
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid project ID");
+            throw new ServletException(e);
         }
     }
 
@@ -327,6 +293,18 @@ public class DefectController extends HttpServlet {
             return param != null && !param.isEmpty() ? Integer.valueOf(param) : null;
         } catch (NumberFormatException e) {
             return null;
+        }
+    }
+
+    private void handleGetProjectAdd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            Integer pID = Integer.parseInt(request.getParameter("pId"));
+            JsonObject jsonResponse = defectService.getResponseJson(pID);
+            Gson gson = new Gson();
+            response.setContentType("application/json");
+            response.getWriter().write(gson.toJson(jsonResponse));
+        } catch (SQLException ex) {
+            throw new ServletException(ex);
         }
     }
 }

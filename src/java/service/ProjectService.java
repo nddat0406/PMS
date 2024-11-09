@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import model.Allocation;
+import model.Criteria;
 import model.Milestone;
 import model.Project;
 import model.ProjectPhase;
@@ -33,7 +34,7 @@ public class ProjectService {
     private ProjectDAO pdao = new ProjectDAO();
     private BaseService baseService = new BaseService();
     private AllocationDAO adao = new AllocationDAO();
-    private PhaseDAO hdao=new PhaseDAO();
+    private PhaseDAO hdao = new PhaseDAO();
 
     public List<Allocation> getByUser(int id, int role) throws SQLException {
         try {
@@ -154,20 +155,20 @@ public class ProjectService {
                     || project.getCode() == null || project.getCode().trim().isEmpty()
                     || project.getStartDate() == null
                     || project.getDomain() == null || project.getDomain().getId() <= 0) {
-                return "Please fill in all the required fields."; 
+                return "Please fill in all the required fields.";
             }
             if (project.getCode() != null && project.getCode().length() > 10) {
-                return "Project code must not exceed 10 characters."; 
+                return "Project code must not exceed 10 characters.";
             }
             if (pdao.isCodeExists(project.getCode()) && pdao.isNameExists(project.getName())) {
-                return " code and name already exists";  
+                return " code and name already exists";
             }
             if (pdao.isCodeExists(project.getCode())) {
-                return "code already exists";  
+                return "code already exists";
             }
 
             if (pdao.isNameExists(project.getName())) {
-                return "name already exists";  
+                return "name already exists";
             }
 // Thiết lập startDate cho các milestones
             Date startDate = project.getStartDate();
@@ -180,9 +181,8 @@ public class ProjectService {
             cal.set(java.util.Calendar.MILLISECOND, 0);
             java.util.Date currentDate = cal.getTime();
 
-
             if (startDate == null || startDate.before(currentDate)) {
-                return "Start date must be today or in the future.";  
+                return "Start date must be today or in the future.";
             }
 
             // Gọi phương thức thêm project và lấy projectId
@@ -199,7 +199,7 @@ public class ProjectService {
 
                 // Kiểm tra nếu không có phases nào được trả về
                 if (phases.isEmpty()) {
-                    return "No phases found for domainId: " + project.getDomain().getId();  
+                    return "No phases found for domainId: " + project.getDomain().getId();
                 }
 
                 // Lặp qua các giai đoạn và tạo milestones
@@ -219,29 +219,37 @@ public class ProjectService {
                     milestone.setPriority(phase.getPriority());
                     milestone.setDetails("Generated milestone for phase: " + phase.getName());
                     milestone.setEndDate(new java.sql.Date(endDate.getTime()));
-                    milestone.setStatus(0); 
+                    milestone.setStatus(0);
                     milestone.setDeliver("Default deliverable");
                     milestone.setProject(project); // Đặt đối tượng Project vào milestone
                     milestone.setPhase(phase); // Đặt đối tượng Phase vào milestone
 
                     try {
                         pdao.addMilestone(milestone);
-                        System.out.println("Milestone added for phase: " + phase.getName());
+                        List<Criteria> criteriaList = pdao.getCriteriaByPhaseId(phase.getId());
+                        for (Criteria criteria : criteriaList) {
+                            criteria.setPhase(phase);
+                            criteria.setDomain(project.getDomain()); 
+                            criteria.setMilestone(milestone); 
+                            pdao.addCriteria(criteria);
+                            System.out.println("Criteria added for phase: " + phase.getName() + " and milestone: " + milestone.getName());
+                        }
+
                     } catch (SQLException e) {
                         System.err.println("Error while adding milestone for phase: " + phase.getName());
                         e.printStackTrace();
-                        return "Error while adding milestone for phase: " + phase.getName();  
+                        return "Error while adding milestone for phase: " + phase.getName();
                     }
 
                     startDate = endDate;
                 }
                 return null;
             } else {
-                return "Failed to retrieve a valid projectId.";  
+                return "Failed to retrieve a valid projectId.";
             }
         } catch (SQLException e) {
             System.err.println("Error while adding project or retrieving phases: " + e.getMessage());
-            return "An error occurred while adding the project: " + e.getMessage();  
+            return "An error occurred while adding the project: " + e.getMessage();
         }
     }
 

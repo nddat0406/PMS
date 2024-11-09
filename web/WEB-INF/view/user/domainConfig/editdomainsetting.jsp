@@ -51,12 +51,12 @@
                                                 <a class="nav-link active" id="Overview-tab" href="${baseUrl}/domain/domainsetting?action=domainSetting" role="tab">Domain Settings</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
-                                                <a class="nav-link" id="Evaluation-tab" href="${baseUrl}/eval" role="tab">Evaluation Criteria</a>
+                                                <a class="nav-link" id="Evaluation-tab" href="${baseUrl}/domain/domaineval" role="tab">Evaluation Criteria</a>
                                             </li>
                                             <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link" id="DomainUsers-tab" href="${baseUrl}/domain/domainuser" role="tab">Domain Users</a>
                                             </li>
-                                           <li class="nav-item" role="presentation" style="width: 150px">
+                                            <li class="nav-item" role="presentation" style="width: 150px">
                                                 <a class="nav-link" id="ProjectPhase-tab" href="${pageContext.request.contextPath}/phaselist" role="tab">Project Phase</a>
                                             </li>
                                         </ul>
@@ -76,13 +76,13 @@
                                                 <input type="hidden" name="action" value="editdomainsetting" />
                                                 <input type="hidden" name="id" value="${setting.id}" />
                                                 <div class="mb-3">
-                                                    <label for="name" class="form-label">Domain Name</label>
+                                                    <label for="name" class="form-label">Setting Name</label>
                                                     <input value="${setting.name}" type="text" class="form-control" id="name" name="name" required minlength="3">
                                                     <div class="invalid-feedback">Name must be at least 3 characters long.</div>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="type" class="form-label">Type</label>
-                                                    <input value="${setting.type}" type="number" class="form-control" id="type" name="type" required min="1">
+                                                    <input value="${setting.type}" type="number" class="form-control" id="type" name="type" readonly value="${setting.type}" >
                                                     <div class="invalid-feedback">Type must be a positive number.</div>
                                                 </div>
                                                 <div class="mb-3">

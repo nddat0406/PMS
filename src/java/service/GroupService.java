@@ -5,9 +5,17 @@
 package service;
 
 import dal.GroupDAO;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import model.Group;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class GroupService {
 
@@ -18,7 +26,7 @@ public class GroupService {
         this.gdao = new GroupDAO();
     }
 
-    public List<Group> getAllGroups(int pageNumber, int pageSize) {
+    public List<Group> getAllGroups(int pageNumber, int pageSize) throws SQLException {
         if (pageNumber <= 0 || pageSize <= 0) {
             throw new IllegalArgumentException("Page number and page size must be greater than 0.");
         }
@@ -51,7 +59,54 @@ public class GroupService {
         return gdao.Update(domainID, code, name, details, status);
     }
 
+    public Workbook exportDomainUser(List<Group> domainUsers) {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Domain Users");
 
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"ID", "Username", "Email", "Phone", "Domain", "Status"};
+
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerCellStyle.setFont(headerFont);
+
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerCellStyle);
+        }
+        int rowNum = 1;
+        for (Group user : domainUsers) {
+            Row row = sheet.createRow(rowNum++);
+
+            row.createCell(0).setCellValue(user.getId());
+            if (user.getUser() != null) {
+                row.createCell(1).setCellValue(user.getUser().getFullname());
+                row.createCell(2).setCellValue(user.getUser().getEmail());
+                row.createCell(3).setCellValue(user.getUser().getMobile());
+            } else {
+                row.createCell(1).setCellValue("Deactivated User");
+                row.createCell(2).setCellValue("Deactivated User");
+                row.createCell(3).setCellValue("Deactivated User");
+            }
+            row.createCell(4).setCellValue(user.getName());
+
+            String status = "Unknown";
+            if (user.getStatus() == 1) {
+                status = "Active";
+            } else if (user.getStatus() == 0) {
+                status = "Inactive";
+            }
+            row.createCell(5).setCellValue(status);
+        }
+
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        return workbook;
+    }
 
     public Group getGroupDetail(int groupID) {
         if (groupID <= 0) {
@@ -118,8 +173,6 @@ public class GroupService {
         return null;
     }
 
-
-
     // Đọc danh sách phòng ban với phân trang
     public List<Group> getDepartmentsByPage(int pageNumber, int pageSize) {
         return gdao.readDepartments(pageNumber, pageSize);
@@ -128,7 +181,7 @@ public class GroupService {
     // Thêm phòng ban mới
     public boolean addDepartment(String code, String name, String details, Integer parent, int status) {
         validateGroup(code, name, details, status);
-                if (gdao.isCodeExists(code)) {
+        if (gdao.isCodeExists(code)) {
             throw new IllegalArgumentException("Code already exists.");
         }
         if (gdao.isNameExists(name)) {
@@ -137,8 +190,6 @@ public class GroupService {
         int rowsAffected = gdao.Add(code, name, details, parent, status);
         return rowsAffected > 0;
     }
-      
-    
 
 // Cập nhật thông tin phòng ban
     public boolean updateDepartment(int departmentID, String code, String name, String details, Integer parent, int status) {
@@ -153,11 +204,11 @@ public class GroupService {
 
     // Lọc danh sách phòng ban theo tiêu chí
     public List<Group> filterDepartments(int pageNumber, int pageSize, Integer status) {
-        return gdao.filter(pageNumber, pageSize,status);
+        return gdao.filter(pageNumber, pageSize, status);
     }
 
     // Tìm kiếm phòng ban theo từ khóa
-    public List<Group> searchDepartments(String keyword) {
+    public List<Group> searchDepartments(String keyword) throws SQLException {
         return gdao.searchDepartments(keyword);
     }
 
@@ -167,9 +218,6 @@ public class GroupService {
         return isCodeDuplicate || isNameDuplicate; // Trả về true nếu code hoặc name bị trùng
     }
 
-    
-    
-    
     public List<Group> getDomainUsersWithPagination(int page, int pageSize) {
         return gdao.getDomainUsersWithPagination(page, pageSize);
     }
@@ -177,18 +225,21 @@ public class GroupService {
     public int getDomainUserCount() {
         return gdao.getDomainUserCount();
     }
-     public List<Group> getDomainUser() {
-         return gdao.getDomainUser();
-     }
-     public List<Group> getDomainUserByDomainId(int domainId) {
+
+    public List<Group> getDomainUser() {
+        return gdao.getDomainUser();
+    }
+
+    public List<Group> getDomainUserByDomainId(int domainId) throws SQLException {
         return gdao.getDomainUserByDomainId(domainId);
     }
-     public void addDomainUser(Group user) throws SQLException {
-         gdao.addDomainUser(user);
-     }
+
+    public void addDomainUser(Group user) throws SQLException {
+        gdao.addDomainUser(user);
+    }
 
     public Group getDomainUserById(int id) throws SQLException {
-        
+
         return gdao.getDomainUserById(id);
     }
 
@@ -203,7 +254,8 @@ public class GroupService {
     public int getLatestId() throws SQLException {
         return gdao.getLatestId();
     }
-      public void updateDomainUser(Group user) throws SQLException {
-         gdao.updateDomainUser(user);
+
+    public void updateDomainUser(Group user) throws SQLException {
+        gdao.updateDomainUser(user);
     }
 }

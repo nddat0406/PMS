@@ -110,8 +110,8 @@
                                                                     <td>${setting.status == true ? "Active" : "Inactive"}</td>
                                                                     <td>
                                                                         <a href="${baseUrl}/domain/domainsetting?action=edit&id=${setting.id}" type="submit" class="btn btn-warning">Detail</a>
-                                                                        |
-                                                                        <a href="${baseUrl}/domain/domainsetting?action=delete&id=${setting.id}" type="submit" class="btn btn-warning">Delete</a>
+                                                                        
+                                                  
                                                                         |
                                                                         <a href="${baseUrl}/domain/domainsetting?action=deactive&id=${setting.id}" type="submit" class="btn btn-danger">Deactive</a>
                                                                         |
