@@ -18,7 +18,7 @@ public class GroupService {
         this.gdao = new GroupDAO();
     }
 
-    public List<Group> getAllGroups(int pageNumber, int pageSize) {
+    public List<Group> getAllGroups(int pageNumber, int pageSize) throws SQLException {
         if (pageNumber <= 0 || pageSize <= 0) {
             throw new IllegalArgumentException("Page number and page size must be greater than 0.");
         }
@@ -157,7 +157,7 @@ public class GroupService {
     }
 
     // Tìm kiếm phòng ban theo từ khóa
-    public List<Group> searchDepartments(String keyword) {
+    public List<Group> searchDepartments(String keyword) throws SQLException {
         return gdao.searchDepartments(keyword);
     }
 
