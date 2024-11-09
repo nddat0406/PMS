@@ -105,7 +105,7 @@ public class PhaseController extends HttpServlet {
         List<ProjectPhase> phases = phaseDAO.getProjectPhaseByDomainId(dID);
         request.setAttribute("phases", phases);
         request.getSession().setAttribute("alloList", phases);
-        request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/PhaseList.jsp").forward(request, response); 
+        request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/PhaseList.jsp").forward(request, response);
     }
 
     private void showPhaseDetail(HttpServletRequest request, HttpServletResponse response)
@@ -180,7 +180,19 @@ public class PhaseController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/phaselist");
     }
 
-    private void populatePhaseFromRequest(ProjectPhase phase, HttpServletRequest request) {
+    private void populatePhaseFromRequest(ProjectPhase phase, HttpServletRequest request) throws ServletException {
+        HttpSession session = request.getSession();
+        Integer dID;
+        String dIdRaw = request.getParameter("domainId");//lay parameter  domainId
+        if (dIdRaw == null) {
+            dID = (Integer) session.getAttribute("domainId");
+            if (dID == null) {
+                throw new ServletException("Some thing went wrong, cannot find the domain id");
+            }
+        } else {
+            dID = Integer.valueOf(dIdRaw);
+            session.setAttribute("domainId", dID);
+        }
         phase.setName(request.getParameter("name"));
         phase.setPriority(Integer.parseInt(request.getParameter("priority")));
         phase.setDetails(request.getParameter("details"));
@@ -194,7 +206,7 @@ public class PhaseController extends HttpServlet {
         phase.setCompleteRate(Integer.parseInt(request.getParameter("completeRate")));
 
         Group domain = new Group();
-        domain.setId(Integer.parseInt(request.getParameter("domainId")));
+        domain.setId(dID);
         phase.setDomain(domain);
     }
 

@@ -208,7 +208,7 @@
 
                                                                 <!-- Status Toggle Form -->
                                                                 <form action="${pageContext.request.contextPath}/phaselist" method="POST" style="display: inline;">
-                                                                    <input type="hidden" name="action" value="changeStatus">
+                                                                    <input type="hidden" name="action" value="changeStatus" >
                                                                     <input type="hidden" name="id" value="${phase.id}">
                                                                     <input type="hidden" name="status" value="${!phase.status}">
                                                                     <button type="submit" class="btn btn-sm ${phase.status ? 'btn-warning' : 'btn-success'}">
@@ -222,7 +222,6 @@
                                                                 </button>
                                                             </td>
                                                         </c:if>
-
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>
@@ -253,7 +252,7 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="name" class="form-label">Phase Name *</label>
-                                        <input type="text" class="form-control" id="name" name="name" required>
+                                        <input type="text" class="form-control" id="name" name="name" required maxlength="20">
                                     </div>
                                     <div class="col-md-6">
                                         <label for="priority" class="form-label">Priority *</label>

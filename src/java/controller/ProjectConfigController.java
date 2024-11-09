@@ -349,7 +349,7 @@ public class ProjectConfigController extends HttpServlet {
             if (pService.havePermission(pID, myProjects)) {
                 session.setAttribute("selectedProject", pID);
             }
-
+            session.setAttribute("milestoneList", milestones);
             // Use the existing pagination method
             pagination(request, response, milestones, linkMile);
         } catch (SQLException ex) {

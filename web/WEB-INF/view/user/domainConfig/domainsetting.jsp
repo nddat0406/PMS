@@ -64,7 +64,7 @@
                                     <div class="card-body">
                                         <div class="tab-content p-0" id="myTabContent">
                                             <form action="${baseUrl}/domain/domainsetting" method="get" class="mb-3">
-                                                <input type="hidden" name="action" value="domainUser" />
+                                                <input type="hidden" name="action" value="domainsetting" />
                                                 <div class="row g-3">
                                                     <div class="col-md-4">
                                                         <input type="text" name="search" class="form-control" 

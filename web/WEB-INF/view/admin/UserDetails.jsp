@@ -40,7 +40,7 @@
 
                     <!-- Sidbar menu -->
                 <jsp:include page="../common/sidebar.jsp"></jsp:include>
-                
+
 
                     <div id="main-content">
                         <div class="container-fluid">
@@ -48,9 +48,9 @@
                             <div class="block-header py-lg-4 py-3">
                                 <div class="row g-3">
                                     <div class="col-md-6 col-sm-12">
-                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Add Clients</h2>
+                                        <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Update User</h2>
                                         <ul class="breadcrumb mb-0">
-                                            <li class="breadcrumb-item active">Add</li>
+                                            <li class="breadcrumb-item active">Update</li>
                                             <li class="breadcrumb-item"><a href="index.html">Lucid</a></li>
                                             <li class="breadcrumb-item">Clients</li>
                                         </ul>
@@ -107,22 +107,27 @@
                                             <label for="role">Role</label>
                                             <select class="form-control" id="role" name="role" required>
                                                 <option value="1" <c:if test="${requestScope.updateUser.role == 1}">selected</c:if>>Admin</option>
-                                                <option value="2" <c:if test="${requestScope.updateUser.role == 2}">selected</c:if>>User</option>
+                                                <option value="2" <c:if test="${requestScope.updateUser.role == 2}">selected</c:if>>Member</option>
+                                                <option value="3" <c:if test="${requestScope.updateUser.role == 3}">selected</c:if>>QA</option>
+                                                <option value="4" <c:if test="${requestScope.updateUser.role == 4}">selected</c:if>>PM</option>
+                                                <option value="5" <c:if test="${requestScope.updateUser.role == 5}">selected</c:if>>Dept Manager</option>
+                                                <option value="6" <c:if test="${requestScope.updateUser.role == 6}">selected</c:if>>PMO</option>
                                                 </select>
                                             </div>
 
-<!--                                        
-
+                                            <!--                                        
+                                            
+                                            
                                             <!-- Department (select dropdown) -->
+                                      
                                             <div class="col-md-4 col-sm-12">
                                                 <label for="departmentId">Department</label>
                                                 <select class="form-control" name="departmentId">
-                                                <c:forEach var="dept" items="${department}">
+                                                    <option value="">-- Select Department --</option>
+                                                    <!-- Lặp qua tất cả các phòng ban -->
+                                                <c:forEach var="dept" items="${departments}">
                                                     <option value="${dept.id}" 
-                                                            <c:if test="${dept.id == updateUser.department.id}">
-                                                                selected
-                                                            </c:if>
-                                                            >
+                                                            <c:if test="${dept.id == updateUser.department.id}">selected</c:if>>
                                                         ${dept.name}
                                                     </option>
                                                 </c:forEach>

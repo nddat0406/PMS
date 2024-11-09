@@ -48,11 +48,9 @@ import service.UserService;
 @MultipartConfig
 public class DomainConfigController extends HttpServlet {
 
-    private String linkEval = "/WEB-INF/view/user/domainConfig/domaineval.jsp";
-    private String linkUser = "/WEB-INF/view/user/domainConfig/domainuser.jsp";
-    private String linkSetting = "/WEB-INF/view/user/domainConfig/domainsetting.jsp";
 
-    private BaseService baseService = new BaseService();
+
+  
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -159,8 +157,11 @@ public class DomainConfigController extends HttpServlet {
                 searchName = searchName != null ? searchName.trim() : null;
                 type = type != null ? type.trim() : null;
                 filterStatus = filterStatus != null ? filterStatus.trim() : null;
+               
+
                 List<Setting> domainSettings;
                 domainSettings = se.getDomainSettingByDomainId(dID);
+                domainSettings=se.filterSettings(filterStatus, filterStatus, type);
 
                 session.setAttribute("domainId", dID);
                 request.setAttribute("searchName", searchName);
@@ -635,12 +636,14 @@ public class DomainConfigController extends HttpServlet {
     }
 
     private void postEvalUpdate(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
         try {
+             int dID = (int) session.getAttribute("domainId");
             int id = Integer.parseInt(request.getParameter("id"));
             CriteriaService crService = new CriteriaService();
             Criteria criteria = crService.getDomainEvalById(id);
             ProjectService projectService = new ProjectService();
-            List<Project> projects = projectService.getAllProjectPharse();
+            List<ProjectPhase> projects = projectService.getAllProjectPharseByDomainId(dID);
             request.setAttribute("projects", projects);
             request.setAttribute("domainEval", criteria);
             request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/editdomaineval.jsp").forward(request, response);

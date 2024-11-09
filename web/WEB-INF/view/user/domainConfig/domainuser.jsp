@@ -98,7 +98,7 @@
                                                             <th>Username</th>
                                                             <th>Email</th>
                                                             <th>Phone</th>
-                                                            <th>Domain</th>
+                                                            
                                                             <th>Status</th>
                                                             <th>Action</th>
                                                         </tr>
@@ -110,7 +110,7 @@
                                                                 <td>${user.user.fullname}</td>
                                                                 <td>${user.user.email}</td>
                                                                 <td>${user.user.mobile}</td>
-                                                                <td>${user.parent.name}</td>
+
                                                                 <td>
                                                                     <c:choose>
                                                                         <c:when test="${user.status == 1}">Active</c:when>

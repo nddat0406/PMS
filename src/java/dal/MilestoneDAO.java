@@ -24,62 +24,67 @@ public class MilestoneDAO extends BaseDAO {
 
     public Milestone getMilestoneById(int id) throws SQLException {
         String str = "SELECT * FROM pms.milestone where id=?";
-        try (PreparedStatement pre = getConnection().prepareStatement(str)) {
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(str);
             pre.setInt(1, id);
-            try (ResultSet rs = pre.executeQuery()) {
-                if (rs.next()) {
-                    Milestone temp = new Milestone();
-                    temp.setId(rs.getInt("id"));
-                    temp.setName(rs.getString("name"));
-                    temp.setPriority(rs.getInt("priority"));
-                    temp.setDetails(rs.getString("details"));
-                    temp.setEndDate(rs.getDate("endDate"));
-                    temp.setStatus(rs.getInt("status"));
-                    temp.setDeliver(rs.getString("deliver"));
-                    temp.setPhase(phaseDAO.getPhaseById(rs.getInt("phaseId")));
-                    temp.setTotalEvalWeight(this.getTotalWeight(rs.getInt("id")));
-                    return temp;
-                }
-            }
+            ResultSet rs = pre.executeQuery();
+            rs.next();
+            Milestone temp = new Milestone();
+            temp.setId(rs.getInt("id"));
+            temp.setName(rs.getString("name"));
+            temp.setPriority(rs.getInt("priority"));
+            temp.setDetails(rs.getString("details"));
+            temp.setEndDate(rs.getDate("endDate"));
+            temp.setStatus(rs.getInt("status"));
+            temp.setDeliver(rs.getString("deliver"));
+            temp.setPhase(phaseDAO.getPhaseById(rs.getInt("phaseId")));
+            temp.setTotalEvalWeight(this.getTotalWeight(rs.getInt(1)));
+            return temp;
+        } catch (SQLException e) {
+            throw new SQLException(e);
         }
-        return null; // Return null if no milestone is found with the given id
     }
 
     public List<Milestone> getAllByProjectId(int id) throws SQLException {
         String str = "SELECT * FROM pms.milestone where projectId=?";
-        List<Milestone> list = new ArrayList<>();
-        try (PreparedStatement pre = getConnection().prepareStatement(str)) {
+        try {
+            List<Milestone> list = new ArrayList<>();
+            PreparedStatement pre = getConnection().prepareStatement(str);
             pre.setInt(1, id);
-            try (ResultSet rs = pre.executeQuery()) {
-                while (rs.next()) {
-                    Milestone temp = new Milestone();
-                    temp.setId(rs.getInt("id"));
-                    temp.setName(rs.getString("name"));
-                    temp.setPriority(rs.getInt("priority"));
-                    temp.setDetails(rs.getString("details"));
-                    temp.setEndDate(rs.getDate("endDate"));
-                    temp.setStatus(rs.getInt("status"));
-                    temp.setDeliver(rs.getString("deliver"));
-                    temp.setPhase(phaseDAO.getPhaseById(rs.getInt("phaseId")));
-                    temp.setTotalEvalWeight(this.getTotalWeight(rs.getInt("id")));
-                    list.add(temp);
-                }
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Milestone temp = new Milestone();
+                temp.setId(rs.getInt("id"));
+                temp.setName(rs.getString("name"));
+                temp.setPriority(rs.getInt("priority"));
+                temp.setDetails(rs.getString("details"));
+                temp.setEndDate(rs.getDate("endDate"));
+                temp.setStatus(rs.getInt("status"));
+                temp.setDeliver(rs.getString("deliver"));
+                temp.setPhase(phaseDAO.getPhaseById(rs.getInt("phaseId")));
+                temp.setTotalEvalWeight(this.getTotalWeight(rs.getInt(1)));
+                list.add(temp);
             }
+            return list;
+        } catch (SQLException e) {
+            throw new SQLException(e);
         }
-        return list;
     }
 
+
     public void updateMilestone(Milestone milestone) throws SQLException {
-        String query = "UPDATE pms.milestone SET name=?, priority=?, details=?, endDate=?, status=?, deliver=? WHERE id=?";
+        String query = "UPDATE pms.milestone SET name=?, priority=?, details=?, endDate=?, status=? WHERE id=?";
         try (PreparedStatement ps = getConnection().prepareStatement(query)) {
             ps.setString(1, milestone.getName());
             ps.setInt(2, milestone.getPriority());
             ps.setString(3, milestone.getDetails());
             ps.setDate(4, new java.sql.Date(milestone.getEndDate().getTime()));
-            ps.setInt(5, milestone.getStatus());
+            ps.setObject(5, milestone.getStatus());
             ps.setString(6, milestone.getDeliver());
-            ps.setInt(7, milestone.getId());
+            ps.setInt(6, milestone.getId());
             ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException(e);
         }
     }
 

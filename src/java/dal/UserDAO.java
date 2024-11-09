@@ -326,30 +326,50 @@ public class UserDAO extends BaseDAO {
     }
 
     public List<User> getAll() throws SQLException {
+
         List<User> list = new ArrayList<>();
         String sql = "SELECT * FROM pms.user";
+
         try (PreparedStatement st = getConnection().prepareStatement(sql); ResultSet rs = st.executeQuery()) {
+
             while (rs.next()) {
                 User user = new User();
-                user.setId(rs.getInt(1));
-                user.setEmail(rs.getString(2));
-                user.setFullname(rs.getString(3));
-                user.setMobile(rs.getString(4));
-                user.setPassword(rs.getString(5));
-                user.setNote(rs.getString(6));
-                user.setRole(rs.getInt(7));
-                user.setStatus(rs.getInt(8));
-                user.setDepartment(new Group(gdao.getDeptNameById(rs.getInt(9))));
-                user.setImage(rs.getString(10));
-                user.setAddress(rs.getString(11));
-                user.setGender(rs.getBoolean(12));
-                user.setBirthdate(rs.getDate(13));
+                user.setId(rs.getInt("id"));
+                user.setEmail(rs.getString("email"));
+                user.setFullname(rs.getString("fullname"));
+                user.setMobile(rs.getString("mobile"));
+                user.setPassword(rs.getString("password"));
+                user.setNote(rs.getString("note"));
+                user.setRole(rs.getInt("role"));
+                user.setStatus(rs.getInt("status"));
+
+                // Department Handling with debug
+                int deptId = rs.getInt("departmentId");
+                String deptName = gdao.getDeptNameById(deptId);
+                if (deptName == null) {
+                    System.out.println("Warning: Department ID " + deptId + " not found.");
+
+                }
+                user.setDepartment(new Group(deptName));
+
+                user.setImage(rs.getString("image"));
+                user.setAddress(rs.getString("address"));
+                user.setGender(rs.getBoolean("gender"));
+                user.setBirthdate(rs.getDate("birthdate"));
+                user.setOtp(rs.getString("otp"));
+                user.setOtp_expiry(rs.getDate("otp_expiry"));
+
                 list.add(user);
             }
         } catch (SQLException e) {
-            throw new SQLException(e);
+            e.printStackTrace(); // Log full exception stack trace
+            throw new SQLException("Error retrieving all users from the database", e);
         }
         return list;
+    }
+
+    public static void main(String[] args) throws SQLException {
+        System.out.println(new UserDAO().getAll());
     }
 
     public List<User> findByName(String keyword) throws SQLException {
@@ -649,6 +669,55 @@ public class UserDAO extends BaseDAO {
                 return rs.next() ? rs.getInt(1) : 0;
             }
         }
+    }
+
+    public List<User> getUsersByProjectId(int projectId) {
+        String sql = "select u.* \n"
+                + //
+                "from \n"
+                + //
+                "\tallocation a,\n"
+                + //
+                "    project p,\n"
+                + //
+                "    user u\n"
+                + //
+                "where\n"
+                + //
+                "\tp.id = a.projectId \n"
+                + //
+                "    AND a.userId = u.id\n"
+                + //
+                "    AND p.id = ?";
+        List<User> list = new ArrayList<>();
+        try {
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            pre.setInt(1, projectId);
+            ResultSet rs = pre.executeQuery();
+            UserDAO userDao = new UserDAO();
+            while (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt(1));
+                user.setEmail(rs.getString(2));
+                user.setFullname(rs.getString(3));
+                user.setMobile(rs.getString(4));
+                user.setPassword(rs.getString(5));
+                user.setNote(rs.getString(6));
+                user.setRole(rs.getInt(7));
+                user.setStatus(rs.getInt(8));
+                user.setDepartment(new Group(gdao.getDeptNameById(rs.getInt(9))));
+                user.setImage(rs.getString(10));
+                user.setAddress(rs.getString(11));
+                user.setGender(rs.getBoolean(12));
+                user.setBirthdate(rs.getDate(13));
+
+                list.add(user);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error:  " + e);
+        }
+
+        return list;
     }
 
 }

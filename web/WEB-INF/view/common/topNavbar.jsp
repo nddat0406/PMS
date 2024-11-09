@@ -50,6 +50,7 @@
                         <li><a href="${pageContext.request.contextPath}/issue" class="icon-menu">Issues</a></li>
                         </c:if>
                         <c:if test="${loginedUser.role != '3' && loginedUser.role != '4' && loginedUser.role != '1'}">
+
                         <li><a href="${pageContext.request.contextPath}/user-issues" class="icon-menu">Issues</a></li>
                         </c:if>
                 </ul>

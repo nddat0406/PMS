@@ -122,6 +122,9 @@ public class UserService {
             throw new SQLException(ex);
         }
     }
+    public static void main(String[] args) throws SQLException {
+        System.out.println(new UserService().getAll());
+    }
 
     public List<User> findByName(String keyword) throws SQLException {
         try {
@@ -297,5 +300,10 @@ public class UserService {
                 .mapToInt(Allocation::getEffortRate)
                 .summaryStatistics();
         return stats.getAverage();
+    }
+        public List<User> getUsersByProjectId(int projectId) {
+
+        return udao.getUsersByProjectId(projectId);
+
     }
 }
