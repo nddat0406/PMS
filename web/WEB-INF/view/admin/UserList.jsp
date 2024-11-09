@@ -157,7 +157,6 @@
                                                                 <c:choose >
                                                                     <c:when test="${d.role == 1}">
                                                                         <span>Admin</span><br>
-
                                                                     </c:when>
                                                                     <c:when test="${d.role == 2}">
                                                                         <span>User</span><br>
@@ -174,9 +173,6 @@
                                                                     <c:when test="${d.role == 6}">
                                                                         <span>PMO</span><br>
                                                                     </c:when>
-
-
-
                                                                 </c:choose>
                                                             </div>
                                                         </td>
@@ -198,7 +194,6 @@
                                                             <button type="button" class="btn btn-sm btn-outline-secondary" 
                                                                     onclick="window.location.href = '${pageContext.request.contextPath}/admin/userdetail?id=${d.id}'">
                                                                 <i class="fa fa-edit"></i>
-
                                                             </button>
                                                             <form action="${pageContext.request.contextPath}/admin/userlist?action=changeStatus" method="POST">
                                                                 <input type="hidden" name="id" value="${d.id}">
@@ -207,9 +202,6 @@
                                                                     ${d.status == 1 ? 'Deactivate' : 'Activate'}
                                                                 </button>
                                                             </form>
-
-
-
                                                         </td>
                                                     </tr>
                                                 </c:forEach>

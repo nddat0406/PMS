@@ -266,13 +266,14 @@ public class GroupDAO extends BaseDAO {
         return list;
     }
 
-    public List<Group> getDomainUserByDomainId(int domainId) {
+    public List<Group> getDomainUserByDomainId(int domainId) throws SQLException {
         List<Group> list = new ArrayList<>();
-        String sql = "SELECT du.* \n"
-                + "FROM pms.group AS g,\n"
-                + "pms.domain_user AS du\n"
-                + "WHERE du.domainId = g.id\n"
-                + "AND g.type = 1 AND du.domainId = ?";
+        String sql = """
+                     SELECT du.* 
+                     FROM pms.group AS g,
+                     pms.domain_user AS du
+                     WHERE du.domainId = g.id
+                     AND g.type = 1 AND du.domainId = ?""";
 
         try (PreparedStatement pre = getConnection().prepareStatement(sql)) {
             pre.setInt(1, domainId);
@@ -286,9 +287,7 @@ public class GroupDAO extends BaseDAO {
                     list.add(domain);
                 }
             }
-        } catch (SQLException e) {
-            System.out.println("Error: " + e);
-        }
+        } 
 
         return list;
     }

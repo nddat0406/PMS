@@ -13,6 +13,9 @@
 
         <link rel="icon" href="favicon.ico" type="image/x-icon">
         <!-- VENDOR CSS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/sweetalert2.min.css">
+
         <!-- MAIN CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/main.css">
     </head>
@@ -72,20 +75,22 @@
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="tab-content p-0" id="myTabContent">
-                                            <form action="${baseUrl}/domain" method="post" enctype="multipart/form-data" class="mb-3">
-                                                <div class="d-flex justify-content-between mb-2">
-                                                    <button type="submit" name="action" value="export" class="btn btn-primary">
-                                                        <i class="fas fa-file-excel"></i> Export to Excel
-                                                    </button>
-                                                    <div>
-                                                        <input type="file" name="file" accept=".xlsx" class="form-control d-inline-block" style="width: auto;"/>
+                                            <div class="d-flex row justify-content-end mb-2">
+                                                <div class="col-lg-6">
+                                                    <form action="${baseUrl}/domain/" method="post" enctype="multipart/form-data" class="mb-3">
                                                         <button type="submit" name="action" value="import" class="btn btn-success">
                                                             <i class="fas fa-file-upload"></i> Import from Excel
                                                         </button>
+                                                        <input type="file" name="file" accept=".xlsx" class="form-control d-inline-block" style="width: auto;"/>
                                                         <a href="assets/domain_user.xlsx" download>Template</a>
-                                                    </div>
+                                                    </form>
                                                 </div>
-                                            </form>
+                                                <div class="col-lg-4">
+                                                    <button type="button" value="export" onclick="exportToExel()" class="btn btn-primary">
+                                                        <i class="fas fa-file-excel"></i> Export to Excel
+                                                    </button>
+                                                </div>
+                                            </div>
 
                                             <div class="tab-pane fade active show" id="Tab1">
                                                 <div class="col-md-12"  style="display: flex; justify-content: right">
@@ -98,7 +103,7 @@
                                                             <th>Username</th>
                                                             <th>Email</th>
                                                             <th>Phone</th>
-                                                            
+
                                                             <th>Status</th>
                                                             <th>Action</th>
                                                         </tr>
@@ -107,9 +112,9 @@
                                                         <c:forEach var="user" items="${domainUsers}">
                                                             <tr>
                                                                 <td>${user.id}</td>
-                                                                <td>${user.user.fullname}</td>
-                                                                <td>${user.user.email}</td>
-                                                                <td>${user.user.mobile}</td>
+                                                                <td>${user.user.fullname==null?'Deactivated User':user.user.fullname}</td>
+                                                                <td>${user.user.email==null?'Deactivated User':user.user.fullname}</td>
+                                                                <td>${user.user.mobile==null?'Deactivated User':user.user.fullname}</td>
 
                                                                 <td>
                                                                     <c:choose>
@@ -121,7 +126,7 @@
                                                                 <td>
                                                                     <a href="${baseUrl}/domain/domainuser?action=edit&id=${user.id}" type="submit" class="btn btn-warning">Detail</a>
                                                                     |
-                                                                   
+
                                                                     <a href="${baseUrl}/domain/domainuser?action=deactive&id=${user.id}" type="submit" class="btn btn-danger">Deactive</a>
                                                                     |
                                                                     <a href="${baseUrl}/domain/domainuser?action=active&id=${user.id}" type="submit" class="btn btn-danger">Active</a>
@@ -136,8 +141,6 @@
                                     </div>                            
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
@@ -155,22 +158,57 @@
 
         <!-- JS file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/libscripts.bundle.js"></script>
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/bundles/sweetalert2.bundle.js"></script>        
+
         <!-- Page JS file -->
         <script src="${pageContext.request.contextPath}/assets/bundles/mainscripts.bundle.js"></script>
-        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
         <script>
-            $(document).ready(function () {
-                $('#domainSettingsTable').DataTable({
-                    "paging": true,
-                    "lengthChange": true,
-                    "searching": true,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": false
-                });
-            });
+                                                        $(document).ready(function () {
+                                                            $('#domainSettingsTable').DataTable({
+                                                                "paging": true,
+                                                                "lengthChange": true,
+                                                                "searching": true,
+                                                                "ordering": true,
+                                                                "info": true,
+                                                                "autoWidth": false
+                                                            });
+                                                        });
+                                                        function exportToExel() {
+                                                            $.ajax({
+                                                                type: "POST",
+                                                                url: "${pageContext.request.contextPath}/domain", // URL của Servlet
+                                                                data: {action: "export"}, // Gửi action là "export"
+                                                                xhrFields: {
+                                                                    responseType: 'blob' // Đặt response là blob để nhận file
+                                                                },
+                                                                success: function (data, status, xhr) {
+                                                                    var filename = "domain_users.xlsx"; // Tên file tải về
+                                                                    // Tạo URL từ dữ liệu blob
+                                                                    var url = window.URL.createObjectURL(data);
+                                                                    var a = document.createElement('a');
+                                                                    a.href = url;
+                                                                    a.download = filename;
+                                                                    // Append link ẩn và tự động nhấn để tải file
+                                                                    document.body.appendChild(a);
+                                                                    a.click();
 
+                                                                    // Xóa URL khi không còn cần nữa
+                                                                    window.URL.revokeObjectURL(url);
+                                                                },
+                                                                error: function (xhr, status, error) {
+                                                                    Swal.fire({
+                                                                        position: 'top-end',
+                                                                        icon: 'error',
+                                                                        title: 'Error Exporting File!',
+                                                                        showConfirmButton: false,
+                                                                        timer: 1500
+                                                                    });
+                                                                }
+                                                            });
+                                                        }
+                                                        ;
         </script>
     </body>
 </html>

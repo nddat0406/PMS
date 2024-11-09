@@ -5,6 +5,7 @@
 package controller;
 
 import dal.CriteriaDAO;
+import dal.PhaseDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -14,11 +15,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Allocation;
 import model.Criteria;
 import model.Group;
 import model.ProjectPhase;
@@ -45,6 +48,8 @@ import service.UserService;
 
 @MultipartConfig
 public class DomainConfigController extends HttpServlet {
+
+    private PhaseDAO phaseDAO = new PhaseDAO();
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -87,7 +92,6 @@ public class DomainConfigController extends HttpServlet {
         HttpSession session = request.getSession();
         switch (action) {
             case "add":
-
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/adddomainsetting.jsp").forward(request, response);
                 break;
             case "edit":
@@ -103,11 +107,7 @@ public class DomainConfigController extends HttpServlet {
                 settingService.updateStatusDomain(action, idU);
                 response.sendRedirect(request.getContextPath() + "/domain/domainsetting");
                 break;
-            case "delete":
-                int idUD = Integer.parseInt(request.getParameter("id"));
-                settingService.deleteDomain(idUD);
-                response.sendRedirect(request.getContextPath() + "/domain/domainsetting");
-                break;
+
             default:
                 try {
                 List<Setting> domainSettings;
@@ -142,12 +142,10 @@ public class DomainConfigController extends HttpServlet {
                 request.setAttribute("domainSettings", domainSettings);
 
                 request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/domainsetting.jsp").forward(request, response);
-
             } catch (NumberFormatException | SQLException e) {
                 throw new ServletException(e);
             }
         }
-
     }
 
     private void domainUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -178,13 +176,7 @@ public class DomainConfigController extends HttpServlet {
                     groupService.UpdateStatusDomain(action, idU);
                     response.sendRedirect(request.getContextPath() + "/domain/domainuser");
                 }
-                case "delete" -> {
-                    int idUD = Integer.parseInt(request.getParameter("id"));
-                    groupService.deleteDomainUser(idUD);
-                    response.sendRedirect(request.getContextPath() + "/domain/domainuser");
-                }
                 default -> {
-
                     Integer dID;
                     String dIdRaw = request.getParameter("domainId");//lay parameter  domainId
                     if (dIdRaw == null) {
@@ -212,21 +204,16 @@ public class DomainConfigController extends HttpServlet {
         action = action != null ? action : "";
         CriteriaService cr = new CriteriaService();
         switch (action) {
-
-            case "add":
+            case "add" ->
                 getEvalAdd(request, response);
-                break;
-            case "edit":
+            case "edit" ->
                 postEvalUpdate(request, response);
-                break;
-
-            case "deactive":
-            case "active":
+            case "deactive", "active" -> {
                 int idU = Integer.parseInt(request.getParameter("id"));
                 cr.editStatusDomainEval(action, idU);
                 response.sendRedirect(request.getContextPath() + "/domain/domaineval");
-                break;
-            default: {
+            }
+            default -> {
                 try {
                     getDomainEval(request, response);
                 } catch (SQLException ex) {
@@ -238,24 +225,31 @@ public class DomainConfigController extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        if ("export".equals(action)) {
-            exportDomainUsersToExcel(response);
-            response.sendRedirect("domain/domainuser?page=1");
-        } else if ("import".equals(action)) {
-            importFromExcel(request);
-            response.sendRedirect("domain/domainuser?page=1");
-        } else if ("adddomainsetting".equals(action)) {
-            this.addDomainSetting(request, response);
-        } else if ("editdomainsetting".equals(action)) {
-            this.editDomainSetting(request, response);
-        } else if ("adddomainuser".equals(action)) {
-            this.addDomainUser(request, response);
-        } else if ("editdomainuser".equals(action)) {
-            this.editDomainUser(request, response);
-        } else if ("adddomaineval".equals(action)) {
-            this.addDomainEval(request, response);
-        } else if ("editdomaineval".equals(action)) {
-            this.editDomainEval(request, response);
+        if (null != action) {
+            switch (action) {
+                case "export" -> {
+                    exportDomainUsersToExcel(request, response);
+                    response.sendRedirect(request.getContextPath() + "/domain/domainuser?page=1");
+                }
+                case "import" -> {
+                    importFromExcel(request);
+                    response.sendRedirect(request.getContextPath() + "/domain/domainuser?page=1");
+                }
+                case "adddomainsetting" ->
+                    this.addDomainSetting(request, response);
+                case "editdomainsetting" ->
+                    this.editDomainSetting(request, response);
+                case "adddomainuser" ->
+                    this.addDomainUser(request, response);
+                case "editdomainuser" ->
+                    this.editDomainUser(request, response);
+                case "adddomaineval" ->
+                    this.addDomainEval(request, response);
+                case "editdomaineval" ->
+                    this.editDomainEval(request, response);
+                default -> {
+                }
+            }
         }
     }
 
@@ -333,6 +327,7 @@ public class DomainConfigController extends HttpServlet {
             String name = request.getParameter("name");
             String weightStr = request.getParameter("weight");
             String statusStr = request.getParameter("status");
+            int phase = Integer.parseInt(request.getParameter("phase"));
             String description = request.getParameter("description");
             int domainId = (int) session.getAttribute("domainId");
 
@@ -359,7 +354,7 @@ public class DomainConfigController extends HttpServlet {
             }
 
             Criteria criteria = new Criteria();
-            criteria.setPhase(new ProjectPhase());
+            criteria.setPhase(new ProjectPhase(phase));
             criteria.setName(name);
             criteria.setWeight((int) weight);
             criteria.setStatus(Boolean.parseBoolean(statusStr));
@@ -371,8 +366,8 @@ public class DomainConfigController extends HttpServlet {
             CriteriaService service = new CriteriaService();
             service.addDomainEval(criteria);
             response.sendRedirect(request.getContextPath() + "/domain/domaineval");
-        } catch (Exception e) {
-            throw new ServletException(e);
+        } catch (SQLException ex) {
+            throw new ServletException(ex);
         }
     }
 
@@ -393,13 +388,10 @@ public class DomainConfigController extends HttpServlet {
             }
             boolean status = Boolean.parseBoolean(request.getParameter("status"));
             Group user = new Group();
-            user.setUser(new User());
-            user.setParent(new Group());
-            user.getUser().setId(userId);
+            user.setUser(new User(userId));
             user.setId(dID);
             user.setStatus(status ? 1 : 0);
             GroupService groupService = new GroupService();
-            user.setId(groupService.getLatestId());
             groupService.addDomainUser(user);
             response.sendRedirect(request.getContextPath() + "/domain/domainuser");
         } catch (NumberFormatException | SQLException e) {
@@ -507,63 +499,35 @@ public class DomainConfigController extends HttpServlet {
             st.setDomain(g);
             settingService.updateDomain(st);
             response.sendRedirect(request.getContextPath() + "/domain/domainsetting");
-        } catch (Exception e) {
-            System.out.println("Error: " + e);
+        } catch (SQLException e) {
+            throw new ServletException(e);
         }
     }
 
-    public void exportDomainUsersToExcel(HttpServletResponse response) throws IOException {
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=domain_users.xlsx");
-        response.setCharacterEncoding("UTF-8");
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Domain Users");
-
-        Row headerRow = sheet.createRow(0);
-        String[] headers = {"ID", "Username", "Email", "Phone", "Domain", "Status"};
-
-        CellStyle headerCellStyle = workbook.createCellStyle();
-        Font headerFont = workbook.createFont();
-        headerFont.setBold(true);
-        headerCellStyle.setFont(headerFont);
-
-        for (int i = 0; i < headers.length; i++) {
-            Cell cell = headerRow.createCell(i);
-            cell.setCellValue(headers[i]);
-            cell.setCellStyle(headerCellStyle);
-        }
-        GroupService service = new GroupService();
-        List<Group> domainUsers = service.getDomainUser();
-        int rowNum = 1;
-        for (Group user : domainUsers) {
-            Row row = sheet.createRow(rowNum++);
-
-            row.createCell(0).setCellValue(user.getId());
-            row.createCell(1).setCellValue(user.getUser().getFullname());
-            row.createCell(2).setCellValue(user.getUser().getEmail());
-            row.createCell(3).setCellValue(user.getUser().getMobile());
-            row.createCell(4).setCellValue(user.getParent().getName());
-
-            String status = "Unknown";
-            if (user.getParent().getStatus() == 1) {
-                status = "Active";
-            } else if (user.getParent().getStatus() == 0) {
-                status = "Inactive";
-            }
-            row.createCell(5).setCellValue(status);
-        }
-
-        for (int i = 0; i < headers.length; i++) {
-            sheet.autoSizeColumn(i);
-        }
-
+    public void exportDomainUsersToExcel(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
-            workbook.write(response.getOutputStream());
-            response.getOutputStream().flush();
-        } catch (IOException e) {
-            throw new IOException("Error while writing Excel data to output stream", e);
-        } finally {
-            workbook.close();
+            GroupService gservice = new GroupService();
+            Integer dID;
+            String dIdRaw = request.getParameter("domainId");//lay parameter  domainId
+            if (dIdRaw == null) {
+                dID = (Integer) request.getSession().getAttribute("domainId");
+                if (dID == null) {
+                    throw new ServletException("Some thing went wrong, cannot find the domain id");
+                }
+            } else {
+                dID = Integer.valueOf(dIdRaw);
+                request.getSession().setAttribute("domainId", dID);
+            }
+            
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=domain_users.xlsx");
+
+            List<Group> list = gservice.getDomainUserByDomainId(dID);
+            Workbook workBook = gservice.exportDomainUser(list);
+            OutputStream outputStream = response.getOutputStream();
+            workBook.write(outputStream);
+        } catch (SQLException ex) {
+            throw new ServletException(ex);
         }
     }
 
@@ -591,36 +555,45 @@ public class DomainConfigController extends HttpServlet {
 
     }
 
-    private void postEvalDelete(HttpServletRequest request, HttpServletResponse response) {
-        CriteriaService cr = new CriteriaService();
+    private void getEvalAdd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            int idUD = Integer.parseInt(request.getParameter("id"));
-            cr.deleteDomainEval(idUD);
-            response.sendRedirect(request.getContextPath() + "/domain/domainsetting");
-        } catch (Exception e) {
-            System.out.println("Error: " + e);
-        }
-    }
-
-    private void getEvalAdd(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession();
-        try {
-
+            HttpSession session = request.getSession();
             ProjectService projectService = new ProjectService();
             //lay tu session
-            int dID = (int) session.getAttribute("domainId");
+            Integer dID;
+            String dIdRaw = request.getParameter("domainId");//lay parameter  domainId
+            if (dIdRaw == null) {
+                dID = (Integer) session.getAttribute("domainId");
+                if (dID == null) {
+                    throw new ServletException("Some thing went wrong, cannot find the domain id");
+                }
+            } else {
+                dID = Integer.valueOf(dIdRaw);
+                session.setAttribute("domainId", dID);
+            }
             List<ProjectPhase> projects = projectService.getAllProjectPharseByDomainId(dID);
-            request.setAttribute("projects", projects);
+            request.setAttribute("projectsphases", projects);
             request.getRequestDispatcher("/WEB-INF/view/user/domainConfig/adddomaineval.jsp").forward(request, response);
-        } catch (Exception e) {
-            System.err.println("Error: " + e);
+        } catch (SQLException ex) {
+            throw new ServletException(ex);
         }
+
     }
 
     private void postEvalUpdate(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         try {
-            int dID = (int) session.getAttribute("domainId");
+            Integer dID;
+            String dIdRaw = request.getParameter("domainId");//lay parameter  domainId
+            if (dIdRaw == null) {
+                dID = (Integer) session.getAttribute("domainId");
+                if (dID == null) {
+                    throw new ServletException("Some thing went wrong, cannot find the domain id");
+                }
+            } else {
+                dID = Integer.valueOf(dIdRaw);
+                session.setAttribute("domainId", dID);
+            }
             int id = Integer.parseInt(request.getParameter("id"));
             CriteriaService crService = new CriteriaService();
             Criteria criteria = crService.getDomainEvalById(id);
@@ -643,7 +616,7 @@ public class DomainConfigController extends HttpServlet {
             if (dIdRaw == null) {
                 dID = (Integer) session.getAttribute("domainId");
                 if (dID == null) {
-                    throw new ServletException("Some thing went wrong, cannot find the project id");
+                    throw new ServletException("Some thing went wrong, cannot find the domain id");
                 }
             } else {
                 dID = Integer.valueOf(dIdRaw);

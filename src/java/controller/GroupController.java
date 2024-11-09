@@ -7,6 +7,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Group;
 import service.GroupService;
 
@@ -68,20 +71,23 @@ public class GroupController extends HttpServlet {
 
     private void paginateList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int pageNumber = getPageNumber(request);
-        int pageSize = 12;
-        Integer filterStatus = getFilterStatus(request);
-        List<Group> listD;
-        if (filterStatus != null) {
-            listD = Domain.filterDepartments(pageNumber, pageSize, filterStatus);
-        } else {
-            listD = Domain.getAllGroups(pageNumber, pageSize);
+        try {
+            int pageNumber = getPageNumber(request);
+            int pageSize = 12;
+            Integer filterStatus = getFilterStatus(request);
+            List<Group> listD;
+            if (filterStatus != null) {
+                listD = Domain.filterDepartments(pageNumber, pageSize, filterStatus);
+            } else {
+                listD = Domain.getAllGroups(pageNumber, pageSize);
+            }
+            request.setAttribute("listD", listD);
+            request.setAttribute("currentPage", pageNumber);
+            request.setAttribute("filterStatus", filterStatus);
+            request.getRequestDispatcher("/WEB-INF/view/admin/Domain.jsp").forward(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(GroupController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        request.setAttribute("listD", listD);
-        request.setAttribute("currentPage", pageNumber);
-        request.setAttribute("filterStatus", filterStatus);
-        request.getRequestDispatcher("/WEB-INF/view/admin/Domain.jsp").forward(request, response);
     }
 
     private void paginateListWithFilter(HttpServletRequest request, HttpServletResponse response)
