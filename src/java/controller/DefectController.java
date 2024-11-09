@@ -34,6 +34,7 @@ public class DefectController extends HttpServlet {
     private ProjectService projectService;
     private SettingService settingService;
     private UserService userService;
+
     @Override
     public void init() throws ServletException {
         defectDAO = new DefectDAO();
@@ -52,7 +53,7 @@ public class DefectController extends HttpServlet {
             } else if (path.contains("/defectdetail")) {
                 showDefectDetail(request, response);
             } else if (path.contains("/getProject")) {
-                handleGetProject(request, response);
+                handleGetRequirement(request, response);
             }
         } catch (SQLException ex) {
             throw new ServletException(ex);
@@ -75,6 +76,9 @@ public class DefectController extends HttpServlet {
                     handleDelete(request, response);
                 case "changeStatus" ->
                     handleStatusChange(request, response);
+               
+                case "getAssignees" ->
+                    handleGetAssignees(request, response);
                 default ->
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
@@ -97,15 +101,15 @@ public class DefectController extends HttpServlet {
         List<Defect> defects;
 //        if (loginUser.equals("1")) { // Assuming isAdmin() checks if the user has admin privileges
         // Admins get all defects
-        if (loginUser.getRole() == 2) {
+
         // Nếu người dùng là member, chỉ lấy defect của họ
         defects = defectDAO.getDefectByAssignee(loginUser.getId());
         request.setAttribute("project", projectService.getAllProject(loginUser.getId()));
-    } else {
+
         // Nếu là admin, lấy tất cả defect
         defects = defectDAO.getAll();
         request.setAttribute("project", projectService.getAllProject());
-    }
+
 //        } else {
 //            // Members get defects only for the projects they participate in
 //            defects = defectDAO.getDefectsByUserProjects(loginUser.getId());
@@ -185,6 +189,8 @@ public class DefectController extends HttpServlet {
     private void handleEdit(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
         int id = Integer.parseInt(request.getParameter("id"));
+        HttpSession session = request.getSession();
+        User loginUser = (User) session.getAttribute("loginedUser");
         Defect defect = defectDAO.getById(id);
 
         if (defect != null) {
@@ -199,9 +205,11 @@ public class DefectController extends HttpServlet {
                 request.setAttribute("defect", defect);
                 showDefectDetail(request, response);
             }
+
         } else {
             response.sendRedirect(request.getContextPath() + "/defectlist");
         }
+
     }
 
     private void handleDelete(HttpServletRequest request, HttpServletResponse response)
@@ -245,16 +253,17 @@ public class DefectController extends HttpServlet {
         defect.setServerity(serverity);
     }
 
-    private void handleGetProject(HttpServletRequest request, HttpServletResponse response)
+    private void handleGetRequirement(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            int requirementId = Integer.parseInt(request.getParameter("requirementId"));
-            Requirement requirement = requirementService.getRequirementById(requirementId);
+          
+            int projectId = Integer.parseInt(request.getParameter("projectId"));
 
-            Project projects = projectService.getProjectById(requirement.getProjectId());
+            Requirement requirement = requirementService.getRequirementById(projectId);
+
             // Convert to JSON and send response
             Gson gson = new Gson();
-            String json = gson.toJson(projects);
+            String json = gson.toJson(projectId);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(json);
@@ -262,6 +271,36 @@ public class DefectController extends HttpServlet {
             Logger.getLogger(DefectController.class.getName()).log(Level.SEVERE, null, e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("Error loading milestones");
+        }
+    }
+
+    private void handleGetAssignees(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, SQLException {
+        try {
+            int projectId = Integer.parseInt(request.getParameter("projectId"));
+            List<User> assignee = userService.getUsersByProjectId(projectId);
+
+            // Create JSON response manually
+            StringBuilder json = new StringBuilder("[");
+            for (int i = 0; i < assignee.size(); i++) {
+                User user = assignee.get(i);
+                if (i > 0) {
+                    json.append(",");
+                }
+                json.append("{")
+                        .append("\"id\":").append(user.getId()).append(",")
+                        .append("\"fullname\":\"").append(user.getFullname().replace("\"", "\\\"")).append("\"")
+                        .append("}");
+            }
+            json.append("]");
+
+            // Send response
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(json.toString());
+
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid project ID");
         }
     }
 

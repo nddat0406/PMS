@@ -86,22 +86,9 @@
                                             <input type="text" class="form-control" name="keyword" 
                                                    value="${param.keyword}" placeholder="Search title...">
                                         </div>
-
-                                        <!-- Requirement Filter -->
-                                        <div class="col-md-2">
-                                            <select name="requirementId" class="form-select">
-                                                <option value="">All Requirements</option>
-                                                <c:forEach items="${requirements}" var="req">
-                                                    <option value="${req.id}" ${param.requirementId == req.id ? 'selected' : ''}>
-                                                        ${req.title}
-                                                    </option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-
                                         <!-- Milestone Filter -->
                                         <div class="col-md-2">
-                                            <select name="projectId" class="form-select">
+                                            <select name="projectId" id="projectId" class="form-select">
                                                 <option value="">All Project </option>
                                                 <c:forEach items="${project}" var="pro">
                                                     <option value="${pro.id}" ${param.projectId == pro.id ? 'selected' : ''}>
@@ -113,7 +100,7 @@
 
                                         <!-- Severity Filter -->
                                         <div class="col-md-2">
-                                            <select name="serverityId" class="form-select">
+                                            <select name="serverityId" id="serverityId" class="form-select">
                                                 <option value="">All Severities</option>
                                                 <c:forEach items="${serverities}" var="sev">
                                                     <option value="${sev.id}" ${param.serverityId == sev.id ? 'selected' : ''}>
@@ -156,10 +143,10 @@
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
-                                                <th>Requirement</th>
-                                                <th>Project</th>
-                                                <th>Severity</th>
                                                 <th>Title</th>
+                                                <th>Project</th>
+                                                <th>Requirement</th>
+                                                <th>Severity</th>
                                                 <th>Leakage</th>
                                                 <th>Due Date</th>
                                                 <th>Status</th>
@@ -170,15 +157,15 @@
                                         <tbody>
                                             <c:forEach items="${defects}" var="defect">
                                                 <tr>
-                                                    <td>${defect.id}</td>                                                  
-                                                    <td>${defect.requirement.title}</td>
+                                                    <td>${defect.id}</td>   
+                                                    <td>${defect.title}</td>
                                                     <td>${defect.project.name}</td>
+                                                    <td>${defect.requirement.title}</td>
                                                     <td>
                                                         <span class="badge bg-${defect.serverity.id == 1 ? 'danger' : defect.serverity.id == 2 ? 'warning' : 'info'}">
                                                             ${defect.serverity.name}
                                                         </span>
                                                     </td>
-                                                    <td>${defect.title}</td>
                                                     <td>
                                                         <span class="badge ${defect.leakage ? 'bg-danger' : 'bg-secondary'}">
                                                             ${defect.leakage ? 'Yes' : 'No'}
@@ -255,19 +242,16 @@
                                             <label for="projectId" class="form-label">Project *</label>
                                             <select class="form-select" id="projectId" name="projectId" required>
                                                 <option value="">Select Project</option>
-                                                <c:forEach items="${project}" var="pro">
-                                                    <option value="${pro.id}">${pro.name}</option>
+                                                <c:forEach items="${project}" var="project">
+                                                    <option value="${project.id}">${project.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
                                         <!-- Requirement -->
-                                        <div class="col-md-6">
+                                        <<div class="col-md-6">
                                             <label for="requirementId" class="form-label">Requirement *</label>
                                             <select class="form-select" id="requirementId" name="requirementId" required>
                                                 <option value="">Select Requirement</option>
-                                                <c:forEach items="${requirements}" var="req">
-                                                    <option value="${req.id}">${req.title}</option>
-                                                </c:forEach>
                                             </select>
                                         </div>
 
@@ -285,13 +269,17 @@
                                             </select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="assignee" class="form-label">Assignee *</label>
-                                            <select class="form-select" name="assignee" id="assignee" required>
-                                                <option value="">Select Assignee</option>
-                                                <c:forEach items="${assignee}" var="user">
-                                                    <option value="${user.id}">${user.fullname}</option>
-                                                </c:forEach>
-                                            </select>
+                                            <div class="mb-3">
+                                                <label class="form-label">Assignee <span class="text-danger">*</span></label>
+                                                <select class="form-select" name="assigneeId" id="assigneeId" >
+                                                    <option value="">Select Assignee</option>
+                                                    <c:forEach items="${users}" var="user">
+                                                        <option value="${user.id}" ${defect != null && defect.assignee == user.id ? 'selected' : ''}>
+                                                            ${user.fullname}
+                                                        </option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
                                         </div>
 
                                         <!-- Due Date -->
@@ -350,26 +338,86 @@
                                                                             };
 
                                                                             // Requirement change handler to load related project
-                                                                            $('#requirementId').change(function () {
-                                                                                const reqId = $(this).val();
-                                                                                if (reqId) {
-                                                                                    // Clear current project options
-                                                                                    $('#projectId').html('<option value="">Select Project</option>');
+//                                                                            $('#requirementId').change(function () {
+//                                                                                const reqId = $(this).val();
+//                                                                                if (reqId) {
+//                                                                                    // Clear current project options
+//                                                                                    $('#projectId').html('<option value="">Select Project</option>');
+//
+//                                                                                    // Load project for selected requirement's project
+//                                                                                    $.get('${pageContext.request.contextPath}/getProject',
+//                                                                                            {requirementId: reqId},
+//                                                                                            function (project) {
+//                                                                                                console.log(project.name);
+//                                                                                                $('#projectId').empty();
+//                                                                                                $('#projectId').append(new Option(project.name, project.id));
+//                                                                                            });
+//                                                                                }
+//                                                                            });
+                                                                            // Project change handler to load related requirements
+//                                                                            $('#projectId').change(function () {
+//                                                                                const reqId = $(this).val();
+//                                                                                if (reqId) {
+//                                                                                    // Clear current project options
+//                                                                                    $('#requirementId').html('<option value="">Select Requirement</option>');
+//
+//                                                                                    // Load project for selected requirement's project
+//                                                                                    $.get('${pageContext.request.contextPath}/getProject',
+//                                                                                            {projectId reqId},
+//                                                                                            function (requirement) {
+//                                                                                                console.log(requirement.name);
+//                                                                                                $('#requirementId:').empty();
+//                                                                                                $('#requirementId:').append(new Option(requirement.name, requirement.id));
+//                                                                                            });
+//                                                                                }
+//                                                                            });
+//                                                                            function loadRequirements(projectId) {
+                                                                            // Khi người dùng thay đổi lựa chọn trong dropdown Project
+                                                                            function loadRequirements(projectId) {
+                                                                                $('#projectId').change(function () {
+                                                                                    const projectId = $(this).val();
+                                                                                    if (projectId) {
+                                                                                        // Xóa các lựa chọn hiện tại trong dropdown Requirement
+                                                                                        $('#requirementId').html('<option value="">Select Requirement</option>');
 
-                                                                                    // Load project for selected requirement's project
-                                                                                    $.get('${pageContext.request.contextPath}/getProject',
-                                                                                            {requirementId: reqId},
-                                                                                            function (project) {
-                                                                                                console.log(project.name);
-                                                                                                $('#projectId').empty();
-                                                                                                $('#projectId').append(new Option(project.name, project.id));
-                                                                                            });
-                                                                                }
-                                                                            });
+                                                                                        // Gửi yêu cầu tới server để lấy danh sách yêu cầu của dự án đã chọn
+                                                                                        $.get('${pageContext.request.contextPath}/getProject',
+                                                                                                {projectId: projectId},
+                                                                                                function (requirements) {
+                                                                                                    // Xóa danh sách hiện tại và thêm lại lựa chọn mặc định
+                                                                                                    $('#requirementId').empty();
+                                                                                                    $('#requirementId').append(new Option("Select Requirement", ""));
 
+                                                                                                    // Thêm các yêu cầu mới vào dropdown Requirement
+                                                                                                    requirements.forEach(function (req) {
+                                                                                                        $('#requirementId').append(new Option(req.title, req.id));
+                                                                                                    });
+                                                                                                }
+                                                                                        );
+                                                                                    } else {
+                                                                                        // Nếu không có dự án nào được chọn, đặt lại danh sách Requirement
+                                                                                        $('#requirementId').html('<option value="">Select Requirement</option>');
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                            }
                                                                             // Date validation
                                                                             $('#duedate').attr('min', new Date().toISOString().split('T')[0]);
                                                                         });
             </script>
+<!--            <script>$('#projectId').on('change', function () {
+                    const projectId = $(this).val();
+
+                    if (projectId) {
+                        // Load requirements
+                        loadRequirements(projectId);
+                        // Load assignees
+                        //loadAssignees(projectId);
+                    } else {
+                        // Clear both dropdowns if no project selected
+                        $('#requirementId').html('<option value="">Select Requirement</option>');
+                        //$('#assigneeId').html('<option value="">Select Assignee</option>');
+                    }
+                });</script>-->
         </body>
     </html>

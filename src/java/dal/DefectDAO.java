@@ -59,7 +59,7 @@ public class DefectDAO extends BaseDAO {
     }
 
     public void update(Defect defect) throws SQLException {
-        String sql = "UPDATE pms.defect SET requirementId=?, projectId=?, serverityId=?, "
+        String sql = "UPDATE pms.defect SET requirementId=?,  projectId=?, serverityId=?, "
                 + "title=?, leakage=?, details=?, duedate=?, status=?, assignee=? WHERE id=?";
         try {
             PreparedStatement st = getConnection().prepareStatement(sql);
@@ -70,7 +70,20 @@ public class DefectDAO extends BaseDAO {
             throw new SQLException("Error updating defect: " + e.getMessage());
         }
     }
-
+public List<Requirement> getAllByProjectId(int projectId) throws SQLException {
+        String sql = "SELECT * FROM pms.requirement WHERE projectId=?";
+        try {
+            List<Requirement> list = new ArrayList<>();
+            PreparedStatement pre = getConnection().prepareStatement(sql);
+            pre.setInt(1, projectId);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                mapResultSetToDefect(rs);            }
+            return list;
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
     public void updateStatus(int id, int status) throws SQLException {
         String sql = "UPDATE pms.defect SET status = ? WHERE id = ?";
         try {
@@ -127,8 +140,8 @@ public class DefectDAO extends BaseDAO {
     private Defect mapResultSetToDefect(ResultSet rs) throws SQLException {
         Defect defect = new Defect();
         defect.setId(rs.getInt("id"));
-        defect.setRequirement(requirementDAO.getRequirementById(rs.getInt("requirementId")));
         defect.setProject(projectDAO.getProjectById(rs.getInt("projectId")));
+        defect.setRequirement(requirementDAO.getRequirementById(rs.getInt("requirementId")));
         defect.setServerity(settingDAO.getSettingById(rs.getInt("serverityId")));
         defect.setTitle(rs.getString("title"));
         defect.setLeakage(rs.getBoolean("leakage"));

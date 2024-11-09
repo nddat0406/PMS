@@ -2,7 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-<<<<<<< HEAD
         <group name="Prj301-class">
             <file>file:/D:/FPTU/SWP391/project/PMS/src/java/model/Allocation.java</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/AllocationService.java</file>
@@ -15,49 +14,29 @@
             <file>file:/D:/FPTU/SWP391/project/PMS/web/META-INF/context.xml</file>
         </group>
         <group>
-            <file>file:/D:/FALL2024/SWP391/lastone/web/META-INF/context.xml</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/model/User.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/IssueDAO.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/RequirementDAO.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/user/issues/addEditIssue.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/service/BaseService.java</file>
             <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/admin/DefectList.jsp</file>
             <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/common/sidebar.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/DefectDAO.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/user/issues/user-issues.jsp</file>
             <file>file:/D:/FALL2024/SWP391/lastone/src/java/service/IssueService.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/web.xml</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/ProjectDAO.java</file>
             <file>file:/D:/FALL2024/SWP391/lastone/src/java/service/RequirementService.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/AllocationDAO.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/model/Project.java</file>
             <file>file:/D:/FALL2024/SWP391/lastone/src/java/model/Issue.java</file>
             <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/DefectController.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/PhaseController.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/UserDAO.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/Dashboard.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/user/domainConfig/PhaseDetails.jsp</file>
             <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/user/issues/issue-manage.jsp</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/service/ProjectService.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/admin/DefectDetails.jsp</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/RequirementDAO.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/IssueDAO.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/AllocationController.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/DefectDAO.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/filter/LoginFilter.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/admin/Department.jsp</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/user/Allocation/alloList.jsp</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/IssueController.java</file>
             <file>file:/D:/FALL2024/SWP391/lastone/src/java/service/UserService.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/model/Requirement.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/src/java/service/ProjectService.java</file>
             <file>file:/D:/FALL2024/SWP391/lastone/src/java/model/Defect.java</file>
+            <file>file:/D:/FALL2024/SWP391/lastone/web/WEB-INF/view/admin/DefectDetails.jsp</file>
             <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/PhaseDAO.java</file>
-=======
-        <group>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/service/SettingService.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/user/projectConfig/projectmilestone.jsp</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/UserIssuesController.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/service/RequirementService.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/service/UserService.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/admin/SettingDetails.jsp</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/dal/SettingDAO.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/dal/MilestoneDAO.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/ProjectConfigController.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/view/admin/SettingList.jsp</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/SettingController.java</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/WEB-INF/classes/app.properties</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/web/META-INF/context.xml</file>
-            <file>file:/D:/Fall2024%20Study/SWP/Iter2/team6/src/java/controller/IssueController.java</file>
->>>>>>> 78ec11a3e7b7329c3f0b9d47917bcf3bfc9191ef
         </group>
     </open-files>
 </project-private>
