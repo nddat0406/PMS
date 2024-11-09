@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
 import model.Group;
 import service.GroupService;
 
@@ -67,7 +68,7 @@ public class GroupController extends HttpServlet {
     }
 
     private void paginateList(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException {
         int pageNumber = getPageNumber(request);
         int pageSize = 12;
         Integer filterStatus = getFilterStatus(request);
@@ -116,7 +117,7 @@ public class GroupController extends HttpServlet {
     }
 
     private void handleSearch(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException {
         String keyword = request.getParameter("keyword");
         if (keyword == null || keyword.trim().isEmpty()) {
             // Sử dụng logic phân trang mặc định
