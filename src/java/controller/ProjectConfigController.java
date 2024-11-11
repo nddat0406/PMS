@@ -458,8 +458,7 @@ public class ProjectConfigController extends HttpServlet {
                 if (hasOpenMilestones) {
                     throw new SQLException("Cannot close this milestone: All other milestones must be closed first because this milestone belongs to a final phase.");
                 }
-
-                pService.updateProjectStatus(projectId, 3);
+                pService.updateProjectStatus(projectId, 0);
             }
 
             // Case 2: Opening a milestone - need to open final phase milestones

@@ -75,7 +75,7 @@
                                                 <!-- Phase Name -->
                                                 <div class="col-md-4 col-sm-12">
                                                     <label for="name">Name</label>
-                                                    <input type="text" class="form-control" id="name" name="name" 
+                                                    <input type="text" class="form-control" id="name" name="name" maxlength="40"
                                                            value="${phase.name}" required>
                                                 </div>
 
@@ -109,7 +109,7 @@
                                                 <!-- Details -->
                                                 <div class="col-12">
                                                     <label for="details">Details</label>
-                                                    <textarea class="form-control" id="details" name="details" 
+                                                    <textarea class="form-control" id="details" name="details" maxlength="490"
                                                               rows="4">${phase.details}</textarea>
                                                 </div>
 

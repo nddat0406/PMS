@@ -102,7 +102,9 @@ public class RequirementService extends BaseService {
             if (searchKey != null && searchKey.trim().isEmpty()) {
                 searchKey = null;
             }
-
+            if(status==-1){
+                status=null;
+            }
             return requirementDAO.searchRequirements(searchKey, complexity, status, projectId);
         } catch (SQLException e) {
             throw new SQLException("Error filtering requirements: " + e.getMessage());

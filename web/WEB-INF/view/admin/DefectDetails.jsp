@@ -88,7 +88,8 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label for="projectId" class="form-label">Project *</label>
-                                                    <input type="text" name="projectId" value="${defect.project.name}" class="form-control" readonly>
+                                                    <input type="text" value="${defect.project.name}" class="form-control" readonly>
+                                                    <input type="hidden" name="projectId" value="${defect.project.id}" class="form-control" readonly>
                                                 </div>
                                                 <!-- Requirement -->
                                                 <div class="col-md-6">
@@ -104,7 +105,6 @@
                                                     </select>
                                                 </div>
 
-                                                <!-- Milestone -->
                                                 <!-- Severity -->
                                                 <div class="col-md-6">
                                                     <label for="serverityId" class="form-label">Severity *</label>
@@ -139,7 +139,7 @@
                                                 <div class="col-md-6">
                                                     <div class="mb-3">
                                                         <label class="form-label">Assignee <span class="text-danger">*</span></label>
-                                                        <select class="form-select" name="assignee" id="assignee" >
+                                                        <select class="form-select" name="assigneeId" id="assignee" >
                                                             <option value="">Select Assignee</option>
                                                             <c:forEach items="${members}" var="user">
                                                                 <option value="${user.id}" ${user.id == defect.assignee.id ? 'selected' : ''} >

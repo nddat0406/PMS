@@ -2,35 +2,12 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-<<<<<<< HEAD
-<<<<<<< HEAD
         <group name="test">
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/SettingService.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/domainConfig/adddomainsetting.jsp</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/GoogleLogin.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/SettingDAO.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/admin/SettingDetails.jsp</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/ProjectDAO.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/GroupController.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/user/projectConfig/projectmember.jsp</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/SettingController.java</file>
-            <file>file:/D:/FPTU/SWP391/project/PMS/web/WEB-INF/view/admin/SettingList.jsp</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/MilestoneDAO.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/controller/ProjectConfigController.java</file>
+            <file>file:/D:/FPTU/SWP391/project/PMS/src/java/service/MilestoneService.java</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/src/java/dal/PhaseDAO.java</file>
             <file>file:/D:/FPTU/SWP391/project/PMS/web/META-INF/context.xml</file>
-=======
-        <group name="PRO">
-            <file>file:/C:/Users/DELL/SWP391/PMS_BanChinh/team6/src/java/dal/CriteriaDAO.java</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS_BanChinh/team6/src/java/dal/SettingDAO.java</file>
-            <file>file:/C:/Users/DELL/SWP391/PMS_BanChinh/team6/src/java/controller/DomainConfigController.java</file>
->>>>>>> cb17286733f17674bb214a2c74e49061598a7371
-=======
-        <group>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/controller/DefectController.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/DefectDAO.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/service/UserService.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/service/DefectService.java</file>
-            <file>file:/D:/FALL2024/SWP391/lastone/src/java/dal/ProjectDAO.java</file>
->>>>>>> cc2077eb5f6e91d9930b2f5d51976d49c5913459
         </group>
     </open-files>
 </project-private>

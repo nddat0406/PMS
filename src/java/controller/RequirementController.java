@@ -73,14 +73,12 @@ public class RequirementController extends HttpServlet {
             switch (action) {
                 case "filter" ->
                     postFilter(request, response);
-                case "sort" ->
-                    postSort(request, response);
+                
                 case "add" ->
                     postAdd(request, response);
                 case "update" ->
                     postUpdate(request, response);
-                case "delete" ->
-                    postDelete(request, response);
+               
                 case "getMilestones" -> {
                     int projectId = Integer.parseInt(request.getParameter("projectId"));
                     List<Milestone> milestones = requirementService.getListMileStoneByProjectId(projectId);
@@ -186,8 +184,6 @@ public class RequirementController extends HttpServlet {
 
         int projectFilter = baseService.TryParseInt(projectFilterRaw);
         int statusFilter = baseService.TryParseInt(statusFilterRaw);
-
-        
         
         List<Requirement> list = requirementService.getRequirementsByFilter(complexityFilter, projectFilter,
                 statusFilter, searchKey);
@@ -201,17 +197,7 @@ public class RequirementController extends HttpServlet {
         pagination(request, response, list);
     }
 
-    private void postSort(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String fieldName = request.getParameter("fieldName");
-        String order = request.getParameter("sortBy");
-        List<Requirement> list = (List<Requirement>) request.getSession().getAttribute("requirementList");
-        baseService.sortListByField(list, fieldName, order);
-        request.getSession().setAttribute("requirementList", list);
-        request.getSession().setAttribute("sortFieldName", fieldName);
-        request.getSession().setAttribute("sortOrder", order);
-        pagination(request, response, list);
-    }
+
 
     private void postAdd(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
@@ -313,18 +299,7 @@ public class RequirementController extends HttpServlet {
         }
     }
 
-    private void postDelete(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, SQLException {
-        try {
-            int id = Integer.parseInt(request.getParameter("requirementId"));
-            // TODO: check lai
-            // requirementService.deleteRequirement(id);
-            List<Requirement> list = refreshChanges(request);
-            pagination(request, response, list);
-        } catch (NumberFormatException e) {
-            throw new ServletException(e);
-        }
-    }
+  
 
     private List<Requirement> refreshChanges(HttpServletRequest request) throws SQLException {
         HttpSession session = request.getSession();

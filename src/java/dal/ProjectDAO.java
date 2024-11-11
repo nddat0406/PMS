@@ -572,18 +572,7 @@ public class ProjectDAO extends BaseDAO {
 
     public List<Setting> getListRole(Integer PID) throws SQLException {
         String str = """
-                 SELECT DISTINCT 
-                 ds.id,
-                     ds.name,
-                     ds.priority
-                 FROM 
-                     allocation a
-                 JOIN 
-                     project p ON a.projectId = p.id
-                 JOIN 
-                     domain_setting ds ON ds.id = a.role
-                 WHERE 
-                     p.id = ? AND ds.type = 2""";
+                 select id,name, priority from domain_setting where domainId = (select domainId from project where id = ?) and type =2""";
         List<Setting> settingList = new ArrayList<>();
         try (PreparedStatement pre = getConnection().prepareStatement(str)) {
             pre.setInt(1, PID);
